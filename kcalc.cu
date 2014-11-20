@@ -249,6 +249,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	__shared__ double S_s[NB];
 	__shared__ double alphaL_s[NB];
 	__shared__ double ialphaD_s[NB];
+	__shared__ double y_s[NB];
 	__shared__ int xyFlag_s[2];
 
 	double K = 0.0;
@@ -267,12 +268,14 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 			S_s[idx] = S_d[i + idx + ii];
 			alphaL_s[idx] = alphaL_d[i + idx + ii];
 			ialphaD_s[idx] = alphaD_d[i + idx + ii];
+			y_s[idx] = sqln2 * alphaL_s[idx] * ialphaD_s[idx];
 		}
 		else{
 			nu_s[idx] = 0.0;
 			S_s[idx] = 0.0;
 			alphaL_s[idx] = 0.0;
 			ialphaD_s[idx] = 0.0;
+			y_s[idx] = 0.0;
 		}
 		__syncthreads();
 
@@ -281,9 +284,9 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 		for(int j = 0; j < NB; ++j){
 			if(i + j < NL){
 				double x = sqln2 * fabs((nu - nu_s[j]) * ialphaD_s[j]);
-				double y = sqln2 * alphaL_s[j] * ialphaD_s[j];
-				if(x * x + y * y < 1e6) xyFlag_s[1] = 1; 
-				if(x * x + y * y < 100) xyFlag_s[0] = 1; 
+				double yy = y_s[j] * y_s[j];
+				if(x * x + yy < 1e6) xyFlag_s[1] = 1; 
+				if(x * x + yy < 100) xyFlag_s[0] = 1; 
 			}
 		}
 		__syncthreads();
@@ -291,7 +294,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 			for(int j = 0; j < NB; ++j){
 				if(i + j < NL){
 					double x = sqln2 * fabs((nu - nu_s[j]) * ialphaD_s[j]);
-					double y = sqln2 * alphaL_s[j] * ialphaD_s[j];
+					double y = y_s[j];
 					K += S_s[j] * voigt_916(x, y, a, id) * sqln2 * ialphaD_s[j] * isqrtpi;
 //if(id < 32) printf("%d %.20g %.20g %.20g %.20g %.20g %.20g\n", id, nu, x, y, nu_s[j], 1.0 / ialphaD_s[j], alphaL_s[j]);
 				}
@@ -303,7 +306,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 				if(i + j < NL){
 					//2nd order Gauss Hermite Quadrature
 					double x = sqln2 * fabs((nu - nu_s[j]) * ialphaD_s[j]);
-					double y = sqln2 *  alphaL_s[j] * ialphaD_s[j];
+					double y = y_s[j];
 					double xxyy = x * x + y * y;
 					double t = y / 3.0;
 					double t1 = 2.0 * t / (M_PI * xxyy);
@@ -317,7 +320,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 				if(i + j < NL){
 					//1 order Gauss Hermite Quadrature
 					double x = sqln2 * fabs((nu - nu_s[j]) * ialphaD_s[j]);
-					double y = sqln2 *  alphaL_s[j] * ialphaD_s[j];
+					double y = y_s[j];
 					K += S_s[j] * sqln2 * y * ialphaD_s[j] / (M_PI * (x * x + y * y));
 				}
 			}
