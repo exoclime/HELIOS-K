@@ -21,6 +21,8 @@ CO2, ...
 numin = <double>	minimum wavenumber in 1/cm
 numax = <double>	maximum wavenumber in 1/cm
 dnu = <double>		spacing in wavenumber in 1/cm
+bins = [ <double> <double> ... <double> ]	boundary of the bins in wavenumbers,
+			numin and numax are automatically included
 
 *The same parameters can be set by console arguments:
 -T <double>
@@ -42,8 +44,8 @@ The code parameters are:
 * nthmax:	Maximum number of threads per kernel launch. 
 		In 2.0 GPUs it can not be larger than 32768. 
 * nlmax:	Maximum number of molecular lines per kernel launch.
-		Setting a lower number prevents from a time out on Desktop
-machines
+		Setting a lower number prevents from a time out on Desktop machines
+* maxbins:	Maximum number of bins
 *qALPHA_L:	q value in the Lorentz half width q = Pself / P
 *PROFILE:	1 = Voigt, 2 = Lorentz, 3 = Gauss
 
@@ -80,7 +82,7 @@ version is.
 
 
 Output File
-Two Output file are written:
+Two kinds of Output is written:
 *Out.dat: It contains the k function
 
-*Out2.dat: It contains the sorted k function
+*Out_bin_<integer>.dat: It contains the sorted k function for the bin number <integer>

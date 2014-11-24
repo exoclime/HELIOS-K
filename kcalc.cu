@@ -232,6 +232,23 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 	}
 }
 
+
+//Just to Test
+__global__ void Line_kernel2(double numin, double dnu, double nu, double S, double alphaL, double alphaD, int Nx, double *K_d){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+
+	double nui = numin + id * dnu;
+
+	if(id < Nx){
+
+		K_d[id] += S * alphaL / (M_PI * ((nui - nu) * (nui - nu) + alphaL * alphaL));
+
+	}
+} 
+
+
 // **************************************************
 //This kernel computes the line shape
 // It uses patterns of shared memory the reduce global memory access
@@ -240,7 +257,7 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 //November 2014
 // **********************************************
 template <int NB, int nl>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *n_d, double *K_d, double dnu, double numin, int Nx, int NL, int ii, int kk){
+__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double dnu, double numin, int Nx, int NL, int ii, int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -289,7 +306,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 				if(x * x + yy < 100) xyFlag_s[0] = 1; 
 			}
 		}
-		__syncthreads();
+//		__syncthreads();
 		if(xyFlag_s[0] == 1){
 			for(int j = 0; j < NB; ++j){
 				if(i + j < NL){
@@ -340,7 +357,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 			}	
 		}
 #endif
-		__syncthreads();
+//		__syncthreads();
 	}
 	if(id < Nx) K_d[id] += K;
 }
@@ -443,6 +460,22 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 6, paramFile);
 		fscanf (paramFile, "%lf", &param.dnu);
 		fgets(skip2, 3, paramFile);
+		//read bins
+		fgets(skip, 9, paramFile);
+		int er = 1;
+		int nbin;
+		param.bins = (double*)malloc(maxbins * sizeof(double));
+
+		param.bins[0] = param.numin;
+		for(nbin = 1; nbin < maxbins; ++nbin){
+			double b;
+			er = fscanf (paramFile, "%lf", &b);
+			if(er == 0) break;
+			param.bins[nbin] = b;
+		}
+		++nbin;
+		param.bins[nbin - 1] = param.numax;
+		param.nbins = nbin;
 
 	fclose(paramFile);
 
@@ -504,7 +537,6 @@ int main(int argc, char*argv[]){
 	sprintf(qFilename, "%s", "q.dat");
 	sprintf(paramFilename, "%s", "param.dat");
 	sprintf(OutFilename, "%s", "Out.dat");
-	sprintf(Out2Filename, "%s", "Out2.dat");
 
 	//Read prameters
 	Param param;
@@ -522,6 +554,9 @@ int main(int argc, char*argv[]){
 	printf("T = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\n", param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu);
 	printf("Profile = %d\n", PROFILE);
 	printf("Using device %d\n", param.dev);
+	for(int i = 0; i < param.nbins - 1; ++i){
+		printf("bin %d %g - %g\n", i, param.bins[i], param.bins[i + 1]);
+	}
 
 	int Nx = (int)((param.numax - param.numin) / param.dnu);
 
@@ -734,28 +769,32 @@ int main(int argc, char*argv[]){
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
 	printf("Time before Line_kernel: %g seconds\n", times + timems/1000000.0);
-/*
-	cudaMemcpy(nu_h, nu_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(S_h, S_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-	for(int i = 0; i < m.NL; ++i){
-		printf("%d %.20g %.20g\n", i, nu_h[i], S_h[i]);
 
-	}
+/*	cudaMemcpy(nu_h, nu_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(S_h, S_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(alphaL_h, alphaL_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(alphaD_h, alphaD_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
 */
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
 	times = 0.0;
 	timems = 0.0;
 
+/*	for(int i = 0; i < m.NL; ++i){
+		Line_kernel2 <<< (Nx + 511) / 512, 512 >>> (param.numin, param.dnu, nu_h[i], S_h[i], alphaL_h[i], alphaD_h[i], Nx, K_d);
+
+	}
+*/
 	for(int k = 0; k < Nx; k += nthmax){
 		int Nk = min(nthmax, Nx);
 		printf("Reached k =  %d, Total = %d\n", k, Nx);
 		for(int i = 0; i < m.NL; i += nlmax){
 			//This loop reduces the running time of the kernel to a few seconds
 			//A longer running time of a single kernel can cause a time out
-			Line_kernel <32, nlmax> <<< (Nk + 31) / 32, 32 >>> (nu_d, S_d, alphaL_d, alphaD_d, n_d, K_d, param.dnu, param.numin, Nx, m.NL, i, k);
+			Line_kernel <32, nlmax> <<< (Nk + 31) / 32, 32 >>> (nu_d, S_d, alphaL_d, alphaD_d, K_d, param.dnu, param.numin, Nx, m.NL, i, k);
 		}
 	}
+
 	cudaDeviceSynchronize();
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
@@ -776,18 +815,24 @@ int main(int argc, char*argv[]){
 	}
 	fclose(OutFile);
 
-
 	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
-	thrust::sort(K_dt, K_dt + Nx);
+	for(int i = 0; i < param.nbins - 1; ++i){
+		sprintf(Out2Filename, "Out_bin_%.5d.dat", i);
+		//compute indexes of the bins
+		int il = (int)((param.bins[i] - param.numin) / param.dnu);
+		int ir = (int)((param.bins[i + 1] - param.numin) / param.dnu) - 1;
+printf("%d %d %d\n", i, il, ir);
 
-	cudaMemcpy(K_h, K_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+		thrust::sort(K_dt + il, K_dt + ir);
 
-	Out2File = fopen(Out2Filename, "w");
-	for(int j = 0; j < Nx; ++j){
-		double x = param.numin + j * param.dnu;
-		fprintf(Out2File, "%.20g %.20g\n", x, K_h[j]);
+		cudaMemcpy(K_h + il, K_d + il, (ir - il) * sizeof(double), cudaMemcpyDeviceToHost);
+
+		Out2File = fopen(Out2Filename, "w");
+		for(int j = 0; j < (ir - il); ++j){
+			fprintf(Out2File, "%g %.20g\n", j / (double)((ir - il)), K_h[j + il]);
+		}
+		fclose(Out2File);
 	}
-	fclose(Out2File);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt2, NULL);

@@ -1,4 +1,4 @@
-#define VERSION 1.01
+#define VERSION 1.02
 
 #define T0 296.0 		//Temperature in K
 #define kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -10,6 +10,7 @@
 #define NCheb 12		//Number of Chebychev coefficients in the q.dat file
 #define nthmax 32768   		//Maximum number of threads in 2.0 Cards
 #define nlmax 32768		//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
+#define maxbins 1000
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
 
 #define PROFILE	1	//1 = Voigt, 2 = Lorentz, 3 = Gauss
@@ -45,4 +46,6 @@ struct Param{
 	double numax;
 	double dnu;
 	double dev;
+	int nbins;
+	double *bins;
 };

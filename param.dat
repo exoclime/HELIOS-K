@@ -4,3 +4,5 @@ Molecule = 1
 numin = 0.0
 numax = 25700.0
 dnu = 1.0
+bins = [ 10000 20000 ]
+ 
