@@ -1,4 +1,4 @@
-#define VERSION 1.02
+#define VERSION 1.1
 
 #define T0 296.0 		//Temperature in K
 #define kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -13,7 +13,9 @@
 #define maxbins 1000
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
 
-#define PROFILE	1	//1 = Voigt, 2 = Lorentz, 3 = Gauss
+#define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
+
+#define NmaxSample 100		//Maximum Number of Sample points for K(y)
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
@@ -48,4 +50,18 @@ struct Param{
 	double dev;
 	int nbins;
 	double *bins;
+};
+
+struct Line{
+	double *nu_h, *nu_d;            //Wavenumber
+	double *S_h, *S_d;              //Intensity
+	double *A_h, *A_d;              //Einstein A coefficient
+	double *delta_h, *delta_d;      //line shift
+	double *EL_h, *EL_d;            //lower state energy
+	double *alphaL_h, *alphaL_d;    //Lorentz Halfwidth
+	double *alphaD_h, *alphaD_d;    //Doppler Halfwidth
+	double *n_h, *n_d;              //temperature dependent exponent
+	double *gamma_h, *gamma_d;      //pressure shift coefficient
+	double *mass_h, *mass_d;        //mass
+	double *Q_h, *Q_d;              //partition function
 };

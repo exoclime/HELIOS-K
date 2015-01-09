@@ -7,7 +7,12 @@
 #include <sys/resource.h>
 
 #include "define.h"
+#include "host.h"
 #include "ISO.h"
+#include "resample.h"
+
+
+
 
 // *********************************************
 //This function calculates the Series Sigma1. Sigma2 and Sigma3 (Equations 27, 28, and 29) from Alg 916
@@ -233,22 +238,6 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 }
 
 
-//Just to Test
-__global__ void Line_kernel2(double numin, double dnu, double nu, double S, double alphaL, double alphaD, int Nx, double *K_d){
-
-	int idx = threadIdx.x;
-	int id = blockIdx.x * blockDim.x + idx;
-
-	double nui = numin + id * dnu;
-
-	if(id < Nx){
-
-		K_d[id] += S * alphaL / (M_PI * ((nui - nu) * (nui - nu) + alphaL * alphaL));
-
-	}
-} 
-
-
 // **************************************************
 //This kernel computes the line shape
 // It uses patterns of shared memory the reduce global memory access
@@ -362,154 +351,8 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	if(id < Nx) K_d[id] += K;
 }
 
-// ****************************************
-// This function computes the Chebyshev polynomials as a function of T
-// n must by greater than 1.
-// *****************************************
-__host__ void Chebyshev(double T, double *Cheb, int n){
-	Cheb[0] = 1.0;
-	Cheb[1] = T;
-	for(int i = 2; i < n; ++i){
-		Cheb[i] = 2.0 * T * Cheb[i - 1] - Cheb[i - 2];
-	}
-	
-}
-// ****************************************
-// This function reads the file q.dat and computes for each Isotopologue
-// the corresponding Partition function Q(T)
 
-//Author: Simon Grimm
-//November 2014
-// *****************************************
-__host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 
-	//Calculate Chebychev polynomial
-	double Cheb[NCheb];
-	Chebyshev(T, Cheb, NCheb);
-
-	//Read Chebychev Coefficients from q file	
-	FILE *qFile;
-	//Check size of q.dat file
-	qFile = fopen(qFilename, "r");
-	if(qFile == NULL){
-		printf("Error: q.dat file not found\n");
-		return 0;
-	}
-	int j;
-	for(j = 0; j < 100; ++j){
-		int id;
-		double coeff;
-		int er = fscanf (qFile, "%d", &id);
-		if (er <= 0) break;
-		for(int i = 0; i < NCheb; ++i){
-			fscanf (qFile, "%lf", &coeff);
-		}
-	}
-	fclose(qFile);
-	part.n = j;
-	
-	part.id = (int*)malloc(j * sizeof(int));
-	part.Q = (double*)malloc(j * sizeof(double));
-	
-	qFile = fopen(qFilename, "r");
-	for(j = 0; j < 100; ++j){
-		int id;
-		double coeff;
-		double Q = 0.0;
-		int er = fscanf (qFile, "%d", &id);
-		if (er <= 0) break;
-		for(int i = 0; i < NCheb; ++i){
-			fscanf (qFile, "%lf", &coeff);
-			Q += coeff * Cheb[i];
-		}
-		part.id[j] = id;
-		part.Q[j] = Q;
-	}
-	fclose(qFile);
-	return 1;
-}
-
-__host__ int read_parameters(Param &param, char *paramFilename, int argc, char*argv[]){
-	//Read parameters from param.dat file
-	FILE *paramFile;
-	param.dev = 0;
-	paramFile = fopen(paramFilename, "r");
-		char skip[160];
-		char skip2[160];
-		//read T
-		fgets(skip, 4, paramFile);
-		fscanf (paramFile, "%lf", &param.T);
-		fgets(skip2, 3, paramFile);
-		//read P
-		fgets(skip, 4, paramFile);
-		fscanf (paramFile, "%lf", &param.P);
-		fgets(skip2, 3, paramFile);
-		//read Molecule
-		fgets(skip, 11, paramFile);
-		fscanf (paramFile, "%d", &param.nMolecule);
-		fgets(skip2, 3, paramFile);
-		//read numin
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%lf", &param.numin);
-		fgets(skip2, 3, paramFile);
-		//read numax
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%lf", &param.numax);
-		fgets(skip2, 3, paramFile);
-		//read dnu
-		fgets(skip, 6, paramFile);
-		fscanf (paramFile, "%lf", &param.dnu);
-		fgets(skip2, 3, paramFile);
-		//read bins
-		fgets(skip, 9, paramFile);
-		int er = 1;
-		int nbin;
-		param.bins = (double*)malloc(maxbins * sizeof(double));
-
-		param.bins[0] = param.numin;
-		for(nbin = 1; nbin < maxbins; ++nbin){
-			double b;
-			er = fscanf (paramFile, "%lf", &b);
-			if(er == 0) break;
-			param.bins[nbin] = b;
-		}
-		++nbin;
-		param.bins[nbin - 1] = param.numax;
-		param.nbins = nbin;
-
-	fclose(paramFile);
-
-	//Read console input arguments
-	for(int i = 1; i < argc; i += 2){
-		if(strcmp(argv[i], "-T") == 0){
-			param.T = atof(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-P") == 0){
-			param.P = atof(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-m") == 0){
-			param.nMolecule = atoi(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-numin") == 0){
-			param.numin = atof(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-numax") == 0){
-			param.numax = atof(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-dnu") == 0){
-			param.dnu = atof(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-dev") == 0){
-			param.dev = atoi(argv[i + 1]);
-		}
-		else{
-			printf("Error: Console arguments not valid!\n");
-			return 0;
-		}
-
-	}
-	return 1;
-}
 
 int main(int argc, char*argv[]){
 
@@ -527,13 +370,14 @@ int main(int argc, char*argv[]){
 	else printf("There are %d CUDA Devices\n", devCount); 
 
 
-	FILE *dataFile;
 	FILE *OutFile;
 	FILE *Out2File;
+	FILE *Out3File;
 	char qFilename[160];
 	char paramFilename[160];
 	char OutFilename[160];
 	char Out2Filename[160];
+	char Out3Filename[160];
 	sprintf(qFilename, "%s", "q.dat");
 	sprintf(paramFilename, "%s", "param.dat");
 	sprintf(OutFilename, "%s", "Out.dat");
@@ -560,6 +404,7 @@ int main(int argc, char*argv[]){
 
 	int Nx = (int)((param.numax - param.numin) / param.dnu);
 
+	//Compute partition function
 	Partition part;
 	er = ChebCoeff(qFilename, part, param.T);
 	if(er == 0){
@@ -588,179 +433,61 @@ int main(int argc, char*argv[]){
 	gettimeofday(&tt1, NULL);
 	times = 0.0;
 	timems = 0.0;
-	
-	double *nu_h, *nu_d;		//Wavenumber
-	double *S_h, *S_d;		//Intensity
-	double *A_h, *A_d;		//Einstein A coefficient
-	double *delta_h, *delta_d;	//line shift
-	double *EL_h, *EL_d;		//lower state energy
-	double *alphaL_h, *alphaL_d;	//Lorentz Halfwidth
-	double *alphaD_h, *alphaD_d;	//Doppler Halfwidth
-	double *n_h, *n_d;		//temperature dependent exponent
-	double *gamma_h, *gamma_d;	//pressure shift coefficient
-	double *mass_h, *mass_d;
-	double *Q_h, *Q_d;		//partition function
+
+	Line L;
 
 	double *K_h, *K_d;
-	
-	nu_h = (double*)malloc(m.NL * sizeof(double));
-	S_h = (double*)malloc(m.NL * sizeof(double));
-	A_h = (double*)malloc(m.NL * sizeof(double));
-	delta_h = (double*)malloc(m.NL * sizeof(double));
-	EL_h = (double*)malloc(m.NL * sizeof(double));
-	alphaL_h = (double*)malloc(m.NL * sizeof(double));
-	alphaD_h = (double*)malloc(m.NL * sizeof(double));
-	n_h = (double*)malloc(m.NL * sizeof(double));
-	gamma_h = (double*)malloc(m.NL * sizeof(double));
-	mass_h = (double*)malloc(m.NL * sizeof(double));
-	Q_h = (double*)malloc(m.NL * sizeof(double));
-
-	cudaMalloc((void **) &nu_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &S_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &A_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &delta_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &EL_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &alphaL_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &alphaD_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &n_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &gamma_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &mass_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &Q_d, m.NL * sizeof(double));
-
+	double *Tr_h, *Tr_d;		//Transmission function
+	double *V_d;			//Vandermonde like matrix for least sqaures
+	double *C_d, *D_d;
 
 	K_h = (double*)malloc(Nx * sizeof(double));
 	cudaMalloc((void **) &K_d, Nx * sizeof(double));
+
+int nTr = 100;
+	Tr_h = (double*)malloc(param.nbins * nTr * sizeof(double));
+	cudaMalloc((void **) &Tr_d, param.nbins * nTr * sizeof(double));
+
+
+int nl_b = 10000;	//number of lines per bin
+int NC = 20;		//number of coefficients in least square
+
+
+	cudaMalloc((void **) &V_d, NC * nl_b * sizeof(double));
+	cudaMalloc((void **) &C_d, NC * sizeof(double));
+	cudaMalloc((void **) &D_d, NC * sizeof(double));
+
+	//set correction factor for simpsons rule
+	SimpsonCoefficient();
+	
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("error = %d = %s\n",error, cudaGetErrorString(error));
 
 
 	for(int i = 0; i < Nx; ++i){
 		K_h[i] = 0.0;
 	}
 
-	
-	{
-		dataFile  = fopen(m.dataFilename, "r");
-		if(dataFile == NULL){
-			printf("Error: line list file not found\n");
-			return 0;
-		}
-		//read line list file		
-
-		char c1[3];
-		//char c2[2];
-		char c3[13];
-		char c4[11];
-		char c5[11];
-		char c6[6];
-		char c7[6];
-		char c8[11];
-		char c9[5];
-		char c10[9];
-		char c11[16];
-		char c12[16];
-		char c13[16];
-		char c14[16];
-		char c15[7];
-		char c16[13];
-		char c17[2];
-		char c18[8];
-		char c19[8];
-		
-		char skip[5];
-
-//int count[40];
-//for(int cc = 0; cc < 40; ++cc){
-//count[cc] = 0;	
-//}
-		for(int i = 0; i < m.NL; ++i){
-		
-			fgets(skip, 1, dataFile);
-			//fgets(c1, 3, dataFile);
-			//fgets(c2, 2, dataFile);
-			fgets(c1, 4, dataFile);		//Use combined notation for Id (AFGL and molecule + abundance number
-			fgets(c3, 13, dataFile);
-			fgets(c4, 11, dataFile);
-			fgets(c5, 11, dataFile);
-			fgets(c6, 6, dataFile);
-			fgets(c7, 6, dataFile);
-			fgets(c8, 11, dataFile);
-			fgets(c9, 5, dataFile);
-			fgets(c10, 9, dataFile);
-			fgets(c11, 16, dataFile);
-			fgets(c12, 16, dataFile);
-			fgets(c13, 16, dataFile);
-			fgets(c14, 16, dataFile);
-			fgets(c15, 7, dataFile);
-			fgets(c16, 13, dataFile);
-			fgets(c17, 2, dataFile);
-			fgets(c18, 8, dataFile);
-			fgets(c19, 8, dataFile);
-			fgets(skip, 6, dataFile);
-			
-			nu_h[i] = strtod(c3, NULL);		
-			S_h[i] = strtod(c4, NULL);		
-			A_h[i] = strtod(c5, NULL);		
-			delta_h[i] = strtod(c9, NULL);
-			EL_h[i] = strtod(c8, NULL);		
-			
-			double gammaAir = strtod(c6, NULL);
-			double gammaSelf = strtod(c7, NULL);
-			alphaL_h[i] = (1.0 - qALPHA_L) * gammaAir + qALPHA_L * gammaSelf;
-			n_h[i] = strtod(c9, NULL);
-			alphaD_h[i] = n_h[i];
-			
-			gamma_h[i] = strtod(c10, NULL);
-			int id= std::atoi(c1);
-			int idAFGL;
-//count[0] += 1;
-			//Assign the Isotopologue properties
-			for(int j = 0; j < m.nISO; ++j){
-				if(id == m.ISO[j].id){
-					mass_h[i] = m.ISO[j].m;
-					Q_h[i] = m.ISO[j].Q;
-					idAFGL = m.ISO[j].AFGL;
-				}
-			}
-			double Q;
-			//Assign the Partition function
-			for(int j = 0; j < part.n; ++j){
-				if(idAFGL == part.id[j]){
-					Q = part.Q[j];
-				}
-			}
-			Q_h[i] /= exp(Q);
-			
-//if(i < 10) printf("%d %d %d %g %g\n", i, id, idAFGL, exp(Q), Q_h[i]);
-		}
-//for(int cc = 0; cc < 40; ++cc){
-//printf("%d %d\n", cc, count[cc]);	
-//}
-		fclose(dataFile);
+	//Allocate the memory for the Line properties
+	Alloc_Line(L, m);
+	//Read the Line list	
+	er = readFile(m, part, L);
+	if(er == 0){
+		return 0;
 	}
-	
+	//Copy Line data to the device
+	Copy_Line(L, m);
 	
 //for(int i = 0; i < m.NL; ++i){
 //	printf("%d %g %g\n", i, nu_h[i], S_h[i]);
 
-//}
-
-	cudaMemcpy(nu_d, nu_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(S_d, S_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(A_d, A_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(delta_d, delta_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(EL_d, EL_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(alphaL_d, alphaL_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(alphaD_d, alphaD_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(n_d, n_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(gamma_d, gamma_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(mass_d, mass_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(Q_d, Q_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 
 	cudaMemcpy(K_d, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
 
-
 	for(int k = 0; k < m.NL; k += nthmax){
 		int Nk = min(nthmax, m.NL);
-		S_kernel <<< (Nk + 127) / 128, 128 >>> (nu_d, S_d, A_d, EL_d, alphaL_d, alphaD_d, n_d, mass_d, gamma_d, delta_d, Q_d, m.NL, param.T, param.P, k);
+		S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.gamma_d, L.delta_d, L.Q_d, m.NL, param.T, param.P, k);
 	}	
 
 	cudaDeviceSynchronize();
@@ -770,28 +497,18 @@ int main(int argc, char*argv[]){
 
 	printf("Time before Line_kernel: %g seconds\n", times + timems/1000000.0);
 
-/*	cudaMemcpy(nu_h, nu_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(S_h, S_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(alphaL_h, alphaL_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(alphaD_h, alphaD_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
-*/
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
 	times = 0.0;
 	timems = 0.0;
 
-/*	for(int i = 0; i < m.NL; ++i){
-		Line_kernel2 <<< (Nx + 511) / 512, 512 >>> (param.numin, param.dnu, nu_h[i], S_h[i], alphaL_h[i], alphaD_h[i], Nx, K_d);
-
-	}
-*/
 	for(int k = 0; k < Nx; k += nthmax){
 		int Nk = min(nthmax, Nx);
 		printf("Reached k =  %d, Total = %d\n", k, Nx);
 		for(int i = 0; i < m.NL; i += nlmax){
 			//This loop reduces the running time of the kernel to a few seconds
 			//A longer running time of a single kernel can cause a time out
-			Line_kernel <32, nlmax> <<< (Nk + 31) / 32, 32 >>> (nu_d, S_d, alphaL_d, alphaD_d, K_d, param.dnu, param.numin, Nx, m.NL, i, k);
+			Line_kernel <32, nlmax> <<< (Nk + 31) / 32, 32 >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d, param.dnu, param.numin, Nx, m.NL, i, k);
 		}
 	}
 
@@ -816,7 +533,7 @@ int main(int argc, char*argv[]){
 	fclose(OutFile);
 
 	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
-	for(int i = 0; i < param.nbins - 1; ++i){
+	for(int i = 0; i < 3/*param.nbins - 1*/; ++i){
 		sprintf(Out2Filename, "Out_bin_%.5d.dat", i);
 		//compute indexes of the bins
 		int il = (int)((param.bins[i] - param.numin) / param.dnu);
@@ -825,6 +542,14 @@ printf("%d %d %d\n", i, il, ir);
 
 		thrust::sort(K_dt + il, K_dt + ir);
 
+Vandermonde_kernel <<< (nl_b + 511) / 512, 512 >>> (V_d, (double)((ir - il)), NC);
+QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, ir - il, NC);
+
+lnK_kernel <<< (ir - il + 511) / 512, 512 >>> (K_d + il, ir - il);
+leastSquare_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, K_d + il, ir - il, NC);
+
+expfx_kernel <<< 1, 512 >>> (K_d +il, NC, ir - il);
+
 		cudaMemcpy(K_h + il, K_d + il, (ir - il) * sizeof(double), cudaMemcpyDeviceToHost);
 
 		Out2File = fopen(Out2Filename, "w");
@@ -832,6 +557,24 @@ printf("%d %d %d\n", i, il, ir);
 			fprintf(Out2File, "%g %.20g\n", j / (double)((ir - il)), K_h[j + il]);
 		}
 		fclose(Out2File);
+
+
+
+
+		sprintf(Out3Filename, "Out_tr_%.5d.dat", i);
+		Out3File = fopen(Out3Filename, "w");
+
+		for(int j = 0; j < nTr; ++j){
+			double m = exp((j - nTr/2) * 0.3);
+			Integrate_kernel < 512 > <<< 1, 512 >>> (K_d + il, Tr_d + i * nTr + j, m, ir - il);
+		}
+		cudaMemcpy(Tr_h + i * nTr, Tr_d + i * nTr, nTr * sizeof(double), cudaMemcpyDeviceToHost);
+		for(int j = 0; j < nTr; ++j){
+	                double m = exp((j - nTr/2) * 0.3);
+			fprintf(Out3File, "%.20g %.20g\n", m, Tr_h[i * nTr + j]);
+		}
+		fclose(Out3File);
+
 	}
 
 	cudaDeviceSynchronize();
@@ -841,46 +584,10 @@ printf("%d %d %d\n", i, il, ir);
 
 	printf("Time after Line_kernel:  %g seconds\n", times + timems/1000000.0);
 
+	free_Line(L);
+
 	error = cudaGetLastError();
 	printf("error = %d = %s\n",error, cudaGetErrorString(error));
-
-/*
-for(int i = 0; i < 1; ++i){
-
- 	double a = 0.0;
-/*
-	if(i == 0) a = 0.0;
-	if(i == 1) a = 0.1;
-	if(i == 2) a = 0.3;
-	if(i == 3) a = 0.5;
-	if(i == 4) a = 0.7;
-	if(i == 5) a = 0.9;
-	if(i == 6) a = 2.0;
-	if(i == 7) a = 5.0;
-	if(i == 8) a = 15.0;
-* /
-/*
-	if(i == 0) a = 20.0;
-	if(i == 1) a = 40.0;
-	if(i == 2) a = 60.0;
-	if(i == 3) a = 80.0;
-	if(i == 4) a = 100.0;
-	if(i == 5) a = 150.0;
-	if(i == 6) a = 200.0;
-* /	
-	a = 200.0;
-
-	double xmax = 100.0;
-	Voigt_line_kernel <<< (Nx + 127) / 128, 128 >>> (a, dnu, K_d, Nx, xmax);
-
-	cudaMemcpy(K_h, K_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
-
-for(int j = 0; j < Nx; ++j){
-	double x = -xmax + j * 2.0 * xmax / ((double)(Nx));
-	printf("%.20g %.20g %g\n", x, K_h[j], a);
-}
-}
-*/
 
 	return 0;
 }
