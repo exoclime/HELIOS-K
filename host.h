@@ -97,6 +97,43 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 6, paramFile);
 		fscanf (paramFile, "%lf", &param.dnu);
 		fgets(skip2, 3, paramFile);
+		//read cut
+		fgets(skip, 6, paramFile);
+		fscanf (paramFile, "%lf", &param.cut);
+		fgets(skip2, 3, paramFile);
+		//read doResampling
+		fgets(skip, 15, paramFile);
+		fscanf (paramFile, "%d", &param.doResampling);
+		fgets(skip2, 3, paramFile);
+		//read nC
+		fgets(skip, 5, paramFile);
+		fscanf (paramFile, "%d", &param.nC);
+		fgets(skip2, 3, paramFile);
+		//read doTransmission
+		fgets(skip, 17, paramFile);
+		fscanf (paramFile, "%d", &param.doTransmission);
+		fgets(skip2, 3, paramFile);
+		//read nTr
+		fgets(skip, 6, paramFile);
+		fscanf (paramFile, "%d", &param.nTr);
+		fgets(skip2, 3, paramFile);
+		//read dTr
+		fgets(skip, 6, paramFile);
+		fscanf (paramFile, "%lf", &param.dTr);
+		fgets(skip2, 3, paramFile);
+		if(param.nC > NmaxSample){
+			printf("nC larger than NmaxSample, reduced to %d\n", NmaxSample);
+			param.nC = NmaxSample;
+		}
+		//read doStoreFullK
+		fgets(skip, 15, paramFile);
+		fscanf (paramFile, "%d", &param.doStoreFullK);
+		fgets(skip2, 3, paramFile);
+		//read doStoreK
+		fgets(skip, 12, paramFile);
+		fscanf (paramFile, "%d", &param.doStoreK);
+		fgets(skip2, 3, paramFile);
+
 		//read bins
 		fgets(skip, 9, paramFile);
 		int er = 1;
@@ -211,7 +248,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L){
 		L.nu_h[i] = strtod(c3, NULL);		
 		L.S_h[i] = strtod(c4, NULL);		
 		L.A_h[i] = strtod(c5, NULL);		
-		L.delta_h[i] = strtod(c9, NULL);
+		L.delta_h[i] = strtod(c10, NULL);
 		L.EL_h[i] = strtod(c8, NULL);		
 		
 		double gammaAir = strtod(c6, NULL);
@@ -220,7 +257,6 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L){
 		L.n_h[i] = strtod(c9, NULL);
 		L.alphaD_h[i] = L.n_h[i];
 		
-		L.gamma_h[i] = strtod(c10, NULL);
 		int id= std::atoi(c1);
 		int idAFGL;
 //count[0] += 1;
@@ -260,9 +296,9 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	L.alphaL_h = (double*)malloc(m.NL * sizeof(double));
 	L.alphaD_h = (double*)malloc(m.NL * sizeof(double));
 	L.n_h = (double*)malloc(m.NL * sizeof(double));
-	L.gamma_h = (double*)malloc(m.NL * sizeof(double));
 	L.mass_h = (double*)malloc(m.NL * sizeof(double));
 	L.Q_h = (double*)malloc(m.NL * sizeof(double));
+	L.ID_h = (int*)malloc(m.NL * sizeof(int));
 
 	cudaMalloc((void **) &L.nu_d, m.NL * sizeof(double));
 	cudaMalloc((void **) &L.S_d, m.NL * sizeof(double));
@@ -272,9 +308,9 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.alphaL_d, m.NL * sizeof(double));
 	cudaMalloc((void **) &L.alphaD_d, m.NL * sizeof(double));
 	cudaMalloc((void **) &L.n_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.gamma_d, m.NL * sizeof(double));
 	cudaMalloc((void **) &L.mass_d, m.NL * sizeof(double));
 	cudaMalloc((void **) &L.Q_d, m.NL * sizeof(double));
+	cudaMalloc((void **) &L.ID_d, m.NL * sizeof(int));
 }
 
 __host__ void Copy_Line(Line &L, Molecule &m){
@@ -286,7 +322,6 @@ __host__ void Copy_Line(Line &L, Molecule &m){
 	cudaMemcpy(L.alphaL_d, L.alphaL_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.alphaD_d, L.alphaD_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.n_d, L.n_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.gamma_d, L.gamma_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.mass_d, L.mass_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.Q_d, L.Q_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
 }
@@ -300,9 +335,9 @@ __host__ void free_Line(Line &L){
 	free(L.alphaL_h);
 	free(L.alphaD_h);
 	free(L.n_h);
-	free(L.gamma_h);
 	free(L.mass_h);
 	free(L.Q_h);
+	free(L.ID_h);
 
 	cudaFree(L.nu_d);
 	cudaFree(L.S_d);
@@ -312,9 +347,9 @@ __host__ void free_Line(Line &L){
 	cudaFree(L.alphaL_d);
 	cudaFree(L.alphaD_d);
 	cudaFree(L.n_d);
-	cudaFree(L.gamma_d);
 	cudaFree(L.mass_d);
 	cudaFree(L.Q_d);
+	cudaFree(L.ID_d);
 
 
 }

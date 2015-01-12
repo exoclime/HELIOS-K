@@ -474,7 +474,7 @@ __global__ void Integrate_kernel(double *K_d, double *Tr_d, double m, int NL){
 	__syncthreads();
 
 	if(idy == 0){
-		Tr_d[0] = a_s[0] / ((double)(NL));
+		Tr_d[0] = a_s[0] / ((double)(NL - 1));
 //		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
 	}
 }
