@@ -266,11 +266,21 @@ __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 
 
 // // bl is the number of treads per block in the Line kernel
-__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, int bl, double numin, double dnu, int NL, int n, double cut){
+__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *alphaL_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if(id < NL){
+
+
+		// cutMode == 0: cut absolute values 
+		if(cutMode == 1){			//Cut factors of Lorentz halfwidth
+			cut *= alphaL_d[id];
+		}
+		else if(cutMode == 2){			//cut fctors of Lorentz / Gauss halfwidth -> y parameter in Voigt Profile
+			cut /= ialphaD_d[id];
+		}
+		
 		int il = ((nu_d[id] - numin + cut) / dnu) / bl;
 		int i = ((nu_d[id] - numin) / dnu) / bl;
 		int ir = ((nu_d[id] - numin - cut) / dnu) / bl;
@@ -315,7 +325,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // **********************************************
 template <int NB>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int nl, int ii, int kk){
+__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int cutMode, int nl, int ii, int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -324,6 +334,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	__shared__ double S_s[NB];
 	__shared__ double ialphaD_s[NB];
 	__shared__ double y_s[NB];
+	__shared__ double cut_s[NB];
 
 	double K = 0.0;
 	int2 Limits;
@@ -344,26 +355,26 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){
 			nu_s[idx] = nu_d[i + idx + ii + Limits.x];
-#if PROFILE == 1
 			ialphaD_s[idx] = sqln2 * alphaD_d[i + idx + ii + Limits.x];
-#else
-			ialphaD_s[idx] = alphaD_d[i + idx + ii + Limits.x];
-#endif
 			y_s[idx] = alphaL_d[i + idx + ii + Limits.x] * ialphaD_s[idx];
 			S_s[idx] = S_d[i + idx + ii + Limits.x] * ialphaD_s[idx];
+			if(cutMode == 0) cut_s[idx] = cut;
+			else if (cutMode == 1) cut_s[idx] = cut * alphaL_d[i + idx + ii + Limits.x];
+			else if (cutMode == 2) cut_s[idx] = cut * y_s[idx];
 		}
 		else{
 			nu_s[idx] = 0.0;
 			S_s[idx] = 0.0;
 			ialphaD_s[idx] = 0.0;
 			y_s[idx] = 0.0;
+			cut_s[idx] = 0.0;
 		}
 		__syncthreads();
 
 # if PROFILE == 1
 		for(int k = 0; k < NB; ++k){
 			//Check smallest values for x and y
-			if(i + k < NL && fabs(nu - nu_s[k]) < cut){
+			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
 				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				double xxyy = x * x + y_s[k] * y_s[k];
 //				if(__any(xxyy < 100)){
@@ -387,7 +398,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 #endif
 # if PROFILE == 2
 		for(int k = 0; k < NB; ++k){
-			if(i + k < NL){
+			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
 				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				double xxyy = x * x + y_s[k] * y_s[k];
 				K += S_s[k] * y_s[k] / (M_PI * xxyy);
@@ -396,7 +407,8 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 #endif
 # if PROFILE == 3
 		for(int k = 0; k < NB; ++k){
-			if(i + k < NL){
+			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
+				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				K += S_s[k] * isqrtpi * exp(-x * x);
 			}	
 		}

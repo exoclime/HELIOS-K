@@ -41,12 +41,14 @@ struct Partition{
 };
 
 struct Param{
+	char name[160];
 	double T;
 	double P;
 	int nMolecule;
 	double numin;
 	double numax;
 	double dnu;
+	int cutMode;
 	double cut;
 	double dev;
 	int nbins;

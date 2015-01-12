@@ -45,20 +45,32 @@ int main(int argc, char*argv[]){
 		printf("Error: Devive Number is not allowed\n");
 		return 0;
 	}
+	double time[4];
+
+	FILE *InfoFile;
+	char InfoFilename[160];
+	sprintf(InfoFilename, "Info_%s.dat", param.name);
+	InfoFile = fopen(InfoFilename, "w");
 
 	cudaSetDevice(param.dev);
-	printf("Version: %g\n", VERSION);
-	printf("T = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\n", 
-		param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK);
-	printf("Profile = %d\n", PROFILE);
-	printf("Using device %d\n", param.dev);
-	for(int i = 0; i < param.nbins - 1; ++i){
-		printf("bin %d %g - %g\n", i, param.bins[i], param.bins[i + 1]);
-		if(param.bins[i + 1] - param.bins[i] < param.nC){
-			printf("Error: bin is smaller than nC -> Memory conflict\n");
-			return 0;
+	for(int i = 0; i < 2; ++i){
+		FILE *infofile;
+		if(i == 0) infofile = InfoFile;
+		if(i == 1) infofile = stdout;
+		fprintf(infofile, "Version: %g\n", VERSION);
+		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\n", 
+			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK);
+		fprintf(infofile, "Profile = %d\n", PROFILE);
+		fprintf(infofile, "Using device %d\n", param.dev);
+		for(int i = 0; i < param.nbins - 1; ++i){
+			fprintf(infofile, "bin %d %g - %g\n", i, param.bins[i], param.bins[i + 1]);
+			if(param.bins[i + 1] - param.bins[i] < param.nC){
+				fprintf(infofile, "Error: bin is smaller than nC -> Memory conflict\n");
+				return 0;
+			}
 		}
 	}
+	fclose(InfoFile);
 
 	int Nx = (int)((param.numax - param.numin) / param.dnu);
 
@@ -142,7 +154,8 @@ int nl_b = 10000;	//number of lines per bin
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	printf("Time before S kernel: %g seconds\n", times + timems/1000000.0);
+	time[0] = times + timems/1000000.0;
+	printf("Time before S_kernel:    %g seconds\n", time[0]);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
@@ -198,15 +211,14 @@ int nl_b = 10000;	//number of lines per bin
 
 	setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, m.NL, param.cut);
 	if(param.cut != 0.0){
-		Cutoff_kernel <<< (m.NL + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, ntL, param.numin, param.dnu, m.NL, nLimits, param.cut);
+		Cutoff_kernel <<< (m.NL + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, m.NL, nLimits, param.cut, param.cutMode);
 		MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, m.NL);
 		cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
 	}
 	else MaxLimits_h[0] = m.NL;
 
-cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
 
-
+//cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
 //for(int i = 0; i < nLimits; ++i){
 //	printf("%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
 //}
@@ -215,15 +227,13 @@ cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	printf("Time before Line_kernel: %g seconds\n", times + timems/1000000.0);
+	time[1] = times + timems/1000000.0;
+	printf("Time before Line_kernel: %g seconds\n", time[1]);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
 	times = 0.0;
 	timems = 0.0;
-
-printf("Max: %d\n", MaxLimits_h[0]);
-printf("nLimits: %d\n", nLimits);
 
 //cudaDeviceSynchronize();
 
@@ -246,7 +256,7 @@ printf("nLimits: %d\n", nLimits);
 			int nl = min(MaxLimits_h[0] - i, nlmax);
 			//This loop reduces the running time of the kernel to a few seconds
 			//A longer running time of a single kernel can cause a time out
-			Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d, param.dnu, param.numin, Nx, m.NL, Limits_d, cut, nl, i, k);
+			Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d, param.dnu, param.numin, Nx, m.NL, Limits_d, cut, param.cutMode, nl, i, k);
 		}
 	}
 
@@ -255,7 +265,8 @@ printf("nLimits: %d\n", nLimits);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	printf("Time for Line_kernel:    %g seconds\n", times + timems/1000000.0);
+	time[2] = times + timems/1000000.0;
+	printf("Time for Line_kernel:    %g seconds\n", time[2]);
 
 	gettimeofday(&tt1, NULL);
 	times = 0.0;
@@ -267,7 +278,7 @@ printf("nLimits: %d\n", nLimits);
 		cudaMemcpy(K_h, K_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 		FILE *OutFile;
 		char OutFilename[160];
-		sprintf(OutFilename, "%s", "Out.dat");
+		sprintf(OutFilename, "Out_%s.dat", param.name);
 		
 		OutFile = fopen(OutFilename, "w");
 		for(int j = 0; j < Nx; ++j){
@@ -276,7 +287,7 @@ printf("nLimits: %d\n", nLimits);
 		}
 		fclose(OutFile);
 	}
-/*
+
 	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
 	for(int i = 0; i < param.nbins - 1; ++i){
 		//compute indexes of the bins
@@ -298,7 +309,7 @@ printf("%d %d %d\n", i, il, ir);
 			cudaMemcpy(K_h + il, K_d + il, param.nC * sizeof(double), cudaMemcpyDeviceToHost);
 			FILE *Out3File;
 			char Out3Filename[160];
-			sprintf(Out3Filename, "Out_cbin_%.5d.dat", i);
+			sprintf(Out3Filename, "Out_%s_cbin_%.5d.dat", param.name, i);
 			Out3File = fopen(Out3Filename, "w");
 
 			fprintf(Out3File, "%.20g ", 2.0 * K_h[il + i]);
@@ -316,7 +327,7 @@ printf("%d %d %d\n", i, il, ir);
 			cudaMemcpy(K_h + il, K_d + il, (ir - il) * sizeof(double), cudaMemcpyDeviceToHost);
 			FILE *Out2File;
 			char Out2Filename[160];
-			sprintf(Out2Filename, "Out_bin_%.5d.dat", i);
+			sprintf(Out2Filename, "Out_%s_bin_%.5d.dat", param.name, i);
 
 			Out2File = fopen(Out2Filename, "w");
 			for(int j = 0; j < (ir - il); ++j){
@@ -329,7 +340,7 @@ printf("%d %d %d\n", i, il, ir);
 		if(param.doTransmission == 1){
 			FILE *Out3File;
 			char Out3Filename[160];
-			sprintf(Out3Filename, "Out_tr_%.5d.dat", i);
+			sprintf(Out3Filename, "Out_%s_tr_%.5d.dat", param.name, i);
 			Out3File = fopen(Out3Filename, "w");
 
 			for(int j = 0; j < param.nTr; ++j){
@@ -344,13 +355,21 @@ printf("%d %d %d\n", i, il, ir);
 			fclose(Out3File);
 		}
 	}
-*/
+
 	cudaDeviceSynchronize();
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	printf("Time after Line_kernel:  %g seconds\n", times + timems/1000000.0);
+	time[3] = times + timems/1000000.0;
+	printf("Time after Line_kernel:  %g seconds\n", time[3]);
+
+	InfoFile = fopen(InfoFilename, "a");
+	fprintf(InfoFile,"Time before S_kernel:    %g seconds\n", time[0]);
+	fprintf(InfoFile,"Time before Line_kernel: %g seconds\n", time[1]);
+	fprintf(InfoFile,"Time for Line_kernel:    %g seconds\n", time[2]);
+	fprintf(InfoFile,"Time after Line_kernel:  %g seconds\n", time[3]);
+	fclose(InfoFile);	
 
 	free_Line(L);
 

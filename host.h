@@ -73,6 +73,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	paramFile = fopen(paramFilename, "r");
 		char skip[160];
 		char skip2[160];
+		//read name
+		fgets(skip, 7, paramFile);
+		fscanf (paramFile, "%s", &param.name);
+		fgets(skip2, 3, paramFile);
 		//read T
 		fgets(skip, 4, paramFile);
 		fscanf (paramFile, "%lf", &param.T);
@@ -96,6 +100,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		//read dnu
 		fgets(skip, 6, paramFile);
 		fscanf (paramFile, "%lf", &param.dnu);
+		fgets(skip2, 3, paramFile);
+		//read cutMode
+		fgets(skip, 10, paramFile);
+		fscanf (paramFile, "%d", &param.cutMode);
 		fgets(skip2, 3, paramFile);
 		//read cut
 		fgets(skip, 6, paramFile);
