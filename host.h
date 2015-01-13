@@ -141,23 +141,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 12, paramFile);
 		fscanf (paramFile, "%d", &param.doStoreK);
 		fgets(skip2, 3, paramFile);
-
-		//read bins
-		fgets(skip, 9, paramFile);
-		int er = 1;
-		int nbin;
-		param.bins = (double*)malloc(maxbins * sizeof(double));
-
-		param.bins[0] = param.numin;
-		for(nbin = 1; nbin < maxbins; ++nbin){
-			double b;
-			er = fscanf (paramFile, "%lf", &b);
-			if(er == 0) break;
-			param.bins[nbin] = b;
-		}
-		++nbin;
-		param.bins[nbin - 1] = param.numax;
-		param.nbins = nbin;
+		//read nbins
+		fgets(skip, 8, paramFile);
+		fscanf (paramFile, "%d", &param.nbins);
+		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
 

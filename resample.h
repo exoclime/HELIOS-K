@@ -6,6 +6,8 @@ __constant__ double wS_c[3];
 // This kernel computes the Vandermonde like matrix for the least squares
 // using Chebyshev polynomials
 //
+// nl is the bigger dimension, NC the smaller one
+//
 // Author: Simon Grimm
 // December 2014
 // *****************************************
@@ -61,7 +63,7 @@ __device__ void printA(double *A_d, int NL, int NC){
 // the Householder scalar c. The rest of V_d is filled with the 
 // Householder vectors.
 //
-// NL is the bigger dimension of V_d, NC the smaller
+// NL is the bigger dimension of V_d, NC the smaller one
 // nb is the number of threads per block
 // The kernel must be launched with only one block
 //
@@ -380,11 +382,12 @@ __global__ void lnK_kernel(double *K_d, int NL){
 __global__ void expfx_kernel(double *b_d, int NC, int NL){
 
 	int idy = threadIdx.x;
+	int idx = blockIdx.x;
 	__shared__ double b_s[NmaxSample];
 
 	for(int k = 0; k < NmaxSample; k += blockDim.x){
 		if(k + idy < NmaxSample){
-			b_s[k + idy] = b_d[k + idy];
+			b_s[k + idy] = b_d[k + idy + idx * NL];
 		}
 	}
 	__syncthreads();
@@ -400,7 +403,7 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 				d2 = t;
 			} 
 			double f = x * d1 - d2 + 0.5 * b_s[0] + 0.5 * b_s[0];
-			b_d[idy + k] = exp(f);
+			b_d[idy + k + idx * NL] = exp(f);
 		}
 	}
 }
@@ -413,69 +416,76 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 //
 // NL is the number of data points in K_d
 // nb is the number of threads per block
-// The kernel must be launched with only 1 block
+// nTr is the number if points in the integral
+// j is the index if Integral point
+// The kernel must be launched with only 1 block per bin
 //
 // Author: Simon Grimm
 // January 2015
 // *****************************************
 template <int nb>
-__global__ void Integrate_kernel(double *K_d, double *Tr_d, double m, int NL){
+__global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, double dTr){
 
 	int idy = threadIdx.x;
+	int idx = blockIdx.x;
 	__shared__ double a_s[nb];
 
-	a_s[idy] = 0.0;
+	for(int j = 0; j < nTr; ++j){
+		__syncthreads();
+		a_s[idy] = 0.0;
 
+		double m = exp((j - nTr/2) * dTr);
 
-	__syncthreads();
+		__syncthreads();
 
-	for(int k = 0; k < NL; k += nb){
-		if(idy + k < NL){
-			a_s[idy] += 1.0 * exp(-K_d[idy + k] * m);
+		for(int k = 0; k < NL; k += nb){
+			if(idy + k < NL){
+				a_s[idy] += 1.0 * exp(-K_d[idy + k + idx * NL] * m);
+			}
 		}
-	}
-	__syncthreads();
+		__syncthreads();
 
-	if(nb >= 512){
-		if(idy < 256){
-			a_s[idy] += a_s[idy + 256];
+		if(nb >= 512){
+			if(idy < 256){
+				a_s[idy] += a_s[idy + 256];
+			}
 		}
-	}
-	__syncthreads();
+		__syncthreads();
 
-	if(nb >= 256){
-		if(idy < 128){
-			a_s[idy] += a_s[idy + 128];
+		if(nb >= 256){
+			if(idy < 128){
+				a_s[idy] += a_s[idy + 128];
+			}
 		}
-	}
-	__syncthreads();
+		__syncthreads();
 
-	if(nb >= 128){
-		if(idy < 64){
-			a_s[idy] += a_s[idy + 64];
+		if(nb >= 128){
+			if(idy < 64){
+				a_s[idy] += a_s[idy + 64];
+			}
 		}
-	}
-	__syncthreads();
-	if(idy < 3){
-		//correct for Simpsons rule 
-		a_s[idy] += wS_c[idy] * exp(-K_d[idy] * m);
-		a_s[idy] += wS_c[2-idy] * exp(-K_d[NL - 1 - idy] * m);
-	}
-	__syncthreads();
-	if(idy < 32){
-		volatile double *a = a_s;
-		a[idy] += a[idy + 32];
-		a[idy] += a[idy + 16];
-		a[idy] += a[idy + 8];
-		a[idy] += a[idy + 4];
-		a[idy] += a[idy + 2];
-		a[idy] += a[idy + 1];
-	}
-	__syncthreads();
+		__syncthreads();
+		if(idy < 3){
+			//correct for Simpsons rule 
+			a_s[idy] += wS_c[idy] * exp(-K_d[idy + idx * NL] * m);
+			a_s[idy] += wS_c[2-idy] * exp(-K_d[NL - 1 - idy + idx * NL] * m);
+		}
+		__syncthreads();
+		if(idy < 32){
+			volatile double *a = a_s;
+			if(nb >= 64) a[idy] += a[idy + 32];
+			if(nb >= 32) a[idy] += a[idy + 16];
+			if(nb >= 16) a[idy] += a[idy + 8];
+			if(nb >= 8) a[idy] += a[idy + 4];
+			if(nb >= 4) a[idy] += a[idy + 2];
+			if(nb >= 2) a[idy] += a[idy + 1];
+		}
+		__syncthreads();
 
-	if(idy == 0){
-		Tr_d[0] = a_s[0] / ((double)(NL - 1));
-//		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
+		if(idy == 0){
+			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1));
+	//		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
+		}
 	}
 }
 

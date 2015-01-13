@@ -142,14 +142,14 @@ __device__ void Sigmab(double x, double y, double &s1, double &s2, double &s3, d
 	}
 }
 
-// **************************************************
+// *************************************************
 //This function calculates the Voigt profile V(x,y) as equation 13 from Zaghloul & Ali, Algorithm 916
 //it calls the Sigma function
 //The parameter TOL sets a tolerance where to truncate the series
 
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
 //November 2014
-// **********************************************
+// **************************************************
 __device__ double voigt_916(double x, double y, double a, int id){
 
 	double s1, s2, s3;
@@ -174,12 +174,12 @@ __device__ double voigt_916(double x, double y, double a, int id){
 	return t1;
 }
 
-// **************************************************
+// *************************************************
 //This kernel calculates the integrate line strength, the Lorentz and the Doppler halfwidths
 //
 //Author Simon Grimm
 //November 2014
-// **********************************************
+// *************************************************
 __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *alphaL_d, double *alphaD_d, double *n_d, double *mass_d, double *delta_d, double *Q_d, int *ID_d, int NL, double T, double P, int kk){
 
 	int idx = threadIdx.x;
@@ -205,13 +205,13 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 	}
 }
 
-// **************************************************
+// *************************************************
 //This kernel calls directly the Voigt function
 // It is usefull to test the profile 
 //
 //Author Simon Grimm
 //November 2014
-// **********************************************
+// *************************************************
 __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, double xmax){
 
 	int idx = threadIdx.x;
@@ -224,8 +224,13 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 	}
 }
 
+//*************************************************
 //This kernel copies an array a to b
 //NL is the size of the array
+//
+//Author Simon Grimm
+//January 2015
+//*************************************************
 __global__ void Copy_kernel(double *a_d, double *b_d, int NL, int k){
 
 	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
@@ -235,9 +240,14 @@ __global__ void Copy_kernel(double *a_d, double *b_d, int NL, int k){
 	}
 }
 
+//*************************************************
 //This kernel sorts the array a_d acording to the key in ID_d 
 //and writes the result into b_d
 //NL is the size of the array
+//
+//Author Simon Grimm
+//January 2015
+//*************************************************
 __global__ void Sort_kernel(double *a_d, double *b_d, int *ID_d, int NL, int k){
 
         int id = blockIdx.x * blockDim.x + threadIdx.x + k;
@@ -247,7 +257,14 @@ __global__ void Sort_kernel(double *a_d, double *b_d, int *ID_d, int NL, int k){
 	}
 }
 
-
+//*************************************************
+//This kernel initializes the Limits arrays
+//
+//n is the size of the Limits_d array
+//NL is the number of Lines
+//Author Simon Grimm
+//January 2015
+//*************************************************
 __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
@@ -264,8 +281,18 @@ __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 	}
 }
 
-
-// // bl is the number of treads per block in the Line kernel
+//*************************************************
+//This kernel comnputes the limits on line indexes for each block in the Line kernel
+// bl is the number of treads per block in the Line kernel
+// n is the size of the Limits_d array
+//
+// cutMode == 0: cut at absolute values
+// cutMode == 1: cut at Lorentz factors
+// cutMode == 2: cut at Doppler factors
+//
+//Author Simon Grimm
+//January 2015
+//*************************************************
 __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *alphaL_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
@@ -282,7 +309,6 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 		}
 		
 		int il = ((nu_d[id] - numin + cut) / dnu) / bl;
-		int i = ((nu_d[id] - numin) / dnu) / bl;
 		int ir = ((nu_d[id] - numin - cut) / dnu) / bl;
 
 		il += 1;
@@ -302,7 +328,14 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 	}
 }
 
-
+//*************************************************
+//This kernel computes the maximum number of lines for all thread blocks in the Line kernel
+//
+//n is the size of the Limits_d array
+//NL is the number of Lines
+//Author Simon Grimm
+//January 2015
+//*************************************************
 __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
@@ -314,7 +347,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 	}
 }
 
-// **************************************************
+// *************************************************
 //This kernel computes the line shape
 // It uses patterns of shared memory the reduce global memory access
 //
@@ -323,7 +356,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //
 //Author Simon Grimm
 //November 2014
-// **********************************************
+// *************************************************
 template <int NB>
 __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int cutMode, int nl, int ii, int kk){
 
