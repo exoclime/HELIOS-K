@@ -37,15 +37,16 @@ int main(int argc, char*argv[]){
 
 	//Read prameters
 	Param param;
+	param.dev = 0;
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
 		return 0;
 	}
-	if(param.dev > devCount || param.dev < 0){
+	if(param.dev >= devCount || param.dev < 0){
 		printf("Error: Devive Number is not allowed\n");
 		return 0;
 	}
-	double time[4];
+	double time[8];
 
 	FILE *InfoFile;
 	char InfoFilename[160];
@@ -57,11 +58,11 @@ int main(int argc, char*argv[]){
 		FILE *infofile;
 		if(i == 0) infofile = InfoFile;
 		if(i == 1) infofile = stdout;
-		fprintf(infofile, "Version: %g\n", VERSION);
+		fprintf(infofile, "\nVersion: %g\n", VERSION);
+		fprintf(infofile, "Using device %d\n\n", param.dev);
 		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\n", 
 			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
-		fprintf(infofile, "Using device %d\n", param.dev);
 	}
 	fclose(InfoFile);
 
@@ -97,8 +98,6 @@ int main(int argc, char*argv[]){
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
-	times = 0.0;
-	timems = 0.0;
 
 	Line L;
 	
@@ -128,12 +127,10 @@ int main(int argc, char*argv[]){
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
 	time[0] = times + timems/1000000.0;
-	printf("Time before S_kernel:    %g seconds\n", time[0]);
+	printf("Time for input:        %g seconds\n", time[0]);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
-	times = 0.0;
-	timems = 0.0;
 
 	//****************************
 	//Compute Line properties
@@ -173,7 +170,7 @@ int main(int argc, char*argv[]){
 
 
 	//********************************
-	//Determine Which lines the block in the Line kernel have to read
+	//Determine which lines the block in the Line kernel has to read
 	//********************************
 	const int ntL = 64;	//number of threads in Line kernel
 	int nLimits = (Nx + ntL - 1) / ntL;
@@ -211,21 +208,23 @@ int main(int argc, char*argv[]){
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
 	time[1] = times + timems/1000000.0;
-	printf("Time before Line_kernel: %g seconds\n", time[1]);
+	printf("Time for Lines:        %g seconds\n", time[1]);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt1, NULL);
-	times = 0.0;
-	timems = 0.0;
 
 
 	//***********************************
 	//Compute the opacity function K(x)
 	//************************************
 	double *K_h, *K_d;
+	int *binKey_d;
 	K_h = (double*)malloc(Nx * sizeof(double));
 	cudaMalloc((void **) &K_d, Nx * sizeof(double));
+	cudaMalloc((void **) &binKey_d, Nx * sizeof(int));
 	cudaMemset(K_d, 0, Nx * sizeof(double));
+	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, Nxb);
+
 
 	double cut = param.cut;
 	if(cut == 0.0) cut = 1.0e30;
@@ -246,11 +245,9 @@ int main(int argc, char*argv[]){
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
 	time[2] = times + timems/1000000.0;
-	printf("Time for Line_kernel:    %g seconds\n", time[2]);
+	printf("Time for K(x):         %g seconds\n", time[2]);
 
 	gettimeofday(&tt1, NULL);
-	times = 0.0;
-	timems = 0.0;
 
 	//***************************
 	//Write the full line profile
@@ -270,6 +267,34 @@ int main(int argc, char*argv[]){
 	}
 	//*******************************
 
+	cudaDeviceSynchronize();
+	gettimeofday(&tt2, NULL);
+	times = (tt2.tv_sec - tt1.tv_sec);
+	timems = (tt2.tv_usec - tt1.tv_usec);
+
+	time[3] = times + timems/1000000.0;
+	printf("Time for write K(x):   %g seconds\n", time[3]);
+
+	gettimeofday(&tt1, NULL);
+
+	//***************************************
+	//Do the sorting of K for all bins
+	//**************************************
+	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
+	thrust::device_ptr<int> binKey_dt = thrust::device_pointer_cast(binKey_d);
+	thrust::sort_by_key(K_dt, K_dt + Nx, binKey_dt);
+	thrust::stable_sort_by_key(binKey_dt, binKey_dt + Nx, K_dt);
+	//****************************************
+
+	cudaDeviceSynchronize();
+	gettimeofday(&tt2, NULL);
+	times = (tt2.tv_sec - tt1.tv_sec);
+	timems = (tt2.tv_usec - tt1.tv_usec);
+
+	time[4] = times + timems/1000000.0;
+	printf("Time for sort K(x):    %g seconds\n", time[4]);
+
+	gettimeofday(&tt1, NULL);
 
 	//********************************
 	//Prepare Resampling and do QR factorization, the same for all bins
@@ -285,26 +310,13 @@ int main(int argc, char*argv[]){
 		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, Nxb, param.nC);
 	}
 	//***************************************
-
-
-	//***************************************
-	//Do the sorting of K for each bin
-	//**************************************
-	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
-	for(int i = 0; i < param.nbins; ++i){
-		int il = i * Nxb;
-		int ir = (i + 1) * Nxb;
-		thrust::sort(K_dt + il, K_dt + ir);
-	}
-	//****************************************
-
-
 	//**********************************
 	// Do the resampling
 	//**********************************
 	if(param.doResampling == 1){
 
 		lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Nx);
+		leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d, Nxb, param.nC);
 
 		FILE *Out3File;
 		char Out3Filename[160];
@@ -312,7 +324,6 @@ int main(int argc, char*argv[]){
 		Out3File = fopen(Out3Filename, "w");
 		for(int i = 0; i < param.nbins; ++i){
 			int il = i * Nxb;
-			leastSquare_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, K_d + il, Nxb, param.nC);
 			cudaMemcpy(K_h + il, K_d + il, param.nC * sizeof(double), cudaMemcpyDeviceToHost);
 
 			fprintf(Out3File, "%.20g ", 2.0 * K_h[il + i]);
@@ -327,6 +338,15 @@ int main(int argc, char*argv[]){
 		}	
 	}
 	//**********************************
+	cudaDeviceSynchronize();
+	gettimeofday(&tt2, NULL);
+	times = (tt2.tv_sec - tt1.tv_sec);
+	timems = (tt2.tv_usec - tt1.tv_usec);
+
+	time[5] = times + timems/1000000.0;
+	printf("Time for Resampling:   %g seconds\n", time[5]);
+
+	gettimeofday(&tt1, NULL);
 
 	//*****************************
 	//Write K per bin output
@@ -347,6 +367,15 @@ int main(int argc, char*argv[]){
 		fclose(Out2File);
 	}
 	//******************************
+	cudaDeviceSynchronize();
+	gettimeofday(&tt2, NULL);
+	times = (tt2.tv_sec - tt1.tv_sec);
+	timems = (tt2.tv_usec - tt1.tv_usec);
+
+	time[6] = times + timems/1000000.0;
+	printf("Time for write K(y):   %g seconds\n", time[6]);
+
+	gettimeofday(&tt1, NULL);
 
 
 	//*********************************
@@ -373,9 +402,11 @@ int main(int argc, char*argv[]){
 				double m = exp((j - param.nTr/2) * param.dTr);
 				fprintf(Out3File, "%.20g %.20g\n", m, Tr_h[i * param.nTr + j]);
 			}
+			fprintf(Out3File, "\n\n");
 		}
-		fprintf(Out3File, "\n\n");
 		fclose(Out3File);
+		free(Tr_h);
+		cudaFree(Tr_d);
 	}
 	//************************************
 
@@ -384,18 +415,35 @@ int main(int argc, char*argv[]){
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	time[3] = times + timems/1000000.0;
-	printf("Time after Line_kernel:  %g seconds\n", time[3]);
+	time[7] = times + timems/1000000.0;
+	printf("Time for Transmission: %g seconds\n", time[7]);
 
 	InfoFile = fopen(InfoFilename, "a");
-	fprintf(InfoFile,"Time before S_kernel:    %g seconds\n", time[0]);
-	fprintf(InfoFile,"Time before Line_kernel: %g seconds\n", time[1]);
-	fprintf(InfoFile,"Time for Line_kernel:    %g seconds\n", time[2]);
-	fprintf(InfoFile,"Time after Line_kernel:  %g seconds\n", time[3]);
+	fprintf(InfoFile,"Number of lines: %d\n", m.NL);
+	fprintf(InfoFile,"Number of points: %d\n", Nx);
+	fprintf(InfoFile,"Number of points per bin: %d\n", Nx / param.nbins);
+	fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
+	fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
+	fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
+	fprintf(InfoFile,"Time for write K(x):   %g seconds\n", time[3]);
+	fprintf(InfoFile,"Time for sort K(x):    %g seconds\n", time[4]);
+	fprintf(InfoFile,"Time for Resampling:   %g seconds\n", time[5]);
+	fprintf(InfoFile,"Time for write K(y):   %g seconds\n", time[6]);
+	fprintf(InfoFile,"Time for Transmission: %g seconds\n", time[7]);
 	fclose(InfoFile);	
 
 	free_Line(L);
+	free(MaxLimits_h);
+	free(K_h);
 
+	cudaFree(Limits_d);
+	cudaFree(MaxLimits_d);
+	cudaFree(K_d);
+	cudaFree(binKey_d);
+	cudaFree(V_d);
+	cudaFree(C_d);
+	cudaFree(D_d);
+	
 	error = cudaGetLastError();
 	printf("error = %d = %s\n",error, cudaGetErrorString(error));
 

@@ -242,6 +242,7 @@ __global__ void QR_kernel(double *V_d, double *C_d, double *D_d, int NL, int NC)
 template <int nb>
 __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double *b_d, int NL, int NC){
 	int idy = threadIdx.x;
+	int idx = blockIdx.x;
 
 	__shared__ double a_s[nb];
 
@@ -251,7 +252,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		__syncthreads();	
 		for(int k = 0; k < NL; k += nb){
 			if(idy + k < NL && idy + k >= j){
-				a_s[idy] += V_d[(idy + k) + NL * j] * b_d[idy + k];
+				a_s[idy] += V_d[(idy + k) + NL * j] * b_d[idy + k + idx * NL];
 			}
 		}
 		__syncthreads();
@@ -290,7 +291,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		double t = a_s[0] / C_d[j];
 		for(int k = 0; k < NL; k += nb){
 			if(idy + k < NL && idy + k >= j){
-				b_d[idy + k] -= t * V_d[(idy + k) + NL * j];
+				b_d[idy + k + idx * NL] -= t * V_d[(idy + k) + NL * j];
 			}
 		}
 		__syncthreads();
@@ -298,7 +299,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 
 	//solve R x = Qt b
 
-	if(idy == 0) b_d[NC - 1] /= D_d[NC - 1];
+	if(idy == 0) b_d[NC - 1 + idx * NL] /= D_d[NC - 1];
 	__syncthreads();
 
 	for(int i = NC - 2; i >= 0; --i){
@@ -306,7 +307,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		__syncthreads();
 		//Assume NC < nb
 		if(idy < NC && idy >= i + 1){
-			a_s[idy] += V_d[i + NL * idy] * b_d[idy];
+			a_s[idy] += V_d[i + NL * idy] * b_d[idy + idx * NL];
 		}
 		__syncthreads();
 
@@ -342,7 +343,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		}
 		__syncthreads();
 		if(idy == 0){
-			b_d[i] = (b_d[i] - a_s[0]) / D_d[i];
+			b_d[i + idx * NL] = (b_d[i + idx * NL] - a_s[0]) / D_d[i];
 
 		}
 	}//end of i loop in R x = Qtb

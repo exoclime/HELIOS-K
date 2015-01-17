@@ -1,4 +1,4 @@
-#define VERSION 1.12
+#define VERSION 1.13
 
 #define T0 296.0 		//Temperature in K
 #define kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -50,7 +50,7 @@ struct Param{
 	double dnu;
 	int cutMode;
 	double cut;
-	double dev;
+	int dev;
 	int nbins;
 	int doResampling;
 	int nC;

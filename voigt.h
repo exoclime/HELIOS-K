@@ -224,6 +224,25 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 	}
 }
 
+// *************************************************
+//This kernel initializes the binkeys with the bin number
+//
+//Nx is the total number of points,
+//Nxb is the number of points ber bin
+//
+//Author Simon Grimm
+//January 2015
+// *************************************************
+__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb){
+
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	if(id < Nx){
+		int bin = id / Nxb;
+		binKey_d[id] = bin;
+	}
+}
+
+
 //*************************************************
 //This kernel copies an array a to b
 //NL is the size of the array
