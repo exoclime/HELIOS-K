@@ -53,6 +53,13 @@ int main(int argc, char*argv[]){
 	sprintf(InfoFilename, "Info_%s.dat", param.name);
 	InfoFile = fopen(InfoFilename, "w");
 
+	int runtimeVersion;
+	int driverVersion;
+
+	cudaRuntimeGetVersion(&runtimeVersion);
+	cudaDriverGetVersion(&driverVersion);
+
+
 	cudaSetDevice(param.dev);
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;
@@ -60,6 +67,9 @@ int main(int argc, char*argv[]){
 		if(i == 1) infofile = stdout;
 		fprintf(infofile, "\nVersion: %g\n", VERSION);
 		fprintf(infofile, "Using device %d\n\n", param.dev);
+		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
+		fprintf(infofile, "Driver Version %d\n", driverVersion);
+
 		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\n", 
 			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
@@ -308,12 +318,6 @@ int main(int argc, char*argv[]){
 
 		Vandermonde_kernel <<< (Nxb + 511) / 512, 512 >>> (V_d, (double)(Nxb), param.nC);
 		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, Nxb, param.nC);
-	}
-	//***************************************
-	//**********************************
-	// Do the resampling
-	//**********************************
-	if(param.doResampling == 1){
 
 		lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Nx);
 		leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d, Nxb, param.nC);
@@ -336,6 +340,9 @@ int main(int argc, char*argv[]){
 		if(param.doTransmission == 1 || param.doStoreK == 1){
 			expfx_kernel <<< param.nbins, 512 >>> (K_d, param.nC, Nxb);
 		}	
+		cudaFree(V_d);
+		cudaFree(C_d);
+		cudaFree(D_d);
 	}
 	//**********************************
 	cudaDeviceSynchronize();
@@ -432,6 +439,7 @@ int main(int argc, char*argv[]){
 	fprintf(InfoFile,"Time for Transmission: %g seconds\n", time[7]);
 	fclose(InfoFile);	
 
+
 	free_Line(L);
 	free(MaxLimits_h);
 	free(K_h);
@@ -440,9 +448,6 @@ int main(int argc, char*argv[]){
 	cudaFree(MaxLimits_d);
 	cudaFree(K_d);
 	cudaFree(binKey_d);
-	cudaFree(V_d);
-	cudaFree(C_d);
-	cudaFree(D_d);
 	
 	error = cudaGetLastError();
 	printf("error = %d = %s\n",error, cudaGetErrorString(error));
