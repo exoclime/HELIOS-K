@@ -186,7 +186,6 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 	int id = blockIdx.x * blockDim.x + idx + kk;
 
 	if(id < NL){
-		double c2 = c * c;
 		double m = mass_d[id] / NA;			// mass in g
 
 		double nu = nu_d[id] + delta_d[id] * P;		//read nu from alphaD
@@ -197,7 +196,7 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 		double alphaL = alphaL_d[id];
 		
 		S_d[id] = S * Q * exp(-EL * h * c / (kB * T) + EL * h * c / (kB * T0)) * (1.0 - exp(-h * nu * c / (kB * T))) / (1.0 - exp(-h * nu * c / (kB * T0))); 
-		alphaD_d[id] = 1.0 / (nu * sqrt(2.0 * kB * T / (m * c2)));	//inverse Doppler halfwith
+		alphaD_d[id] = c / nu * sqrt( m / (2.0 * kB * T));	//inverse Doppler halfwith
 		alphaL *= P * pow(T0 / T, n_d[id]);
 		alphaL += A_d[id] / (4.0 * M_PI * c);				//1/cm
 		alphaL_d[id] = alphaL;
@@ -221,6 +220,21 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 		double aTOL = M_PI * sqrt(-1.0 / log(TOL * 0.5));
 		double x = fabs(-xmax + id * 2.0 * xmax / ((double)(Nx)));
 		K_d[id] = voigt_916(x, a, aTOL, id);
+	}
+}
+// *************************************************
+//This kernel initializes K_d with kmin
+//
+//Author Simon Grimm
+//January 2015
+// *************************************************
+__global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+
+	if(id < Nx){
+		K_d[id] = kmin;
 	}
 }
 
@@ -399,7 +413,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	}
 
 	double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
-	double sqln2 = sqrt(log(2.0));
+	double sqln2 = 1.0;//sqrt(log(2.0)); //This factor will cancel out, becuase alphaD = sqln2 * vo sqrt(2kt/mc2)
 	double isqrtpi = 1.0 / sqrt(M_PI);
 	
 	double nu = numin + id * dnu;

@@ -145,6 +145,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%d", &param.nbins);
 		fgets(skip2, 3, paramFile);
+		//read kmin
+		fgets(skip, 7, paramFile);
+		fscanf (paramFile, "%lf", &param.kmin);
+		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
 

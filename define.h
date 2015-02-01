@@ -1,4 +1,4 @@
-#define VERSION 1.13
+#define VERSION 1.14
 
 #define T0 296.0 		//Temperature in K
 #define kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -14,7 +14,6 @@
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
 
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
-
 #define NmaxSample 100		//Maximum Number of resample points for K(y)
 
 struct Isotopologue{
@@ -59,6 +58,7 @@ struct Param{
 	double dTr;
 	int doStoreFullK;
 	int doStoreK;
+	double kmin;
 };
 
 struct Line{

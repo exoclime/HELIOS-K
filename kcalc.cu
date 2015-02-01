@@ -70,8 +70,8 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
 		fprintf(infofile, "Driver Version %d\n", driverVersion);
 
-		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\n", 
-			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins);
+		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\n", 
+			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins, param.kmin);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 	}
 	fclose(InfoFile);
@@ -232,7 +232,7 @@ int main(int argc, char*argv[]){
 	K_h = (double*)malloc(Nx * sizeof(double));
 	cudaMalloc((void **) &K_d, Nx * sizeof(double));
 	cudaMalloc((void **) &binKey_d, Nx * sizeof(int));
-	cudaMemset(K_d, 0, Nx * sizeof(double));
+	InitialK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Nx, param.kmin);
 	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, Nxb);
 
 
@@ -309,9 +309,45 @@ int main(int argc, char*argv[]){
 	//********************************
 	//Prepare Resampling and do QR factorization, the same for all bins
 	//*********************************
-	double *V_d;			//Vandermonde like matrix for least sqaures
-	double *C_d, *D_d;
+	int *Nxmin_h, *Nxmin_d;		
+	Nxmin_h = (int*)malloc(param.nbins * sizeof(int));
+	cudaMalloc((void **) &Nxmin_d, param.nbins * sizeof(int));
+	for(int i = 0; i < param.nbins; ++i){
+		Nxmin_h[i] = 0;
+	}
+	cudaMemset(Nxmin_d, 0, param.nbins * sizeof(int));
 	if(param.doResampling == 1){
+
+		double *K2_h, *K2_d;
+		K2_h = (double*)malloc(Nx * sizeof(double));
+		cudaMalloc((void **) &K2_d, Nx * sizeof(double));
+		cudaMemset(K2_d, 0, Nx * sizeof(double));
+
+		findCut_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Nx, Nxb, param.kmin, Nxmin_d, param.nbins);
+		rescale_kernel < 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d, K2_d, Nxb, param.kmin);
+/*
+cudaMemcpy(K2_h, K2_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+cudaMemcpy(K_h, K_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+cudaDeviceSynchronize();
+
+for(int i = 0; i < param.nbins; ++i){
+	int il = i * Nxb;
+	if(K_h[il] == param.kmin){
+		for(int j = 0; j < Nxb; ++j){
+			printf("%g %.20g\n", j / (double)(Nxb), K2_h[j + il]);
+		}
+		printf("\n\n");
+	}
+}
+*/
+		copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d, K2_d, param.kmin, Nxb);
+		cudaMemcpy(Nxmin_h, Nxmin_d, param.nbins * sizeof(int), cudaMemcpyDeviceToHost);
+
+	
+
+		double *V_d;			//Vandermonde like matrix for least sqaures
+		double *C_d, *D_d;
+
 		cudaMalloc((void **) &V_d, param.nC * Nxb * sizeof(double));
 		cudaMalloc((void **) &C_d, param.nC * sizeof(double));
 		cudaMalloc((void **) &D_d, param.nC * sizeof(double));
@@ -343,6 +379,8 @@ int main(int argc, char*argv[]){
 		cudaFree(V_d);
 		cudaFree(C_d);
 		cudaFree(D_d);
+		cudaFree(K2_d);
+		free(K2_h);
 	}
 	//**********************************
 	cudaDeviceSynchronize();
@@ -366,8 +404,9 @@ int main(int argc, char*argv[]){
 		Out2File = fopen(Out2Filename, "w");
 		for(int i = 0; i < param.nbins; ++i){
 			int il = i * Nxb;
+			int Nxmin = Nxmin_h[i];
 			for(int j = 0; j < Nxb; ++j){
-				fprintf(Out2File, "%g %.20g\n", j / (double)(Nxb), K_h[j + il]);
+				fprintf(Out2File, "%g %.20g\n", Nxmin / ((double)(Nxb)) + j / ((double)(Nxb)) * (Nxb - Nxmin) / ((double)(Nxb)), K_h[j + il]);
 			}
 			fprintf(Out2File,"\n\n");
 		}
@@ -402,7 +441,7 @@ int main(int argc, char*argv[]){
 		sprintf(Out3Filename, "Out_%s_tr.dat", param.name);
 		Out3File = fopen(Out3Filename, "w");
 
-		Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d, Tr_d, Nxb, param.nTr, param.dTr);
+		Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d, Tr_d, Nxb, param.nTr, param.dTr, Nxmin_d, param.kmin);
 		cudaMemcpy(Tr_h, Tr_d, param.nbins * param.nTr * sizeof(double), cudaMemcpyDeviceToHost);
 		for(int i = 0; i < param.nbins; ++i){
 			for(int j = 0; j < param.nTr; ++j){
@@ -443,12 +482,14 @@ int main(int argc, char*argv[]){
 	free_Line(L);
 	free(MaxLimits_h);
 	free(K_h);
+	free(Nxmin_h);
 
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);
 	cudaFree(K_d);
 	cudaFree(binKey_d);
-	
+	cudaFree(Nxmin_d);	
+
 	error = cudaGetLastError();
 	printf("error = %d = %s\n",error, cudaGetErrorString(error));
 

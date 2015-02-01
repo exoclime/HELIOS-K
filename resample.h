@@ -252,7 +252,9 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		__syncthreads();	
 		for(int k = 0; k < NL; k += nb){
 			if(idy + k < NL && idy + k >= j){
-				a_s[idy] += V_d[(idy + k) + NL * j] * b_d[idy + k + idx * NL];
+				double b = b_d[idy + k + idx * NL];
+//if(idx == 18 && j == 2) printf("%d %g\n", idy + k + idx * NL, b);
+				a_s[idy] += V_d[(idy + k) + NL * j] * b;
 			}
 		}
 		__syncthreads();
@@ -351,6 +353,92 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 
 
 // ****************************************
+// This kernel finds bins starting with kmin and stores the starting index
+//
+// Author: Simon Grimm
+// February 2015
+// *****************************************
+__global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *Nmin_d, int nbins){
+
+	int id = threadIdx.x + blockIdx.x * blockDim.x;
+	int ib = id / NLb;
+
+	if(id < NL - 1 && ib < nbins){
+		double K = K_d[id];
+		double K1 = K_d[id + 1];
+
+		if(K == kmin && K1 > kmin){
+			int n = id - ib * NLb + 1;
+//printf("%d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
+			Nmin_d[ib] = n;
+
+		}
+	}
+
+}
+
+// ****************************************
+// This kernel rescales bins starting with kmin to [0:1] starting from 
+// the first entry bigger than kmin, stored in Nmin 
+//
+// Author: Simon Grimm
+// February 2015
+// *****************************************
+template <int nb>
+__global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, double kmin){
+
+	int idy = threadIdx.x;
+	int idx = blockIdx.x;
+
+	double K = K_d[idx * NLb];
+
+	int Nmin = Nmin_d[idx];
+	if(K == kmin){
+
+		for(int k = 0; k < NLb; k += nb){
+			if(idy + k < NLb){
+				double ii = Nmin + (1.0 - Nmin / ((double)(NLb - 1))) * (k + idy); //required index position
+				if(ii >= NLb - 1) ii = 0.999999 * (NLb - 1);
+				int il = ii / ((double)(NLb)) * NLb; //left index
+				double Kl = K_d[idx * NLb + il];
+				double Kr = K_d[idx * NLb + il + 1];
+				double Ki = Kl + (Kr - Kl) * (ii - il);
+
+				K2_d[idx * NLb + k + idy] = Ki; 
+			}
+		}
+	}
+}
+
+// ****************************************
+// This kernel copies rescaled bins into K_d
+//
+// Author: Simon Grimm
+// February 2015
+// *****************************************
+template <int nb>
+__global__ void copyK2_kernel(double *K_d, double *K2_d, double kmin, int NLb){
+
+	int idy = threadIdx.x;
+	int idx = blockIdx.x;
+
+	double K = K_d[idx * NLb];
+
+	if(K == kmin){
+
+		for(int k = 0; k < NLb; k += nb){
+			if(idy + k < NLb){
+				K_d[idx * NLb + k + idy] = K2_d[idx * NLb + k + idy];
+
+			}
+		}
+	}
+
+}
+
+
+
+// ****************************************
 // This kernel computes the log of an array K_d
 // NL is the lenght of the array
 //
@@ -362,7 +450,11 @@ __global__ void lnK_kernel(double *K_d, int NL){
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if(id < NL){
-		K_d[id] = log(K_d[id]);
+		double K;
+		K = K_d[id];
+
+		K = log(K);
+		K_d[id] = K;
 	}
 }
 
@@ -425,11 +517,12 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 // January 2015
 // *****************************************
 template <int nb>
-__global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, double dTr){
+__global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, double dTr, int *Nmin_d, double kmin){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
 	__shared__ double a_s[nb];
+	int Nmin = Nmin_d[idx];
 
 	for(int j = 0; j < nTr; ++j){
 		__syncthreads();
@@ -484,7 +577,7 @@ __global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, dou
 		__syncthreads();
 
 		if(idy == 0){
-			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1));
+			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1)) * (NL - Nmin) / ((double)(NL - 1)) + exp(-kmin * m) * Nmin/ ((double)(NL - 1));
 	//		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
 		}
 	}
