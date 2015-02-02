@@ -59,6 +59,11 @@ int main(int argc, char*argv[]){
 	cudaRuntimeGetVersion(&runtimeVersion);
 	cudaDriverGetVersion(&driverVersion);
 
+	//Determine the number of points
+	int Nx = (int)((param.numax - param.numin) / param.dnu);
+	//Determine the numbers of points per bin
+	int Nxb = Nx / param.nbins;
+
 
 	cudaSetDevice(param.dev);
 	for(int i = 0; i < 2; ++i){
@@ -70,16 +75,18 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
 		fprintf(infofile, "Driver Version %d\n", driverVersion);
 
+		if(Nxb < param.nC && i == 0){
+			printf("Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", Nxb);
+			fprintf(infofile, "Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", Nxb);
+			param.nC = Nxb;
+		}
+
 		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\n", 
 			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins, param.kmin);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 	}
 	fclose(InfoFile);
 
-	//Determine the number of points
-	int Nx = (int)((param.numax - param.numin) / param.dnu);
-	//Determine the numbers of points per bin
-	int Nxb = Nx / param.nbins;
 	
 	//Compute partition function
 	Partition part;
@@ -129,7 +136,7 @@ int main(int argc, char*argv[]){
 	//************************
 	printf("Number of lines: %d\n", m.NL);
 	printf("Number of points: %d\n", Nx);
-	printf("Number of points per bin: %d\n", Nx / param.nbins);
+	printf("Number of points per bin: %d\n", Nxb);
 
 	cudaDeviceSynchronize();
 	gettimeofday(&tt2, NULL);
@@ -149,6 +156,25 @@ int main(int argc, char*argv[]){
 		int Nk = min(nthmax, m.NL);
 		S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, m.NL, param.T, param.P, k);
 	}	
+
+/* *************
+	//print number of lines per bin
+	cudaMemcpy(L.nu_h, L.nu_d, m.NL * sizeof(double), cudaMemcpyDeviceToHost);
+	int nLb[param.nbins];
+	for(int i = 0; i < param.nbins; ++i){
+		nLb[i] = 0;
+	}
+	double binWidth = (param.numax - param.numin) / ((double)(param.nbins));
+	printf("%g\n", binWidth);
+	for(int i = 0; i < m.NL; ++i){
+		int b = int(L.nu_h[i] / binWidth);
+		nLb[b] += 1;
+	}
+	for(int i = 0; i < param.nbins; ++i){
+		printf("%d, ", nLb[i]);
+	}
+	printf("\n");
+*/ 
 
 	//Sort the data along nu
 	thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
@@ -201,13 +227,22 @@ int main(int argc, char*argv[]){
 	}
 	else MaxLimits_h[0] = m.NL;
 
+/*
 //	print Limits
-//	int2 *Limits_h, *Limits_d;
-//	Limits_h = (int2*)malloc(nLimits * sizeof(int2));
-//	cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
-//	for(int i = 0; i < nLimits; ++i){
-//		printf("%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
-//	}
+	int2 *Limits_h;
+	Limits_h = (int2*)malloc(nLimits * sizeof(int2));
+	cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
+	FILE *LimitsFile;
+	char LimitsFilename[160];
+	sprintf(LimitsFilename, "Limits_%s_dat", param.name);
+	LimitsFile = fopen(LimitsFilename, "w");
+
+	for(int i = 0; i < nLimits; ++i){
+		fprintf(LimitsFile,"%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
+	}
+	fclose(LimitsFile);
+	free(Limits_h);
+*/
 	//*********************************************
 
 
@@ -467,7 +502,7 @@ for(int i = 0; i < param.nbins; ++i){
 	InfoFile = fopen(InfoFilename, "a");
 	fprintf(InfoFile,"Number of lines: %d\n", m.NL);
 	fprintf(InfoFile,"Number of points: %d\n", Nx);
-	fprintf(InfoFile,"Number of points per bin: %d\n", Nx / param.nbins);
+	fprintf(InfoFile,"Number of points per bin: %d\n", Nxb);
 	fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
 	fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
 	fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);

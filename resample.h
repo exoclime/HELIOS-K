@@ -577,7 +577,7 @@ __global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, dou
 		__syncthreads();
 
 		if(idy == 0){
-			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1)) * (NL - Nmin) / ((double)(NL - 1)) + exp(-kmin * m) * Nmin/ ((double)(NL - 1));
+			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1)) * (NL - Nmin) / ((double)(NL)) + exp(-kmin * m) * Nmin/ ((double)(NL));
 	//		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
 		}
 	}
