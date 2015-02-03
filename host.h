@@ -149,18 +149,25 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 7, paramFile);
 		fscanf (paramFile, "%lf", &param.kmin);
 		fgets(skip2, 3, paramFile);
+		//read qalphaL
+		fgets(skip, 10, paramFile);
+		fscanf (paramFile, "%lf", &param.qalphaL);
+		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
 
 	//Read console input arguments
 	for(int i = 1; i < argc; i += 2){
-		if(strcmp(argv[i], "-T") == 0){
+		if(strcmp(argv[i], "-name") == 0){
+			sprintf(param.name, "%s", argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-T") == 0){
 			param.T = atof(argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-P") == 0){
 			param.P = atof(argv[i + 1]);
 		}
-		else if(strcmp(argv[i], "-m") == 0){
+		else if(strcmp(argv[i], "-M") == 0){
 			param.nMolecule = atoi(argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-numin") == 0){
@@ -171,6 +178,42 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 		else if(strcmp(argv[i], "-dnu") == 0){
 			param.dnu = atof(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-cutM") == 0){
+			param.cutMode = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-cut") == 0){
+			param.cut = atof(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-dR") == 0){
+			param.doResampling = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-nC") == 0){
+			param.nC = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-dT") == 0){
+			param.doTransmission = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-nTr") == 0){
+			param.nTr = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-dTr") == 0){
+			param.dTr = atof(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-dSF") == 0){
+			param.doStoreFullK = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-dSS") == 0){
+			param.doStoreK = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-nbins") == 0){
+			param.nbins = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-kmin") == 0){
+			param.kmin = atof(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-q") == 0){
+			param.qalphaL = atof(argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-dev") == 0){
 			param.dev = atoi(argv[i + 1]);
@@ -184,7 +227,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	return 1;
 }
 
-__host__ int readFile(Molecule &m, Partition &part, Line &L){
+__host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 	FILE *dataFile;
 	dataFile  = fopen(m.dataFilename, "r");
 	if(dataFile == NULL){
@@ -252,7 +295,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L){
 		
 		double gammaAir = strtod(c6, NULL);
 		double gammaSelf = strtod(c7, NULL);
-		L.alphaL_h[i] = (1.0 - qALPHA_L) * gammaAir + qALPHA_L * gammaSelf;
+		L.alphaL_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		L.n_h[i] = strtod(c9, NULL);
 		L.alphaD_h[i] = L.n_h[i];
 		

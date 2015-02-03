@@ -81,8 +81,8 @@ int main(int argc, char*argv[]){
 			param.nC = Nxb;
 		}
 
-		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\n", 
-			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins, param.kmin);
+		fprintf(infofile, "name = %s\nT = %g\nP = %g\nMolecule = %d\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\nqalphaL = %g\n", 
+			param.name, param.T, param.P, param.nMolecule, param.numin, param.numax, param.dnu, param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK, param.nbins, param.kmin, param.qalphaL);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 	}
 	fclose(InfoFile);
@@ -127,7 +127,7 @@ int main(int argc, char*argv[]){
 	//**************************
 	//Read the Line list	
 	//**************************
-	er = readFile(m, part, L);
+	er = readFile(m, part, L, param.qalphaL);
 	if(er == 0){
 		return 0;
 	}
@@ -377,7 +377,6 @@ for(int i = 0; i < param.nbins; ++i){
 */
 		copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d, K2_d, param.kmin, Nxb);
 		cudaMemcpy(Nxmin_h, Nxmin_d, param.nbins * sizeof(int), cudaMemcpyDeviceToHost);
-
 	
 
 		double *V_d;			//Vandermonde like matrix for least sqaures
@@ -400,7 +399,8 @@ for(int i = 0; i < param.nbins; ++i){
 		for(int i = 0; i < param.nbins; ++i){
 			int il = i * Nxb;
 			cudaMemcpy(K_h + il, K_d + il, param.nC * sizeof(double), cudaMemcpyDeviceToHost);
-
+	
+			fprintf(Out3File, "%.20g %.20g ", param.kmin, Nxmin_h[i] / ((double)(Nxb)));
 			fprintf(Out3File, "%.20g ", 2.0 * K_h[il + i]);
 			for(int i = 1; i < param.nC; ++i){
 				fprintf(Out3File, "%.20g ", K_h[il + i]);
