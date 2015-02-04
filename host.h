@@ -75,7 +75,8 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		char skip2[160];
 		//read name
 		fgets(skip, 7, paramFile);
-		fscanf (paramFile, "%s", &param.name);
+		fgets(param.name, 160, paramFile);
+		//fscanf (paramFile, "%s", &param.name);
 		fgets(skip2, 3, paramFile);
 		//read T
 		fgets(skip, 4, paramFile);

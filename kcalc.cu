@@ -74,7 +74,7 @@ int main(int argc, char*argv[]){
 
 		for(int j = 0; j < devCount; ++j){
 			cudaGetDeviceProperties(&devProp, j);
-			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%d, Shared memory per block: %d",
+			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu",
 devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0], devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
 
 		}
@@ -134,6 +134,10 @@ devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.
 
 	//Allocate the memory for the Line properties
 	Alloc_Line(L, m);
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Line alloc error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	//**************************
 	//Read the Line list	
 	//**************************

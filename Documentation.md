@@ -1,5 +1,5 @@
 # kCalc #
-** Author: Simon Grimm **
+#### Authors: Simon Grimm, Kevin Heng ####
 
 # Requirements #
 
@@ -17,11 +17,9 @@ for compute capability of 2.0, or 'make SM=35' for 3.5.
 kcalk can be startet with
 
 ```
-#!cuda
-
 ./kcalk
 ```
-followed by optional arguments listed [here](#markdown-header-console-arguments).
+followed by optional arguments listed below.
 
 
 # Input parameters #
@@ -40,13 +38,13 @@ parameters are listed here, the order can not be changed.
    * 1: cut at multiple values of Lorentz widths
    * 2: cut at multiple values of Doppler widths
  * cut: value where to cut, according to the cutMode, if cut = 0, then no cutting is performed
- * doResampling: When set to one, then all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients are written to the file 'Out_<name>_cbin.dat'.
+ * doResampling: When set to one, then all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients are written to the file 'Out_< name >_cbin.dat'.
  *nC: Number of Chebyshev coefficients use for the resampling
- * doTransmission: When set to one, then the transmission function per bin is computed for various numbers of m, and written to the file 'Out_<nam>_tr.dat'.
+ * doTransmission: When set to one, then the transmission function per bin is computed for various numbers of m, and written to the file 'Out_< name >_tr.dat'.
  * nTr: nummber of points used for the transmission function
  * dTr: spacing of the points used for the transmission function in exp space: m_i = exp((i - nTr/2) * dTr)
- * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_<nama>.dat'.
- * doStoreSK: When set to one, then the perbin sorted opacity function is written to the file 'Out_<name>_bin.dat'.
+ * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_< name >.dat'.
+ * doStoreSK: When set to one, then the perbin sorted opacity function is written to the file 'Out_< name >_bin.dat'.
  * nbins: number of bins
  * kmin: minimal value for the opacity function 
  * qalphaL: q value in the Lorentz half width q = Pself / P 
@@ -55,25 +53,25 @@ parameters are listed here, the order can not be changed.
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:
 
  * \-name : name
- * \-T <double> : T
- * \-P <double> : P
- * \-M <int> : Molecule
- * \-numin <double> : numin
- * \-numax <double> : numax
- * \-dnu <double> : dnu
- * \-cutM <int> : cutMode
- * \-cut <double> : cut
- * \-dR <int> : doResampling
- * \-nC <int> : nC
- * \-dT <int> : doTRansmission
- * \-nTr <int> : nTr
- * \-dTr <double> : dTr
- * \-dSF <int> : doStoreFullK
- * \-dSS <int> : doStoreSK
- * \-nbins <int> : nbins
- * \-kmin <double> : kmin
- * \-dev <int> : Device number (For multiple GPU systems) 	
- * \-q <double> : qalphaL
+ * \-T < double > : T
+ * \-P < double > : P
+ * \-M < int > : Molecule
+ * \-numin < double > : numin
+ * \-numax < double > : numax
+ * \-dnu < double > : dnu
+ * \-cutM < int > : cutMode
+ * \-cut < double > : cut
+ * \-dR < int > : doResampling
+ * \-nC < int > : nC
+ * \-dT < int > : doTRansmission
+ * \-nTr < int > : nTr
+ * \-dTr < double > : dTr
+ * \-dSF < int > : doStoreFullK
+ * \-dSS < int > : doStoreSK
+ * \-nbins < int > : nbins
+ * \-kmin < double > : kmin
+ * \-dev < int > : Device number (For multiple GPU systems) 	
+ * \-q < double > : qalphaL
 
 # Code parameters #
 The file define.h contains the physical parameters and some code parameters.
@@ -113,27 +111,27 @@ the  first 2 characters are the Molecule id, the third character is the order al
 # Output Files #
 Different Output files are written, depending to the set values in the 'param.dat' file
 
-# Info_<name>.dat #
+# Info_< name >.dat #
 Contains the used parameters, and timing information
 
-# Out_<name>.dat #
+# Out_< name >.dat #
 It contains nu and K(nu)
 nu are positions of the wavenumber and K is the unsorted opacity function
 
-# Out_<name>_bin.dat #
+# Out_< name >_bin.dat #
 It contains the y and K(y) per bin
 y goes from 0 to 1, K(y) is the per bin sorted opacity function. The bins are separated by two blank lines.
 When doResampling is set to one, then this file contains the sorted opacity functions computed from the 
 Chebyshev coefficients
 
-# Out_<name>_cbin.dat #
+# Out_< name >_cbin.dat #
 It contains the chebyshev coefficients of the per bins resampled sorted logarithm of the opacity functions in the format
 kmin_i ystart_i C0_i C1_i ... C(nC - 1)_i
 where i refers to the bin index, and C are the Chebyshev coefficients
 kmin is the minimal value of K(y), reached when cutting the Voigt profiles
 ystart is the position in y when the K(y) starts to be larger than kmin
 
-# Out_<name>_tr.dat #
+# Out_< name >_tr.dat #
 It contains m and T.
 m is the column mass, m_i = exp((i - nTr/2) * dTr)
 T is the Transmission function Int_0^1 exp(-K(y)m) dy
