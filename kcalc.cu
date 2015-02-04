@@ -66,10 +66,19 @@ int main(int argc, char*argv[]){
 
 
 	cudaSetDevice(param.dev);
+	cudaDeviceProp devProp;
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;
 		if(i == 0) infofile = InfoFile;
 		if(i == 1) infofile = stdout;
+
+		for(int j = 0; j < devCount; ++j){
+			cudaGetDeviceProperties(&devProp, j);
+			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%d, Shared memory per block: %d",
+devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0], devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
+
+		}
+
 		fprintf(infofile, "\nVersion: %g\n", VERSION);
 		fprintf(infofile, "Using device %d\n\n", param.dev);
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
@@ -120,7 +129,8 @@ int main(int argc, char*argv[]){
 	
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
-	printf("error = %d = %s\n",error, cudaGetErrorString(error));
+	printf("Initial error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 
 	//Allocate the memory for the Line properties
 	Alloc_Line(L, m);
@@ -139,6 +149,9 @@ int main(int argc, char*argv[]){
 	printf("Number of points per bin: %d\n", Nxb);
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Line Read error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -248,6 +261,9 @@ int main(int argc, char*argv[]){
 
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Line error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -285,6 +301,9 @@ int main(int argc, char*argv[]){
 	//*************************************
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -313,6 +332,9 @@ int main(int argc, char*argv[]){
 	//*******************************
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Write error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -332,6 +354,9 @@ int main(int argc, char*argv[]){
 	//****************************************
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Sort error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -419,6 +444,9 @@ for(int i = 0; i < param.nbins; ++i){
 	}
 	//**********************************
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Resampling error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -449,6 +477,9 @@ for(int i = 0; i < param.nbins; ++i){
 	}
 	//******************************
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Write error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -492,6 +523,9 @@ for(int i = 0; i < param.nbins; ++i){
 	//************************************
 
 	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("Transmission error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
 	gettimeofday(&tt2, NULL);
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
@@ -526,7 +560,7 @@ for(int i = 0; i < param.nbins; ++i){
 	cudaFree(Nxmin_d);	
 
 	error = cudaGetLastError();
-	printf("error = %d = %s\n",error, cudaGetErrorString(error));
+	printf("Final error = %d = %s\n",error, cudaGetErrorString(error));
 
 	return 0;
 }
