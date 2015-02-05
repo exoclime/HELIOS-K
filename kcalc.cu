@@ -126,6 +126,10 @@ devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.
 	gettimeofday(&tt1, NULL);
 
 	Line L;
+
+	printf("Number of lines: %d\n", m.NL);
+	printf("Number of points: %d\n", Nx);
+	printf("Number of points per bin: %d\n", Nxb);
 	
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
@@ -150,9 +154,6 @@ devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.
 	printf("Line Read error = %d = %s\n",error, cudaGetErrorString(error));
 	if(error != 0) return 0;
 
-	printf("Number of lines: %d\n", m.NL);
-	printf("Number of points: %d\n", Nx);
-	printf("Number of points per bin: %d\n", Nxb);
 
 	//Copy Line data to the device
 	Copy_Line(L, m);

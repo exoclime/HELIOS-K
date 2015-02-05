@@ -75,8 +75,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		char skip2[160];
 		//read name
 		fgets(skip, 7, paramFile);
-		fgets(param.name, 160, paramFile);
-		//fscanf (paramFile, "%s", &param.name);
+		fscanf (paramFile, "%s", &param.name);
 		fgets(skip2, 3, paramFile);
 		//read T
 		fgets(skip, 4, paramFile);
@@ -237,7 +236,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 	}
 	//read line list file		
 
-	char c1[3];
+	char c1[4];
 	//char c2[2];
 	char c3[13];
 	char c4[11];
@@ -257,14 +256,13 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 	char c18[8];
 	char c19[8];
 	
-	char skip[5];
+	char skip[6];
 
 //int count[40];
 //for(int cc = 0; cc < 40; ++cc){
 //count[cc] = 0;	
 //}
 	for(int i = 0; i < m.NL; ++i){
-	
 		fgets(skip, 1, dataFile);
 		//fgets(c1, 3, dataFile);
 		//fgets(c2, 2, dataFile);
@@ -287,13 +285,13 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 		fgets(c18, 8, dataFile);
 		fgets(c19, 8, dataFile);
 		fgets(skip, 6, dataFile);
-		
+	
+	
 		L.nu_h[i] = strtod(c3, NULL);		
 		L.S_h[i] = strtod(c4, NULL);		
 		L.A_h[i] = strtod(c5, NULL);		
 		L.delta_h[i] = strtod(c10, NULL);
 		L.EL_h[i] = strtod(c8, NULL);		
-		
 		double gammaAir = strtod(c6, NULL);
 		double gammaSelf = strtod(c7, NULL);
 		L.alphaL_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
