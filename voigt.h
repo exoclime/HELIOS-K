@@ -189,6 +189,7 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 		double m = mass_d[id] / NA;			// mass in g
 
 		double nu = nu_d[id] + delta_d[id] * P;		//read nu from alphaD
+		if(nu == 0.0) nu = 0.0000001;
 		nu_d[id] = nu;
 		double S = S_d[id] / m;				//cm / g
 		double EL = EL_d[id];  				//1/cm
@@ -440,7 +441,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 # if PROFILE == 1
 		for(int k = 0; k < NB; ++k){
 			//Check smallest values for x and y
-			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
+			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
 				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				double xxyy = x * x + y_s[k] * y_s[k];
 //				if(__any(xxyy < 100)){
@@ -464,7 +465,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 #endif
 # if PROFILE == 2
 		for(int k = 0; k < NB; ++k){
-			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
+			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
 				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				double xxyy = x * x + y_s[k] * y_s[k];
 				K += S_s[k] * y_s[k] / (M_PI * xxyy);
@@ -473,7 +474,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 #endif
 # if PROFILE == 3
 		for(int k = 0; k < NB; ++k){
-			if(i + k < NL && fabs(nu - nu_s[k]) < cut_s[k]){
+			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
 				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
 				K += S_s[k] * isqrtpi * exp(-x * x);
 			}	

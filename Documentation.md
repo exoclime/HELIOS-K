@@ -29,7 +29,9 @@ parameters are listed here, the order can not be changed.
  * name: The name is included in th Output filenames
  * T: Temperature in Kelvin
  * P: Pressure in Atmospheres
+ * useHITEMP: when set to 0, the HITRAN files are red. When set to 1 the HITEMP files are red
  * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
+ * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
  * numin: minimum wavenumber in 1/cm
  * numax: maximum wavenumber in 1/cm
  * dnu: spatial resolution in wavenumber in 1/cm
@@ -52,10 +54,12 @@ parameters are listed here, the order can not be changed.
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:
 
- * \-name : name
+ * \-name < c >: name
  * \-T < double > : T
  * \-P < double > : P
+ * \-HITEMP < int > : useHITEMP
  * \-M < int > : Molecule
+ * \-path < c > : pathToData
  * \-numin < double > : numin
  * \-numax < double > : numax
  * \-dnu < double > : dnu

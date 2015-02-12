@@ -85,14 +85,31 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 4, paramFile);
 		fscanf (paramFile, "%lf", &param.P);
 		fgets(skip2, 3, paramFile);
+		//read HITEMP
+		fgets(skip, 12, paramFile);
+		fscanf (paramFile, "%d", &param.useHITEMP);
+		fgets(skip2, 3, paramFile);
 		//read Molecule
 		fgets(skip, 11, paramFile);
 		fscanf (paramFile, "%d", &param.nMolecule);
 		fgets(skip2, 3, paramFile);
+		//read path
+		fgets(skip, 13, paramFile);
+		fscanf (paramFile, "%s", &param.path);
+		fgets(skip2, 3, paramFile);
+		if(strcmp(param.path, "numin") == 0){
+			sprintf(param.path, "");
+		
+			fgets(skip, 3, paramFile);
+			fscanf (paramFile, "%lf", &param.numin);
+			fgets(skip2, 3, paramFile);
+		}
+		else{
 		//read numin
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%lf", &param.numin);
 		fgets(skip2, 3, paramFile);
+		}
 		//read numax
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%lf", &param.numax);
@@ -167,8 +184,14 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		else if(strcmp(argv[i], "-P") == 0){
 			param.P = atof(argv[i + 1]);
 		}
+		else if(strcmp(argv[i], "-HITEMP") == 0){
+			param.useHITEMP = atoi(argv[i + 1]);
+		}
 		else if(strcmp(argv[i], "-M") == 0){
 			param.nMolecule = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-path") == 0){
+			sprintf(param.path, "%s", argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-numin") == 0){
 			param.numin = atof(argv[i + 1]);
@@ -227,11 +250,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	return 1;
 }
 
-__host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
+__host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
 	FILE *dataFile;
-	dataFile  = fopen(m.dataFilename, "r");
+	dataFile  = fopen(m.dataFilename[fi], "r");
 	if(dataFile == NULL){
-		printf("Error: line list file not found\n");
+		printf("Error: line list file not found %s\n", m.dataFilename[fi]);
 		return 0;
 	}
 	//read line list file		
@@ -262,7 +285,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 //for(int cc = 0; cc < 40; ++cc){
 //count[cc] = 0;	
 //}
-	for(int i = 0; i < m.NL; ++i){
+	for(int i = 0; i < m.NL[fi]; ++i){
 		fgets(skip, 1, dataFile);
 		//fgets(c1, 3, dataFile);
 		//fgets(c2, 2, dataFile);
@@ -329,42 +352,42 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL){
 
 
 __host__ void Alloc_Line(Line &L, Molecule &m){
-	L.nu_h = (double*)malloc(m.NL * sizeof(double));
-	L.S_h = (double*)malloc(m.NL * sizeof(double));
-	L.A_h = (double*)malloc(m.NL * sizeof(double));
-	L.delta_h = (double*)malloc(m.NL * sizeof(double));
-	L.EL_h = (double*)malloc(m.NL * sizeof(double));
-	L.alphaL_h = (double*)malloc(m.NL * sizeof(double));
-	L.alphaD_h = (double*)malloc(m.NL * sizeof(double));
-	L.n_h = (double*)malloc(m.NL * sizeof(double));
-	L.mass_h = (double*)malloc(m.NL * sizeof(double));
-	L.Q_h = (double*)malloc(m.NL * sizeof(double));
-	L.ID_h = (int*)malloc(m.NL * sizeof(int));
+	L.nu_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.S_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.A_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.delta_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.EL_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.alphaL_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.alphaD_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.n_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.mass_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
 
-	cudaMalloc((void **) &L.nu_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.S_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.A_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.delta_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.EL_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.alphaL_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.alphaD_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.n_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.mass_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.Q_d, m.NL * sizeof(double));
-	cudaMalloc((void **) &L.ID_d, m.NL * sizeof(int));
+	cudaMalloc((void **) &L.nu_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.S_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.A_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.delta_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.EL_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.alphaL_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.alphaD_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.n_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.mass_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.Q_d, m.NLmax * sizeof(double));
+	cudaMalloc((void **) &L.ID_d, m.NLmax * sizeof(int));
 }
 
-__host__ void Copy_Line(Line &L, Molecule &m){
-	cudaMemcpy(L.nu_d, L.nu_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.S_d, L.S_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.A_d, L.A_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.delta_d, L.delta_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.EL_d, L.EL_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.alphaL_d, L.alphaL_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.alphaD_d, L.alphaD_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.n_d, L.n_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.mass_d, L.mass_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.Q_d, L.Q_h, m.NL * sizeof(double), cudaMemcpyHostToDevice);
+__host__ void Copy_Line(Line &L, Molecule &m, int i){
+	cudaMemcpy(L.nu_d, L.nu_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.S_d, L.S_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.A_d, L.A_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.delta_d, L.delta_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.EL_d, L.EL_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.alphaL_d, L.alphaL_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.alphaD_d, L.alphaD_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.n_d, L.n_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.mass_d, L.mass_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.Q_d, L.Q_h, m.NL[i] * sizeof(double), cudaMemcpyHostToDevice);
 }
 
 __host__ void free_Line(Line &L){

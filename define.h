@@ -28,9 +28,11 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL;			//Number of Lines
+	int NL[34];		//Number of Lines per file
+	int NLmax;
 	Isotopologue *ISO;
-	char dataFilename[160];
+	char dataFilename[34][160];
+	int nFiles;
 };
 
 struct Partition{
@@ -44,6 +46,8 @@ struct Param{
 	double T;
 	double P;
 	int nMolecule;
+	char path[300];
+	int useHITEMP;
 	double numin;
 	double numax;
 	double dnu;

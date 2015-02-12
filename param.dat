@@ -1,7 +1,9 @@
 name = g
 T = 800.0
 P = 1.0
+useHITEMP = 0
 Molecule = 1
+pathToData = 
 numin = 0.5
 numax = 25720.0
 dnu = 0.1
