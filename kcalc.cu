@@ -169,7 +169,7 @@ param.nbins, param.kmin, param.qalphaL);
 	//**************************************
 	//Starting the loop around the datafile
 	//*************************************
-	for(int fi = 0; fi < 3/*m.nFiles*/; ++fi){
+	for(int fi = 0; fi < m.nFiles; ++fi){
 		printf("Reading file %d\n", fi);
 		gettimeofday(&tt1, NULL);
 		
