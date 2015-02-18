@@ -16,6 +16,6 @@ nTr = 1000
 dTr = 0.05
 doStoreFullK = 1
 doStoreSK = 1
-nbins = 100
+nbins = 3
 kmin = 1.0e-9
 qalphaL = 0.5

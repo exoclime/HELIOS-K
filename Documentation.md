@@ -99,7 +99,7 @@ splitts the kernel into smaller parts. But it makes the Code a bit slower.
 
 The following input files must be provided:
 
- * Line list files from HITRAN in ASCII format. For example the "01_hit12.par" file for H2O
+ * Line list files from HITRAN or HITEMP in ASCII format. For example for H20 the "01_hit12.par" file from HITRAN, or all the files "01_00000-00050_HITEMP2010.par" to "01_11000-30000_HITEMP2010.par" from HITEMP. These must be stored at the location, specified with the "pathToData" argument. 
  * "q.dat" file containing line by line for each Isotopologue the Chebychev  coefficinets
   for the partition function. The number of coefficients must correspond to the value "NCheb" in the define.h file
  * The file "ISO.h" must contain the specifications for each Molecule:
@@ -134,6 +134,8 @@ kmin_i ystart_i C0_i C1_i ... C(nC - 1)_i
 where i refers to the bin index, and C are the Chebyshev coefficients
 kmin is the minimal value of K(y), reached when cutting the Voigt profiles
 ystart is the position in y when the K(y) starts to be larger than kmin
+K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j]), where T are the Chebyshev polynomials. y must be in the range -1 to 1, and the resulted K(y) functions must be remapped from y in (-1, 1) to (ystart, 1).
+
 
 # Out_< name >_tr.dat #
 It contains m and T.

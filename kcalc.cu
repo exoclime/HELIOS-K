@@ -170,7 +170,7 @@ param.nbins, param.kmin, param.qalphaL);
 	//Starting the loop around the datafile
 	//*************************************
 	for(int fi = 0; fi < m.nFiles; ++fi){
-		printf("Reading file %d\n", fi);
+		printf("Reading file %d of %d\n", fi, m.nFiles);
 		gettimeofday(&tt1, NULL);
 		
 		printf("Number of lines: %d\n", m.NL[fi]);
