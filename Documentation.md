@@ -141,7 +141,7 @@ where i refers to the bin index, and C are the Chebyshev coefficients
 kmin is the minimal value of K(y), reached when cutting the Voigt profiles
 ystart is the position in y when the K(y) starts to be larger than kmin
 K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j](yy)), where T(y) are the Chebyshev polynomials,
-where yy = (y - ystart - 1.0) * 2.0 / (1.0 - ystart), for y in the range [ystart, 1]
+where yy = (2.0 * y - 1.0 - ystart) / (1.0 - ystart), for y in the range [ystart, 1]
 
 
 # Out_< name >_tr.dat #
