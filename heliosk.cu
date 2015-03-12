@@ -210,7 +210,7 @@ param.nbins, param.kmin, param.qalphaL);
 			S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, m.NL[fi], param.T, param.P, k);
 		}	
 
-/* *************
+/* // *************
 		//print number of lines per bin
 		cudaMemcpy(L.nu_h, L.nu_d, m.NL[fi] * sizeof(double), cudaMemcpyDeviceToHost);
 		int nLb[param.nbins];
@@ -227,8 +227,8 @@ param.nbins, param.kmin, param.qalphaL);
 			printf("%d, ", nLb[i]);
 		}
 		printf("\n");
-*/ 
-
+ 
+*/
 		//Sort the data along nu
 		thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
 		thrust::device_ptr<int> ID_dt = thrust::device_pointer_cast(L.ID_d);
@@ -454,8 +454,7 @@ for(int i = 0; i < param.nbins; ++i){
 			cudaMemcpy(K_h + il, K_d + il, param.nC * sizeof(double), cudaMemcpyDeviceToHost);
 	
 			fprintf(Out3File, "%.20g %.20g ", param.kmin, Nxmin_h[i] / ((double)(Nxb)));
-			fprintf(Out3File, "%.20g ", 2.0 * K_h[il + i]);
-			for(int i = 1; i < param.nC; ++i){
+			for(int i = 0; i < param.nC; ++i){
 				fprintf(Out3File, "%.20g ", K_h[il + i]);
 			}
 			fprintf(Out3File, "\n\n");

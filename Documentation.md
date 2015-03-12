@@ -1,5 +1,11 @@
-# kCalc #
+# HELIOS-K #
 #### Authors: Simon Grimm, Kevin Heng ####
+
+# Limitations #
+The current version of the code supports only the molecules H2O, CO2, CO and CH4. 
+When HITEMP is used, only H20 is supported.
+All the other molecules will be included soon. 
+
 
 # Requirements #
 
@@ -9,15 +15,15 @@ from https://developer.nvidia.com/cuda-downloads.
 
 
 # Compilation #
-kcalc can be compiled with the Makefile by typing 'make SM=xx' to the
+HELIOS-K can be compiled with the Makefile by typing 'make SM=xx' to the
 terminal, where xx corresponds to the compute capability. For example use 'make SM=20'
 for compute capability of 2.0, or 'make SM=35' for 3.5.
 
-# Starting kcalk #
-kcalk can be startet with
+# Starting HELIOS-K #
+HELIOS-K can be startet with
 
 ```
-./kcalk
+./heliosk
 ```
 followed by optional arguments listed below.
 
@@ -134,7 +140,8 @@ kmin_i ystart_i C0_i C1_i ... C(nC - 1)_i
 where i refers to the bin index, and C are the Chebyshev coefficients
 kmin is the minimal value of K(y), reached when cutting the Voigt profiles
 ystart is the position in y when the K(y) starts to be larger than kmin
-K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j]), where T are the Chebyshev polynomials. y must be in the range -1 to 1, and the resulted K(y) functions must be remapped from y in (-1, 1) to (ystart, 1).
+K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j](yy)), where T(y) are the Chebyshev polynomials,
+where yy = (y - ystart - 1.0) * 2.0 / (1.0 - ystart), for y in the range [ystart, 1]
 
 
 # Out_< name >_tr.dat #

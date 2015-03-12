@@ -1,7 +1,7 @@
 SM=35
 ARCH = -arch sm_$(SM)
-source = kcalc.cu
+source = heliosk.cu
 headers = define.h ISO.h resample.h host.h voigt.h
-kcalc: $(source) $(headers)
-	nvcc $(ARCH) -o kcalc $(source)
-#	nvcc --compiler-options -Wall $(ARCH) -o kcalc $(source)
+heliosk: $(source) $(headers)
+	nvcc $(ARCH) -o heliosk $(source)
+#	nvcc --compiler-options -Wall $(ARCH) -o heliosk $(source)
