@@ -9,7 +9,7 @@ All the other molecules will be included soon.
 
 # Requirements #
 
-GENGA runs on Nvidia GPUs with compute capability of 2.0 or higher. To be able
+HELIOS-K runs on Nvidia GPUs with compute capability of 2.0 or higher. To be able
 to use the Code one has to install the Cuda Toolkit. This can be downloaded
 from https://developer.nvidia.com/cuda-downloads.
 
