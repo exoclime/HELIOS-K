@@ -35,7 +35,7 @@ parameters are listed here, the order can not be changed.
  * name: The name is included in th Output filenames
  * T: Temperature in Kelvin
  * P: Pressure in Atmospheres
- * useHITEMP: when set to 0, the HITRAN files are red. When set to 1 the HITEMP files are red
+ * useHITEMP: when set to 0, the HITRAN files are read. When set to 1 the HITEMP files are read
  * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
  * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
  * numin: minimum wavenumber in 1/cm

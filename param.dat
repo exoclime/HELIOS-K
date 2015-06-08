@@ -19,3 +19,4 @@ doStoreSK = 1
 nbins = 3
 kmin = 1.0e-9
 qalphaL = 0.5
+doMean = 1

@@ -75,8 +75,8 @@ int main(int argc, char*argv[]){
 		for(int j = 0; j < devCount; ++j){
 			cudaGetDeviceProperties(&devProp, j);
 			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu",
-devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
-devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
+				devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
+				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
 
 		}
 
@@ -91,10 +91,10 @@ devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devPro
 			param.nC = Nxb;
 		}
 
-		fprintf(infofile, "name = %s\nT = %g\nP = %g\nuseHITEMP = %d\nMolecule = %d\npathToData = %s\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\nqalphaL = %g\n", 
+		fprintf(infofile, "name = %s\nT = %g\nP = %g\nuseHITEMP = %d\nMolecule = %d\npathToData = %s\nnumin = %g\nnumax = %g\ndnu = %g\ncutMode = %d\ncut = %g\ndoResampling = %d\nnC = %d\ndoTransmission = %d\nnTr = %d\ndTr =  %g\ndoStoreFullK = %d\ndostoreK = %d\nnbins = %d\nkmin = %g\nqalphaL = %g\ndoMean = %d\n", 
 			param.name, param.T, param.P, param.useHITEMP, param.nMolecule, param.path, param.numin, param.numax, param.dnu,
-param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK,
-param.nbins, param.kmin, param.qalphaL);
+			param.cutMode, param.cut, param.doResampling, param.nC, param.doTransmission, param.nTr, param.dTr, param.doStoreFullK, param.doStoreK,
+			param.nbins, param.kmin, param.qalphaL, param.doMean);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 	}
 	fclose(InfoFile);
@@ -372,6 +372,66 @@ param.nbins, param.kmin, param.qalphaL);
 
 	gettimeofday(&tt1, NULL);
 
+	//**************************************
+	//compute the Planck and Rosseland means
+	//**************************************
+	if(param.doMean == 1){
+
+		double *Pm_d;
+		double *Rm_d;
+		double *Pmn_d;
+		double *Rmn_d;
+
+		cudaMalloc((void **) &Pm_d, Nx * sizeof(double));
+		cudaMalloc((void **) &Rm_d, Nx * sizeof(double));
+		cudaMalloc((void **) &Pmn_d, Nx * sizeof(double));
+		cudaMalloc((void **) &Rmn_d, Nx * sizeof(double));
+	
+		Mean_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Pm_d, Rm_d, Pmn_d, Rmn_d, param.T, Nx, param.numin, param.dnu);
+
+cudaMemcpy(K_h, Pm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+for(int i = 0; i < Nx; ++i){
+	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
+}
+printf("\n\n");
+cudaMemcpy(K_h, Rm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+for(int i = 0; i < Nx; ++i){
+	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
+}
+printf("\n\n");
+cudaMemcpy(K_h, Pmn_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+for(int i = 0; i < Nx; ++i){
+	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
+}
+printf("\n\n");
+cudaMemcpy(K_h, Rmn_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+for(int i = 0; i < Nx; ++i){
+	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
+}
+printf("\n\n");
+
+		cudaFree(Pm_d);
+		cudaFree(Rm_d);
+		cudaFree(Pmn_d);
+		cudaFree(Rmn_d);
+	}
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	printf("maen error = %d = %s\n",error, cudaGetErrorString(error));
+	if(error != 0) return 0;
+	gettimeofday(&tt2, NULL);
+	times = (tt2.tv_sec - tt1.tv_sec);
+	timems = (tt2.tv_usec - tt1.tv_usec);
+
+//	time[3] = times + timems/1000000.0;
+//	printf("Time for mean K(x):   %g seconds\n", time[3]);
+
+	gettimeofday(&tt1, NULL);
+
+
+
+
+
 	//***************************************
 	//Do the sorting of K for all bins
 	//**************************************
@@ -546,6 +606,32 @@ for(int i = 0; i < param.nbins; ++i){
 		fclose(Out3File);
 		free(Tr_h);
 		cudaFree(Tr_d);
+	}
+	//************************************
+	//Calculate the Planck and Rosseland Mean
+	//*********************************
+	if(param.doMean == 1){
+
+		double *mean_h, *mean_d;
+		mean_h = (double*)malloc(param.nbins * 2 * sizeof(double));
+		cudaMalloc((void **) &mean_d, param.nbins * 2 * sizeof(double));
+
+		//set correction factor for simpsons rule needed for resampling
+		SimpsonCoefficient();
+		FILE *Out4File;
+		char Out4Filename[160];
+
+		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
+		Out4File = fopen(Out4Filename, "w");
+
+		//Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d, Tr_d, Nxb, param.nTr, param.dTr, Nxmin_d, param.kmin);
+		cudaMemcpy(mean_h, mean_d, param.nbins * 2.0 * sizeof(double), cudaMemcpyDeviceToHost);
+		for(int i = 0; i < param.nbins; ++i){
+			fprintf(Out4File, "%.20g %.20g\n", mean_h[i * 2], mean_h[i * 2 + 1]);
+		}
+		fclose(Out4File);
+		free(mean_h);
+		cudaFree(mean_d);
 	}
 	//************************************
 

@@ -196,10 +196,10 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 		double Q = Q_d[id];				//Q0 / Q(T)
 		double alphaL = alphaL_d[id];
 		
-		S_d[id] = S * Q * exp(-EL * h * c / (kB * T) + EL * h * c / (kB * T0)) * (1.0 - exp(-h * nu * c / (kB * T))) / (1.0 - exp(-h * nu * c / (kB * T0))); 
-		alphaD_d[id] = c / nu * sqrt( m / (2.0 * kB * T));	//inverse Doppler halfwith
+		S_d[id] = S * Q * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * T0))); 
+		alphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwith
 		alphaL *= P * pow(T0 / T, n_d[id]);
-		alphaL += A_d[id] / (4.0 * M_PI * c);				//1/cm
+		alphaL += A_d[id] / (4.0 * M_PI * def_c);				//1/cm
 		alphaL_d[id] = alphaL;
 		ID_d[id] = id;
 	}

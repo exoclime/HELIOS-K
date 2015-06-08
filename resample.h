@@ -502,7 +502,7 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 }
 
 // ****************************************
-// This kernel integrates a Kurve exp(-K_d * m) using the extended Simpsons rule:
+// This kernel integrates a function exp(-K_d * m) using the extended Simpsons rule:
 // I = 1/h (3/8 f1 + 7/6 f2 + 23/24/ f3 + f4 + ... + FN-3 + 23/23 fN-2 + 7/6 fN-1 + 3/8 fN) + O(1/N^4)
 //
 // The result is written in Tr_d[0]
@@ -510,7 +510,7 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 // NL is the number of data points in K_d
 // nb is the number of threads per block
 // nTr is the number if points in the integral
-// j is the index if Integral point
+// j is the index of the Integral point
 // The kernel must be launched with only 1 block per bin
 //
 // Author: Simon Grimm
@@ -599,4 +599,40 @@ __host__ void SimpsonCoefficient(){
 	wS_h[2] = -1.0/24.0;
 	cudaMemcpyToSymbol(wS_c, wS_h, 3 * sizeof(double), 0, cudaMemcpyHostToDevice);
 	free(wS_h);
+}
+
+// ****************************************
+// This kernel computes the terms needed for the Planck and Rosseland means. 
+// It computes also the denominators. For the Planck mean it would be
+// int_0^infty (2 h nu^3 / c^2 /(exp(hv/(kBT)) - 1) dnu  = 2 kB^4 T^4 / ( h^3 c^2) pi^4/15
+// but here we compute it also numerically to estimate the error.
+//
+// Author: Simon Grimm
+// May 2015
+// *****************************************
+__global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double T, int Nx, double numin, double dnu){
+
+	int idy = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idy;
+
+	if(id < Nx){
+		double nu = numin + id * dnu;
+		double nu3 = nu * nu * nu;
+
+		double t1 = 2.0 * def_h * nu3 / (def_c * def_c);
+		double t2 = def_h * nu * def_c / (def_kB * T);
+		
+		double e = exp(t2);
+		double e1 = e - 1.0;
+
+		double B = t1 / e1;
+		double dB_dT = t1 * t2 * e / (T * e1 * e1);
+
+		double iK = 1.0 / K_d[id];
+
+		Pm_d[id] = B * iK;
+		Rm_d[id] = dB_dT * iK;
+		Pmn_d[id] = B;
+		Rmn_d[id] = dB_dT;
+	}
 }

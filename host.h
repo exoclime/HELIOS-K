@@ -170,6 +170,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 10, paramFile);
 		fscanf (paramFile, "%lf", &param.qalphaL);
 		fgets(skip2, 3, paramFile);
+		//read doMean
+		fgets(skip, 9, paramFile);
+		fscanf (paramFile, "%d", &param.doMean);
+		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
 
@@ -240,6 +244,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 		else if(strcmp(argv[i], "-dev") == 0){
 			param.dev = atoi(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-Mean") == 0){
+			param.doMean = atoi(argv[i + 1]);
 		}
 		else{
 			printf("Error: Console arguments not valid!\n");

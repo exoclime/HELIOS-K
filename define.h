@@ -1,9 +1,9 @@
 #define VERSION 1.43
 
 #define T0 296.0 		//Temperature in K
-#define kB 1.3806489e-16 	//Boltzmann constant in erg/K
-#define h 6.62606957e-27	//Planck costant in erg s
-#define c 2.99792458e10 	//Speed of light cm/s
+#define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
+#define def_h 6.62606957e-27	//Planck costant in erg s
+#define def_c 2.99792458e10 	//Speed of light cm/s
 #define NA 6.0221412927e23	//Avogadro Constant  1/mol
 
 #define TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
@@ -64,6 +64,7 @@ struct Param{
 	int doStoreK;
 	double kmin;
 	double qalphaL;
+	int doMean;
 };
 
 struct Line{
