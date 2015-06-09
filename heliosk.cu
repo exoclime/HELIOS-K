@@ -46,7 +46,7 @@ int main(int argc, char*argv[]){
 		printf("Error: Devive Number is not allowed\n");
 		return 0;
 	}
-	double time[8];
+	double time[9];
 
 	FILE *InfoFile;
 	char InfoFilename[160];
@@ -388,7 +388,7 @@ int main(int argc, char*argv[]){
 		cudaMalloc((void **) &Rmn_d, Nx * sizeof(double));
 	
 		Mean_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Pm_d, Rm_d, Pmn_d, Rmn_d, param.T, Nx, param.numin, param.dnu);
-
+/*
 cudaMemcpy(K_h, Pm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 for(int i = 0; i < Nx; ++i){
 	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
@@ -409,6 +409,27 @@ for(int i = 0; i < Nx; ++i){
 	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
 }
 printf("\n\n");
+*/
+		IntegrateMean_kernel <512> <<< 4, 512 >>> (Pm_d, Rm_d, Pmn_d, Rmn_d, Nx);
+		double integral = 2.0 * def_kB * def_kB * def_kB * def_kB * param.T * param.T * param.T * param.T / ( def_h * def_h * def_h * def_c * def_c * 15.0) * M_PI * M_PI * M_PI * M_PI;
+	
+		double *means_h;	
+		means_h = (double*)malloc(4 * sizeof(double));
+
+		cudaMemcpy(means_h + 0, Pm_d, sizeof(double), cudaMemcpyDeviceToHost);
+		cudaMemcpy(means_h + 1, Rm_d, sizeof(double), cudaMemcpyDeviceToHost);
+		cudaMemcpy(means_h + 2, Pmn_d, sizeof(double), cudaMemcpyDeviceToHost);
+		cudaMemcpy(means_h + 3, Rmn_d, sizeof(double), cudaMemcpyDeviceToHost);
+
+		FILE *Out4File;
+		char Out4Filename[160];
+
+		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
+		Out4File = fopen(Out4Filename, "w");
+
+		fprintf(Out4File, "%.20g\n%.20g\n%.20g\n%.20g\n", means_h[0] / means_h[2], means_h[1] / means_h[3],  means_h[2], integral);
+
+		fclose(Out4File);
 
 		cudaFree(Pm_d);
 		cudaFree(Rm_d);
@@ -423,8 +444,8 @@ printf("\n\n");
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-//	time[3] = times + timems/1000000.0;
-//	printf("Time for mean K(x):   %g seconds\n", time[3]);
+	time[4] = times + timems/1000000.0;
+	printf("Time for mean K(x):    %g seconds\n", time[4]);
 
 	gettimeofday(&tt1, NULL);
 
@@ -449,8 +470,8 @@ printf("\n\n");
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	time[4] = times + timems/1000000.0;
-	printf("Time for sort K(x):    %g seconds\n", time[4]);
+	time[5] = times + timems/1000000.0;
+	printf("Time for sort K(x):    %g seconds\n", time[5]);
 
 	gettimeofday(&tt1, NULL);
 
@@ -538,8 +559,8 @@ for(int i = 0; i < param.nbins; ++i){
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	time[5] = times + timems/1000000.0;
-	printf("Time for Resampling:   %g seconds\n", time[5]);
+	time[6] = times + timems/1000000.0;
+	printf("Time for Resampling:   %g seconds\n", time[6]);
 
 	gettimeofday(&tt1, NULL);
 
@@ -571,11 +592,13 @@ for(int i = 0; i < param.nbins; ++i){
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	time[6] = times + timems/1000000.0;
-	printf("Time for write K(y):   %g seconds\n", time[6]);
+	time[7] = times + timems/1000000.0;
+	printf("Time for write K(y):   %g seconds\n", time[7]);
 
 	gettimeofday(&tt1, NULL);
 
+	//set correction factor for simpsons rule needed for resampling
+	SimpsonCoefficient();
 
 	//*********************************
 	//Calculate the Transmission function
@@ -586,8 +609,6 @@ for(int i = 0; i < param.nbins; ++i){
 		Tr_h = (double*)malloc(param.nbins * param.nTr * sizeof(double));
 		cudaMalloc((void **) &Tr_d, param.nbins * param.nTr * sizeof(double));
 
-		//set correction factor for simpsons rule needed for resampling
-		SimpsonCoefficient();
 		FILE *Out3File;
 		char Out3Filename[160];
 
@@ -607,33 +628,7 @@ for(int i = 0; i < param.nbins; ++i){
 		free(Tr_h);
 		cudaFree(Tr_d);
 	}
-	//************************************
-	//Calculate the Planck and Rosseland Mean
-	//*********************************
-	if(param.doMean == 1){
 
-		double *mean_h, *mean_d;
-		mean_h = (double*)malloc(param.nbins * 2 * sizeof(double));
-		cudaMalloc((void **) &mean_d, param.nbins * 2 * sizeof(double));
-
-		//set correction factor for simpsons rule needed for resampling
-		SimpsonCoefficient();
-		FILE *Out4File;
-		char Out4Filename[160];
-
-		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
-		Out4File = fopen(Out4Filename, "w");
-
-		//Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d, Tr_d, Nxb, param.nTr, param.dTr, Nxmin_d, param.kmin);
-		cudaMemcpy(mean_h, mean_d, param.nbins * 2.0 * sizeof(double), cudaMemcpyDeviceToHost);
-		for(int i = 0; i < param.nbins; ++i){
-			fprintf(Out4File, "%.20g %.20g\n", mean_h[i * 2], mean_h[i * 2 + 1]);
-		}
-		fclose(Out4File);
-		free(mean_h);
-		cudaFree(mean_d);
-	}
-	//************************************
 
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
@@ -643,15 +638,16 @@ for(int i = 0; i < param.nbins; ++i){
 	times = (tt2.tv_sec - tt1.tv_sec);
 	timems = (tt2.tv_usec - tt1.tv_usec);
 
-	time[7] = times + timems/1000000.0;
-	printf("Time for Transmission: %g seconds\n", time[7]);
+	time[8] = times + timems/1000000.0;
+	printf("Time for Transmission: %g seconds\n", time[8]);
 
 	InfoFile = fopen(InfoFilename, "a");
 	fprintf(InfoFile,"Time for write K(x):   %g seconds\n", time[3]);
-	fprintf(InfoFile,"Time for sort K(x):    %g seconds\n", time[4]);
-	fprintf(InfoFile,"Time for Resampling:   %g seconds\n", time[5]);
-	fprintf(InfoFile,"Time for write K(y):   %g seconds\n", time[6]);
-	fprintf(InfoFile,"Time for Transmission: %g seconds\n", time[7]);
+	fprintf(InfoFile,"Time for mean K(x):    %g seconds\n", time[4]);
+	fprintf(InfoFile,"Time for sort K(x):    %g seconds\n", time[5]);
+	fprintf(InfoFile,"Time for Resampling:   %g seconds\n", time[6]);
+	fprintf(InfoFile,"Time for write K(y):   %g seconds\n", time[7]);
+	fprintf(InfoFile,"Time for Transmission: %g seconds\n", time[8]);
 	fclose(InfoFile);	
 
 

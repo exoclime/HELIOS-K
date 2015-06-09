@@ -608,7 +608,7 @@ __host__ void SimpsonCoefficient(){
 // but here we compute it also numerically to estimate the error.
 //
 // Author: Simon Grimm
-// May 2015
+// June 2015
 // *****************************************
 __global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double T, int Nx, double numin, double dnu){
 
@@ -619,7 +619,7 @@ __global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn
 		double nu = numin + id * dnu;
 		double nu3 = nu * nu * nu;
 
-		double t1 = 2.0 * def_h * nu3 / (def_c * def_c);
+		double t1 = 2.0 * def_h * nu3 * def_c * def_c;
 		double t2 = def_h * nu * def_c / (def_kB * T);
 		
 		double e = exp(t2);
@@ -628,11 +628,101 @@ __global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn
 		double B = t1 / e1;
 		double dB_dT = t1 * t2 * e / (T * e1 * e1);
 
-		double iK = 1.0 / K_d[id];
+		double K = K_d[id];
 
-		Pm_d[id] = B * iK;
-		Rm_d[id] = dB_dT * iK;
+		Pm_d[id] = B * K;
+		Rm_d[id] = dB_dT / K;
 		Pmn_d[id] = B;
 		Rmn_d[id] = dB_dT;
+
+	}
+}
+
+template <int nb>
+__global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, int NL){
+
+	int idy = threadIdx.x;
+	int idx = blockIdx.x;
+	__shared__ double a_s[nb];
+
+	a_s[idy] = 0.0;
+
+	__syncthreads();
+
+	for(int k = 0; k < NL; k += nb){
+		if(idy + k < NL){
+			if(idx == 0) a_s[idy] += Pm_d[idy + k];
+			if(idx == 1) a_s[idy] += Rm_d[idy + k];
+			if(idx == 2) a_s[idy] += Pmn_d[idy + k];
+			if(idx == 3) a_s[idy] += Rmn_d[idy + k];
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 512){
+		if(idy < 256){
+			a_s[idy] += a_s[idy + 256];
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 256){
+		if(idy < 128){
+			a_s[idy] += a_s[idy + 128];
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 128){
+		if(idy < 64){
+			a_s[idy] += a_s[idy + 64];
+		}
+	}
+	__syncthreads();
+	if(idy < 3){
+		//correct for Simpsons rule 
+		if(idx == 0){
+			a_s[idy] += wS_c[idy] * Pm_d[idy];
+			a_s[idy] += wS_c[2-idy] * Pm_d[NL - 1 - idy];
+		}
+		if(idx == 1){
+			a_s[idy] += wS_c[idy] * Rm_d[idy];
+			a_s[idy] += wS_c[2-idy] * Rm_d[NL - 1 - idy];
+		}
+		if(idx == 2){
+			a_s[idy] += wS_c[idy] * Pmn_d[idy];
+			a_s[idy] += wS_c[2-idy] * Pmn_d[NL - 1 - idy];
+		}
+		if(idx == 3){
+			a_s[idy] += wS_c[idy] * Rmn_d[idy];
+			a_s[idy] += wS_c[2-idy] * Rmn_d[NL - 1 - idy];
+		}
+	}
+	__syncthreads();
+	if(idy < 32){
+		volatile double *a = a_s;
+		if(nb >= 64) a[idy] += a[idy + 32];
+		if(nb >= 32) a[idy] += a[idy + 16];
+		if(nb >= 16) a[idy] += a[idy + 8];
+		if(nb >= 8) a[idy] += a[idy + 4];
+		if(nb >= 4) a[idy] += a[idy + 2];
+		if(nb >= 2) a[idy] += a[idy + 1];
+	}
+	__syncthreads();
+
+	if(idy == 0){
+		if(idx == 0){
+			Pm_d[0] = a_s[0];
+		}
+		if(idx == 1){
+			Rm_d[0] = a_s[0];
+		}
+		if(idx == 2){
+			Pmn_d[0] = a_s[0];
+		}
+		if(idx == 3){
+			Rmn_d[0] = a_s[0];
+		}
+printf("%d %.20g\n", idx, a_s[0]);
 	}
 }

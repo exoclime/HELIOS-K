@@ -56,6 +56,7 @@ parameters are listed here, the order can not be changed.
  * nbins: number of bins
  * kmin: minimal value for the opacity function 
  * qalphaL: q value in the Lorentz half width q = Pself / P 
+ * doMean: Calculate the Planck and Rosseland opacity means
 
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:
@@ -82,6 +83,7 @@ Instead of using the parameter file, some arguments can also be passed as consol
  * \-kmin < double > : kmin
  * \-dev < int > : Device number (For multiple GPU systems) 	
  * \-q < double > : qalphaL
+ * \-Mean < int > : doMean
 
 # Code parameters #
 The file define.h contains the physical parameters and some code parameters.
@@ -130,7 +132,8 @@ nu are positions of the wavenumber and K is the unsorted opacity function
 
 # Out_< name >_bin.dat #
 It contains the y and K(y) per bin
-y goes from 0 to 1, K(y) is the per bin sorted opacity function. The bins are separated by two blank lines.
+y goes from 0 to 1. K(y) is the per bin sorted opacity function. The bins are separated by two blank lines, starting with 
+the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
 When doResampling is set to one, then this file contains the sorted opacity functions computed from the 
 Chebyshev coefficients
 
@@ -142,11 +145,22 @@ kmin is the minimal value of K(y), reached when cutting the Voigt profiles
 ystart is the position in y when the K(y) starts to be larger than kmin
 K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j](yy)), where T(y) are the Chebyshev polynomials,
 where yy = (2.0 * y - 1.0 - ystart) / (1.0 - ystart), for y in the range [ystart, 1]
-
+The bins are separated with a blank line, starting with 
+the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
 
 # Out_< name >_tr.dat #
 It contains m and T.
 m is the column mass, m_i = exp((i - nTr/2) * dTr)
 T is the Transmission function Int_0^1 exp(-K(y)m) dy
+
+# Out_< name >_mean.dat #
+When the argument doMean is set to one, this file contains the Planck and Rosseland means.
+They are computed over the entire range in wavenumbers from numin to numax with spacing dnu.
+The first line is the Planck mean: Int_0^infty (kappa * B_nu * dnu) / Int_0^infty (B_nu * dnu)
+The second line is the Rosseland mean: Int_0^infty (kappa^-1 * del(B_nu)/del(T) * dnu) / Int_0^infty ( del(B)/del(T)_nu * dnu)
+The third line is the numerical integral Int_0^infty (B_nu * dnu)
+The fourth line is the analytic integral Int_0^infty (B_nu * dnu) = 2.0 * kB^4 * T^4 / (h^3 * c^2) * pi^4 / 15
+
+The value of the numerical integral should converge to the analytic expression for high resolutions dnu, numin -> 0 and numax -> infinity.
 
 
