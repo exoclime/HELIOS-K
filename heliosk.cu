@@ -411,7 +411,9 @@ for(int i = 0; i < Nx; ++i){
 printf("\n\n");
 */
 		IntegrateMean_kernel <512> <<< 4, 512 >>> (Pm_d, Rm_d, Pmn_d, Rmn_d, Nx);
-		double integral = 2.0 * def_kB * def_kB * def_kB * def_kB * param.T * param.T * param.T * param.T / ( def_h * def_h * def_h * def_c * def_c * 15.0) * M_PI * M_PI * M_PI * M_PI;
+		double sigma = 2.0 * def_kB * def_kB * def_kB * def_kB / ( def_h * def_h * def_h * def_c * def_c * 15.0) * M_PI * M_PI * M_PI * M_PI * M_PI;
+		double integral1 = sigma * param.T * param.T * param.T * param.T / M_PI;
+		double integral2 = M_PI / (4.0 * sigma * param.T * param.T * param.T);
 	
 		double *means_h;	
 		means_h = (double*)malloc(4 * sizeof(double));
@@ -427,7 +429,7 @@ printf("\n\n");
 		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
 		Out4File = fopen(Out4Filename, "w");
 
-		fprintf(Out4File, "%.20g\n%.20g\n%.20g\n%.20g\n", means_h[0] / means_h[2], means_h[1] / means_h[3],  means_h[2], integral);
+		fprintf(Out4File, "%.20g\n%.20g\n%.20g\n%.20g\n%.20g\n%.20g\n", means_h[0] / means_h[2], means_h[3] / means_h[1],  means_h[2], integral1, means_h[3], 1.0 / integral2);
 
 		fclose(Out4File);
 
