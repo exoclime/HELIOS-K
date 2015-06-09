@@ -155,11 +155,11 @@ T is the Transmission function Int_0^1 exp(-K(y)m) dy
 
 # Out_< name >_mean.dat #
 When the argument doMean is set to one, this file contains the Planck and Rosseland means.
-They are computed over the entire range in wavenumbers from numin to numax with spacing dnu.
-The first line is the Planck mean: Int_0^infty (kappa * B_nu * dnu) / Int_0^infty (B_nu * dnu)
-The second line is the Rosseland mean: Int_0^infty (kappa^-1 * del(B_nu)/del(T) * dnu) / Int_0^infty ( del(B)/del(T)_nu * dnu)
-The third line is the numerical integral Int_0^infty (B_nu * dnu)
-The fourth line is the analytic integral Int_0^infty (B_nu * dnu) = 2.0 * kB^4 * T^4 / (h^3 * c^2) * pi^4 / 15
+They are computed over the entire range in wavenumbers from numin to numax with spacing dnu.  
+The first line is the Planck mean: Int_0^infty (kappa * B_nu * dnu) / Int_0^infty (B_nu * dnu)  
+The second line is the Rosseland mean: Int_0^infty (kappa^-1 * del(B_nu)/del(T) * dnu) / Int_0^infty ( del(B)/del(T)_nu * dnu)  
+The third line is the numerical integral Int_0^infty (B_nu * dnu)  
+The fourth line is the analytic integral Int_0^infty (B_nu * dnu) = 2.0 * kB^4 * T^4 / (h^3 * c^2) * pi^4 / 15  
 
 The value of the numerical integral should converge to the analytic expression for high resolutions dnu, numin -> 0 and numax -> infinity.
 
