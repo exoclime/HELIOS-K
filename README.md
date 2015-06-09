@@ -3,7 +3,7 @@
 
 # Limitations #
 The current version of the code supports only the molecules H2O, CO2, CO and CH4. 
-When HITEMP is used, only H20 is supported.
+When HITEMP is used, only H20, C02 and C0 are supported.
 All the other molecules will be included soon. 
 
 
