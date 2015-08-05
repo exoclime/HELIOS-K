@@ -248,12 +248,29 @@ __global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
 //Author Simon Grimm
 //January 2015
 // *************************************************
-__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb){
+__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb, double *individualBins_d, int nbins, double numin, double dnu){
 
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
+
 	if(id < Nx){
 		int bin = id / Nxb;
 		binKey_d[id] = bin;
+	//	if(id == Nx - 1) binKey_d[id] = (id - 1) / Nxb;
+
+		if(individualBins_d != NULL){
+			double nu = numin + id * dnu;
+			binKey_d[id] = 0;
+
+			for(int i = 0; i < nbins; ++i){
+				double nl = individualBins_d[i];
+				double nr = individualBins_d[i + 1];
+
+				if(nl < nu && nu <= nr){
+					binKey_d[id] = i;
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -316,7 +333,7 @@ __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 }
 
 //*************************************************
-//This kernel comnputes the limits on line indexes for each block in the Line kernel
+//This kernel computes the limits of line indexes for each block in the Line kernel
 // bl is the number of treads per block in the Line kernel
 // n is the size of the Limits_d array
 //

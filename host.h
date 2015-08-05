@@ -162,6 +162,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%d", &param.nbins);
 		fgets(skip2, 3, paramFile);
+		//read bins
+		fgets(skip, 11, paramFile);
+		fscanf (paramFile, "%s", &param.bins);
+		fgets(skip2, 3, paramFile);
 		//read kmin
 		fgets(skip, 7, paramFile);
 		fscanf (paramFile, "%lf", &param.kmin);
@@ -254,8 +258,52 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 
 	}
+
+	if(strcmp(param.bins, "-") != 0){
+		printf("Use bins in file %s\n", param.bins);
+		param.useIndividualBins = 1;
+		FILE *binsfile;
+		binsfile = fopen(param.bins, "r");
+		if(binsfile == NULL){
+			printf("Error: bins file not found: %s\n", param.bins);
+			return 0;
+		}
+
+		double b;
+		int er;
+		for(int i = 0; i < 1000000; ++i){
+			er = fscanf(binsfile, "%lf", &b);
+			if(er <= 0){
+				param.nbins = i - 1;
+				break;
+			}
+		}		
+		fclose(binsfile);	
+	}
+
 	return 1;
 }
+
+__host__ int readBinFile(Param &param, double *individualBins_h){
+	FILE *binsfile;
+	binsfile = fopen(param.bins, "r");
+	int er;
+	double binsOld = -100000.0;
+	for(int i = 0; i < param.nbins + 1; ++i){
+		er = fscanf(binsfile, "%lf", &individualBins_h[i]);
+		if(er <= 0) return 0;
+		if(individualBins_h[i] <= binsOld){
+			printf("Error; bin boundaries not monotonic growing\n");
+			return 0;
+		}
+		binsOld = individualBins_h[i];
+
+		printf("%g\n", individualBins_h[i]);
+	}
+	fclose(binsfile);	
+	return 1;
+}
+
 
 __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
 	FILE *dataFile;

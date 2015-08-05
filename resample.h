@@ -19,8 +19,8 @@ __global__ void Vandermonde_kernel(double *A_d, double nl, int NC){
 
 	if(id < NL){
 
-		double x = id * 2.0 / nl - 1.0;
-
+		double x = id * 2.0 / (nl - 1.0) - 1.0;
+//printf("%d %g\n", id, x);
 		A_d[id + NL * 0] = 1.0;
 		A_d[id + NL * 1] = x;
 
@@ -391,7 +391,6 @@ __global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, 
 	int idx = blockIdx.x;
 
 	double K = K_d[idx * NLb];
-
 	int Nmin = Nmin_d[idx];
 	if(K == kmin){
 
@@ -404,7 +403,7 @@ __global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, 
 				double Kr = K_d[idx * NLb + il + 1];
 				double Ki = Kl + (Kr - Kl) * (ii - il);
 
-				K2_d[idx * NLb + k + idy] = Ki; 
+				K2_d[idx * NLb + k + idy] = Ki;
 			}
 		}
 	}
@@ -429,7 +428,6 @@ __global__ void copyK2_kernel(double *K_d, double *K2_d, double kmin, int NLb){
 		for(int k = 0; k < NLb; k += nb){
 			if(idy + k < NLb){
 				K_d[idx * NLb + k + idy] = K2_d[idx * NLb + k + idy];
-
 			}
 		}
 	}
@@ -450,11 +448,8 @@ __global__ void lnK_kernel(double *K_d, int NL){
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if(id < NL){
-		double K;
-		K = K_d[id];
-
-		K = log(K);
-		K_d[id] = K;
+		double K = K_d[id];
+		K_d[id] = log(K);
 	}
 }
 

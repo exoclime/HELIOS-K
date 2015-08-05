@@ -38,6 +38,7 @@ int main(int argc, char*argv[]){
 	//Read prameters
 	Param param;
 	param.dev = 0;
+	param.useIndividualBins = 0;
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
 		return 0;
@@ -46,6 +47,33 @@ int main(int argc, char*argv[]){
 		printf("Error: Devive Number is not allowed\n");
 		return 0;
 	}
+
+	//If the bin file is used store the boundaries of the bins
+	double *individualBins_h, *individualBins_d;
+	if(param.useIndividualBins == 1){
+		individualBins_h = (double*)malloc((param.nbins + 1) * sizeof(double));
+		cudaMalloc((void **) &individualBins_d, (param.nbins + 1) * sizeof(double));
+		er = readBinFile(param, individualBins_h);
+		if(er == 0) return 0;
+		param.numin = individualBins_h[0];
+		param.numax = individualBins_h[param.nbins];
+		cudaMemcpy(individualBins_d, individualBins_h, (param.nbins + 1) * sizeof(double), cudaMemcpyHostToDevice);
+
+		if(param.doResampling == 1){
+			printf("Error: The resampling function is not supported for the bin-file option\n");
+			return 0;
+		}
+		if(param.doTransmission == 1){
+			printf("Error: The transmission function is not supported for the bin-file option\n");
+			return 0;
+		}
+	}
+	else{
+		individualBins_h = NULL;
+		individualBins_d = NULL;
+	
+	}
+
 	double time[9];
 
 	FILE *InfoFile;
@@ -60,7 +88,7 @@ int main(int argc, char*argv[]){
 	cudaDriverGetVersion(&driverVersion);
 
 	//Determine the number of points
-	int Nx = (int)((param.numax - param.numin) / param.dnu);
+	int Nx = (int)((param.numax - param.numin) / param.dnu) + 1;
 	//Determine the numbers of points per bin
 	int Nxb = Nx / param.nbins;
 
@@ -143,7 +171,13 @@ int main(int argc, char*argv[]){
 	cudaMalloc((void **) &K_d, Nx * sizeof(double));
 	cudaMalloc((void **) &binKey_d, Nx * sizeof(int));
 	InitialK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d, Nx, param.kmin);
-	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, Nxb);
+	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, Nxb, individualBins_d, param.nbins, param.numin, param.dnu);
+	//int *binKey_h; 	//only needed for check the key
+	//binKey_h = (int*)malloc(Nx * sizeof(int));
+	//cudaMemcpy(binKey_h, binKey_d, Nx * sizeof(int), cudaMemcpyDeviceToHost);
+	//for(int i = 0; i < Nx; ++i){
+	//	printf("%d %g %d\n", i, param.numin + i * param.dnu, binKey_h[i]);
+	//}
 
 	const int ntL = 64;	//number of threads in Line kernel
 	int nLimits = (Nx + ntL - 1) / ntL;
@@ -152,7 +186,7 @@ int main(int argc, char*argv[]){
 	int *MaxLimits_h, *MaxLimits_d;
 	MaxLimits_h = (int*)malloc(sizeof(int));
 	cudaMalloc((void **) &MaxLimits_d, sizeof(int));
-	//int2 *Limits_h;
+	//int2 *Limits_h; 	//only needed for check the Limits
 	//Limits_h = (int2*)malloc(nLimits * sizeof(int2));
 
 	cudaDeviceSynchronize();
@@ -167,7 +201,7 @@ int main(int argc, char*argv[]){
 	fprintf(InfoFile,"Number of points per bin: %d\n", Nxb);
 	fclose(InfoFile);
 	//**************************************
-	//Starting the loop around the datafile
+	//Starting the loop around the datafiles
 	//*************************************
 	for(int fi = 0; fi < m.nFiles; ++fi){
 		printf("Reading file %d of %d\n", fi, m.nFiles);
@@ -337,7 +371,7 @@ int main(int argc, char*argv[]){
 		fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
 		fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
 		fclose(InfoFile);
-	} // End if linefile loop
+	} // End of linefile loop
 
 	gettimeofday(&tt1, NULL);
 
@@ -479,6 +513,7 @@ printf("\n\n");
 
 	//********************************
 	//Prepare Resampling and do QR factorization, the same for all bins
+	// this doesn't work with individual bins
 	//*********************************
 	int *Nxmin_h, *Nxmin_d;		
 	Nxmin_h = (int*)malloc(param.nbins * sizeof(int));
@@ -575,13 +610,40 @@ for(int i = 0; i < param.nbins; ++i){
 		char Out2Filename[160];
 		sprintf(Out2Filename, "Out_%s_bin.dat", param.name);
 		Out2File = fopen(Out2Filename, "w");
-		for(int i = 0; i < param.nbins; ++i){
-			int il = i * Nxb;
-			int Nxmin = Nxmin_h[i];
-			for(int j = 0; j < Nxb; ++j){
-				fprintf(Out2File, "%g %.20g\n", Nxmin / ((double)(Nxb)) + j / ((double)(Nxb)) * (Nxb - Nxmin) / ((double)(Nxb)), K_h[j + il]);
+		if(param.useIndividualBins == 0){
+			for(int i = 0; i < param.nbins; ++i){
+				int il = i * Nxb;
+				int Nxmin = Nxmin_h[i];
+				for(int j = 0; j < Nxb; ++j){
+					fprintf(Out2File, "%g %.20g\n", Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1)), K_h[j + il]);
+				}
+				fprintf(Out2File,"\n\n");
 			}
-			fprintf(Out2File,"\n\n");
+		}
+		else{
+			int ib = 0;
+			int j = 0;
+			for(int i = 0; i < Nx; ++i){
+				double nu = param.numin + i * param.dnu;
+				double nul = individualBins_h[ib];
+				double nur = individualBins_h[ib + 1];
+				
+				int il = (int)((nul - param.numin) / param.dnu);
+				int ir = (int)((nur - param.numin) / param.dnu);
+				int Nxb = ir - il;
+				if(ib == 0) ++Nxb; //take into account the first left boundary
+
+//printf("%d %g %g %g %d %d %d %d %g\n", j, nu, nul, nur, Nxb, il, ir, i, j / ((double)(Nxb - 1)));
+
+				fprintf(Out2File, "%g %.20g\n", j / ((double)(Nxb - 1)), K_h[i]);
+				++j;
+
+				if(nu > nur - param.dnu){
+					++ib;
+					j = 0;
+					fprintf(Out2File,"\n\n");
+				}
+			}
 		}
 		fclose(Out2File);
 	}
@@ -657,12 +719,14 @@ for(int i = 0; i < param.nbins; ++i){
 	free(MaxLimits_h);
 	free(K_h);
 	free(Nxmin_h);
+	free(individualBins_h);
 
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);
 	cudaFree(K_d);
 	cudaFree(binKey_d);
-	cudaFree(Nxmin_d);	
+	cudaFree(Nxmin_d);
+	cudaFree(individualBins_d);	
 
 	error = cudaGetLastError();
 	printf("Final error = %d = %s\n",error, cudaGetErrorString(error));
