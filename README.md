@@ -125,11 +125,11 @@ the  first 2 characters are the Molecule id, the third character is the order al
 When a 'bisfile' name is given in the param.dat file, then this file is used to generate the edges of the bins, which can be irregular. Note that this option
 does no support the deresampling and deTransmission options. 
 The binsfile must contain line by line the edges of the bins in cm^-1. 
-For example:
-0.5
-50
-100
-200
+  For example:  
+  0.5  
+  50  
+  100  
+  200  
 
 # Output Files #
 Different Output files are written, depending to the set values in the 'param.dat' file
