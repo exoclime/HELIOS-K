@@ -85,6 +85,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 4, paramFile);
 		fscanf (paramFile, "%lf", &param.P);
 		fgets(skip2, 3, paramFile);
+		//read PFile
+		fgets(skip, 8, paramFile);
+		fscanf (paramFile, "%s", &param.PFilename);
+		fgets(skip2, 3, paramFile);
 		//read HITEMP
 		fgets(skip, 12, paramFile);
 		fscanf (paramFile, "%d", &param.useHITEMP);
@@ -305,6 +309,27 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}		
 		fclose(edgesfile);	
 	}
+	if(strcmp(param.PFilename, "-") != 0){
+		printf("Use Pressure in file %s\n", param.PFilename);
+		param.usePFile = 1;
+		FILE *Pfile;
+		Pfile = fopen(param.PFilename, "r");
+		if(Pfile == NULL){
+			printf("Error: Pressure file not found: %s\n", param.PFilename);
+			return 0;
+		}
+
+		double b;
+		int er;
+		for(int i = 0; i < 1000000; ++i){
+			er = fscanf(Pfile, "%lf", &b);
+			if(er <= 0){
+				param.nP = i;
+				break;
+			}
+		}		
+		fclose(Pfile);	
+	}
 
 	return 1;
 }
@@ -346,6 +371,19 @@ __host__ int readEdgesFile(Param &param, double *outputEdges_h){
 		//printf("%g\n", outputEdges_h[i]);
 	}
 	fclose(edgesfile);	
+	return 1;
+}
+
+__host__ int readPFile(Param &param, double *P_h){
+	FILE *Pfile;
+	Pfile = fopen(param.PFilename, "r");
+	int er;
+	for(int i = 0; i < param.nP; ++i){
+		er = fscanf(Pfile, "%lf", &P_h[i]);
+		if(er <= 0) return 0;
+		printf("%g\n", P_h[i]);
+	}
+	fclose(Pfile);	
 	return 1;
 }
 
@@ -419,7 +457,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 		double gammaSelf = strtod(c7, NULL);
 		L.alphaL_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		L.n_h[i] = strtod(c9, NULL);
-		L.alphaD_h[i] = L.n_h[i];
+		L.alphaD_h[i] = 0.0;
 		
 		int id= std::atoi(c1);
 		int idAFGL;

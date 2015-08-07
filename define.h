@@ -1,4 +1,4 @@
-#define VERSION 1.44
+#define VERSION 1.45
 
 #define T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -45,6 +45,9 @@ struct Param{
 	char name[160];
 	double T;
 	double P;
+	char PFilename[160];
+	int nP;
+	int usePFile; 
 	int nMolecule;
 	char path[300];
 	int useHITEMP;

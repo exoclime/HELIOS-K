@@ -718,6 +718,6 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 		if(idx == 3){
 			Rmn_d[0] = a_s[0];
 		}
-printf("%d %.20g\n", idx, a_s[0]);
+//printf("%d %.20g\n", idx, a_s[0]);
 	}
 }
