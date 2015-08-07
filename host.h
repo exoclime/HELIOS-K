@@ -162,9 +162,13 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%d", &param.nbins);
 		fgets(skip2, 3, paramFile);
-		//read bins
+		//read binsfile
 		fgets(skip, 11, paramFile);
 		fscanf (paramFile, "%s", &param.bins);
+		fgets(skip2, 3, paramFile);
+		//read putputEdges
+		fgets(skip, 18, paramFile);
+		fscanf (paramFile, "%s", &param.edges);
 		fgets(skip2, 3, paramFile);
 		//read kmin
 		fgets(skip, 7, paramFile);
@@ -280,6 +284,27 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}		
 		fclose(binsfile);	
 	}
+	if(strcmp(param.edges, "-") != 0){
+		printf("Use output edges in file %s\n", param.edges);
+		param.useOutputEdges = 1;
+		FILE *edgesfile;
+		edgesfile = fopen(param.edges, "r");
+		if(edgesfile == NULL){
+			printf("Error: output edges file not found: %s\n", param.edges);
+			return 0;
+		}
+
+		double b;
+		int er;
+		for(int i = 0; i < 1000000; ++i){
+			er = fscanf(edgesfile, "%lf", &b);
+			if(er <= 0){
+				param.nedges = i;
+				break;
+			}
+		}		
+		fclose(edgesfile);	
+	}
 
 	return 1;
 }
@@ -298,9 +323,29 @@ __host__ int readBinFile(Param &param, double *individualBins_h){
 		}
 		binsOld = individualBins_h[i];
 
-		printf("%g\n", individualBins_h[i]);
+		//printf("%g\n", individualBins_h[i]);
 	}
 	fclose(binsfile);	
+	return 1;
+}
+
+__host__ int readEdgesFile(Param &param, double *outputEdges_h){
+	FILE *edgesfile;
+	edgesfile = fopen(param.edges, "r");
+	int er;
+	double edgesOld = -100000.0;
+	for(int i = 0; i < param.nedges; ++i){
+		er = fscanf(edgesfile, "%lf", &outputEdges_h[i]);
+		if(er <= 0) return 0;
+		if(outputEdges_h[i] <= edgesOld){
+			printf("Error; output edges not monotonic growing\n");
+			return 0;
+		}
+		edgesOld = outputEdges_h[i];
+
+		//printf("%g\n", outputEdges_h[i]);
+	}
+	fclose(edgesfile);	
 	return 1;
 }
 

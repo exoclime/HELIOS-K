@@ -54,7 +54,8 @@ parameters are listed here, the order can not be changed.
  * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_< name >.dat'.
  * doStoreSK: When set to one, then the perbin sorted opacity function is written to the file 'Out_< name >_bin.dat'.
  * nbins: number of bins
- * binsfile: A '-' ignores tis option, otherwise this option specifies a file name with contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
+ * binsfile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
+ * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
  * kmin: minimal value for the opacity function 
  * qalphaL: q value in the Lorentz half width q = Pself / P 
  * doMean: Calculate the Planck and Rosseland opacity means
@@ -122,14 +123,25 @@ the  first 2 characters are the Molecule id, the third character is the order al
 
 
 # The binsfile options #
-When a 'bisfile' name is given in the param.dat file, then this file is used to generate the edges of the bins, which can be irregular. Note that this option
-does no support the deresampling and deTransmission options. 
-The binsfile must contain line by line the edges of the bins in cm^-1. 
+When a 'binsFile' name is given in the param.dat file, then this file is used to generate the edges of the bins, which can be irregular. Note that this option
+does no support the doResampling and doTransmission options. 
+The binsfile must contain line by line the edges of the bins in cm^-1.   
   For example:  
   0.5  
   50  
   100  
   200  
+
+# The output edges option #
+When a 'outputedgesFile' name is given in the pram.dat file, then this file is used to specify the output positions of the Out_<name>_bin.dat files.
+The file must contain line by line the positions in y.  
+  For example:  
+  0.0  
+  0.1  
+  0.45  
+  0.78  
+  1.0  
+
 
 # Output Files #
 Different Output files are written, depending to the set values in the 'param.dat' file

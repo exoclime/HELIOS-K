@@ -55,7 +55,9 @@ struct Param{
 	double cut;
 	int dev;
 	int nbins;
+	int nedges;
 	char bins[160];
+	char edges[160];
 	int doResampling;
 	int nC;
 	int doTransmission;
@@ -67,6 +69,7 @@ struct Param{
 	double qalphaL;
 	int doMean;
 	int useIndividualBins;
+	int useOutputEdges;
 };
 
 struct Line{

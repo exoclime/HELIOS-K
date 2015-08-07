@@ -39,6 +39,8 @@ int main(int argc, char*argv[]){
 	Param param;
 	param.dev = 0;
 	param.useIndividualBins = 0;
+	param.useOutputEdges = 0;
+	param.nedges = 0;
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
 		return 0;
@@ -71,7 +73,16 @@ int main(int argc, char*argv[]){
 	else{
 		individualBins_h = NULL;
 		individualBins_d = NULL;
-	
+	}
+	//If the output edges file is used store the edges
+	double *outputEdges_h;
+	if(param.useOutputEdges == 1){
+		outputEdges_h = (double*)malloc((param.nedges + 1) * sizeof(double));
+		er = readEdgesFile(param, outputEdges_h);
+		if(er == 0) return 0;
+	}
+	else{
+		outputEdges_h = NULL;
 	}
 
 	double time[9];
@@ -614,8 +625,20 @@ for(int i = 0; i < param.nbins; ++i){
 			for(int i = 0; i < param.nbins; ++i){
 				int il = i * Nxb;
 				int Nxmin = Nxmin_h[i];
+				int iedge = 0;
 				for(int j = 0; j < Nxb; ++j){
-					fprintf(Out2File, "%g %.20g\n", Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1)), K_h[j + il]);
+					double y = Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
+					double y1 = Nxmin / ((double)(Nxb - 1)) + (j + 1) / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
+					if(param.useOutputEdges == 0){
+						fprintf(Out2File, "%g %.20g\n", y, K_h[j + il]);
+					}
+					else{
+						double edge = outputEdges_h[iedge];
+						if(y <= edge && edge <= y1 && iedge < param.nedges){
+							fprintf(Out2File, "%g %.20g\n", edge, (K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]);
+							++iedge;
+						}
+					}
 				}
 				fprintf(Out2File,"\n\n");
 			}
@@ -623,6 +646,7 @@ for(int i = 0; i < param.nbins; ++i){
 		else{
 			int ib = 0;
 			int j = 0;
+			int iedge = 0;
 			for(int i = 0; i < Nx; ++i){
 				double nu = param.numin + i * param.dnu;
 				double nul = individualBins_h[ib];
@@ -633,15 +657,28 @@ for(int i = 0; i < param.nbins; ++i){
 				int Nxb = ir - il;
 				if(ib == 0) ++Nxb; //take into account the first left boundary
 
-//printf("%d %g %g %g %d %d %d %d %g\n", j, nu, nul, nur, Nxb, il, ir, i, j / ((double)(Nxb - 1)));
+				double y = j / ((double)(Nxb - 1));
+				double y1 = (j + 1) / ((double)(Nxb - 1));
 
-				fprintf(Out2File, "%g %.20g\n", j / ((double)(Nxb - 1)), K_h[i]);
+				if(param.useOutputEdges == 0){
+					fprintf(Out2File, "%g %.20g\n", y, K_h[i]);
+				}
+				else{
+					double edge = outputEdges_h[iedge];
+					if(y <= edge && edge <= y1 && iedge < param.nedges){
+						fprintf(Out2File, "%g %.20g\n", edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]);
+//printf("%d %g %g %g %g %g %g\n", j, y, y1, edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i], K_h[i], K_h[i + 1]);
+						++iedge;
+
+					}
+				}
 				++j;
 
 				if(nu > nur - param.dnu){
 					++ib;
 					j = 0;
 					fprintf(Out2File,"\n\n");
+					iedge = 0;
 				}
 			}
 		}
@@ -720,6 +757,7 @@ for(int i = 0; i < param.nbins; ++i){
 	free(K_h);
 	free(Nxmin_h);
 	free(individualBins_h);
+	free(outputEdges_h);
 
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);
