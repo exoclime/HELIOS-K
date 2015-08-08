@@ -60,6 +60,7 @@ parameters are listed here, the order can not be changed.
  * kmin: minimal value for the opacity function 
  * qalphaL: q value in the Lorentz half width q = Pself / P 
  * doMean: Calculate the Planck and Rosseland opacity means
+ * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
 
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:

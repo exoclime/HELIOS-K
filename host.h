@@ -104,7 +104,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		if(strcmp(param.path, "numin") == 0){
 			sprintf(param.path, "");
 		
-			fgets(skip, 3, paramFile);
+			//fgets(skip, 3, paramFile);
 			fscanf (paramFile, "%lf", &param.numin);
 			fgets(skip2, 3, paramFile);
 		}
@@ -185,6 +185,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		//read doMean
 		fgets(skip, 9, paramFile);
 		fscanf (paramFile, "%d", &param.doMean);
+		fgets(skip2, 3, paramFile);
+		//read Units
+		fgets(skip, 8, paramFile);
+		fscanf (paramFile, "%d", &param.units);
 		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);

@@ -169,6 +169,7 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "kmin = %g\n", param.kmin);
 		fprintf(infofile, "qalphaL = %g\n", param.qalphaL);
 		fprintf(infofile, "doMean = %d\n", param.doMean);
+		fprintf(infofile, "Units = %d\n", param.units);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 	}
 	fclose(InfoFile);
@@ -194,6 +195,13 @@ int main(int argc, char*argv[]){
 		printf("Molecule Id is not allowed\n");
 		return 0;
 	}
+
+	//compute the mean mass
+	m.meanMass = 0.0;
+	for(int i = 0; i < m.nISO; ++i){
+		m.meanMass += m.ISO[i].Ab * m.ISO[i].m; //mean Molar Mass (g)
+	}
+	//printf("mean mass %g\n", m.meanMass);
 	
 	timeval tt1;			//start time
 	timeval tt2;			//end time
@@ -455,7 +463,13 @@ int main(int argc, char*argv[]){
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 			for(int j = 0; j < Nx; ++j){
 				double x = param.numin + j * param.dnu;
-				fprintf(OutFile, "%.20g %.20g\n", x, K_h[j]);
+				if(param.units == 0){
+					fprintf(OutFile, "%.20g %.20g\n", x, K_h[j]);
+				}
+				else{
+					fprintf(OutFile, "%.20g %.20g\n", x, K_h[j] / NA * m.meanMass);
+				}
+				
 			}
 			fprintf(OutFile, "\n\n");
 		}
@@ -710,12 +724,23 @@ for(int i = 0; i < param.nbins; ++i){
 						double y = Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
 						double y1 = Nxmin / ((double)(Nxb - 1)) + (j + 1) / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
 						if(param.useOutputEdges == 0){
-							fprintf(Out2File, "%g %.20g\n", y, K_h[j + il]);
+							if(param.units == 0){
+								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il]);
+							}
+							else{
+								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il] / NA * m.meanMass);
+							}
 						}
 						else{
 							double edge = outputEdges_h[iedge];
 							if(y <= edge && edge <= y1 && iedge < param.nedges){
-								fprintf(Out2File, "%g %.20g\n", edge, (K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]);
+								if(param.units == 0){
+									fprintf(Out2File, "%g %.20g\n", edge, (K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]);
+								}
+								else{
+									fprintf(Out2File, "%g %.20g\n", edge, ((K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]) / NA * m.meanMass);
+
+								}
 								++iedge;
 							}
 						}
@@ -741,13 +766,22 @@ for(int i = 0; i < param.nbins; ++i){
 					double y1 = (j + 1) / ((double)(Nxb - 1));
 
 					if(param.useOutputEdges == 0){
-						fprintf(Out2File, "%g %.20g\n", y, K_h[i]);
+						if(param.units == 0){
+							fprintf(Out2File, "%g %.20g\n", y, K_h[i]);
+						}
+						else{
+							fprintf(Out2File, "%g %.20g\n", y, K_h[i] / NA * m.meanMass);
+						}
 					}
 					else{
 						double edge = outputEdges_h[iedge];
 						if(y <= edge && edge <= y1 && iedge < param.nedges){
-							fprintf(Out2File, "%g %.20g\n", edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]);
-	//printf("%d %g %g %g %g %g %g\n", j, y, y1, edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i], K_h[i], K_h[i + 1]);
+							if(param.units == 0){
+								fprintf(Out2File, "%g %.20g\n", edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]);
+							}
+							else{
+								fprintf(Out2File, "%g %.20g\n", edge, ((K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]) / NA * m.meanMass);
+							}
 							++iedge;
 
 						}

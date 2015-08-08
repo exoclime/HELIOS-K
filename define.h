@@ -1,4 +1,4 @@
-#define VERSION 1.45
+#define VERSION 1.46
 
 #define T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -33,6 +33,7 @@ struct Molecule{
 	Isotopologue *ISO;
 	char dataFilename[34][160];
 	int nFiles;
+	double meanMass;
 };
 
 struct Partition{
@@ -73,6 +74,7 @@ struct Param{
 	int doMean;
 	int useIndividualBins;
 	int useOutputEdges;
+	int units;
 };
 
 struct Line{

@@ -1,10 +1,10 @@
-name = h
+name = g
 T = 800.0
-P = 10.0
+P = 1.0
 PFile = -
 useHITEMP = 0
 Molecule = 1
-pathToData = 
+pathToData =
 numin = 0.5
 numax = 25720.0
 dnu = 1.0
@@ -23,4 +23,5 @@ OutputEdgesFile = -
 kmin = 1.0e-9
 qalphaL = 0.5
 doMean = 1
+Units = 0
 
