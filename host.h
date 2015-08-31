@@ -122,6 +122,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 6, paramFile);
 		fscanf (paramFile, "%lf", &param.dnu);
 		fgets(skip2, 3, paramFile);
+		//read Nxb
+		fgets(skip, 14, paramFile);
+		fscanf (paramFile, "%d", &param.Nxb);
+		fgets(skip2, 3, paramFile);
 		//read cutMode
 		fgets(skip, 10, paramFile);
 		fscanf (paramFile, "%d", &param.cutMode);
@@ -189,6 +193,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		//read Units
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%d", &param.units);
+		fgets(skip2, 3, paramFile);
+		//read ReplaceFiles
+		fgets(skip, 15, paramFile);
+		fscanf (paramFile, "%d", &param.replaceFiles);
 		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
@@ -338,21 +346,21 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	return 1;
 }
 
-__host__ int readBinFile(Param &param, double *individualBins_h){
+__host__ int readBinFile(Param &param, double *binBoundaries_h){
 	FILE *binsfile;
 	binsfile = fopen(param.bins, "r");
 	int er;
 	double binsOld = -100000.0;
 	for(int i = 0; i < param.nbins + 1; ++i){
-		er = fscanf(binsfile, "%lf", &individualBins_h[i]);
+		er = fscanf(binsfile, "%lf", &binBoundaries_h[i]);
 		if(er <= 0) return 0;
-		if(individualBins_h[i] <= binsOld){
+		if(binBoundaries_h[i] <= binsOld){
 			printf("Error; bin boundaries not monotonic growing\n");
 			return 0;
 		}
-		binsOld = individualBins_h[i];
+		binsOld = binBoundaries_h[i];
 
-		//printf("%g\n", individualBins_h[i]);
+		//printf("%g\n", binBoundaries_h[i]);
 	}
 	fclose(binsfile);	
 	return 1;
@@ -556,6 +564,4 @@ __host__ void free_Line(Line &L){
 	cudaFree(L.mass_d);
 	cudaFree(L.Q_d);
 	cudaFree(L.ID_d);
-
-
 }

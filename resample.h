@@ -605,13 +605,13 @@ __host__ void SimpsonCoefficient(){
 // Author: Simon Grimm
 // June 2015
 // *****************************************
-__global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double T, int Nx, double numin, double dnu){
+__global__ void Mean_kernel(double *K_d, double *x_d, double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double T, int Nx){
 
 	int idy = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idy;
 
 	if(id < Nx){
-		double nu = numin + id * dnu;
+		double nu = x_d[id];
 		double nu3 = nu * nu * nu;
 
 		double t1 = 2.0 * def_h * nu3 * def_c * def_c;
@@ -630,11 +630,17 @@ __global__ void Mean_kernel(double *K_d, double *Pm_d, double *Rm_d, double *Pmn
 		Pmn_d[id] = B;
 		Rmn_d[id] = dB_dT;
 
+		if(nu == 0.0){
+			Pm_d[id] = 0.0;
+			Rm_d[id] = 0.0;
+			Pmn_d[id] = 0.0;
+			Rmn_d[id] = 0.0;
+		}
 	}
 }
 
 template <int nb>
-__global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, int NL){
+__global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double *x_d, int NL, int useIndividualX){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
@@ -645,11 +651,22 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 	__syncthreads();
 
 	for(int k = 0; k < NL; k += nb){
-		if(idy + k < NL){
-			if(idx == 0) a_s[idy] += Pm_d[idy + k];
-			if(idx == 1) a_s[idy] += Rm_d[idy + k];
-			if(idx == 2) a_s[idy] += Pmn_d[idy + k];
-			if(idx == 3) a_s[idy] += Rmn_d[idy + k];
+		if(useIndividualX == 0){
+			if(idy + k < NL){
+				if(idx == 0) a_s[idy] += Pm_d[idy + k];
+				if(idx == 1) a_s[idy] += Rm_d[idy + k];
+				if(idx == 2) a_s[idy] += Pmn_d[idy + k];
+				if(idx == 3) a_s[idy] += Rmn_d[idy + k];
+			}
+		}
+		else{
+			//Trapezoid rule for unequal spaced x
+			if(idy + k  + 1 < NL){
+				if(idx == 0) a_s[idy] += 0.5 * (Pm_d[idy + k] + Pm_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
+				if(idx == 1) a_s[idy] += 0.5 * (Rm_d[idy + k] + Rm_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
+				if(idx == 2) a_s[idy] += 0.5 * (Pmn_d[idy + k] + Pmn_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
+				if(idx == 3) a_s[idy] += 0.5 * (Rmn_d[idy + k] + Rmn_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
+			}
 		}
 	}
 	__syncthreads();
@@ -674,7 +691,7 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 		}
 	}
 	__syncthreads();
-	if(idy < 3){
+	if(idy < 3 && useIndividualX == 0){
 		//correct for Simpsons rule 
 		if(idx == 0){
 			a_s[idy] += wS_c[idy] * Pm_d[idy];

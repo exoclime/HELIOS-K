@@ -240,6 +240,31 @@ __global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
 }
 
 // *************************************************
+// This kernel initializes the location of nu 
+//
+// Author Simon Grimm
+// August 2015
+// *************************************************
+__global__ void setX_kernel(double *x_d, double Nx, double numin, double dnu, int Nxb, int useIndividualX, double *binBoundaries_d){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+
+	if(id < Nx){
+		if(useIndividualX == 0){
+			x_d[id] = numin + id * dnu;
+		}
+		else{
+			int bin = id / Nxb;
+			double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
+			int start = bin * Nxb;
+			x_d[id] = binBoundaries_d[bin] + (id - start) * dnu;
+			//x_d[id] = id * id / 10000.0;
+		}
+	}
+}
+
+// *************************************************
 //This kernel initializes the binkeys with the bin number
 //
 //Nx is the total number of points,
@@ -248,31 +273,62 @@ __global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
 //Author Simon Grimm
 //January 2015
 // *************************************************
-__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb, double *individualBins_d, int nbins, double numin, double dnu){
+__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb, double *binBoundaries_d, int nbins, double numax, double *x_d, int useIndividualX){
 
 	int id = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if(id < Nx){
-		int bin = id / Nxb;
-		binKey_d[id] = bin;
-	//	if(id == Nx - 1) binKey_d[id] = (id - 1) / Nxb;
+		//int bin = id / Nxb;
+		//binKey_d[id] = bin;
 
-		if(individualBins_d != NULL){
-			double nu = numin + id * dnu;
+		//if(useIndividualX == 1){
+			double nu = x_d[id];
 			binKey_d[id] = 0;
 
 			for(int i = 0; i < nbins; ++i){
-				double nl = individualBins_d[i];
-				double nr = individualBins_d[i + 1];
+				double nl = binBoundaries_d[i];
+				double nr = binBoundaries_d[i + 1];
 
-				if(nl < nu && nu <= nr){
+				if(nl <= nu && nu < nr){
 					binKey_d[id] = i;
 					break;
 				}
 			}
-		}
+			if(nu >= numax){
+				binKey_d[id] = nbins; 
+			}
+		//}
 	}
 }
+// *************************************************
+//This kernel determines the starting index of the bins
+//
+//Nx is the total number of points,
+//nbins is the number of bins
+//
+//Author Simon Grimm
+//August 2015
+// *************************************************
+__global__ void binIndex_kernel(int *binKey_d, int *binIndex_d, int Nx, int nbins){
+
+	int id = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if(id < Nx - 1){
+		int bin = binKey_d[id];
+		int bin1 = binKey_d[id + 1];
+
+		if(bin1 > bin){
+//printf("bin Index %d %d %d %d %d\n", bin1, bin, id + 1, Nx, nbins);
+			binIndex_d[bin1] = id + 1;
+		}
+	}
+	if(id == 0){
+		binIndex_d[0] = 0;
+		binIndex_d[nbins] = Nx;
+		binIndex_d[nbins + 1] = Nx;
+	}
+}
+
 
 
 //*************************************************
@@ -344,23 +400,79 @@ __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 //Author Simon Grimm
 //January 2015
 //*************************************************
-__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *alphaL_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode){
+__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *alphaL_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode, int Nx, double *x_d, int useIndividualX){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if(id < NL){
 
+		double nu = nu_d[id];
 
 		// cutMode == 0: cut absolute values 
 		if(cutMode == 1){			//Cut factors of Lorentz halfwidth
 			cut *= alphaL_d[id];
 		}
-		else if(cutMode == 2){			//cut fctors of Lorentz / Gauss halfwidth -> y parameter in Voigt Profile
+		else if(cutMode == 2){			//cut factors of Lorentz / Gauss halfwidth -> y parameter in Voigt Profile
 			cut /= ialphaD_d[id];
 		}
-		
-		int il = ((nu_d[id] - numin + cut) / dnu) / bl;
-		int ir = ((nu_d[id] - numin - cut) / dnu) / bl;
+	
+		//Determine the block index in x of the limits	
+		int il = ((nu - numin + cut) / dnu) / bl;
+		int ir = ((nu - numin - cut) / dnu) / bl;
+
+		//if an irregular spacing in x is used, a binary search for the index is needed
+		if(useIndividualX == 1){
+			il = 0;
+			ir = 0;
+			int l = 0;
+			int r = Nx - 1;
+			int i;
+			int m;
+			for(i = 0; i < 10000; ++i){
+				m = l + (r - l) / 2;
+				if(m == 0){
+					il = 0;
+					break;
+				}
+				if(m >= Nx - 2){
+					il = m / bl;
+					break;
+				}
+//if(id == 224514) printf("%d %d %d %d %d %g %g\n", i, l, r, m, Nx, nu + cut, x_d[m]);
+				if(x_d[m] <= (nu + cut) && (nu + cut) < x_d[m + 1]){
+					il = m / bl;
+					break;		
+				}
+				else{
+					if(x_d[m] > (nu + cut)) r = m;
+					else l = m;
+				}
+			}
+			if(i >= 10000 -1) printf("Error: binary search for limits did not converge for il %d %g %g\n", id, nu + cut, x_d[m]);
+			l = 0;
+			r = Nx - 1;
+			for(i = 0; i < 10000; ++i){
+				m = l + (r - l) / 2;
+				if(m == 0){
+					ir = 0;
+					break;
+				}
+				if(m >= Nx - 2){
+					ir = m / bl;
+					break;
+				}
+//if(id == 223381) printf("%d %d %d %d %d %g %g\n", i, l, r, m, Nx, nu - cut, x_d[m]);
+				if(x_d[m] <= (nu - cut) && (nu - cut) < x_d[m + 1]){
+					ir = m / bl;
+					break;		
+				}
+				else{
+					if(x_d[m] > (nu - cut)) r = m;
+					else l = m;
+				}
+			}
+			if(i >= 10000 -1) printf("Error: binary search for limits did not converge for ir %d %g %g\n", id, nu - cut, x_d[m]);
+		}
 
 		il += 1;
 		
@@ -375,7 +487,7 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 		for(int j = ir; j <= il; ++j){ 
 			atomicMax(&Limits_d[j].y, id);
 		}
-//if(id  < 200) printf("%d %g %d %d %d %d\n", id, nu_d[id], il, i, ir, ID_d[id]);
+//if(id > NL - 50 || id < 50) printf("%d %g %d %d %d\n", id, nu_d[id], il, ir, ID_d[id]);
 	}
 }
 
@@ -409,7 +521,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // *************************************************
 template <int NB>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int cutMode, int nl, int ii, int kk){
+__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double *x_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int cutMode, int nl, int ii, int kk, int useIndividualX){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -433,8 +545,16 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
 	double sqln2 = 1.0;//sqrt(log(2.0)); //This factor will cancel out, becuase alphaD = sqln2 * vo sqrt(2kt/mc2)
 	double isqrtpi = 1.0 / sqrt(M_PI);
-	
-	double nu = numin + id * dnu;
+
+	double nu = -numin;
+	if(useIndividualX == 0){
+		nu = numin + id * dnu;
+	}
+	else{
+		if(id < Nx){
+			nu = x_d[id];
+		}
+	}
 
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){

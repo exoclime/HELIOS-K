@@ -1,5 +1,5 @@
 name = g
-T = 800.0
+T = 300.0
 P = 1.0
 PFile = -
 useHITEMP = 0
@@ -8,8 +8,9 @@ pathToData =
 numin = 0.5
 numax = 25720.0
 dnu = 1.0
-cutMode = 1
-cut = 30.0 
+Nnu per bin = 0
+cutMode = 0
+cut = 20.0 
 doResampling = 0
 nC = 20
 doTransmission = 0
@@ -24,4 +25,4 @@ kmin = 1.0e-9
 qalphaL = 0.5
 doMean = 1
 Units = 0
-
+ReplaceFiles = 1

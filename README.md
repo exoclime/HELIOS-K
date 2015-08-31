@@ -42,6 +42,7 @@ parameters are listed here, the order can not be changed.
  * numin: minimum wavenumber in 1/cm
  * numax: maximum wavenumber in 1/cm
  * dnu: spatial resolution in wavenumber in 1/cm
+ * Nnu per bin: The number of points in nu per bin. When this is set to zero, then dnu is used, otherwise the value of dnu is overwritten.
  * cutMode: Set the voigt profile cutting mode:
    * 0: cut at absolute wavenumbers
    * 1: cut at multiple values of Lorentz widths
@@ -53,7 +54,7 @@ parameters are listed here, the order can not be changed.
  * nTr: nummber of points used for the transmission function
  * dTr: spacing of the points used for the transmission function in exp space: m_i = exp((i - nTr/2) * dTr)
  * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_< name >.dat'.
- * doStoreSK: When set to one, then the perbin sorted opacity function is written to the file 'Out_< name >_bin.dat'.
+ * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file 'Out_< name >_bin.dat'. When set to 2, then the per bin sorted opacity function is written to different bin files 'Out_< name >_bin< bin number >.dat'.
  * nbins: number of bins
  * binsfile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
  * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
@@ -61,6 +62,7 @@ parameters are listed here, the order can not be changed.
  * qalphaL: q value in the Lorentz half width q = Pself / P 
  * doMean: Calculate the Planck and Rosseland opacity means
  * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
+ * ReplaceFile: When set to 1, then all output files are overwritten, when set to 0 then the data is appended to the existing files.
 
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:
@@ -161,6 +163,7 @@ Contains the used parameters, and timing information
 # Out_< name >.dat #
 It contains nu and K(nu)
 nu are positions of the wavenumber and K is the unsorted opacity function
+When the PFile is used then the files contains also the values of T and P.
 
 # Out_< name >_bin.dat #
 It contains the y and K(y) per bin
@@ -168,7 +171,10 @@ y goes from 0 to 1. K(y) is the per bin sorted opacity function. The bins are se
 the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
 When doResampling is set to one, then this file contains the sorted opacity functions computed from the 
 Chebyshev coefficients
-
+When the PFile is used then the files contains also the values of T, P and point index.
+When the OutputEdgesFile is used, then the file contains not all points in y, but the averaged values between the intervals given in the OutputEdgesFile. 
+When doStoreSK is set to 2, then the bins are stored in different files with names Out_< name >_bin< bin index>.dat
+ 
 # Out_< name >_cbin.dat #
 It contains the chebyshev coefficients of the per bins resampled sorted logarithm of the opacity functions in the format
 kmin_i ystart_i C0_i C1_i ... C(nC - 1)_i
@@ -179,11 +185,15 @@ K(y) can be recomputed as K(y) = sum_(0 <= j < nC) (C[j] * T[j](yy)), where T(y)
 where yy = (2.0 * y - 1.0 - ystart) / (1.0 - ystart), for y in the range [ystart, 1]
 The bins are separated with a blank line, starting with 
 the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
+When the PFile is used then the files contains also the values of T and P.
+When doResampling is set to 2, then the bins are stored in different files with names Out_< name >_cbin< bin index>.dat
 
 # Out_< name >_tr.dat #
 It contains m and T.
 m is the column mass, m_i = exp((i - nTr/2) * dTr)
 T is the Transmission function Int_0^1 exp(-K(y)m) dy
+When the PFile is used then the files contains also the values of T, P and point index.
+When doTransmission is set to 2, then the bins are stored in different files with names Out_< name >_tr< bin index>.dat
 
 # Out_< name >_mean.dat #
 When the argument doMean is set to one, this file contains the Planck and Rosseland means.

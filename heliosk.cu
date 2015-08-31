@@ -43,6 +43,7 @@ int main(int argc, char*argv[]){
 	param.nedges = 0;
 	param.nP = 1;
 	param.usePFile = 0;
+	param.useIndividualX = 0;
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
 		return 0;
@@ -51,31 +52,67 @@ int main(int argc, char*argv[]){
 		printf("Error: Devive Number is not allowed\n");
 		return 0;
 	}
+	if(param.Nxb != 0){
+		param.useIndividualX = 1;
+	}
+
+	char filemode[16];
+	if(param.replaceFiles == 0){
+		sprintf(filemode, "a");
+	}
+	else{
+		sprintf(filemode, "w");
+	}
 
 	//If the bin file is used store the boundaries of the bins
-	double *individualBins_h, *individualBins_d;
+	double *binBoundaries_h, *binBoundaries_d;
+	binBoundaries_h = (double*)malloc((param.nbins + 1) * sizeof(double));
+	cudaMalloc((void **) &binBoundaries_d, (param.nbins + 1) * sizeof(double));
 	if(param.useIndividualBins == 1){
-		individualBins_h = (double*)malloc((param.nbins + 1) * sizeof(double));
-		cudaMalloc((void **) &individualBins_d, (param.nbins + 1) * sizeof(double));
-		er = readBinFile(param, individualBins_h);
+		er = readBinFile(param, binBoundaries_h);
 		if(er == 0) return 0;
-		param.numin = individualBins_h[0];
-		param.numax = individualBins_h[param.nbins];
-		cudaMemcpy(individualBins_d, individualBins_h, (param.nbins + 1) * sizeof(double), cudaMemcpyHostToDevice);
+		param.numin = binBoundaries_h[0];
+		param.numax = binBoundaries_h[param.nbins];
 
-		if(param.doResampling == 1){
+		if(param.doResampling > 0){
 			printf("Error: The resampling function is not supported for the bin-file option\n");
 			return 0;
 		}
-		if(param.doTransmission == 1){
+		if(param.doTransmission > 0){
 			printf("Error: The transmission function is not supported for the bin-file option\n");
 			return 0;
 		}
 	}
 	else{
-		individualBins_h = NULL;
-		individualBins_d = NULL;
+		for(int i = 0; i < param.nbins; ++i){
+			binBoundaries_h[i] = param.numin + i * (param.numax - param.numin) / ((double)(param.nbins));
+		}
+		binBoundaries_h[param.nbins] = param.numax;
 	}
+	cudaMemcpy(binBoundaries_d, binBoundaries_h, (param.nbins + 1) * sizeof(double), cudaMemcpyHostToDevice);
+
+	//for(int i = 0; i < param.nbins + 1; ++i){
+	//	printf("%d %g\n", i, binBoundaries_h[i]);
+	//}	
+
+	int Nx;
+	if(param.useIndividualX == 0){
+		Nx = (int)((param.numax - param.numin) / param.dnu) + 1;
+		param.Nxb = Nx / param.nbins;
+	}
+	else{
+		Nx = param.nbins * param.Nxb + 1;
+		if(param.doResampling > 0){
+			printf("Error: The resampling function is not supported for unequal spacing option\n");
+			return 0;
+		}
+		if(param.doTransmission > 0){
+			printf("Error: The transmission function is not supported for unequal spacing option\n");
+			return 0;
+		}
+	}
+
+
 	//If the output edges file is used store the edges
 	double *outputEdges_h;
 	if(param.useOutputEdges == 1){
@@ -103,18 +140,13 @@ int main(int argc, char*argv[]){
 	FILE *InfoFile;
 	char InfoFilename[160];
 	sprintf(InfoFilename, "Info_%s.dat", param.name);
-	InfoFile = fopen(InfoFilename, "w");
+	InfoFile = fopen(InfoFilename, filemode);
 
 	int runtimeVersion;
 	int driverVersion;
 
 	cudaRuntimeGetVersion(&runtimeVersion);
 	cudaDriverGetVersion(&driverVersion);
-
-	//Determine the number of points
-	int Nx = (int)((param.numax - param.numin) / param.dnu) + 1;
-	//Determine the numbers of points per bin
-	int Nxb = Nx / param.nbins;
 
 
 	cudaSetDevice(param.dev);
@@ -137,10 +169,10 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
 		fprintf(infofile, "Driver Version %d\n", driverVersion);
 
-		if(Nxb < param.nC && i == 0){
-			printf("Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", Nxb);
-			fprintf(infofile, "Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", Nxb);
-			param.nC = Nxb;
+		if(param.Nxb < param.nC && i == 0){
+			printf("Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", param.Nxb);
+			fprintf(infofile, "Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", param.Nxb);
+			param.nC = param.Nxb;
 		}
 		fprintf(infofile, "name = %s\n", param.name);
 		fprintf(infofile, "T = %g\n", param.T);
@@ -156,6 +188,8 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "numin = %g\n", param.numin);
 		fprintf(infofile, "numax = %g\n", param.numax);
 		fprintf(infofile, "dnu = %g\n", param.dnu);
+		fprintf(infofile, "Nnu per bin = %d\n", param.Nxb);
+		fprintf(infofile, "Number of points: %d\n", Nx);
 		fprintf(infofile, "cutMode = %d\n", param.cutMode);
 		fprintf(infofile, "cut = %g\n", param.cut);
 		fprintf(infofile, "doResampling = %d\n", param.doResampling);
@@ -171,6 +205,7 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "doMean = %d\n", param.doMean);
 		fprintf(infofile, "Units = %d\n", param.units);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
+		fprintf(infofile, "Replace files = %d\n", param.replaceFiles);
 	}
 	fclose(InfoFile);
 
@@ -202,7 +237,13 @@ int main(int argc, char*argv[]){
 		m.meanMass += m.ISO[i].Ab * m.ISO[i].m; //mean Molar Mass (g)
 	}
 	//printf("mean mass %g\n", m.meanMass);
-	
+	double unitScale = 1.0;
+
+	if(param.units == 1){
+		unitScale = 1.0 / NA * m.meanMass;
+		param.kmin /= unitScale;
+	}	
+
 	timeval tt1;			//start time
 	timeval tt2;			//end time
 	long long times, timems;	//elapsed time in seconds and microseconds
@@ -220,20 +261,33 @@ int main(int argc, char*argv[]){
 
 	//Allocate the memory for the Line properties
 	Alloc_Line(L, m);
-
 	double *K_h, *K_d;
+	double *x_h, *x_d;
 	int *binKey_d;
+	int *binIndex_h, *binIndex_d;
 	K_h = (double*)malloc(Nx * sizeof(double));
+	x_h = (double*)malloc(Nx * sizeof(double));
+	binIndex_h = (int*)malloc((param.nbins + 2) * sizeof(int));
 	cudaMalloc((void **) &K_d, param.nP * Nx * sizeof(double));
+	cudaMalloc((void **) &x_d, Nx * sizeof(double));
 	cudaMalloc((void **) &binKey_d, Nx * sizeof(int));
+	cudaMalloc((void **) &binIndex_d, (param.nbins + 2) * sizeof(int));
 	InitialK_kernel <<< (param.nP * Nx + 511) / 512, 512 >>> (K_d, param.nP * Nx, param.kmin);
-	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, Nxb, individualBins_d, param.nbins, param.numin, param.dnu);
-	//int *binKey_h; 	//only needed to check the key
-	//binKey_h = (int*)malloc(Nx * sizeof(int));
-	//cudaMemcpy(binKey_h, binKey_d, Nx * sizeof(int), cudaMemcpyDeviceToHost);
-	//for(int i = 0; i < Nx; ++i){
-	//	printf("%d %g %d\n", i, param.numin + i * param.dnu, binKey_h[i]);
-	//}
+	setX_kernel <<< (Nx + 511) / 512, 512 >>> (x_d, Nx, param.numin, param.dnu, param.Nxb, param.useIndividualX, binBoundaries_d);
+	cudaMemcpy(x_h, x_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+	binKey_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, Nx, param.Nxb, binBoundaries_d, param.nbins, param.numax, x_d, param.useIndividualX);
+	binIndex_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, binIndex_d, Nx, param.nbins);
+	cudaMemcpy(binIndex_h, binIndex_d, (param.nbins + 2) * sizeof(int), cudaMemcpyDeviceToHost);
+
+	/*			
+	int *binKey_h; 	//only needed to check the key
+	binKey_h = (int*)malloc(Nx * sizeof(int));
+	cudaMemcpy(binKey_h, binKey_d, Nx * sizeof(int), cudaMemcpyDeviceToHost);
+	for(int i = 0; i < Nx; ++i){
+		int bin = binKey_h[i];
+		printf("%d %g %d %d %d\n", i, x_h[i], bin, binIndex_h[bin], binIndex_h[bin + 1]);
+	}
+	*/
 
 	const int ntL = 64;	//number of threads in Line kernel
 	int nLimits = (Nx + ntL - 1) / ntL;
@@ -252,12 +306,6 @@ int main(int argc, char*argv[]){
 		return 0;
 	}
 
-	printf("Number of points: %d\n", Nx);
-	printf("Number of points per bin: %d\n", Nxb);
-	InfoFile = fopen(InfoFilename, "a");
-	fprintf(InfoFile,"Number of points: %d\n", Nx);
-	fprintf(InfoFile,"Number of points per bin: %d\n", Nxb);
-	fclose(InfoFile);
 	//**************************************
 	//Starting the loop around the datafiles
 	//*************************************
@@ -366,26 +414,28 @@ int main(int argc, char*argv[]){
 
 			setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, m.NL[fi], param.cut);
 			if(param.cut != 0.0){
-				Cutoff_kernel <<< (m.NL[fi] + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, m.NL[fi], nLimits, param.cut, param.cutMode);
+				Cutoff_kernel <<< (m.NL[fi] + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, m.NL[fi], nLimits, param.cut, param.cutMode, Nx, x_d, param.useIndividualX);
 				MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, m.NL[fi]);
 				cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
 			}
 			else MaxLimits_h[0] = m.NL[fi];
 
-/*
+			/*
 			//print Limits
+			int2 *Limits_h;
+			Limits_h = (int2*)malloc(nLimits * sizeof(int2));
 			cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
 			FILE *LimitsFile;
 			char LimitsFilename[160];
 			sprintf(LimitsFilename, "Limits_%s_dat", param.name);
-			LimitsFile = fopen(LimitsFilename, "w");
+			LimitsFile = fopen(LimitsFilename, filemode);
 
 			for(int i = 0; i < nLimits; ++i){
 				fprintf(LimitsFile,"%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
 			}
 			fclose(LimitsFile);
 			free(Limits_h);
-*/
+			*/
 			//*********************************************
 
 			cudaDeviceSynchronize();
@@ -419,7 +469,7 @@ int main(int argc, char*argv[]){
 					int nl = min(MaxLimits_h[0] - i, nlmax);
 					//This loop reduces the running time of the kernel to a few seconds
 					//A longer running time of a single kernel can cause a time out
-					Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d + iP * Nx, param.dnu, param.numin, Nx, m.NL[fi], Limits_d, cut, param.cutMode, nl, i, k);
+					Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d + iP * Nx, x_d, param.dnu, param.numin, Nx, m.NL[fi], Limits_d, cut, param.cutMode, nl, i, k, param.useIndividualX);
 				}
 			}
 			//*************************************
@@ -458,18 +508,16 @@ int main(int argc, char*argv[]){
 		char OutFilename[160];
 		sprintf(OutFilename, "Out_%s.dat", param.name);
 			
-		OutFile = fopen(OutFilename, "w");
+		OutFile = fopen(OutFilename, filemode);
 		for(int iP = 0; iP < param.nP; ++iP){
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 			for(int j = 0; j < Nx; ++j){
-				double x = param.numin + j * param.dnu;
-				if(param.units == 0){
-					fprintf(OutFile, "%.20g %.20g\n", x, K_h[j]);
+				if(param.nP == 1){
+					fprintf(OutFile, "%.20g %.20g\n", x_h[j], K_h[j] * unitScale);
 				}
 				else{
-					fprintf(OutFile, "%.20g %.20g\n", x, K_h[j] / NA * m.meanMass);
+					fprintf(OutFile, "%.20g %.20g %.20g %.20g\n", x_h[j], K_h[j] * unitScale, param.T, P_h[iP]);
 				}
-				
 			}
 			fprintf(OutFile, "\n\n");
 		}
@@ -495,7 +543,7 @@ int main(int argc, char*argv[]){
 	//**************************************
 	//compute the Planck and Rosseland means
 	//**************************************
-	if(param.doMean == 1){
+	if(param.doMean > 0){
 		
 		double *Pm_d;
 		double *Rm_d;
@@ -514,15 +562,15 @@ int main(int argc, char*argv[]){
 		char Out4Filename[160];
 
 		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
-		Out4File = fopen(Out4Filename, "w");
+		Out4File = fopen(Out4Filename, filemode);
 	
 		for(int iP = 0; iP < param.nP; ++iP){
 
-			Mean_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Pm_d, Rm_d, Pmn_d, Rmn_d, param.T, Nx, param.numin, param.dnu);
+			Mean_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, x_d, Pm_d, Rm_d, Pmn_d, Rmn_d, param.T, Nx);
 /*
 cudaMemcpy(K_h, Pm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 for(int i = 0; i < Nx; ++i){
-	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
+	printf("%g %g\n", x_h[i], K_h[i]);
 }
 printf("\n\n");
 cudaMemcpy(K_h, Rm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
@@ -541,7 +589,7 @@ for(int i = 0; i < Nx; ++i){
 }
 printf("\n\n");
 */
-			IntegrateMean_kernel <512> <<< 4, 512 >>> (Pm_d, Rm_d, Pmn_d, Rmn_d, Nx);
+			IntegrateMean_kernel <512> <<< 4, 512 >>> (Pm_d, Rm_d, Pmn_d, Rmn_d, x_d, Nx, param.useIndividualX);
 			double sigma = 2.0 * def_kB * def_kB * def_kB * def_kB / ( def_h * def_h * def_h * def_c * def_c * 15.0) * M_PI * M_PI * M_PI * M_PI * M_PI;
 			double integral1 = sigma * param.T * param.T * param.T * param.T / M_PI;
 			double integral2 = M_PI / (4.0 * sigma * param.T * param.T * param.T);
@@ -552,8 +600,24 @@ printf("\n\n");
 			cudaMemcpy(means_h + 3, Rmn_d, sizeof(double), cudaMemcpyDeviceToHost);
 
 
-			fprintf(Out4File, "%.20g\n%.20g\n%.20g\n%.20g\n%.20g\n%.20g\n", means_h[0] / means_h[2], means_h[3] / means_h[1],  means_h[2], integral1, means_h[3], 1.0 / integral2);
-			fprintf(Out4File, "\n\n");
+			if(param.nP == 1){
+				fprintf(Out4File, "%.20g\n", means_h[0] / means_h[2]);
+				fprintf(Out4File, "%.20g\n", means_h[3] / means_h[1]);
+				fprintf(Out4File, "%.20g\n", means_h[2]);
+				fprintf(Out4File, "%.20g\n", integral1);
+				fprintf(Out4File, "%.20g\n", means_h[3]);
+				fprintf(Out4File, "%.20g\n", 1.0 / integral2);
+			}
+			else{
+				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[0] / means_h[2], param.T, P_h[iP]);
+				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[3] / means_h[1], param.T, P_h[iP]);
+				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[2], param.T), P_h[iP];
+				fprintf(Out4File, "%.20g %.20g %.20g\n", integral1, param.T, P_h[iP]);
+				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[3], param.T, P_h[iP]);
+				fprintf(Out4File, "%.20g %.20g %.20g\n", 1.0 / integral2, param.T, P_h[iP]);
+
+			}
+			//fprintf(Out4File, "\n\n");
 		}
 		
 		fclose(Out4File);
@@ -618,7 +682,7 @@ printf("\n\n");
 		Nxmin_h[i] = 0;
 	}
 	cudaMemset(Nxmin_d, 0, param.nbins * sizeof(int));
-	if(param.doResampling == 1){
+	if(param.doResampling > 0){
 
 		double *K2_h, *K2_d;
 		K2_h = (double*)malloc(Nx * sizeof(double));
@@ -627,59 +691,88 @@ printf("\n\n");
 		double *V_d;			//Vandermonde like matrix for least sqaures
 		double *C_d, *D_d;
 
-		cudaMalloc((void **) &V_d, param.nC * Nxb * sizeof(double));
+		cudaMalloc((void **) &V_d, param.nC * param.Nxb * sizeof(double));
 		cudaMalloc((void **) &C_d, param.nC * sizeof(double));
 		cudaMalloc((void **) &D_d, param.nC * sizeof(double));
 
-		Vandermonde_kernel <<< (Nxb + 511) / 512, 512 >>> (V_d, (double)(Nxb), param.nC);
-		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, Nxb, param.nC);
+		Vandermonde_kernel <<< (param.Nxb + 511) / 512, 512 >>> (V_d, (double)(param.Nxb), param.nC);
+		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, param.Nxb, param.nC);
 
 		FILE *Out3File;
 		char Out3Filename[160];
-		sprintf(Out3Filename, "Out_%s_cbin.dat", param.name);
-		Out3File = fopen(Out3Filename, "w");
+		if(param.doResampling == 1){
+			sprintf(Out3Filename, "Out_%s_cbin.dat", param.name);
+			Out3File = fopen(Out3Filename, filemode);
+		}
+		if(param.doResampling == 2){
+			if(param.replaceFiles == 1){
+				for(int i = 0; i < param.nbins; ++i){
+					sprintf(Out3Filename, "Out_%s_cbin%.4d.dat", param.name, i);
+					Out3File = fopen(Out3Filename, "w");
+					fclose(Out3File);	
+				}
+			}
+			sprintf(Out3Filename, "Out_%s_cbin%.4d.dat", param.name, 0);
+			Out3File = fopen(Out3Filename, "a");
+		}
 
 		for(int iP = 0; iP < param.nP; ++iP){	
+			if(param.doResampling == 2 && iP > 0){
+				fclose(Out3File);
+				sprintf(Out3Filename, "Out_%s_cbin%.4d.dat", param.name, 0);
+				Out3File = fopen(Out3Filename, "a");
+			}
 			cudaMemset(K2_d, 0, Nx * sizeof(double));
 			cudaMemset(Nxmin_d, 0, param.nbins * sizeof(int));
 
-			findCut_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx, Nxb, param.kmin, Nxmin_d, param.nbins);
-			rescale_kernel < 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d + iP * Nx, K2_d, Nxb, param.kmin);
+			findCut_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx, param.Nxb, param.kmin, Nxmin_d, param.nbins);
+			rescale_kernel < 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d + iP * Nx, K2_d, param.Nxb, param.kmin);
 /*
 cudaMemcpy(K2_h, K2_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 cudaDeviceSynchronize();
 
 for(int i = 0; i < param.nbins; ++i){
-	int il = i * Nxb;
+	int il = i * param.Nxb;
 	if(K_h[il] == param.kmin){
-		for(int j = 0; j < Nxb; ++j){
-			printf("%g %.20g\n", j / (double)(Nxb), K2_h[j + il]);
+		for(int j = 0; j < param.Nxb; ++j){
+			printf("%g %.20g\n", j / (double)(param.Nxb), K2_h[j + il]);
 		}
 		printf("\n\n");
 	}
 }
 */
-			copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, K2_d, param.kmin, Nxb);
+			copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, K2_d, param.kmin, param.Nxb);
 			cudaMemcpy(Nxmin_h, Nxmin_d, param.nbins * sizeof(int), cudaMemcpyDeviceToHost);
 	
 
 			lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx);
-			leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d + iP * Nx, Nxb, param.nC);
+			leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d + iP * Nx, param.Nxb, param.nC);
 
 			for(int i = 0; i < param.nbins; ++i){
-				int il = i * Nxb;
+				int il = i * param.Nxb;
 				cudaMemcpy(K_h + il, K_d + il + iP * Nx, param.nC * sizeof(double), cudaMemcpyDeviceToHost);
 		
-				fprintf(Out3File, "%.20g %.20g ", param.kmin, Nxmin_h[i] / ((double)(Nxb)));
-				for(int i = 0; i < param.nC; ++i){
-					fprintf(Out3File, "%.20g ", K_h[il + i]);
+				fprintf(Out3File, "%.20g %.20g ", param.kmin, Nxmin_h[i] / ((double)(param.Nxb)));
+				for(int ic = 0; ic < param.nC; ++ic){
+					fprintf(Out3File, "%.20g ", K_h[il + ic]);
 				}
-				fprintf(Out3File, "\n\n");
+				if(param.nP > 1){
+					fprintf(Out3File, "%.20g %.20g ", param.T, P_h[iP]);
+				}
+				if(param.doResampling == 1){
+					fprintf(Out3File, "\n\n");
+				}
+				if(param.doResampling == 2 && i < param.nbins - 1){
+					fprintf(Out3File, "\n");
+					fclose(Out3File);
+					sprintf(Out3Filename, "Out_%s_cbin%.4d.dat", param.name, i + 1);
+					Out3File = fopen(Out3Filename, "a");
+				}
 			}
-			fprintf(Out3File, "\n\n");
-			if(param.doTransmission == 1 || param.doStoreK == 1){
-				expfx_kernel <<< param.nbins, 512 >>> (K_d + iP * Nx, param.nC, Nxb);
+			//fprintf(Out3File, "\n\n");
+			if(param.doTransmission > 0 || param.doStoreK > 0){
+				expfx_kernel <<< param.nbins, 512 >>> (K_d + iP * Nx, param.nC, param.Nxb);
 			}	
 		}
 		fclose(Out3File);
@@ -708,96 +801,138 @@ for(int i = 0; i < param.nbins; ++i){
 	//*****************************
 	//Write K per bin output
 	//*****************************
-	if(param.doStoreK == 1){
+	if(param.doStoreK > 0){
 		FILE *Out2File;
 		char Out2Filename[160];
-		sprintf(Out2Filename, "Out_%s_bin.dat", param.name);
-		Out2File = fopen(Out2Filename, "w");
+		if(param.doStoreK == 1){
+			sprintf(Out2Filename, "Out_%s_bin.dat", param.name);
+			Out2File = fopen(Out2Filename, filemode);
+		}
+		if(param.doStoreK == 2){
+			if(param.replaceFiles == 1){
+				for(int i = 0; i < param.nbins; ++i){
+					sprintf(Out2Filename, "Out_%s_bin%.4d.dat", param.name, i);
+					Out2File = fopen(Out2Filename, "w");
+					fclose(Out2File);	
+				}
+			}
+			sprintf(Out2Filename, "Out_%s_bin%.4d.dat", param.name, 0);
+			Out2File = fopen(Out2Filename, "a");
+		}
+		
 		for(int iP = 0; iP < param.nP; ++iP){
+			if(param.doStoreK == 2 && iP > 0){
+				fclose(Out2File);
+				sprintf(Out2Filename, "Out_%s_bin%.4d.dat", param.name, 0);
+				Out2File = fopen(Out2Filename, "a");
+			}
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 			if(param.useIndividualBins == 0){
 				for(int i = 0; i < param.nbins; ++i){
-					int il = i * Nxb;
+					int il = i * param.Nxb;
 					int Nxmin = Nxmin_h[i];
-					int iedge = 0;
-					for(int j = 0; j < Nxb; ++j){
-						double y = Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
-						double y1 = Nxmin / ((double)(Nxb - 1)) + (j + 1) / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
+					int iedge = 0; //index of edge
+					int nedge = 0; //number of points per edge intervall
+					double sedge = 0.0; //sum of points in edge intervall
+					for(int j = 0; j < param.Nxb; ++j){
+						double y = Nxmin / ((double)(param.Nxb - 1)) + j / ((double)(param.Nxb - 1)) * (param.Nxb - Nxmin - 1) / ((double)(param.Nxb - 1));
+						double y1 = Nxmin / ((double)(param.Nxb - 1)) + (j + 1) / ((double)(param.Nxb - 1)) * (param.Nxb - Nxmin - 1) / ((double)(param.Nxb - 1));
 						if(param.useOutputEdges == 0){
-							if(param.units == 0){
-								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il]);
+							if(param.nP == 1){
+								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il] * unitScale);
 							}
 							else{
-								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il] / NA * m.meanMass);
+								fprintf(Out2File, "%g %.20g %g %g %d\n", y, K_h[j + il] * unitScale, param.T, P_h[iP], j);
 							}
 						}
 						else{
 							double edge = outputEdges_h[iedge];
+							++nedge;
+							sedge += K_h[j + il] * unitScale;
 							if(y <= edge && edge <= y1 && iedge < param.nedges){
-								if(param.units == 0){
-									fprintf(Out2File, "%g %.20g\n", edge, (K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]);
+								if(param.nP == 1){
+									if(iedge > 0) fprintf(Out2File, "%g %.20g\n", 0.5 * (edge + outputEdges_h[iedge - 1]), sedge / ((double)(nedge)));
 								}
 								else{
-									fprintf(Out2File, "%g %.20g\n", edge, ((K_h[j + 1 + il] - K_h[j + il]) / ( y1 - y) * (edge - y) + K_h[j + il]) / NA * m.meanMass);
+									if(iedge > 0) fprintf(Out2File, "%g %.20g %g %g %d\n", 0.5 * (edge + outputEdges_h[iedge - 1]), sedge / ((double)(nedge)), param.T, P_h[iP], iedge - 1);
 
 								}
 								++iedge;
+								nedge = 0;
+								sedge = 0.0;
 							}
 						}
 					}
-					fprintf(Out2File,"\n\n");
+					if(param.doStoreK == 1){
+						fprintf(Out2File,"\n\n");
+					}
+					if(param.doStoreK == 2 && i < param.nbins - 1){
+						fclose(Out2File);
+						sprintf(Out2Filename, "Out_%s_bin%.4d.dat", param.name, i + 1);
+						Out2File = fopen(Out2Filename, "a");
+					}
 				}
 			}
 			else{
 				int ib = 0;
 				int j = 0;
-				int iedge = 0;
+				int iedge = 0; //inde of edge
+				int nedge = 0; //number of points per edge intervall
+				double sedge = 0.0; //sum of points in edge intervall
 				for(int i = 0; i < Nx; ++i){
-					double nu = param.numin + i * param.dnu;
-					double nul = individualBins_h[ib];
-					double nur = individualBins_h[ib + 1];
-					
-					int il = (int)((nul - param.numin) / param.dnu);
-					int ir = (int)((nur - param.numin) / param.dnu);
+					int il = binIndex_h[ib];
+					int ir = binIndex_h[ib + 1];
 					int Nxb = ir - il;
-					if(ib == 0) ++Nxb; //take into account the first left boundary
 
 					double y = j / ((double)(Nxb - 1));
 					double y1 = (j + 1) / ((double)(Nxb - 1));
 
 					if(param.useOutputEdges == 0){
-						if(param.units == 0){
-							fprintf(Out2File, "%g %.20g\n", y, K_h[i]);
+						if(param.nP == 1){
+							fprintf(Out2File, "%g %.20g\n", y, K_h[i] * unitScale);
 						}
 						else{
-							fprintf(Out2File, "%g %.20g\n", y, K_h[i] / NA * m.meanMass);
+							fprintf(Out2File, "%g %.20g %.20g %.20g %d\n", y, K_h[i] * unitScale, param.T, P_h[iP], j);
 						}
 					}
 					else{
 						double edge = outputEdges_h[iedge];
+						++nedge;
+						sedge += K_h[i] * unitScale;
 						if(y <= edge && edge <= y1 && iedge < param.nedges){
-							if(param.units == 0){
-								fprintf(Out2File, "%g %.20g\n", edge, (K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]);
+							if(param.nP == 1){
+								if(iedge > 0) fprintf(Out2File, "%g %.20g\n", 0.5 * (edge + outputEdges_h[iedge - 1]), sedge / ((double)(nedge)));
 							}
 							else{
-								fprintf(Out2File, "%g %.20g\n", edge, ((K_h[i + 1] - K_h[i]) / ( y1 - y) * (edge - y) + K_h[i]) / NA * m.meanMass);
+								if(iedge > 0) fprintf(Out2File, "%g %.20g %.20g %.20g %d\n", 0.5 * (edge + outputEdges_h[iedge - 1]), sedge / ((double)(nedge)), param.T, P_h[iP], iedge - 1);
 							}
 							++iedge;
-
+							nedge = 0;
+							sedge = 0.0;
 						}
 					}
 					++j;
 
-					if(nu > nur - param.dnu){
+					if(i >= ir - 1){
+//printf("%d %d %d %d\n", ib, il, ir, Nxb);
 						++ib;
 						j = 0;
-						fprintf(Out2File,"\n\n");
+						if(param.doStoreK == 1){
+							fprintf(Out2File,"\n\n");
+						}
+						if(param.doStoreK == 2 && ib < param.nbins){
+							fclose(Out2File);
+							sprintf(Out2Filename, "Out_%s_bin%.4d.dat", param.name, ib);
+							Out2File = fopen(Out2Filename, "a");
+						}
 						iedge = 0;
+					}
+					if(ib >= param.nbins){
+						break;
 					}
 				}
 			}
-			fprintf(Out2File,"\n\n");
-		}
+		}//end of P loop
 		fclose(Out2File);
 	}
 	//******************************
@@ -822,7 +957,7 @@ for(int i = 0; i < param.nbins; ++i){
 	//*********************************
 	//Calculate the Transmission function
 	//*********************************
-	if(param.doTransmission == 1){
+	if(param.doTransmission > 0 ){
 
 		double *Tr_h, *Tr_d;
 		Tr_h = (double*)malloc(param.nbins * param.nTr * sizeof(double));
@@ -831,20 +966,49 @@ for(int i = 0; i < param.nbins; ++i){
 		FILE *Out3File;
 		char Out3Filename[160];
 
-		sprintf(Out3Filename, "Out_%s_tr.dat", param.name);
-		Out3File = fopen(Out3Filename, "w");
+		if(param.doTransmission == 1){
+			sprintf(Out3Filename, "Out_%s_tr.dat", param.name);
+			Out3File = fopen(Out3Filename, filemode);
+		}
+		if(param.doTransmission == 2){
+			if(param.replaceFiles == 1){
+				for(int i = 0; i < param.nbins; ++i){
+					sprintf(Out3Filename, "Out_%s_tr%.4d.dat", param.name, i);
+					Out3File = fopen(Out3Filename, "w");
+					fclose(Out3File);	
+				}
+			}
+			sprintf(Out3Filename, "Out_%s_tr%.4d.dat", param.name, 0);
+			Out3File = fopen(Out3Filename, "a");
+		}
 
 		for(int iP = 0; iP < param.nP; ++iP){
-			Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, Tr_d, Nxb, param.nTr, param.dTr, Nxmin_d, param.kmin);
+			if(param.doTransmission == 2 && iP > 0){
+				fclose(Out3File);
+				sprintf(Out3Filename, "Out_%s_tr%.4d.dat", param.name, 0);
+				Out3File = fopen(Out3Filename, "a");
+			}
+			Integrate_kernel < 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, Tr_d, param.Nxb, param.nTr, param.dTr, Nxmin_d, param.kmin);
 			cudaMemcpy(Tr_h, Tr_d, param.nbins * param.nTr * sizeof(double), cudaMemcpyDeviceToHost);
 			for(int i = 0; i < param.nbins; ++i){
 				for(int j = 0; j < param.nTr; ++j){
 					double m = exp((j - param.nTr/2) * param.dTr);
-					fprintf(Out3File, "%.20g %.20g\n", m, Tr_h[i * param.nTr + j]);
+					if(param.nP == 1){
+						fprintf(Out3File, "%.20g %.20g\n", m, Tr_h[i * param.nTr + j]);
+					}
+					else{
+						fprintf(Out3File, "%.20g %.20g %.20g %.20g %d\n", m, Tr_h[i * param.nTr + j], param.T, P_h[iP], j);
+					}
 				}
-				fprintf(Out3File, "\n\n");
+				if(param.doTransmission == 1){
+					fprintf(Out3File, "\n\n");
+				}
+				if(param.doTransmission == 2 && i < param.nbins - 1){
+					fclose(Out3File);
+					sprintf(Out3Filename, "Out_%s_tr%.4d.dat", param.name, i + 1);
+					Out3File = fopen(Out3Filename, "a");
+				}
 			}
-			fprintf(Out3File, "\n\n");
 		}
 		fclose(Out3File);
 		free(Tr_h);
@@ -878,16 +1042,18 @@ for(int i = 0; i < param.nbins; ++i){
 	free_Line(L);
 	free(MaxLimits_h);
 	free(K_h);
+	free(x_h);
 	free(Nxmin_h);
-	free(individualBins_h);
+	free(binBoundaries_h);
 	free(outputEdges_h);
 
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);
 	cudaFree(K_d);
+	cudaFree(x_d);
 	cudaFree(binKey_d);
 	cudaFree(Nxmin_d);
-	cudaFree(individualBins_d);	
+	cudaFree(binBoundaries_d);	
 
 	error = cudaGetLastError();
 	printf("Final error = %d = %s\n",error, cudaGetErrorString(error));

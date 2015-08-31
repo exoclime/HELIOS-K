@@ -23,9 +23,14 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[4] = (Isotopologue){15,  182,	6.23003E-07,    8.7519E+02,    6,     21.020985};
 		m.ISO[5] = (Isotopologue){16,  172,	1.15853E-07,    5.2204E+03,   36,     20.020956};
 		m.nFiles = 1;		//number of data files
+		//HITRAN2012
 		m.NL[0] = 224515;	//number of lines
 		m.NLmax = 224515;	//same as the number of lines
 		sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit12.par");
+		//HITRAN2008
+		//m.NL[0] = 69201;	//number of lines
+		//m.NLmax = 69201;	//same as the number of lines
+		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit08.par");
 
 		if(param.useHITEMP == 1){
 			m.nFiles = 34;			//number of data files

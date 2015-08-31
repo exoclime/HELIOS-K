@@ -1,4 +1,4 @@
-#define VERSION 1.46
+#define VERSION 1.50
 
 #define T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -55,6 +55,7 @@ struct Param{
 	double numin;
 	double numax;
 	double dnu;
+	int Nxb;
 	int cutMode;
 	double cut;
 	int dev;
@@ -75,6 +76,8 @@ struct Param{
 	int useIndividualBins;
 	int useOutputEdges;
 	int units;
+	int useIndividualX;
+	int replaceFiles;
 };
 
 struct Line{
