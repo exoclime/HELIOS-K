@@ -44,6 +44,7 @@ int main(int argc, char*argv[]){
 	param.nP = 1;
 	param.usePFile = 0;
 	param.useIndividualX = 0;
+	param.useCia = 0;
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
 		return 0;
@@ -184,6 +185,7 @@ int main(int argc, char*argv[]){
 		}
 		fprintf(infofile, "useHITEMP = %d\n", param.useHITEMP);
 		fprintf(infofile, "Molecule = %d\n", param.nMolecule);
+		fprintf(infofile, "cia System = %s\n", param.ciaSystem);
 		fprintf(infofile, "pathToData = %s\n", param.path);
 		fprintf(infofile, "numin = %g\n", param.numin);
 		fprintf(infofile, "numax = %g\n", param.numax);
@@ -226,7 +228,7 @@ int main(int argc, char*argv[]){
 	//Initialize the Isotopologue properties for ISO.h
 	Init(m, param);
 
-	if(m.NL[0] == 0){
+	if(m.NL[0] == 0 && param.nMolecule != 0){
 		printf("Molecule Id is not allowed\n");
 		return 0;
 	}
@@ -236,13 +238,22 @@ int main(int argc, char*argv[]){
 	for(int i = 0; i < m.nISO; ++i){
 		m.meanMass += m.ISO[i].Ab * m.ISO[i].m; //mean Molar Mass (g)
 	}
-	//printf("mean mass %g\n", m.meanMass);
+//printf("mean mass %g\n", m.meanMass);
 	double unitScale = 1.0;
 
 	if(param.units == 1){
 		unitScale = 1.0 / NA * m.meanMass;
 		param.kmin /= unitScale;
+		if(param.nMolecule == 0){
+			printf("Error, no molecule defined for unit conversion\n");
+			return 0;
+		}
 	}	
+
+
+	//Set cia System properties
+	ciaSystem cia;
+	InitCia(cia, param);
 
 	timeval tt1;			//start time
 	timeval tt2;			//end time
@@ -305,143 +316,38 @@ int main(int argc, char*argv[]){
 		printf("Line alloc error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-
-	//**************************************
-	//Starting the loop around the datafiles
-	//*************************************
-	for(int fi = 0; fi < m.nFiles; ++fi){
-
-		time[1] = 0;
-		time[2] = 0;
-
-		printf("Reading file %d of %d\n", fi, m.nFiles);
-		gettimeofday(&tt1, NULL);
-		
-		printf("Number of lines: %d\n", m.NL[fi]);
-
-		//**************************
-		//Read the Line list	
-		//**************************
-		er = readFile(m, part, L, param.qalphaL, fi);
-		if(er == 0){
-			return 0;
+	if(param.useCia == 1){
+		for(int i = 0; i < param.nP; ++i){
+			readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[i], m.meanMass);
+			cudaMemcpy(K_d + i * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
 		}
-		cudaDeviceSynchronize();
-		error = cudaGetLastError();
-		if(error != 0){
-			printf("Line Read error = %d = %s\n",error, cudaGetErrorString(error));
-			return 0;
-		}
+	}
+	gettimeofday(&tt1, NULL);
+	if(param.nMolecule > 0){
+		//**************************************
+		//Starting the loop around the datafiles
+		//*************************************
+		for(int fi = 0; fi < m.nFiles; ++fi){
 
-		gettimeofday(&tt2, NULL);
-		times = (tt2.tv_sec - tt1.tv_sec);
-		timems = (tt2.tv_usec - tt1.tv_usec);
+			time[1] = 0;
+			time[2] = 0;
 
-		time[0] = times + timems/1000000.0;
-		printf("Time for input:        %g seconds\n", time[0]);
+			printf("Reading file %d of %d\n", fi, m.nFiles);
+			gettimeofday(&tt1, NULL);
+			
+			printf("Number of lines: %d\n", m.NL[fi]);
 
-		cudaDeviceSynchronize();
-		gettimeofday(&tt1, NULL);
-
-		//start the loop around the Pressure values. only 1 iteration if no Pressure file is given
-		for(int iP = 0; iP < param.nP; ++iP){
-
-			//Copy Line data to the device
-			Copy_Line(L, m, fi);
-			//************************
-
-			//****************************
-			//Compute Line properties
-			//***************************
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				int Nk = min(nthmax, m.NL[fi]);
-				S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, m.NL[fi], param.T, P_h[iP], k);
-			}	
-
-/* // *************
-			//uncoment this only when no Presure file is given
-			//print number of lines per bin
-			cudaMemcpy(L.nu_h, L.nu_d, m.NL[fi] * sizeof(double), cudaMemcpyDeviceToHost);
-			int nLb[param.nbins];
-			for(int i = 0; i < param.nbins; ++i){
-				nLb[i] = 0;
+			//**************************
+			//Read the Line list	
+			//**************************
+			er = readFile(m, part, L, param.qalphaL, fi);
+			if(er == 0){
+				return 0;
 			}
-			double binWidth = (param.numax - param.numin) / ((double)(param.nbins));
-			printf("%g\n", binWidth);
-			for(int i = 0; i < m.NL[fi]; ++i){
-				int b = int(L.nu_h[i] / binWidth);
-				nLb[b] += 1;
-			}
-			for(int i = 0; i < param.nbins; ++i){
-				printf("%d, ", nLb[i]);
-			}
-			printf("\n");
- 
-*/
-			//Sort the data along nu
-			thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
-			thrust::device_ptr<int> ID_dt = thrust::device_pointer_cast(L.ID_d);
-
-			thrust::sort_by_key(nu_dt, nu_dt + m.NL[fi], ID_dt);
-
-			//Destroy Q_d to sort S_d alphaL_d and alphaD_d
-			int Nk = min(nthmax, m.NL[fi]);
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.S_d, L.Q_d, m.NL[fi], k);
-			}
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.S_d, L.ID_d, m.NL[fi], k);
-			}
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaL_d, L.Q_d, m.NL[fi], k);
-			}
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaL_d, L.ID_d, m.NL[fi], k);
-			}
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaD_d, L.Q_d, m.NL[fi], k);
-			}
-			for(int k = 0; k < m.NL[fi]; k += nthmax){
-				Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaD_d, L.ID_d, m.NL[fi], k);
-			}
-			//********************************
-
-
-			//********************************
-			//Determine which lines the block in the Line kernel has to read
-			//********************************
-			cudaMemset(MaxLimits_d, 0, sizeof(int));
-
-			setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, m.NL[fi], param.cut);
-			if(param.cut != 0.0){
-				Cutoff_kernel <<< (m.NL[fi] + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, m.NL[fi], nLimits, param.cut, param.cutMode, Nx, x_d, param.useIndividualX);
-				MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, m.NL[fi]);
-				cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
-			}
-			else MaxLimits_h[0] = m.NL[fi];
-
-			/*
-			//print Limits
-			int2 *Limits_h;
-			Limits_h = (int2*)malloc(nLimits * sizeof(int2));
-			cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
-			FILE *LimitsFile;
-			char LimitsFilename[160];
-			sprintf(LimitsFilename, "Limits_%s_dat", param.name);
-			LimitsFile = fopen(LimitsFilename, filemode);
-
-			for(int i = 0; i < nLimits; ++i){
-				fprintf(LimitsFile,"%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
-			}
-			fclose(LimitsFile);
-			free(Limits_h);
-			*/
-			//*********************************************
-
 			cudaDeviceSynchronize();
 			error = cudaGetLastError();
 			if(error != 0){
-				printf("Line error = %d = %s\n",error, cudaGetErrorString(error));
+				printf("Line Read error = %d = %s\n",error, cudaGetErrorString(error));
 				return 0;
 			}
 
@@ -449,56 +355,169 @@ int main(int argc, char*argv[]){
 			times = (tt2.tv_sec - tt1.tv_sec);
 			timems = (tt2.tv_usec - tt1.tv_usec);
 
-			time[1] += times + timems/1000000.0;
+			time[0] = times + timems/1000000.0;
+			printf("Time for input:        %g seconds\n", time[0]);
 
-			if(iP == param.nP - 1){
-				printf("Time for Lines:        %g seconds\n", time[1]);
-			}
 			cudaDeviceSynchronize();
 			gettimeofday(&tt1, NULL);
 
+			//start the loop around the Pressure values. only 1 iteration if no Pressure file is given
+			for(int iP = 0; iP < param.nP; ++iP){
 
-			//***********************************
-			//Compute the opacity function K(x)
-			//************************************
-			double cut = param.cut;
-			if(cut == 0.0) cut = 1.0e30;
-			for(int k = 0; k < Nx; k += nthmax){
-				Nk = min(nthmax, Nx - k);
-				for(int i = 0; i < MaxLimits_h[0]; i += nlmax){
-					int nl = min(MaxLimits_h[0] - i, nlmax);
-					//This loop reduces the running time of the kernel to a few seconds
-					//A longer running time of a single kernel can cause a time out
-					Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d + iP * Nx, x_d, param.dnu, param.numin, Nx, m.NL[fi], Limits_d, cut, param.cutMode, nl, i, k, param.useIndividualX);
+				//Copy Line data to the device
+				Copy_Line(L, m, fi);
+				//************************
+
+				//****************************
+				//Compute Line properties
+				//***************************
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					int Nk = min(nthmax, m.NL[fi]);
+					S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, m.NL[fi], param.T, P_h[iP], k);
+				}	
+
+	/* // *************
+				//uncoment this only when no Presure file is given
+				//print number of lines per bin
+				cudaMemcpy(L.nu_h, L.nu_d, m.NL[fi] * sizeof(double), cudaMemcpyDeviceToHost);
+				int nLb[param.nbins];
+				for(int i = 0; i < param.nbins; ++i){
+					nLb[i] = 0;
 				}
-			}
-			//*************************************
+				double binWidth = (param.numax - param.numin) / ((double)(param.nbins));
+				printf("%g\n", binWidth);
+				for(int i = 0; i < m.NL[fi]; ++i){
+					int b = int(L.nu_h[i] / binWidth);
+					nLb[b] += 1;
+				}
+				for(int i = 0; i < param.nbins; ++i){
+					printf("%d, ", nLb[i]);
+				}
+				printf("\n");
+	 
+	*/
+				//Sort the data along nu
+				thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
+				thrust::device_ptr<int> ID_dt = thrust::device_pointer_cast(L.ID_d);
 
-			cudaDeviceSynchronize();
-			error = cudaGetLastError();
-			if(error != 0){
-				printf("K error = %d = %s\n",error, cudaGetErrorString(error));
-				return 0;
-			}
-			gettimeofday(&tt2, NULL);
-			times = (tt2.tv_sec - tt1.tv_sec);
-			timems = (tt2.tv_usec - tt1.tv_usec);
+				thrust::sort_by_key(nu_dt, nu_dt + m.NL[fi], ID_dt);
 
-			time[2] += times + timems/1000000.0;
-			if(iP == param.nP - 1){
-				printf("Time for K(x):         %g seconds\n", time[2]);
-			}
-			gettimeofday(&tt1, NULL);
+				//Destroy Q_d to sort S_d alphaL_d and alphaD_d
+				int Nk = min(nthmax, m.NL[fi]);
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.S_d, L.Q_d, m.NL[fi], k);
+				}
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.S_d, L.ID_d, m.NL[fi], k);
+				}
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaL_d, L.Q_d, m.NL[fi], k);
+				}
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaL_d, L.ID_d, m.NL[fi], k);
+				}
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaD_d, L.Q_d, m.NL[fi], k);
+				}
+				for(int k = 0; k < m.NL[fi]; k += nthmax){
+					Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaD_d, L.ID_d, m.NL[fi], k);
+				}
+				//********************************
 
-		} // End of pressure loop
 
-		InfoFile = fopen(InfoFilename, "a");
-		fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi]);
-		fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
-		fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
-		fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
-		fclose(InfoFile);
-	} // End of linefile loop
+				//********************************
+				//Determine which lines the block in the Line kernel has to read
+				//********************************
+				cudaMemset(MaxLimits_d, 0, sizeof(int));
+
+				setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, m.NL[fi], param.cut);
+				if(param.cut != 0.0){
+					Cutoff_kernel <<< (m.NL[fi] + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, m.NL[fi], nLimits, param.cut, param.cutMode, Nx, x_d, param.useIndividualX);
+					MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, m.NL[fi]);
+					cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
+				}
+				else MaxLimits_h[0] = m.NL[fi];
+
+				/*
+				//print Limits
+				int2 *Limits_h;
+				Limits_h = (int2*)malloc(nLimits * sizeof(int2));
+				cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
+				FILE *LimitsFile;
+				char LimitsFilename[160];
+				sprintf(LimitsFilename, "Limits_%s_dat", param.name);
+				LimitsFile = fopen(LimitsFilename, filemode);
+
+				for(int i = 0; i < nLimits; ++i){
+					fprintf(LimitsFile,"%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
+				}
+				fclose(LimitsFile);
+				free(Limits_h);
+				*/
+				//*********************************************
+
+				cudaDeviceSynchronize();
+				error = cudaGetLastError();
+				if(error != 0){
+					printf("Line error = %d = %s\n",error, cudaGetErrorString(error));
+					return 0;
+				}
+
+				gettimeofday(&tt2, NULL);
+				times = (tt2.tv_sec - tt1.tv_sec);
+				timems = (tt2.tv_usec - tt1.tv_usec);
+
+				time[1] += times + timems/1000000.0;
+
+				if(iP == param.nP - 1){
+					printf("Time for Lines:        %g seconds\n", time[1]);
+				}
+				cudaDeviceSynchronize();
+				gettimeofday(&tt1, NULL);
+
+
+				//***********************************
+				//Compute the opacity function K(x)
+				//************************************
+				double cut = param.cut;
+				if(cut == 0.0) cut = 1.0e30;
+				for(int k = 0; k < Nx; k += nthmax){
+					Nk = min(nthmax, Nx - k);
+					for(int i = 0; i < MaxLimits_h[0]; i += nlmax){
+						int nl = min(MaxLimits_h[0] - i, nlmax);
+						//This loop reduces the running time of the kernel to a few seconds
+						//A longer running time of a single kernel can cause a time out
+						Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d + iP * Nx, x_d, param.dnu, param.numin, Nx, m.NL[fi], Limits_d, cut, param.cutMode, nl, i, k, param.useIndividualX);
+					}
+				}
+				//*************************************
+
+				cudaDeviceSynchronize();
+				error = cudaGetLastError();
+				if(error != 0){
+					printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+					return 0;
+				}
+				gettimeofday(&tt2, NULL);
+				times = (tt2.tv_sec - tt1.tv_sec);
+				timems = (tt2.tv_usec - tt1.tv_usec);
+
+				time[2] += times + timems/1000000.0;
+				if(iP == param.nP - 1){
+					printf("Time for K(x):         %g seconds\n", time[2]);
+				}
+				gettimeofday(&tt1, NULL);
+
+			} // End of pressure loop
+
+			InfoFile = fopen(InfoFilename, "a");
+			fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi]);
+			fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
+			fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
+			fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
+			fclose(InfoFile);
+		} // End of linefile loop
+	}
 
 	//***************************
 	//Write the full line profile

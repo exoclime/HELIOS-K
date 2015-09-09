@@ -5,6 +5,7 @@
 #define def_h 6.62606957e-27	//Planck costant in erg s
 #define def_c 2.99792458e10 	//Speed of light cm/s
 #define NA 6.0221412927e23	//Avogadro Constant  1/mol
+#define def_amagat 2.6867774e19 // molecules cm^-3
 
 #define TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
 #define NCheb 12		//Number of Chebychev coefficients in the q.dat file
@@ -42,6 +43,14 @@ struct Partition{
 	double *Q;
 };
 
+struct ciaSystem{
+	int Nsets;
+	char dataFilename[160];
+	double mass1;
+	double mass2;
+};
+
+
 struct Param{
 	char name[160];
 	double T;
@@ -50,6 +59,8 @@ struct Param{
 	int nP;
 	int usePFile; 
 	int nMolecule;
+	char ciaSystem[160];
+	int useCia;
 	char path[300];
 	int useHITEMP;
 	double numin;

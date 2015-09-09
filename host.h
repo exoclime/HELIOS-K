@@ -97,6 +97,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 11, paramFile);
 		fscanf (paramFile, "%d", &param.nMolecule);
 		fgets(skip2, 3, paramFile);
+		//read ciaSystem
+		fgets(skip, 12, paramFile);
+		fscanf (paramFile, "%s", &param.ciaSystem);
+		fgets(skip2, 3, paramFile);
 		//read path
 		fgets(skip, 13, paramFile);
 		fscanf (paramFile, "%s", &param.path);
@@ -342,6 +346,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}		
 		fclose(Pfile);	
 	}
+	if(strcmp(param.ciaSystem, "-") != 0){
+		param.useCia = 1;
+	}
 
 	return 1;
 }
@@ -437,8 +444,6 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 //}
 	for(int i = 0; i < m.NL[fi]; ++i){
 		fgets(skip, 1, dataFile);
-		//fgets(c1, 3, dataFile);
-		//fgets(c2, 2, dataFile);
 		fgets(c1, 4, dataFile);		//Use combined notation for Id (AFGL and molecule + abundance number
 		fgets(c3, 13, dataFile);
 		fgets(c4, 11, dataFile);
@@ -448,6 +453,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 		fgets(c8, 11, dataFile);
 		fgets(c9, 5, dataFile);
 		fgets(c10, 9, dataFile);
+		
 		fgets(c11, 16, dataFile);
 		fgets(c12, 16, dataFile);
 		fgets(c13, 16, dataFile);
@@ -459,6 +465,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 		fgets(c19, 8, dataFile);
 		fgets(skip, 6, dataFile);
 	
+//		fgets(skip, 36, dataFile);
 	
 		L.nu_h[i] = strtod(c3, NULL);		
 		L.S_h[i] = strtod(c4, NULL);		
@@ -470,7 +477,8 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 		L.alphaL_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		L.n_h[i] = strtod(c9, NULL);
 		L.alphaD_h[i] = 0.0;
-		
+
+//if(i < 10) printf("%g %g %g %g %g %g %g %g\n", L.nu_h[i], L.S_h[i], L.A_h[i], gammaAir, gammaSelf, L.EL_h[i], L.n_h[i], L.delta_h[i]);		
 		int id= std::atoi(c1);
 		int idAFGL;
 //count[0] += 1;
@@ -498,6 +506,126 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 //}
 	fclose(dataFile);
 	return 1;
+}
+
+
+__host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, int Nx, double T, double P, double meanMass){
+
+	FILE *ciaFile;
+	ciaFile = fopen(cia.dataFilename, "r");
+
+	char skip[160];
+	char c1[12];
+	char c2[12];
+	char c3[9];
+	char c4[9];
+	char c5[12];
+	double numin;
+	double numax;
+	int Ncia;
+	double Tcia0, Tcia1;
+	double max;
+
+	double nu0, nu1;
+	double cia0, cia1;
+
+	Tcia1 = 0.0;
+
+	for(int i = 0; i < Nx; ++i){
+		K_h[i] = 0.0;
+	}
+
+	for(int it = 0; it < cia.Nsets; ++it){
+		
+		Tcia0 = Tcia1;
+
+		fgets(skip, 21, ciaFile);
+		fgets(c1, 11, ciaFile);
+		fgets(c2, 11, ciaFile);
+		fgets(c3, 8, ciaFile);
+		fgets(c4, 8, ciaFile);
+		fgets(c5, 11, ciaFile);
+		fgets(skip, 37, ciaFile);
+	 
+		numin = strtod(c1, NULL);
+		numax = strtod(c2, NULL);
+		Ncia = atoi(c3);
+		Tcia1 = strtod(c4, NULL);
+		max = strtod(c5, NULL);
+
+//printf("%g %g %d %g %g\n", numin, numax, Ncia, Tcia1, max);
+
+		fscanf(ciaFile, "%lf", &nu0);
+		fscanf(ciaFile, "%lf", &cia0);
+		fscanf(ciaFile, "%lf", &nu1);
+		fscanf(ciaFile, "%lf", &cia1);
+
+		int nc = 2;
+		
+		for(int i = 0; i < Nx; ++i){
+
+			while(x_h[i] >= nu1){
+				nu0 = nu1;
+				cia0 = cia1;
+				fscanf(ciaFile, "%lf", &nu1);
+				fscanf(ciaFile, "%lf", &cia1);
+//printf("C %g %g %d %d\n", nu1, cia1, i, nc);
+				++nc;
+				if(nc == Ncia) break;
+			}
+
+			if(nu0 <= x_h[i] && x_h[i] < nu1){
+				if(Tcia1 <= T){
+					K_h[i] = cia0 + (cia1 - cia0) * (x_h[i] - nu0) / (nu1 - nu0);
+//if(Tcia1 == 400) printf("A %g %g %g %g %g %g %g\n", nu0, x_h[i], nu1, cia0, cia1, K_h[i], Tcia1);
+				}
+				if(T < Tcia1){
+					double K0 = K_h[i];
+					double K1 = cia0 + (cia1 - cia0) * (x_h[i] - nu0) / (nu1 - nu0);
+					K_h[i] = K0 + (K1 - K0) * (T - Tcia0) / (Tcia1 - Tcia0);
+//printf("B %g %g %g %g %g %g %g %g %g\n", nu0, x_h[i], nu1, cia0, cia1, K_h[i], T, K0, K1);
+				}
+			}
+		
+			if(nu1 == numax) break;
+
+			if(i == Nx - 1){
+				while(nc < Ncia){
+				fscanf(ciaFile, "%lf", &nu1);
+				fscanf(ciaFile, "%lf", &cia1);
+//printf("D %g %g %d %d\n", nu1, cia1, i, nc);
+				++nc;
+				}
+			}
+
+
+		}
+		fgets(skip, 3, ciaFile);
+		if(T <= Tcia1) break;
+	}	
+
+	//See HITRAN cia Paper, Richard et al 2012
+	//P0 is set to 1 atm
+	//T0 is set to 273.15 K 
+	double rho1 = P * 273.15 / T * def_amagat; // numerical density in molecules cm^3
+
+
+	for(int i = 0; i < Nx; ++i){
+		if(Tcia1 < T){
+			K_h[i] = param.kmin;
+		}	
+		else{
+			K_h[i] *= rho1; // K in cm^2 / molecule
+			K_h[i] *= NA / cia.mass1; //K in cm^2 / g
+			K_h[i] += param.kmin;
+		}
+	}
+
+	fclose(ciaFile);
+	for(int i = 0; i < Nx; ++i){
+//printf("%g %g %g\n", x_h[i], K_h[i], T);
+
+	}
 }
 
 

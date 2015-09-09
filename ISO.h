@@ -31,7 +31,12 @@ __host__ void Init(Molecule &m, Param param){
 		//m.NL[0] = 69201;	//number of lines
 		//m.NLmax = 69201;	//same as the number of lines
 		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit08.par");
-
+		//Test
+		//m.NL[0] = 64123;	//number of lines
+		//m.NLmax = 64123;	//same as the number of lines
+		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_H2O.bin");
+		
+		
 		if(param.useHITEMP == 1){
 			m.nFiles = 34;			//number of data files
 			m.NL[ 0] = 2048387;		//number of lines per data file
@@ -196,7 +201,7 @@ __host__ void Init(Molecule &m, Param param){
 
 			m.NLmax = 113631;              //The naximum of number of lines per file
 
-			sprintf(m.dataFilename[ 0], "%s%s", param.path, "05_HITEMP2010.par");
+			sprintf(m.dataFilename[0], "%s%s", param.path, "05_HITEMP2010.par");
 		}
 	}
 	if(m.id == 6){//CH4
@@ -217,3 +222,18 @@ __host__ void Init(Molecule &m, Param param){
 		}
 	}
 }
+
+
+__host__ void InitCia(ciaSystem &cia, Param param){
+	if(strcmp(param.ciaSystem, "H2-H2") == 0){
+		cia.Nsets = 113;
+		sprintf(cia.dataFilename, "%s%s", param.path, "H2-H2_2011.cia");
+		cia.mass1 = 2.0 * 1.00794; //mass of H2 in g / mol
+	}
+	if(strcmp(param.ciaSystem, "H2-He") == 0){
+		cia.Nsets = 339;
+		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_2011.cia");
+		cia.mass1 = 2.0 * 1.00794; //mass of H2 in g / mol
+	}
+}
+

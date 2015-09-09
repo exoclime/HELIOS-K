@@ -38,6 +38,7 @@ parameters are listed here, the order can not be changed.
  * PFile: A '-' ignores this option, otherwise this option specifies a file name which contains multiple values for P
  * useHITEMP: when set to 0, the HITRAN files are read. When set to 1 the HITEMP files are read
  * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
+ * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are 'H2-H2'and 'H2-He'
  * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
  * numin: minimum wavenumber in 1/cm
  * numax: maximum wavenumber in 1/cm
