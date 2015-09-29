@@ -1,6 +1,6 @@
-name = g
+name = H2-H2_400
 T = 400.0
-P = 1.0
+P = 0.9869
 PFile = -
 useHITEMP = 0
 Molecule = 0

@@ -553,7 +553,7 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 		Tcia1 = strtod(c4, NULL);
 		max = strtod(c5, NULL);
 
-//printf("%g %g %d %g %g\n", numin, numax, Ncia, Tcia1, max);
+//printf("%g %g %d %g %g %g\n", numin, numax, Ncia, Tcia1, Tcia0, max);
 
 		fscanf(ciaFile, "%lf", &nu0);
 		fscanf(ciaFile, "%lf", &cia0);
@@ -579,7 +579,7 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 					K_h[i] = cia0 + (cia1 - cia0) * (x_h[i] - nu0) / (nu1 - nu0);
 //if(Tcia1 == 400) printf("A %g %g %g %g %g %g %g\n", nu0, x_h[i], nu1, cia0, cia1, K_h[i], Tcia1);
 				}
-				if(T < Tcia1){
+				if(T < Tcia1 && Tcia0 > 0.0){
 					double K0 = K_h[i];
 					double K1 = cia0 + (cia1 - cia0) * (x_h[i] - nu0) / (nu1 - nu0);
 					K_h[i] = K0 + (K1 - K0) * (T - Tcia0) / (Tcia1 - Tcia0);
@@ -607,7 +607,7 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 	//See HITRAN cia Paper, Richard et al 2012
 	//P0 is set to 1 atm
 	//T0 is set to 273.15 K 
-	double rho1 = P * 273.15 / T * def_amagat; // numerical density in molecules cm^3
+	double rho1 = P * 273.15 / T * def_amagat; // numerical density in molecules cm^-3
 
 
 	for(int i = 0; i < Nx; ++i){
@@ -616,7 +616,7 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 		}	
 		else{
 			K_h[i] *= rho1; // K in cm^2 / molecule
-			K_h[i] *= NA / cia.mass1; //K in cm^2 / g
+			K_h[i] *= NA / cia.mass1; //K in cm^2 / g  //should be masss of he in h2he
 			K_h[i] += param.kmin;
 		}
 	}

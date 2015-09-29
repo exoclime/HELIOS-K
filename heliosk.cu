@@ -241,19 +241,24 @@ int main(int argc, char*argv[]){
 //printf("mean mass %g\n", m.meanMass);
 	double unitScale = 1.0;
 
-	if(param.units == 1){
-		unitScale = 1.0 / NA * m.meanMass;
-		param.kmin /= unitScale;
-		if(param.nMolecule == 0){
-			printf("Error, no molecule defined for unit conversion\n");
-			return 0;
-		}
-	}	
-
-
 	//Set cia System properties
 	ciaSystem cia;
 	InitCia(cia, param);
+
+	if(param.useCia == 1 && param.nMolecule != 0){
+		printf("Error, not allowed to use a cia system with a molecule\n");
+		return 0;
+	}
+
+
+	if(param.units == 1){
+		unitScale = 1.0 / NA * m.meanMass;
+		if(param.nMolecule == 0){
+			unitScale = 1.0 / NA * cia.mass1;
+		}
+		param.kmin /= unitScale;
+	}	
+
 
 	timeval tt1;			//start time
 	timeval tt2;			//end time
