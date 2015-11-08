@@ -224,51 +224,59 @@ __host__ void Init(Molecule &m, Param param){
 }
 
 
-__host__ void InitCia(ciaSystem &cia, Param param){
+__host__ int InitCia(Molecule &m, ciaSystem &cia, Param param){
+	m.NLmax = 0;
+	cia.Nsets = 0;
+	cia.mass1 = 1.0;
 	if(strcmp(param.ciaSystem, "H2-H2") == 0){
 		cia.Nsets = 113;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-H2_2011.cia");
 		cia.mass1 = 2.0 * 1.00794; //mass of H2 in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-H2_eq") == 0){
+	else if(strcmp(param.ciaSystem, "H2-H2_eq") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-H2_eq_2011.cia");
 		cia.mass1 = 2.0 * 1.00794; //mass of H2 in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-H2_norm") == 0){
+	else if(strcmp(param.ciaSystem, "H2-H2_norm") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-H2_norm_2011.cia");
 		cia.mass1 = 2.0 * 1.00794; //mass of H2 in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-He") == 0){
+	else if(strcmp(param.ciaSystem, "H2-He") == 0){
 		cia.Nsets = 339;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_2011.cia");
 		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-He_eq") == 0){
+	else if(strcmp(param.ciaSystem, "H2-He_eq") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_eq_2011.cia");
 		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-He_norm") == 0){
+	else if(strcmp(param.ciaSystem, "H2-He_norm") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_norm_2011.cia");
 		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-CH4_eq") == 0){
+	else if(strcmp(param.ciaSystem, "H2-CH4_eq") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-CH4_eq_2011.cia");
 		cia.mass1 = 16.04246; //mass of CH4 in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-CH4_norm") == 0){
+	else if(strcmp(param.ciaSystem, "H2-CH4_norm") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-CH4_norm_2011.cia");
 		cia.mass1 = 16.04246; //mass of CH4 in g / mol
 	}
-	if(strcmp(param.ciaSystem, "H2-H") == 0){
+	else if(strcmp(param.ciaSystem, "H2-H") == 0){
 		cia.Nsets = 4;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-H_2011.cia");
 		cia.mass1 = 1.00794; //mass of H in g / mol
 	}
+	else{
+		printf("Error: cia System not found %s\n", param.ciaSystem);
+		return 0;
+	}
+	return 1;
 }
 

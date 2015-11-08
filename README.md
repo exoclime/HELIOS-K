@@ -38,8 +38,8 @@ parameters are listed here, the order can not be changed.
  * PFile: A '-' ignores this option, otherwise this option specifies a file name which contains multiple values for P
  * useHITEMP: when set to 0, the HITRAN files are read. When set to 1 the HITEMP files are read
  * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
- * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are 'H2-H2', H2-H2_eq', 'H2_H2_norm', 'H2-He', 'H2-He_eq'  
-  'H2-He_norm', 'H2-CH4_eq', 'H2-CH4_norm' and 'H2-H'.
+ * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are H2-H2, H2-H2_eq, H2_H2_norm, H2-He, H2-He_eq  
+  H2-He_norm, H2-CH4_eq, H2-CH4_norm and H2-H.
  * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
  * numin: minimum wavenumber in 1/cm
  * numax: maximum wavenumber in 1/cm
@@ -139,7 +139,7 @@ The binsfile must contain line by line the edges of the bins in cm^-1.
   200  
 
 # The output edges option #
-When a 'outputedgesFile' name is given in the pram.dat file, then this file is used to specify the output positions of the Out_<name>_bin.dat files.
+When a 'outputedgesFile' name is given in the pram.dat file, then this file is used to specify the averaged output positions of the Out_<name>_bin.dat files.
 The file must contain line by line the positions in y.  
   For example:  
   0.0  

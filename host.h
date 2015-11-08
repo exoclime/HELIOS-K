@@ -400,7 +400,6 @@ __host__ int readPFile(Param &param, double *P_h){
 	for(int i = 0; i < param.nP; ++i){
 		er = fscanf(Pfile, "%lf", &P_h[i]);
 		if(er <= 0) return 0;
-		printf("%g\n", P_h[i]);
 	}
 	fclose(Pfile);	
 	return 1;
@@ -410,6 +409,7 @@ __host__ int readPFile(Param &param, double *P_h){
 __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
 	FILE *dataFile;
 	dataFile  = fopen(m.dataFilename[fi], "r");
+
 	if(dataFile == NULL){
 		printf("Error: line list file not found %s\n", m.dataFilename[fi]);
 		return 0;

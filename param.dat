@@ -1,10 +1,10 @@
-name = H2-H2_400
-T = 400.0
-P = 0.9869
+name = g
+T = 500
+P = 1.0
 PFile = -
 useHITEMP = 0
-Molecule = 0
-ciaSystem = H2-H2
+Molecule = 1
+ciaSystem = -
 pathToData =
 numin = 0.5
 numax = 27000.0

@@ -202,15 +202,21 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "doStoreFullK = %d\n", param.doStoreFullK);
 		fprintf(infofile, "dostoreK = %d\n", param.doStoreK);
 		fprintf(infofile, "nbins = %d\n", param.nbins);
+		if(param.useIndividualBins == 1){
+			fprintf(infofile, "use Individual bins: %s\n", param.bins);
+		}
 		fprintf(infofile, "kmin = %g\n", param.kmin);
 		fprintf(infofile, "qalphaL = %g\n", param.qalphaL);
 		fprintf(infofile, "doMean = %d\n", param.doMean);
 		fprintf(infofile, "Units = %d\n", param.units);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 		fprintf(infofile, "Replace files = %d\n", param.replaceFiles);
+		if(param.useOutputEdges == 1){
+			fprintf(infofile, "use output edges: %s\n", param.edges);
+		}
+
 	}
 	fclose(InfoFile);
-
 	
 	//Compute partition function
 	Partition part;
@@ -243,7 +249,10 @@ int main(int argc, char*argv[]){
 
 	//Set cia System properties
 	ciaSystem cia;
-	InitCia(cia, param);
+	if(param.useCia == 1){
+		er = InitCia(m, cia, param);
+		if(er == 0) return 0;
+	}
 
 	if(param.useCia == 1 && param.nMolecule != 0){
 		printf("Error, not allowed to use a cia system with a molecule\n");
@@ -253,12 +262,11 @@ int main(int argc, char*argv[]){
 
 	if(param.units == 1){
 		unitScale = 1.0 / NA * m.meanMass;
-		if(param.nMolecule == 0){
+		if(param.useCia == 1 && param.nMolecule == 0){
 			unitScale = 1.0 / NA * cia.mass1;
 		}
 		param.kmin /= unitScale;
 	}	
-
 
 	timeval tt1;			//start time
 	timeval tt2;			//end time
