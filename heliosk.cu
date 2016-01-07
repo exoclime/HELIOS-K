@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+
 #include "define.h"
 #include "host.h"
 #include "ISO.h"
@@ -285,6 +286,12 @@ int main(int argc, char*argv[]){
 
 	//Allocate the memory for the Line properties
 	Alloc_Line(L, m);
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	if(error != 0){
+		printf("Line alloc error = %d = %s\n",error, cudaGetErrorString(error));
+		return 0;
+	}
 	double *K_h, *K_d;
 	double *x_h, *x_d;
 	int *binKey_d;
@@ -296,6 +303,14 @@ int main(int argc, char*argv[]){
 	cudaMalloc((void **) &x_d, Nx * sizeof(double));
 	cudaMalloc((void **) &binKey_d, Nx * sizeof(int));
 	cudaMalloc((void **) &binIndex_d, (param.nbins + 2) * sizeof(int));
+
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	if(error != 0){
+		printf("K alloc error = %d = %s\n",error, cudaGetErrorString(error));
+		return 0;
+	}
+
 	InitialK_kernel <<< (param.nP * Nx + 511) / 512, 512 >>> (K_d, param.nP * Nx, param.kmin);
 	setX_kernel <<< (Nx + 511) / 512, 512 >>> (x_d, Nx, param.numin, param.dnu, param.Nxb, param.useIndividualX, binBoundaries_d);
 	cudaMemcpy(x_h, x_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
@@ -316,30 +331,29 @@ int main(int argc, char*argv[]){
 	const int ntL = 64;	//number of threads in Line kernel
 	int nLimits = (Nx + ntL - 1) / ntL;
 	int2 *Limits_d;
+
 	cudaMalloc((void **) &Limits_d, nLimits * sizeof(int2));
 	int *MaxLimits_h, *MaxLimits_d;
 	MaxLimits_h = (int*)malloc(sizeof(int));
 	cudaMalloc((void **) &MaxLimits_d, sizeof(int));
-	//int2 *Limits_h; 	//only needed for check the Limits
-	//Limits_h = (int2*)malloc(nLimits * sizeof(int2));
 
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
 	if(error != 0){
-		printf("Line alloc error = %d = %s\n",error, cudaGetErrorString(error));
+		printf("Alloc error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
 	if(param.useCia == 1){
-		for(int i = 0; i < param.nP; ++i){
-			readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[i], m.meanMass);
-			cudaMemcpy(K_d + i * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
+		for(int iP = 0; iP < param.nP; ++iP){
+			readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[iP], m.meanMass);
+			cudaMemcpy(K_d + iP * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
 		}
 	}
 	gettimeofday(&tt1, NULL);
 	if(param.nMolecule > 0){
 		//**************************************
 		//Starting the loop around the datafiles
-		//*************************************
+		//**************************************
 		for(int fi = 0; fi < m.nFiles; ++fi){
 
 			time[1] = 0;
@@ -381,7 +395,7 @@ int main(int argc, char*argv[]){
 				Copy_Line(L, m, fi);
 				//************************
 
-				//****************************
+				//***************************
 				//Compute Line properties
 				//***************************
 				for(int k = 0; k < m.NL[fi]; k += nthmax){
@@ -451,7 +465,7 @@ int main(int argc, char*argv[]){
 				}
 				else MaxLimits_h[0] = m.NL[fi];
 
-				/*
+/*				
 				//print Limits
 				int2 *Limits_h;
 				Limits_h = (int2*)malloc(nLimits * sizeof(int2));
@@ -466,7 +480,7 @@ int main(int argc, char*argv[]){
 				}
 				fclose(LimitsFile);
 				free(Limits_h);
-				*/
+*/				
 				//*********************************************
 
 				cudaDeviceSynchronize();
@@ -492,6 +506,7 @@ int main(int argc, char*argv[]){
 				//***********************************
 				//Compute the opacity function K(x)
 				//************************************
+
 				double cut = param.cut;
 				if(cut == 0.0) cut = 1.0e30;
 				for(int k = 0; k < Nx; k += nthmax){
@@ -541,19 +556,24 @@ int main(int argc, char*argv[]){
 		sprintf(OutFilename, "Out_%s.dat", param.name);
 			
 		OutFile = fopen(OutFilename, filemode);
+FILE *binaryOutFile;
+binaryOutFile = fopen("Out.bin", "wb");
+
 		for(int iP = 0; iP < param.nP; ++iP){
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+fwrite(K_h, sizeof(double), Nx, binaryOutFile);
 			for(int j = 0; j < Nx; ++j){
 				if(param.nP == 1){
-					fprintf(OutFile, "%.20g %.20g\n", x_h[j], K_h[j] * unitScale);
+				//	fprintf(OutFile, "%.20g %.20g\n", x_h[j], K_h[j] * unitScale);
 				}
 				else{
-					fprintf(OutFile, "%.20g %.20g %.20g %.20g\n", x_h[j], K_h[j] * unitScale, param.T, P_h[iP]);
+				//	fprintf(OutFile, "%.20g %.20g %.20g %.20g\n", x_h[j], K_h[j] * unitScale, param.T, P_h[iP]);
 				}
 			}
 			fprintf(OutFile, "\n\n");
 		}
 		fclose(OutFile);
+fclose(binaryOutFile);
 	}
 	//*******************************
 
@@ -679,7 +699,7 @@ printf("\n\n");
 
 	//***************************************
 	//Do the sorting of K for all bins
-	//**************************************
+	//***************************************
 	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
 	thrust::device_ptr<int> binKey_dt = thrust::device_pointer_cast(binKey_d);
 	for(int iP = 0; iP < param.nP; ++iP){
@@ -703,7 +723,7 @@ printf("\n\n");
 
 	gettimeofday(&tt1, NULL);
 
-	//********************************
+	//*********************************
 	//Prepare Resampling and do QR factorization, the same for all bins
 	// this doesn't work with individual bins
 	//*********************************

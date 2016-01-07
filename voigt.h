@@ -521,7 +521,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // *************************************************
 template <int NB>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double *x_d, double dnu, double numin, int Nx, int NL, int2 *Limits_d, double cut, int cutMode, int nl, int ii, int kk, int useIndividualX){
+__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double *x_d, const double dnu, const double numin, const int Nx, const int NL, int2 *Limits_d, const double cut, const int cutMode, const int nl, const int ii, const int kk, const int useIndividualX){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -599,6 +599,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 				}
 			}
 		}
+
 #endif
 # if PROFILE == 2
 		for(int k = 0; k < NB; ++k){
