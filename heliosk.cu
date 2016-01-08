@@ -556,24 +556,43 @@ int main(int argc, char*argv[]){
 		sprintf(OutFilename, "Out_%s.dat", param.name);
 			
 		OutFile = fopen(OutFilename, filemode);
-FILE *binaryOutFile;
-binaryOutFile = fopen("Out.bin", "wb");
 
 		for(int iP = 0; iP < param.nP; ++iP){
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
-fwrite(K_h, sizeof(double), Nx, binaryOutFile);
 			for(int j = 0; j < Nx; ++j){
+
 				if(param.nP == 1){
-				//	fprintf(OutFile, "%.20g %.20g\n", x_h[j], K_h[j] * unitScale);
+					fprintf(OutFile, "%.20g %.20g\n", x_h[j], K_h[j] * unitScale);
 				}
 				else{
-				//	fprintf(OutFile, "%.20g %.20g %.20g %.20g\n", x_h[j], K_h[j] * unitScale, param.T, P_h[iP]);
+					fprintf(OutFile, "%.20g %.20g %.20g %.20g\n", x_h[j], K_h[j] * unitScale, param.T, P_h[iP]);
 				}
 			}
 			fprintf(OutFile, "\n\n");
 		}
 		fclose(OutFile);
-fclose(binaryOutFile);
+	}
+	if(param.doStoreFullK == 2){
+		//write a binary file in single precision
+		FILE *OutFile;
+		char OutFilename[160];
+		sprintf(OutFilename, "Out_%s.bin", param.name);
+			
+		if(param.replaceFiles == 0){
+			OutFile = fopen(OutFilename, "ab");
+		}
+		else{
+			OutFile = fopen(OutFilename, "wb");
+		}
+
+		for(int iP = 0; iP < param.nP; ++iP){
+			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
+			for(int j = 0; j < Nx; ++j){
+				float Kf = (float)(K_h[j]);
+				fwrite(&Kf, sizeof(float), 1, OutFile);
+			}
+		}
+		fclose(OutFile);
 	}
 	//*******************************
 
