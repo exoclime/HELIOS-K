@@ -464,7 +464,7 @@ int main(int argc, char*argv[]){
 					cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
 				}
 				else MaxLimits_h[0] = m.NL[fi];
-
+				printf("Maximum number of Line Blocks %d\n", MaxLimits_h[0]);
 /*				
 				//print Limits
 				int2 *Limits_h;
@@ -473,10 +473,15 @@ int main(int argc, char*argv[]){
 				FILE *LimitsFile;
 				char LimitsFilename[160];
 				sprintf(LimitsFilename, "Limits_%s_dat", param.name);
-				LimitsFile = fopen(LimitsFilename, filemode);
+				if(fi == 0){
+					LimitsFile = fopen(LimitsFilename, filemode);
+				}
+				else{
+					LimitsFile = fopen(LimitsFilename, "a");
+				}
 
 				for(int i = 0; i < nLimits; ++i){
-					fprintf(LimitsFile,"%d %d %d\n", i, Limits_h[i].x, Limits_h[i].y);
+					fprintf(LimitsFile,"%d %d %d %d\n", fi, i, Limits_h[i].x, Limits_h[i].y);
 				}
 				fclose(LimitsFile);
 				free(Limits_h);

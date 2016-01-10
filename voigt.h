@@ -480,12 +480,14 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 		ir = max(ir, 0);
 		il = min(il, n);
 		ir = min(ir, n);
-	
-		for(int j = ir; j <= il; ++j){ 
-			atomicMin(&Limits_d[j].x, id);
-		}
-		for(int j = ir; j <= il; ++j){ 
-			atomicMax(&Limits_d[j].y, id);
+
+		if(il != 0 || ir != 0){	
+			for(int j = ir; j <= il; ++j){ 
+				atomicMin(&Limits_d[j].x, id);
+			}
+			for(int j = ir; j <= il; ++j){ 
+				atomicMax(&Limits_d[j].y, id);
+			}
 		}
 //if(id > NL - 50 || id < 50) printf("%d %g %d %d %d\n", id, nu_d[id], il, ir, ID_d[id]);
 	}
