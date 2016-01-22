@@ -180,6 +180,44 @@ __host__ void Init(Molecule &m, Param param){
 		}
 
 	}
+	if(m.id == 3){//O3
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 422116;
+		m.NLmax = 422116;
+		m.nISO = 5;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){31,  666,  .992901E+00,    3.4838E+03,    1,     47.984745};
+		m.ISO[1] = (Isotopologue){32,  668,  3.98194E-03,    7.4657E+03,    1,     49.988991};
+		m.ISO[2] = (Isotopologue){33,  686,  1.99097E-03,    3.6471E+03,    1,     49.988991};
+		m.ISO[3] = (Isotopologue){34,  667,  7.40475E-04,    4.3331E+04,    6,     48.988960};
+		m.ISO[4] = (Isotopologue){35,  676,  3.70237E-04,    2.1405E+04,    6,     48.988960};
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "03_hit12.par");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
+	if(m.id == 4){//N20
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 47843;
+		m.NLmax = 47843;
+		m.nISO = 5;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){31,  446,  .990333E+00,    5.0018E+03,    9,     44.001062};
+		m.ISO[1] = (Isotopologue){32,  456,  3.64093E-03,    3.3619E+03,    6,     44.998096};
+		m.ISO[2] = (Isotopologue){33,  546,  3.64093E-03,    3.4586E+03,    6,     44.998096};
+		m.ISO[3] = (Isotopologue){34,  448,  1.98582E-03,    5.3147E+03,    9,     46.005308};
+		m.ISO[4] = (Isotopologue){35,  447,  3.69280E-04,    3.0971E+04,   54,     45.005278};
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "04_hit08.par");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
 	if(m.id == 5){//CO
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 4606;
@@ -216,6 +254,53 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[2] = (Isotopologue){63,  212,	6.15751E-04,    4.7954E+03,    3,     17.037475};
 		m.ISO[3] = (Isotopologue){64,  312,	6.91785E-06,    9.5990E+03,    6,     18.040830};
 		sprintf(m.dataFilename[0], "%s%s", param.path, "06_hit12.par");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
+	if(m.id == 11){//NH3
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 46392;
+		m.NLmax = 46392;
+		m.nISO = 2;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){111,  4111,  .995872E+00,    1.7252E+03,    3,     17.026549};
+		m.ISO[1] = (Isotopologue){112,  5111,  3.66129E-03,    1.1527E+03,    2,     18.023583};
+		sprintf(m.dataFilename[0], "%s%s", param.path, "11_hit12.par");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
+	if(m.id == 23){//HCN
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 4253;
+		m.NLmax = 4253;
+		m.nISO = 3;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){231,  124,  .985114E+00,    8.9529E+02,    6,     27.010899};
+		m.ISO[1] = (Isotopologue){232,  134,  1.10676E-02,    1.8403E+03,   12,     28.014254};
+		m.ISO[2] = (Isotopologue){233,  125,  3.62174E-03,    6.2141E+02,    4,     28.007933};
+		sprintf(m.dataFilename[0], "%s%s", param.path, "23_hit08.par");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
+	if(m.id == 26){//C2H2
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 20410;
+		m.NLmax = 20410;
+		m.nISO = 3;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){261,  1221,  .977599E+00,    4.1403E+02,    1,     26.015650};
+		m.ISO[1] = (Isotopologue){262,  1231,  2.19663E-02,    1.6562E+03,    8,     27.019005};
+		m.ISO[2] = (Isotopologue){263,  1222,  3.04550E-04,    1.5818E+03,    6,     27.021825};
+		sprintf(m.dataFilename[0], "%s%s", param.path, "26_hit12.par");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
