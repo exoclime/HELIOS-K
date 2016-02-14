@@ -166,10 +166,23 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 15, paramFile);
 		fscanf (paramFile, "%d", &param.doStoreFullK);
 		fgets(skip2, 3, paramFile);
+		//read pathK
+		fgets(skip, 10, paramFile);
+		fscanf (paramFile, "%s", &param.pathK);
+		fgets(skip2, 3, paramFile);
+		if(strcmp(param.pathK, "doStoreSK") == 0){
+			sprintf(param.pathK, "");
+		
+			//fgets(skip, 3, paramFile);
+			fscanf (paramFile, "%d", &param.doStoreK);
+			fgets(skip2, 3, paramFile);
+		}
+		else{
 		//read doStoreK
 		fgets(skip, 12, paramFile);
 		fscanf (paramFile, "%d", &param.doStoreK);
 		fgets(skip2, 3, paramFile);
+		}
 		//read nbins
 		fgets(skip, 8, paramFile);
 		fscanf (paramFile, "%d", &param.nbins);
@@ -224,6 +237,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 		else if(strcmp(argv[i], "-path") == 0){
 			sprintf(param.path, "%s", argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-pathK") == 0){
+			sprintf(param.pathK, "%s", argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-numin") == 0){
 			param.numin = atof(argv[i + 1]);

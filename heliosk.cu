@@ -201,6 +201,7 @@ int main(int argc, char*argv[]){
 		fprintf(infofile, "nTr = %d\n", param.nTr);
 		fprintf(infofile, "dTr =  %g\n", param.dTr);
 		fprintf(infofile, "doStoreFullK = %d\n", param.doStoreFullK);
+		fprintf(infofile, "pathToK = %s\n", param.pathK);
 		fprintf(infofile, "dostoreK = %d\n", param.doStoreK);
 		fprintf(infofile, "nbins = %d\n", param.nbins);
 		if(param.useIndividualBins == 1){
@@ -580,7 +581,7 @@ int main(int argc, char*argv[]){
 	if(param.doStoreFullK == -1){
 		FILE *OutFile;
 		char OutFilename[160];
-		sprintf(OutFilename, "%sOut_%s.dat", param.path, param.name);
+		sprintf(OutFilename, "%sOut_%s.dat", param.pathK, param.name);
 			
 		OutFile = fopen(OutFilename, "r");
 		if(OutFile == NULL){
@@ -633,7 +634,7 @@ int main(int argc, char*argv[]){
 		//read a binary file
 		FILE *OutFile;
 		char OutFilename[160];
-		sprintf(OutFilename, "%sOut_%s.bin", param.path, param.name);
+		sprintf(OutFilename, "%sOut_%s.bin", param.pathK, param.name);
 			
 		OutFile = fopen(OutFilename, "rb");
 		if(OutFile == NULL){

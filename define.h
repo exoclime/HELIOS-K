@@ -62,6 +62,7 @@ struct Param{
 	char ciaSystem[160];
 	int useCia;
 	char path[300];
+	char pathK[300];
 	int useHITEMP;
 	double numin;
 	double numax;

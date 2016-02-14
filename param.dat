@@ -18,6 +18,7 @@ doTransmission = 0
 nTr = 1000
 dTr = 0.05
 doStoreFullK = 0
+pathToK =
 doStoreSK = 0
 nbins = 1
 binsFile = -
