@@ -350,7 +350,7 @@ int main(int argc, char*argv[]){
 		}
 	}
 	gettimeofday(&tt1, NULL);
-	if(param.nMolecule > 0){
+	if(param.nMolecule > 0 && param.doStoreFullK >= 0){
 		//**************************************
 		//Starting the loop around the datafiles
 		//**************************************
@@ -577,6 +577,36 @@ int main(int argc, char*argv[]){
 		}
 		fclose(OutFile);
 	}
+	if(param.doStoreFullK == -1){
+		FILE *OutFile;
+		char OutFilename[160];
+		sprintf(OutFilename, "%sOut_%s.dat", param.path, param.name);
+			
+		OutFile = fopen(OutFilename, "r");
+		if(OutFile == NULL){
+			printf("Error: Input file not found %s\n", OutFilename);
+			return 0;
+		}
+
+		for(int iP = 0; iP < param.nP; ++iP){
+			for(int j = 0; j < Nx; ++j){
+
+				if(param.nP == 1){
+					double k;
+					fscanf(OutFile, "%lf %lf\n", &x_h[j], &k);
+					K_h[j] = k / unitScale;
+				}
+				else{
+					double k, t, p;
+					fscanf(OutFile, "%lf %lf %lf %lf\n", &x_h[j], &k, &t, &p);
+					K_h[j] = k / unitScale;
+				}
+			}
+			cudaMemcpy(K_d + iP * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
+			fscanf(OutFile, "\n\n");
+		}
+		fclose(OutFile);
+	}
 	if(param.doStoreFullK == 2){
 		//write a binary file in single precision
 		FILE *OutFile;
@@ -596,6 +626,28 @@ int main(int argc, char*argv[]){
 				float Kf = (float)(K_h[j]);
 				fwrite(&Kf, sizeof(float), 1, OutFile);
 			}
+		}
+		fclose(OutFile);
+	}
+	if(param.doStoreFullK == -2){
+		//read a binary file
+		FILE *OutFile;
+		char OutFilename[160];
+		sprintf(OutFilename, "%sOut_%s.bin", param.path, param.name);
+			
+		OutFile = fopen(OutFilename, "rb");
+		if(OutFile == NULL){
+			printf("Error: Input file not found %s\n", OutFilename);
+			return 0;
+		}
+
+		for(int iP = 0; iP < param.nP; ++iP){
+			for(int j = 0; j < Nx; ++j){
+				float Kf;
+				fread(&Kf, sizeof(float), 1, OutFile);
+				K_h[j] = (double)(Kf);
+			}
+			cudaMemcpy(K_d + iP * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
 		}
 		fclose(OutFile);
 	}
