@@ -319,6 +319,10 @@ int main(int argc, char*argv[]){
 	binIndex_kernel <<< (Nx + 511) / 512, 512 >>> (binKey_d, binIndex_d, Nx, param.nbins);
 	cudaMemcpy(binIndex_h, binIndex_d, (param.nbins + 2) * sizeof(int), cudaMemcpyDeviceToHost);
 
+	free(binBoundaries_h);
+	cudaFree(binIndex_d);
+	cudaFree(binBoundaries_d);	
+
 	/*			
 	int *binKey_h; 	//only needed to check the key
 	binKey_h = (int*)malloc(Nx * sizeof(int));
@@ -552,6 +556,8 @@ int main(int argc, char*argv[]){
 			fclose(InfoFile);
 		} // End of linefile loop
 	}
+	cudaFree(Limits_d);
+	cudaFree(MaxLimits_d);
 
 	//***************************
 	//Write the full line profile
@@ -674,18 +680,15 @@ int main(int argc, char*argv[]){
 	//**************************************
 	if(param.doMean > 0){
 		
-		double *Pm_d;
-		double *Rm_d;
 		double *Pmn_d;
 		double *Rmn_d;
 
-		cudaMalloc((void **) &Pm_d, Nx * sizeof(double));
-		cudaMalloc((void **) &Rm_d, Nx * sizeof(double));
 		cudaMalloc((void **) &Pmn_d, Nx * sizeof(double));
 		cudaMalloc((void **) &Rmn_d, Nx * sizeof(double));
 	
-		double *means_h;	
+		double *means_h, *means_d;	
 		means_h = (double*)malloc(4 * sizeof(double));
+		cudaMalloc((void **) &means_d, 4 * sizeof(double));
 
 		FILE *Out4File;
 		char Out4Filename[160];
@@ -695,17 +698,8 @@ int main(int argc, char*argv[]){
 	
 		for(int iP = 0; iP < param.nP; ++iP){
 
-			Mean_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, x_d, Pm_d, Rm_d, Pmn_d, Rmn_d, param.T, Nx);
+			Mean_kernel <<< (Nx + 511) / 512, 512 >>> (x_d, Pmn_d, Rmn_d, param.T, Nx);
 /*
-cudaMemcpy(K_h, Pm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
-for(int i = 0; i < Nx; ++i){
-	printf("%g %g\n", x_h[i], K_h[i]);
-}
-printf("\n\n");
-cudaMemcpy(K_h, Rm_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
-for(int i = 0; i < Nx; ++i){
-	printf("%g %g\n", param.numin + i * param.dnu, K_h[i]);
-}
 printf("\n\n");
 cudaMemcpy(K_h, Pmn_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 for(int i = 0; i < Nx; ++i){
@@ -718,15 +712,12 @@ for(int i = 0; i < Nx; ++i){
 }
 printf("\n\n");
 */
-			IntegrateMean_kernel <512> <<< 4, 512 >>> (Pm_d, Rm_d, Pmn_d, Rmn_d, x_d, Nx, param.useIndividualX);
+			IntegrateMean_kernel <512> <<< 4, 512 >>> (Pmn_d, Rmn_d, x_d, K_d + iP * Nx, means_d, Nx, param.useIndividualX);
 			double sigma = 2.0 * def_kB * def_kB * def_kB * def_kB / ( def_h * def_h * def_h * def_c * def_c * 15.0) * M_PI * M_PI * M_PI * M_PI * M_PI;
 			double integral1 = sigma * param.T * param.T * param.T * param.T / M_PI;
 			double integral2 = M_PI / (4.0 * sigma * param.T * param.T * param.T);
 		
-			cudaMemcpy(means_h + 0, Pm_d, sizeof(double), cudaMemcpyDeviceToHost);
-			cudaMemcpy(means_h + 1, Rm_d, sizeof(double), cudaMemcpyDeviceToHost);
-			cudaMemcpy(means_h + 2, Pmn_d, sizeof(double), cudaMemcpyDeviceToHost);
-			cudaMemcpy(means_h + 3, Rmn_d, sizeof(double), cudaMemcpyDeviceToHost);
+			cudaMemcpy(means_h, means_d, 4 * sizeof(double), cudaMemcpyDeviceToHost);
 
 
 			if(param.nP == 1){
@@ -752,8 +743,7 @@ printf("\n\n");
 		fclose(Out4File);
 
 		free(means_h);
-		cudaFree(Pm_d);
-		cudaFree(Rm_d);
+		cudaFree(means_d);
 		cudaFree(Pmn_d);
 		cudaFree(Rmn_d);
 	}
@@ -783,6 +773,7 @@ printf("\n\n");
 		thrust::sort_by_key(K_dt + iP * Nx, K_dt + Nx + iP * Nx, binKey_dt);
 		thrust::stable_sort_by_key(binKey_dt, binKey_dt + Nx, K_dt + iP * Nx);
 	}
+	cudaFree(binKey_d);
 	//****************************************
 
 	cudaDeviceSynchronize();
@@ -884,7 +875,8 @@ for(int i = 0; i < param.nbins; ++i){
 		
 				fprintf(Out3File, "%.20g %.20g ", param.kmin, Nxmin_h[i] / ((double)(param.Nxb)));
 				for(int ic = 0; ic < param.nC; ++ic){
-					fprintf(Out3File, "%.20g ", K_h[il + ic]);
+					if(Nxmin_h[i] != param.Nxb) fprintf(Out3File, "%.20g ", K_h[il + ic]);
+					else fprintf(Out3File, "0.0 ");
 				}
 				if(param.nP > 1){
 					fprintf(Out3File, "%.20g %.20g ", param.T, P_h[iP]);
@@ -1173,16 +1165,12 @@ for(int i = 0; i < param.nbins; ++i){
 	free(K_h);
 	free(x_h);
 	free(Nxmin_h);
-	free(binBoundaries_h);
 	free(outputEdges_h);
+	free(binIndex_h);
 
-	cudaFree(Limits_d);
-	cudaFree(MaxLimits_d);
 	cudaFree(K_d);
 	cudaFree(x_d);
-	cudaFree(binKey_d);
 	cudaFree(Nxmin_d);
-	cudaFree(binBoundaries_d);	
 
 	error = cudaGetLastError();
 	printf("Final error = %d = %s\n",error, cudaGetErrorString(error));

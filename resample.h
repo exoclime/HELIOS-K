@@ -356,7 +356,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 // This kernel finds bins starting with kmin and stores the starting index
 //
 // Author: Simon Grimm
-// February 2015
+// February 2016
 // *****************************************
 __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *Nmin_d, int nbins){
 
@@ -372,6 +372,11 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 //printf("%d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
 			Nmin_d[ib] = n;
 
+		}
+		//find complete empty bins
+		if(K == kmin && id % NLb == NLb - 1){
+//printf("empty bin %d\n", ib);
+			Nmin_d[ib] = NLb;
 		}
 	}
 
@@ -605,7 +610,7 @@ __host__ void SimpsonCoefficient(){
 // Author: Simon Grimm
 // June 2015
 // *****************************************
-__global__ void Mean_kernel(double *K_d, double *x_d, double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double T, int Nx){
+__global__ void Mean_kernel(double *x_d, double *Pmn_d, double *Rmn_d, double T, int Nx){
 
 	int idy = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idy;
@@ -623,16 +628,10 @@ __global__ void Mean_kernel(double *K_d, double *x_d, double *Pm_d, double *Rm_d
 		double B = t1 / e1;
 		double dB_dT = t1 * t2 * e / (T * e1 * e1);
 
-		double K = K_d[id];
-
-		Pm_d[id] = B * K;
-		Rm_d[id] = dB_dT / K;
 		Pmn_d[id] = B;
 		Rmn_d[id] = dB_dT;
 
 		if(nu == 0.0){
-			Pm_d[id] = 0.0;
-			Rm_d[id] = 0.0;
 			Pmn_d[id] = 0.0;
 			Rmn_d[id] = 0.0;
 		}
@@ -640,7 +639,7 @@ __global__ void Mean_kernel(double *K_d, double *x_d, double *Pm_d, double *Rm_d
 }
 
 template <int nb>
-__global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, double *Rmn_d, double *x_d, int NL, int useIndividualX){
+__global__ void IntegrateMean_kernel(double *Pmn_d, double *Rmn_d, double *x_d, double *K_d, double *means_d, int NL, int useIndividualX){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
@@ -653,8 +652,10 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 	for(int k = 0; k < NL; k += nb){
 		if(useIndividualX == 0){
 			if(idy + k < NL){
-				if(idx == 0) a_s[idy] += Pm_d[idy + k];
-				if(idx == 1) a_s[idy] += Rm_d[idy + k];
+				if(idx == 0) a_s[idy] += (Pmn_d[idy + k] * K_d[idy + k]);
+				if(idx == 1){
+					if(K_d[idy + k] != 0.0) a_s[idy] += (Rmn_d[idy + k] / K_d[idy + k]);
+				}
 				if(idx == 2) a_s[idy] += Pmn_d[idy + k];
 				if(idx == 3) a_s[idy] += Rmn_d[idy + k];
 			}
@@ -662,8 +663,10 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 		else{
 			//Trapezoid rule for unequal spaced x
 			if(idy + k  + 1 < NL){
-				if(idx == 0) a_s[idy] += 0.5 * (Pm_d[idy + k] + Pm_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
-				if(idx == 1) a_s[idy] += 0.5 * (Rm_d[idy + k] + Rm_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
+				if(idx == 0) a_s[idy] += 0.5 * ((Pmn_d[idy + k] * K_d[idy + k]) + (Pmn_d[idy + k + 1] * K_d[idy + k + 1])) * (x_d[idy + k + 1] - x_d[idy + k]);
+				if(idx == 1){
+					if(K_d[idy + k] != 0.0 && K_d[idy + k + 1] != 0.0) a_s[idy] += 0.5 * ((Rmn_d[idy + k] / K_d[idy + k]) + (Rmn_d[idy + k + 1] / K_d[idy + k + 1])) * (x_d[idy + k + 1] - x_d[idy + k]);
+				}
 				if(idx == 2) a_s[idy] += 0.5 * (Pmn_d[idy + k] + Pmn_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
 				if(idx == 3) a_s[idy] += 0.5 * (Rmn_d[idy + k] + Rmn_d[idy + k + 1]) * (x_d[idy + k + 1] - x_d[idy + k]);
 			}
@@ -694,12 +697,12 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 	if(idy < 3 && useIndividualX == 0){
 		//correct for Simpsons rule 
 		if(idx == 0){
-			a_s[idy] += wS_c[idy] * Pm_d[idy];
-			a_s[idy] += wS_c[2-idy] * Pm_d[NL - 1 - idy];
+			a_s[idy] += wS_c[idy] * (Pmn_d[idy] * K_d[idy]);
+			a_s[idy] += wS_c[2-idy] * (Pmn_d[NL - 1 - idy] * K_d[NL - 1 - idy]);
 		}
 		if(idx == 1){
-			a_s[idy] += wS_c[idy] * Rm_d[idy];
-			a_s[idy] += wS_c[2-idy] * Rm_d[NL - 1 - idy];
+			if(K_d[idy] != 0.0) a_s[idy] += wS_c[idy] * (Rmn_d[idy] / K_d[idy]);
+			if(K_d[NL - 1 - idy] != 0.0) a_s[idy] += wS_c[2-idy] * (Rmn_d[NL - 1 - idy] / K_d[NL - 1 - idy]);
 		}
 		if(idx == 2){
 			a_s[idy] += wS_c[idy] * Pmn_d[idy];
@@ -724,16 +727,16 @@ __global__ void IntegrateMean_kernel(double *Pm_d, double *Rm_d, double *Pmn_d, 
 
 	if(idy == 0){
 		if(idx == 0){
-			Pm_d[0] = a_s[0];
+			means_d[0] = a_s[0];
 		}
 		if(idx == 1){
-			Rm_d[0] = a_s[0];
+			means_d[1] = a_s[0];
 		}
 		if(idx == 2){
-			Pmn_d[0] = a_s[0];
+			means_d[2] = a_s[0];
 		}
 		if(idx == 3){
-			Rmn_d[0] = a_s[0];
+			means_d[3] = a_s[0];
 		}
 //printf("%d %.20g\n", idx, a_s[0]);
 	}
