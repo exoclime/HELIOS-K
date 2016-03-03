@@ -378,6 +378,10 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 //printf("empty bin %d\n", ib);
 			Nmin_d[ib] = NLb;
 		}
+		if(K1 == kmin && id == NL - 2){
+//printf("empty last bin %d\n", ib);
+			Nmin_d[ib] = NLb;
+		}
 	}
 
 }

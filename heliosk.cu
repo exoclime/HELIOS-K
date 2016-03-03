@@ -815,6 +815,13 @@ printf("\n\n");
 		cudaMalloc((void **) &C_d, param.nC * sizeof(double));
 		cudaMalloc((void **) &D_d, param.nC * sizeof(double));
 
+		cudaDeviceSynchronize();
+		error = cudaGetLastError();
+		if(error != 0){
+			printf("Resampling Allocation error = %d = %s\n",error, cudaGetErrorString(error));
+			return 0;
+		}
+
 		Vandermonde_kernel <<< (param.Nxb + 511) / 512, 512 >>> (V_d, (double)(param.Nxb), param.nC);
 		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, param.Nxb, param.nC);
 
@@ -865,7 +872,6 @@ for(int i = 0; i < param.nbins; ++i){
 			copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, K2_d, param.kmin, param.Nxb);
 			cudaMemcpy(Nxmin_h, Nxmin_d, param.nbins * sizeof(int), cudaMemcpyDeviceToHost);
 	
-
 			lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx);
 			leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d + iP * Nx, param.Nxb, param.nC);
 
