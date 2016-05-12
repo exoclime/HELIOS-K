@@ -32,7 +32,7 @@ __host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 		return 0;
 	}
 	int j;
-	for(j = 0; j < 100; ++j){
+	for(j = 0; j < 1000; ++j){
 		int id;
 		double coeff;
 		int er = fscanf (qFile, "%d", &id);
@@ -48,7 +48,7 @@ __host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 	part.Q = (double*)malloc(j * sizeof(double));
 	
 	qFile = fopen(qFilename, "r");
-	for(j = 0; j < 100; ++j){
+	for(j = 0; j < 1000; ++j){
 		int id;
 		double coeff;
 		double Q = 0.0;
@@ -494,7 +494,7 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 		L.n_h[i] = strtod(c9, NULL);
 		L.alphaD_h[i] = 0.0;
 
-//if(i < 10) printf("%g %g %g %g %g %g %g %g\n", L.nu_h[i], L.S_h[i], L.A_h[i], gammaAir, gammaSelf, L.EL_h[i], L.n_h[i], L.delta_h[i]);		
+//printf("%g %g %g %g %g %g %g %g\n", L.nu_h[i], L.S_h[i], L.A_h[i], gammaAir, gammaSelf, L.EL_h[i], L.n_h[i], L.delta_h[i]);		
 		int id= std::atoi(c1);
 		int idAFGL;
 //count[0] += 1;
@@ -506,16 +506,23 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 				idAFGL = m.ISO[j].AFGL;
 			}
 		}
-		double Q;
+		double Q = 0.0;
+		int Qcheck = 0;
 		//Assign the Partition function
 		for(int j = 0; j < part.n; ++j){
 			if(idAFGL == part.id[j]){
 				Q = part.Q[j];
+				Qcheck = 1;
 			}
+		}
+		if(Qcheck == 0){
+			printf("Error: partition function for AFGL %d not found\n", idAFGL);
+			return 0;
+
 		}
 		L.Q_h[i] /= exp(Q);
 		
-//if(i < 10) printf("%d %d %d %g %g\n", i, id, idAFGL, exp(Q), Q_h[i]);
+//printf("%d %d %d %g %g %d %g %d\n", i, id, idAFGL, exp(Q), L.Q_h[i], part.n, Q, Qcheck);
 	}
 //for(int cc = 0; cc < 40; ++cc){
 //printf("%d %d\n", cc, count[cc]);	

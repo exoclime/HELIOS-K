@@ -192,6 +192,7 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 		if(nu == 0.0) nu = 0.0000001;
 		nu_d[id] = nu;
 		double S = S_d[id] / m;				//cm / g
+//printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], m, mass_d[id], Q_d[id]);
 		double EL = EL_d[id];  				//1/cm
 		double Q = Q_d[id];				//Q0 / Q(T)
 		double alphaL = alphaL_d[id];
