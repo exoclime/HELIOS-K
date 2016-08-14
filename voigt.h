@@ -186,7 +186,7 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 	int id = blockIdx.x * blockDim.x + idx + kk;
 
 	if(id < NL){
-		double m = mass_d[id] / NA;			// mass in g
+		double m = mass_d[id] / def_NA;			// mass in g
 
 		double nu = nu_d[id] + delta_d[id] * P;		//read nu from alphaD
 		if(nu == 0.0) nu = 0.0000001;
@@ -197,9 +197,9 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 		double Q = Q_d[id];				//Q0 / Q(T)
 		double alphaL = alphaL_d[id];
 		
-		S_d[id] = S * Q * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * T0))); 
-		alphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwith
-		alphaL *= P * pow(T0 / T, n_d[id]);
+		S_d[id] = S * Q * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * def_T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * def_T0))); 
+		alphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwdith
+		alphaL *= P * pow(def_T0 / T, n_d[id]);
 		alphaL += A_d[id] / (4.0 * M_PI * def_c);				//1/cm
 		alphaL_d[id] = alphaL;
 		ID_d[id] = id;
@@ -260,7 +260,6 @@ __global__ void setX_kernel(double *x_d, double Nx, double numin, double dnu, in
 			double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
 			int start = bin * Nxb;
 			x_d[id] = binBoundaries_d[bin] + (id - start) * dnu;
-			//x_d[id] = id * id / 10000.0;
 		}
 	}
 }
@@ -420,7 +419,6 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 		//Determine the block index in x of the limits	
 		int il = ((nu - numin + cut) / dnu) / bl;
 		int ir = ((nu - numin - cut) / dnu) / bl;
-
 		//if an irregular spacing in x is used, a binary search for the index is needed
 		if(useIndividualX == 1){
 			il = 0;
@@ -577,6 +575,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 			cut_s[idx] = 0.0;
 		}
 		__syncthreads();
+//if(i + idx + ii + Limits.x < 100) printf("%d %g %g %g %g\n", i + idx + ii + Limits.x, nu_d[i + idx + ii + Limits.x], S_d[i + idx + ii + Limits.x], alphaD_d[i + idx + ii + Limits.x], alphaL_d[i + idx + ii + Limits.x]);
 
 # if PROFILE == 1
 		for(int k = 0; k < NB; ++k){

@@ -1,10 +1,10 @@
-#define VERSION 1.53
+#define VERSION 1.54
 
-#define T0 296.0 		//Temperature in K
+#define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
 #define def_h 6.62606957e-27	//Planck costant in erg s
 #define def_c 2.99792458e10 	//Speed of light cm/s
-#define NA 6.0221412927e23	//Avogadro Constant  1/mol
+#define def_NA 6.0221412927e23	//Avogadro Constant  1/mol
 #define def_amagat 2.6867774e19 // molecules cm^-3
 
 #define TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
@@ -13,6 +13,7 @@
 #define nlmax 32768		//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
 #define maxbins 1000		//Maximum number of bins
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
+#define maxlines 50000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
 
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
@@ -29,10 +30,10 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL[34];		//Number of Lines per file
+	int NL[122];		//Number of Lines per file
 	int NLmax;
 	Isotopologue *ISO;
-	char dataFilename[34][160];
+	char dataFilename[122][160];
 	int nFiles;
 	double meanMass;
 };
