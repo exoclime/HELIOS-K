@@ -10,7 +10,7 @@
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
 //November 2014
 // **********************************************
-__device__ void Sigma(double x, double y, double &s1, double &s2, double &s3, double a, double ex2, int id){
+__device__ void Sigma(const double x, const double y, double &s1, double &s2, double &s3, const double a, const double ex2, const int id){
 
 	s1 = 0.0;
 	double sold1 = s1;
@@ -89,7 +89,7 @@ __device__ void Sigma(double x, double y, double &s1, double &s2, double &s3, do
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
 //November 2014
 // **********************************************
-__device__ void Sigmab(double x, double y, double &s1, double &s2, double &s3, double a, double ex2, int id){
+__device__ void Sigmab(double x, const double y, double &s1, double &s2, double &s3, const double a, const double ex2, const int id){
 
 	s1 = 0.0;
 	double sold1 = s1;
@@ -105,16 +105,16 @@ __device__ void Sigmab(double x, double y, double &s1, double &s2, double &s3, d
 
 	if(x < 0.0) x = -x;
 
-		int n0 = (int)(ceil(x / a)); //starting point for sigma3 series
-		int n3p, n3n;
+	int n0 = (int)(ceil(x / a)); //starting point for sigma3 series
+	int n3p, n3n;
 
-		int stop1 = 0;
-		int stop2 = 0;
-		int stop3 = 0;
+	int stop1 = 0;
+	int stop2 = 0;
+	int stop3 = 0;
 
-		double e2axn = exp(-2.0 * a * x);
+	double e2axn = exp(-2.0 * a * x);
 
-		for(int n = 1; n < 100; ++n){
+	for(int n = 1; n < 100; ++n){
 		n3p = n0 + n - 1;
 		n3n = n0 - n;
 		an = a * n;
@@ -141,6 +141,58 @@ __device__ void Sigmab(double x, double y, double &s1, double &s2, double &s3, d
 //		if(n >= 100-1) printf("Sigma Series did not converge %d\n", id);
 	}
 }
+__device__ void Sigmabf(float x, const float y, float &s1, float &s2, float &s3, const float a, const float ex2, const int id){
+
+	s1 = 0.0f;
+	float sold1 = s1;
+	s2 = 0.0f;
+	float sold2 = s2;
+	s3 = 0.0f;
+	float sold3 = s3;
+
+	float f, f3p, f3n;
+	float an, an3p, an3n;
+
+	float yy = y * y;
+
+	if(x < 0.0f) x = -x;
+
+	int n0 = (int)(ceil(x / a)); //starting point for sigma3 series
+	int n3p, n3n;
+
+	int stop1 = 0;
+	int stop2 = 0;
+	int stop3 = 0;
+
+	float e2axn = expf(-2.0f * a * x);
+
+	for(int n = 1; n < 100; ++n){
+		n3p = n0 + n - 1;
+		n3n = n0 - n;
+		an = a * n;
+		an3p = a * n3p;
+		an3n = a * n3n;
+
+		f = 1.0f / (an * an + yy);
+		f3p = 1.0f / (an3p * an3p + yy);
+		f3n = 1.0f / (an3n * an3n + yy);
+
+		s1 += f * expf(-(an * an + x * x));
+		s2 += f * expf(-(an + x) * (an + x));
+		s3 += f3p * expf(-(an3p - x) * (an3p - x));
+		if(n3n >= 1) s3 += f3n * expf(-(an3n - x) * (an3n - x));
+
+		if(fabs(s1 - sold1) < TOLF) stop1 = 1;
+		if(fabs(s2 - sold2) < TOLF) stop2 = 1;
+		if(fabs(s3 - sold3) < TOLF) stop3 = 1;
+		if(stop1 == 1 && stop2 ==1 && stop3 == 1) break;
+
+		sold1 = s1;
+		sold2 = s2;
+		sold3 = s3;
+//		if(n >= 100-1) printf("Sigma Series did not converge %d\n", id);
+	}
+}
 
 // *************************************************
 //This function calculates the Voigt profile V(x,y) as equation 13 from Zaghloul & Ali, Algorithm 916
@@ -150,7 +202,7 @@ __device__ void Sigmab(double x, double y, double &s1, double &s2, double &s3, d
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
 //November 2014
 // **************************************************
-__device__ double voigt_916(double x, double y, double a, int id){
+__device__ double voigt_916(const double x, const double y, const double a, const int id){
 
 	double s1, s2, s3;
 	double ex2 = exp(-x * x);
@@ -173,6 +225,29 @@ __device__ double voigt_916(double x, double y, double a, int id){
 	
 	return t1;
 }
+__device__ float voigt_916f(const float x, const float y, const float a, const int id){
+
+	float s1, s2, s3;
+	float ex2 = expf(-x * x);
+
+	//Compute Sigma Series
+	if(x != 0.0 && y != 0.0) Sigmabf(x, y, s1, s2, s3, a, ex2, id);
+
+	float xy = x * y;
+	float a2ipi = 2.0f * a / M_PIf;
+	float cos2xy = cosf(2.0f * xy);
+	float sinxy = sinf(xy);
+
+	float t1 = ex2 * erfcxf(y) * cos2xy;
+	t1 += a2ipi * x * sinxy * ex2 * sinxy / xy;
+	t1 += a2ipi * y * (-cos2xy * s1 + 0.5f * (s2 + s3));
+	
+	if(x == 0) t1 = erfcxf(y);
+	if(y == 0) t1 = expf(-x * x);
+	//if(x*x + y*y > 1.0e18) t1 = y / (sqrt(M_PIf) * (x * x + y * y));
+	
+	return t1;
+}
 
 // *************************************************
 //This kernel calculates the integrate line strength, the Lorentz and the Doppler halfwidths
@@ -180,7 +255,7 @@ __device__ double voigt_916(double x, double y, double a, int id){
 //Author Simon Grimm
 //November 2014
 // *************************************************
-__global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *alphaL_d, double *alphaD_d, double *n_d, double *mass_d, double *delta_d, double *Q_d, int *ID_d, int NL, double T, double P, int kk){
+__global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *vy_d, double *ialphaD_d, double *n_d, double *mass_d, double *delta_d, double *Q_d, int *ID_d, int NL, double T, double P, int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -188,20 +263,20 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 	if(id < NL){
 		double m = mass_d[id] / def_NA;			// mass in g
 
-		double nu = nu_d[id] + delta_d[id] * P;		//read nu from alphaD
+		double nu = nu_d[id] + delta_d[id] * P;
 		if(nu == 0.0) nu = 0.0000001;
 		nu_d[id] = nu;
 		double S = S_d[id] / m;				//cm / g
 //printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], m, mass_d[id], Q_d[id]);
 		double EL = EL_d[id];  				//1/cm
 		double Q = Q_d[id];				//Q0 / Q(T)
-		double alphaL = alphaL_d[id];
+		double alphaL = vy_d[id];
 		
 		S_d[id] = S * Q * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * def_T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * def_T0))); 
-		alphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwdith
+		ialphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwidth
 		alphaL *= P * pow(def_T0 / T, n_d[id]);
 		alphaL += A_d[id] / (4.0 * M_PI * def_c);				//1/cm
-		alphaL_d[id] = alphaL;
+		vy_d[id] = alphaL * ialphaD_d[id];
 		ID_d[id] = id;
 	}
 }
@@ -346,6 +421,14 @@ __global__ void Copy_kernel(double *a_d, double *b_d, int NL, int k){
 		b_d[id] = a_d[id];
 	}
 }
+__global__ void Copyf_kernel(float *a_d, double *b_d, int NL, int k){
+
+	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
+
+	if(id < NL){
+		b_d[id] = a_d[id];
+	}
+}
 
 //*************************************************
 //This kernel sorts the array a_d acording to the key in ID_d 
@@ -356,6 +439,14 @@ __global__ void Copy_kernel(double *a_d, double *b_d, int NL, int k){
 //January 2015
 //*************************************************
 __global__ void Sort_kernel(double *a_d, double *b_d, int *ID_d, int NL, int k){
+
+        int id = blockIdx.x * blockDim.x + threadIdx.x + k;
+
+        if(id < NL){
+		b_d[id] = a_d[ID_d[id]];
+	}
+}
+__global__ void Sortf_kernel(double *a_d, float *b_d, int *ID_d, int NL, int k){
 
         int id = blockIdx.x * blockDim.x + threadIdx.x + k;
 
@@ -400,7 +491,7 @@ __global__ void setLimits_kernel(int2 *Limits_d, int n, int NL, double cut){
 //Author Simon Grimm
 //January 2015
 //*************************************************
-__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *alphaL_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode, int Nx, double *x_d, int useIndividualX){
+__global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *vy_d, double *ialphaD_d, int bl, double numin, double dnu, int NL, int n, double cut, int cutMode, int Nx, double *x_d, int useIndividualX){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -408,11 +499,10 @@ __global__ void Cutoff_kernel(double *nu_d, int *ID_d, int2 *Limits_d, double *a
 
 		double nu = nu_d[id];
 
-		// cutMode == 0: cut absolute values 
-		if(cutMode == 1){			//Cut factors of Lorentz halfwidth
-			cut *= alphaL_d[id];
+		if(cutMode == 1){
+			cut *= vy_d[id] / ialphaD_d[id];
 		}
-		else if(cutMode == 2){			//cut factors of Lorentz / Gauss halfwidth -> y parameter in Voigt Profile
+		else if(cutMode == 2){
 			cut /= ialphaD_d[id];
 		}
 	
@@ -522,7 +612,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // *************************************************
 template <int NB>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double *alphaD_d, double *K_d, double *x_d, const double dnu, const double numin, const int Nx, const int NL, int2 *Limits_d, const double cut, const int cutMode, const int nl, const int ii, const int kk, const int useIndividualX){
+__global__ void Line_kernel(double *nu_d, double *S_d, double *vy_d, double *ialphaD_d, double *K_d, double *x_d, const double dnu, const double numin, const int Nx, const int NL, int2 *Limits_d, const double cut, const int cutMode, const int nl, const int ii, const int kk, const int useIndividualX){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -544,7 +634,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	}
 
 	double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
-	double sqln2 = 1.0;//sqrt(log(2.0)); //This factor will cancel out, becuase alphaD = sqln2 * vo sqrt(2kt/mc2)
+	double sqln2 = 1.0;//sqrt(log(2.0)); //This factor will cancel out, because alphaD = sqln2 * vo sqrt(2kt/mc2)
 	double isqrtpi = 1.0 / sqrt(M_PI);
 
 	double nu = -numin;
@@ -560,12 +650,12 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){
 			nu_s[idx] = nu_d[i + idx + ii + Limits.x];
-			ialphaD_s[idx] = sqln2 * alphaD_d[i + idx + ii + Limits.x];
-			y_s[idx] = alphaL_d[i + idx + ii + Limits.x] * ialphaD_s[idx];
+			ialphaD_s[idx] = sqln2 * ialphaD_d[i + idx + ii + Limits.x];
+			y_s[idx] = vy_d[i + idx + ii + Limits.x];
 			S_s[idx] = S_d[i + idx + ii + Limits.x] * ialphaD_s[idx];
 			if(cutMode == 0) cut_s[idx] = cut;
-			else if (cutMode == 1) cut_s[idx] = cut * alphaL_d[i + idx + ii + Limits.x];
-			else if (cutMode == 2) cut_s[idx] = cut * y_s[idx];
+			else if (cutMode == 1) cut_s[idx] = cut * y_s[idx] / ialphaD_s[idx];
+			else if (cutMode == 2) cut_s[idx] = cut / ialphaD_s[idx];
 		}
 		else{
 			nu_s[idx] = 0.0;
@@ -575,7 +665,7 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 			cut_s[idx] = 0.0;
 		}
 		__syncthreads();
-//if(i + idx + ii + Limits.x < 100) printf("%d %g %g %g %g\n", i + idx + ii + Limits.x, nu_d[i + idx + ii + Limits.x], S_d[i + idx + ii + Limits.x], alphaD_d[i + idx + ii + Limits.x], alphaL_d[i + idx + ii + Limits.x]);
+//if(i + idx + ii + Limits.x < 100) printf("%d %g %g %g %g\n", i + idx + ii + Limits.x, nu_d[i + idx + ii + Limits.x], S_d[i + idx + ii + Limits.x], ialphaD_d[i + idx + ii + Limits.x], vy_d[i + idx + ii + Limits.x]);
 
 # if PROFILE == 1
 		for(int k = 0; k < NB; ++k){
@@ -628,3 +718,111 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *alphaL_d, double 
 	if(id < Nx) K_d[id] += K;
 }
 
+
+template <int NB, int E>
+__global__ void Line2_kernel(double *nu_d, double *S_d, double *ialphaD_d, double *vy_d, double *K_d, const double dnu, const double numin, const int il, const int nstart, const int Nk, const double cut, const int nl){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+	__shared__ double nu_s[NB];
+	__shared__ double S_s[NB];
+	__shared__ double vy_s[NB];
+	__shared__ double ialphaD_s[NB];
+
+	if(idx < nl){ 
+		nu_s[idx] = nu_d[il + idx];
+		S_s[idx] = S_d[il + idx];
+		vy_s[idx] = vy_d[il + idx];
+		ialphaD_s[idx] = ialphaD_d[il + idx];
+	}
+	__syncthreads();
+	if(id < Nk){
+		int ii = nstart + id;
+		double K = K_d[ii];
+		for(int ill = 0; ill < nl; ++ill){
+			double nuc = nu_s[ill];
+
+			double S = S_s[ill];
+			double y = vy_s[ill];
+			double ialphaD = ialphaD_s[ill];
+
+			double nu = numin + ii * dnu;
+
+			if(fabs(nu - nuc) < cut){	
+
+				double x = fabs(nu - nuc) * ialphaD;
+				double xxyy = x * x + y * y;
+
+				if(/*E == 0 && */xxyy >= 1.0e6){
+				//1 order Gauss Hermite Quadrature
+					K += S * y / (M_PI * xxyy);
+				}
+				if(/*E == 1 &&*/ xxyy >= 100.0 && xxyy < 1.0e6){
+				//2nd order Gauss Hermite Quadrature
+					double t = y / 3.0;
+					double t1 = 2.0 * t / (M_PI * xxyy);
+					double t2 = t * (xxyy + 1.5) / (M_PI * (xxyy + 1.5) * (xxyy + 1.5) - 4.0 * x * x * 1.5);
+					K += S * (t1 + t2);
+				}
+				if(/*E == 2 &&*/ xxyy < 100.0){
+					double isqrtpi = 1.0 / sqrt(M_PI);
+					double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
+					K += S * voigt_916(x, y, a, ii) * isqrtpi;
+				}
+			}
+		}
+		K_d[ii] = K;
+	}
+}
+template <int NB, int E>
+__global__ void Line2f_kernel(double *S_d, double *vy_d, float *va_d, float *vb_d, float *vcut_d, double *K_d, const int il, const int nstart, const int Nk, const int nl){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+	__shared__ float S_s[NB];
+	__shared__ float vy_s[NB];
+	__shared__ float va_s[NB];
+	__shared__ float vb_s[NB];
+	__shared__ float vcut_s[NB];
+
+	if(idx < nl){ 
+		S_s[idx] = (float)(S_d[il + idx]);
+		vy_s[idx] = (float)(vy_d[il + idx]);
+		va_s[idx] = va_d[il + idx];
+		vb_s[idx] = vb_d[il + idx];
+		vcut_s[idx] = vcut_d[il + idx];
+	}
+	__syncthreads();
+	if(id < Nk){
+		int ii = nstart + id;
+		double K = K_d[ii];
+		for(int ill = 0; ill < nl; ++ill){
+
+			float y = vy_s[ill];
+			float x = va_s[ill] + ii * vb_s[ill];
+
+			if(fabsf(x) < vcut_s[ill]){	
+
+				float xxyy = x * x + y * y;
+
+				if(E == 0 && xxyy >= 1.0e6f){
+				//1 order Gauss Hermite Quadrature
+					K += S_s[ill] * y / (M_PIf * xxyy);
+				}
+				if(E == 1 && xxyy >= 100.0f && xxyy < 1.0e6f){
+				//2nd order Gauss Hermite Quadrature
+					float t = y / 3.0f;
+					float t1 = 2.0f * t / (M_PIf * xxyy);
+					float t2 = t * (xxyy + 1.5f) / (M_PIf * (xxyy + 1.5f) * (xxyy + 1.5f) - 4.0f * x * x * 1.5f);
+					K += S_s[ill] * (t1 + t2);
+				}
+				if(E == 2 && xxyy < 100.0f){
+					float isqrtpif = 1.0f / sqrtf(M_PIf);
+					float af = M_PI * sqrtf(-1.0f / logf(TOLF * 0.5f));
+					K += S_s[ill] * voigt_916f(x, y, af, ii) * isqrtpif;
+				}
+			}
+		}
+		K_d[ii] = K;
+	}
+}

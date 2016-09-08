@@ -378,12 +378,20 @@ int main(int argc, char*argv[]){
 		//**************************************
 		//Starting the loop around the datafiles
 		//**************************************
-		for(int fi = 0; fi < m.nFiles; ++fi){
+		int fi0 = 0;
+		int fi1 = m.nFiles;
+		if(param.useHITEMP == 2 && param.cutMode == 0 && param.cut > 0){
+			//calculate which files to read
+			fi0 = max((int)((param.numin - param.cut) / 100) - 1, 0);
+			fi1 = min((int)((param.numax + param.cut) / 100) + 1, m.nFiles);
+			
+		}
+		for(int fi = fi0; fi < fi1; ++fi){
 
 			time[1] = 0;
 			time[2] = 0;
 
-			printf("Reading file %d of %d\n", fi, m.nFiles);
+			printf("Reading file %d of %d\n", fi + 1, fi1);
 			gettimeofday(&tt1, NULL);
 			
 			printf("Number of lines: %d\n", m.NL[fi]);
@@ -395,7 +403,7 @@ int main(int argc, char*argv[]){
 				er = readFile(m, part, L, param.qalphaL, fi);
 			}
 			else{
-				er = readFileExomol(m, part, L, fi, param.T);
+				er = readFileExomol(param, m, part, L, fi, param.T);
 			}
 			if(er == 0){
 				return 0;
@@ -426,10 +434,10 @@ int main(int argc, char*argv[]){
 
 				for(int iL = 0; iL < m.NL[fi]; iL += maxlines){
 					int NL = min(maxlines, m.NL[fi] - iL);
-					printf("precessing Line file part %d of %d with %d lines\n", (iL + maxlines - 1) / maxlines, (m.NL[fi] + maxlines - 1)/ maxlines, NL);
+					printf("processing Line file part %d of %d with %d lines\n", (iL + maxlines - 1) / maxlines + 1, (m.NL[fi] + maxlines - 1)/ maxlines, NL);
 
-					if(param.useHITEMP < 2) Copy_Line(L, m, fi);
-					else Copy2_Line(L, m, fi, iL);
+					if(param.useHITEMP < 2) Copy_Line(L, m, iL, NL);
+					else Copy2_Line(L, m, iL, NL);
 					//************************
 
 					//***************************
@@ -438,110 +446,124 @@ int main(int argc, char*argv[]){
 					if(param.useHITEMP < 2){
 						for(int k = 0; k < NL; k += nthmax){
 							int Nk = min(nthmax, NL);
-							S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.alphaL_d, L.alphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, NL, param.T, P_h[iP], k);
+							S_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.A_d, L.EL_d, L.vy_d, L.ialphaD_d, L.n_d, L.mass_d, L.delta_d, L.Q_d, L.ID_d, NL, param.T, P_h[iP], k);
 						}	
-					}
-		/* // *************
-					//uncoment this only when no Pressure file is given
-					//print number of lines per bin
-					cudaMemcpy(L.nu_h, L.nu_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
-					int nLb[param.nbins];
-					for(int i = 0; i < param.nbins; ++i){
-						nLb[i] = 0;
-					}
-					double binWidth = (param.numax - param.numin) / ((double)(param.nbins));
-					printf("%g\n", binWidth);
-					for(int i = 0; i < NL; ++i){
-						int b = int(L.nu_h[i] / binWidth);
-						nLb[b] += 1;
-					}
-					for(int i = 0; i < param.nbins; ++i){
-						printf("%d, ", nLb[i]);
-					}
-					printf("\n");
-		 
-		*/
-					//Sort the data along nu
-					thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
-					thrust::device_ptr<int> ID_dt = thrust::device_pointer_cast(L.ID_d);
+			/* // *************
+						//uncoment this only when no Pressure file is given
+						//print number of lines per bin
+						cudaMemcpy(L.nu_h, L.nu_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
+						int nLb[param.nbins];
+						for(int i = 0; i < param.nbins; ++i){
+							nLb[i] = 0;
+						}
+						double binWidth = (param.numax - param.numin) / ((double)(param.nbins));
+						printf("%g\n", binWidth);
+						for(int i = 0; i < NL; ++i){
+							int b = int(L.nu_h[i] / binWidth);
+							nLb[b] += 1;
+						}
+						for(int i = 0; i < param.nbins; ++i){
+							printf("%d, ", nLb[i]);
+						}
+						printf("\n");
+			 
+			*/
+						//Sort the data along nu
+						thrust::device_ptr<double> nu_dt = thrust::device_pointer_cast(L.nu_d);
+						thrust::device_ptr<int> ID_dt = thrust::device_pointer_cast(L.ID_d);
 
-					thrust::sort_by_key(nu_dt, nu_dt + NL, ID_dt);
+						thrust::sort_by_key(nu_dt, nu_dt + NL, ID_dt);
 
-					//Destroy Q_d to sort S_d alphaL_d and alphaD_d
-					int Nk = min(nthmax, NL);
-					for(int k = 0; k < NL; k += nthmax){
-						Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.S_d, L.Q_d, NL, k);
-					}
-					for(int k = 0; k < NL; k += nthmax){
-						Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.S_d, L.ID_d, NL, k);
-					}
-					cudaDeviceSynchronize();
-					error = cudaGetLastError();
-					if(error != 0){
-						printf("Sort3 error = %d = %s\n",error, cudaGetErrorString(error));
-						return 0;
-					}
-					for(int k = 0; k < NL; k += nthmax){
-						Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaL_d, L.Q_d, NL, k);
-					}
-					for(int k = 0; k < NL; k += nthmax){
-						Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaL_d, L.ID_d, NL, k);
-					}
-					for(int k = 0; k < NL; k += nthmax){
-						Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.alphaD_d, L.Q_d, NL, k);
-					}
-					for(int k = 0; k < NL; k += nthmax){
-						Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.alphaD_d, L.ID_d, NL, k);
-					}
-					//********************************
+						//Destroy Q_d to sort S_d vy_d and ialphaD_d
+						int Nk = min(nthmax, NL);
+						for(int k = 0; k < NL; k += nthmax){
+							Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.S_d, L.Q_d, NL, k);
+						}
+						for(int k = 0; k < NL; k += nthmax){
+							Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.S_d, L.ID_d, NL, k);
+						}
+						for(int k = 0; k < NL; k += nthmax){
+							Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.vy_d, L.Q_d, NL, k);
+						}
+						for(int k = 0; k < NL; k += nthmax){
+							Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.vy_d, L.ID_d, NL, k);
+						}
+						for(int k = 0; k < NL; k += nthmax){
+							Copy_kernel <<< (Nk + 127) / 128, 128 >>> (L.ialphaD_d, L.Q_d, NL, k);
+						}
+						for(int k = 0; k < NL; k += nthmax){
+							Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.ialphaD_d, L.ID_d, NL, k);
+						}
+						if(param.useHITEMP == 2){
+							for(int k = 0; k < NL; k += nthmax){
+								Copyf_kernel <<< (Nk + 127) / 128, 128 >>> (L.va_d, L.Q_d, NL, k);
+							}
+							for(int k = 0; k < NL; k += nthmax){
+								Sortf_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.va_d, L.ID_d, NL, k);
+							}
+							for(int k = 0; k < NL; k += nthmax){
+								Copyf_kernel <<< (Nk + 127) / 128, 128 >>> (L.vb_d, L.Q_d, NL, k);
+							}
+							for(int k = 0; k < NL; k += nthmax){
+								Sortf_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.vb_d, L.ID_d, NL, k);
+							}
+							for(int k = 0; k < NL; k += nthmax){
+								Copyf_kernel <<< (Nk + 127) / 128, 128 >>> (L.vcut_d, L.Q_d, NL, k);
+							}
+							for(int k = 0; k < NL; k += nthmax){
+								Sortf_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.vcut_d, L.ID_d, NL, k);
+							}
+						}
+						//********************************
 
-					cudaDeviceSynchronize();
-					error = cudaGetLastError();
-					if(error != 0){
-						printf("Sort error = %d = %s\n",error, cudaGetErrorString(error));
-						return 0;
-					}
+						cudaDeviceSynchronize();
+						error = cudaGetLastError();
+						if(error != 0){
+							printf("Sort error = %d = %s\n",error, cudaGetErrorString(error));
+							return 0;
+						}
 
-					//********************************
-					//Determine which lines the block in the Line kernel has to read
-					//********************************
-					cudaMemset(MaxLimits_d, 0, sizeof(int));
+						//********************************
+						//Determine which lines the block in the Line kernel has to read
+						//********************************
+						cudaMemset(MaxLimits_d, 0, sizeof(int));
 
-					setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, NL, param.cut);
-					if(param.cut != 0.0){
-						Cutoff_kernel <<< (NL + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.alphaL_d, L.alphaD_d, ntL, param.numin, param.dnu, NL, nLimits, param.cut, param.cutMode, Nx, x_d, param.useIndividualX);
-						MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, NL);
-						cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
-					}
-					else MaxLimits_h[0] = NL;
-					printf("Maximum number of Line Blocks %d\n", MaxLimits_h[0]);
-	/*				
-					//print Limits
-					int2 *Limits_h;
-					Limits_h = (int2*)malloc(nLimits * sizeof(int2));
-					cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
-					FILE *LimitsFile;
-					char LimitsFilename[160];
-					sprintf(LimitsFilename, "Limits_%s.dat", param.name);
-					if(fi == 0){
-						LimitsFile = fopen(LimitsFilename, filemode);
-					}
-					else{
-						LimitsFile = fopen(LimitsFilename, "a");
-					}
+						setLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, nLimits, NL, param.cut);
+						if(param.cut != 0.0){
+							Cutoff_kernel <<< (NL + 255) / 256 , 256 >>> (L.nu_d, L.ID_d, Limits_d, L.vy_d, L.ialphaD_d, ntL, param.numin, param.dnu, NL, nLimits, param.cut, param.cutMode, Nx, x_d, param.useIndividualX);
+							MaxLimits_kernel <<< (nLimits + 255) / 256, 256 >>> (Limits_d, MaxLimits_d, nLimits, NL);
+							cudaMemcpy(MaxLimits_h, MaxLimits_d, sizeof(int), cudaMemcpyDeviceToHost);
+						}
+						else MaxLimits_h[0] = NL;
+						printf("Maximum number of Line Blocks %d\n", MaxLimits_h[0]);
+						
+	/*					//print Limits
+						int2 *Limits_h;
+						Limits_h = (int2*)malloc(nLimits * sizeof(int2));
+						cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
+						FILE *LimitsFile;
+						char LimitsFilename[160];
+						sprintf(LimitsFilename, "Limits_%s.dat", param.name);
+						if(fi == 0){
+							LimitsFile = fopen(LimitsFilename, filemode);
+						}
+						else{
+							LimitsFile = fopen(LimitsFilename, "a");
+						}
 
-					for(int i = 0; i < nLimits; ++i){
-						fprintf(LimitsFile,"%d %d %d %d\n", fi, i, Limits_h[i].x, Limits_h[i].y);
-					}
-					fclose(LimitsFile);
-					free(Limits_h);
-	 */				
-					//*********************************************
-					cudaDeviceSynchronize();
-					error = cudaGetLastError();
-					if(error != 0){
-						printf("Line error = %d = %s\n",error, cudaGetErrorString(error));
-						return 0;
+						for(int i = 0; i < nLimits; ++i){
+							fprintf(LimitsFile,"%d %d %d %d\n", fi, i, Limits_h[i].x, Limits_h[i].y);
+						}
+						fclose(LimitsFile);
+						free(Limits_h);
+	*/	 				
+						//*********************************************
+						cudaDeviceSynchronize();
+						error = cudaGetLastError();
+						if(error != 0){
+							printf("Line error = %d = %s\n",error, cudaGetErrorString(error));
+							return 0;
+						}
 					}
 
 					gettimeofday(&tt2, NULL);
@@ -560,21 +582,145 @@ int main(int argc, char*argv[]){
 					//***********************************
 					//Compute the opacity function K(x)
 					//************************************
-
 					double cut = param.cut;
 					if(cut == 0.0) cut = 1.0e30;
-					for(int k = 0; k < Nx; k += nthmax){
-						Nk = min(nthmax, Nx - k);
-						for(int i = 0; i < MaxLimits_h[0]; i += nlmax){
+					if(param.useHITEMP < 2){
+						for(int k = 0; k < Nx; k += nthmax){
+							int Nk = min(nthmax, Nx - k);
+							for(int i = 0; i < MaxLimits_h[0]; i += nlmax){
 if(i % (10 * nlmax) == 0){
 cudaDeviceSynchronize();
 printf("%d\n", i);
 }
-							int nl = min(MaxLimits_h[0] - i, nlmax);
-							//This loop reduces the running time of the kernel to a few seconds
-							//A longer running time of a single kernel can cause a time out
-							Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.alphaL_d, L.alphaD_d, K_d + iP * Nx, x_d, param.dnu, param.numin, Nx, NL, Limits_d, cut, param.cutMode, nl, i, k, param.useIndividualX);
+								int nl = min(MaxLimits_h[0] - i, nlmax);
+								//This loop reduces the running time of the kernel to a few seconds
+								//A longer running time of a single kernel can cause a time out
+								Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.nu_d, L.S_d, L.vy_d, L.ialphaD_d, K_d + iP * Nx, x_d, param.dnu, param.numin, Nx, NL, Limits_d, cut, param.cutMode, nl, i, k, param.useIndividualX);
+							}
 						}
+					}
+					else{
+						const int nl = 128;
+						for(int il = 0; il < NL; il += nl){ //loop over lines
+							int ii11 = 0;
+							int ii00 = Nx;
+							for(int iil = 0; iil < nl; ++iil){
+								if(il + iil < NL){
+									int Inu = (int)((L.nu_h[il + iil] - param.numin) / param.dnu);
+									int ii0 = Inu - (int)(cut / param.dnu) - 1;
+									int ii1 = Inu + (int)(cut / param.dnu) + 2;
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil], Inu, ii0, ii1);
+
+									if(ii0 < Nx && ii1 >= 0.0){
+										ii1 = min(Nx, ii1);
+										ii0 = max(0, ii0);
+
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
+									}
+								}
+							}
+							int nt = ii11 - ii00;
+if(il % 10000 == 0) printf("%d %d %d %d\n",il, ii00, ii11, nt);
+							int nstart = ii00;
+							int nll = min(nl, NL - il);	
+							for(int k = 0; k < nt; k += nthmax){
+								int Nk = min(nthmax, nt - k);
+								if(Nk > 0 && nll > 0){
+									Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S_d, L.vy_d, L.va_d, L.vb_d, L.vcut_d, K_d + iP * Nx, il, nstart, Nk, nll);
+									//Line2_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.nu_d, L.S_d, L.ialphaD_d, L.vy_d, K_d + iP * Nx, param.dnu, param.numin, il, nstart, Nk, param.cut, nll);
+								}
+								nstart += nthmax;
+							}
+						}
+
+						//search second order regimes of the Voigt profile
+						const int nl2 = 128;
+						for(int il = 0; il < NL; il += nl2){ //loop over lines
+							int ii11 = 0;
+							int ii00 = Nx;
+							for(int iil = 0; iil < nl2; ++iil){
+								if(il + iil < NL){
+
+									double aD2 = 1.0 / (L.ialphaD_h[il + iil] * L.ialphaD_h[il + iil]);
+									double aL2 = L.vy_h[il + iil] * L.vy_h[il + iil] * aD2;
+									double Dnu2 = 1.0e6 * aD2 - aL2;
+									double Dnu = 0.0;
+									if(Dnu2 > 0){
+										Dnu = sqrt(Dnu2);
+										int Inu = (int)((L.nu_h[il + iil] - param.numin) / param.dnu);
+										int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
+										int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
+//printf("%d %d %d\n", il + iil, ii0, ii1);
+										if(ii0 < Nx && ii1 >= 0.0){
+											ii1 = min(Nx, ii1);
+											ii0 = max(0, ii0);
+
+											ii11 = max(ii11, ii1);
+											ii00 = min(ii00, ii0);
+										}
+									}
+								}
+							}
+							int nt = ii11 - ii00;
+cudaDeviceSynchronize();
+if(il % 10000 == 0) printf("%d %d %d %d\n",il, ii00, ii11, nt);
+							int nstart = ii00;
+							int nll = min(nl2, NL - il);	
+							for(int k = 0; k < nt; k += nthmax){
+								int Nk = min(nthmax, nt - k);
+								if(Nk > 0 && nll > 0){
+									Line2f_kernel < nl2, 1 > <<< (max(Nk, nll) + nl2 - 1) / nl2, nl2 >>> (L.S_d, L.vy_d, L.va_d, L.vb_d, L.vcut_d, K_d + iP * Nx, il, nstart, Nk, nll);
+									//Line2_kernel < nl2, 1 > <<< (max(Nk, nll) + nl2 - 1) / nl2, nl2 >>> (L.nu_d, L.S_d, L.ialphaD_d, L.vy_d, K_d + iP * Nx, param.dnu, param.numin, il, nstart, Nk, param.cut, nll);
+								}
+								nstart += nthmax;
+							}
+						}
+
+						//search higher order regimes of the Voigt profile
+						const int nl3 = 128;
+						for(int il = 0; il < NL; il += nl3){ //loop over lines
+							int ii11 = 0;
+							int ii00 = Nx;
+							for(int iil = 0; iil < nl3; ++iil){
+								if(il + iil < NL){
+
+									double aD2 = 1.0 / (L.ialphaD_h[il + iil] * L.ialphaD_h[il + iil]);
+									double aL2 = L.vy_h[il + iil] * L.vy_h[il + iil] * aD2;
+									double nuc = L.nu_h[il + iil];
+									double Dnu2 = 1.0e2 * aD2 - aL2;
+									double Dnu = 0.0;
+									if(Dnu2 > 0){
+										Dnu = sqrt(Dnu2);
+										int Inu = (int)((L.nu_h[il + iil] - param.numin) / param.dnu);
+										int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
+										int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
+//printf("%d %.20g %.20g %.20g %d %d\n", il + iil, nuc, nuc - Dnu, nuc + Dnu, ii0, ii1);
+										if(ii0 < Nx && ii1 >= 0.0){
+											ii1 = min(Nx, ii1);
+											ii0 = max(0, ii0);
+
+											ii11 = max(ii11, ii1);
+											ii00 = min(ii00, ii0);
+										}
+									}
+								}
+							}
+							int nt = ii11 - ii00;
+cudaDeviceSynchronize();
+if(il % 10000 == 0) printf("%d %d %d %d\n",il, ii00, ii11, nt);
+							int nstart = ii00;
+							int nll = min(nl3, NL - il);	
+							for(int k = 0; k < nt; k += nthmax){
+								int Nk = min(nthmax, nt - k);
+								if(Nk > 0 && nll > 0){
+									Line2f_kernel < nl3, 2 > <<< (max(Nk, nll) + nl3 - 1) / nl3, nl3 >>> (L.S_d, L.vy_d, L.va_d, L.vb_d, L.vcut_d, K_d + iP * Nx, il, nstart, Nk, nll);
+									//Line2_kernel < nl3, 2 > <<< (max(Nk, nll) + nl3 - 1) / nl3, nl3 >>> (L.nu_d, L.S_d, L.ialphaD_d, L.vy_d, K_d + iP * Nx, param.dnu, param.numin, il, nstart, Nk, param.cut, nll);
+								}
+								nstart += nthmax;
+							}
+						}
+
 					}
 					//*************************************
 
@@ -584,20 +730,21 @@ printf("%d\n", i);
 						printf("K error = %d = %s\n",error, cudaGetErrorString(error));
 						return 0;
 					}
+					gettimeofday(&tt2, NULL);
+					times = (tt2.tv_sec - tt1.tv_sec);
+					timems = (tt2.tv_usec - tt1.tv_usec);
+
+					time[2] += times + timems/1000000.0;
+					if(iP == param.nP - 1){
+						printf("Time for K(x):         %g seconds\n", time[2]);
+					}
+					gettimeofday(&tt1, NULL);
+
 				} // End of maxLines loop
-				gettimeofday(&tt2, NULL);
-				times = (tt2.tv_sec - tt1.tv_sec);
-				timems = (tt2.tv_usec - tt1.tv_usec);
-
-				time[2] += times + timems/1000000.0;
-				if(iP == param.nP - 1){
-					printf("Time for K(x):         %g seconds\n", time[2]);
-				}
-				gettimeofday(&tt1, NULL);
-
 			} // End of pressure loop
 
 			InfoFile = fopen(InfoFilename, "a");
+			fprintf(InfoFile,"File %d of %d\n", fi + 1, fi1);
 			fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi]);
 			fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
 			fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);

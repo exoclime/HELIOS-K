@@ -7,7 +7,10 @@
 #define def_NA 6.0221412927e23	//Avogadro Constant  1/mol
 #define def_amagat 2.6867774e19 // molecules cm^-3
 
+#define M_PIf 3.14159265358979323846f
+
 #define TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
+#define TOLF 2.48e-12f		//Tolerance in the Voigt function
 #define NCheb 12		//Number of Chebychev coefficients in the q.dat file
 #define nthmax 32768   		//Maximum number of threads in 2.0 Cards
 #define nlmax 32768		//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
@@ -99,10 +102,15 @@ struct Line{
 	double *A_h, *A_d;              //Einstein A coefficient
 	double *delta_h, *delta_d;      //pressure induced line shift
 	double *EL_h, *EL_d;            //lower state energy
-	double *alphaL_h, *alphaL_d;    //Lorentz Halfwidth
-	double *alphaD_h, *alphaD_d;    //Doppler Halfwidth
+	double *vy_h, *vy_d;	 	//Lorentz Halfwidth / Doppler Halfwidth
+	float *va_h, *va_d;	 	//(numin - nu) * ialphaD
+	float *vb_h, *vb_d;	 	//dnu * ialphaD
+	float *vcut_h, *vcut_d;	 	//cut * ialphaD
+	double *ialphaD_h, *ialphaD_d;  //Doppler Halfwidth
 	double *n_h, *n_d;              //temperature dependent exponent
 	double *mass_h, *mass_d;        //mass
 	double *Q_h, *Q_d;              //partition function
 	int *ID_h, *ID_d;		//line id used for sorting
+
+	
 };
