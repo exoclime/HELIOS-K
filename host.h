@@ -72,7 +72,7 @@ __host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 //Author: Simon Grimm
 //August 2016
 // *****************************************
-__host__ int readPartitionExomol(char *qFilename, Partition &part, double T){
+__host__ int readPartitionExomol(int nMolecule, char *qFilename, Partition &part, double T){
 
 	//Read Chebychev Coefficients from q file	
 	FILE *qFile;
@@ -83,20 +83,32 @@ __host__ int readPartitionExomol(char *qFilename, Partition &part, double T){
 	}
 	double T0, T1;
 	double q0, q1, q;
+	double skip;
 	T1 = 0;
 	q1 = 1.0;
 	q = 1.0;
 	int er = 0;
-	for(int j = 0; j < 150; ++j){
+	for(int j = 0; j < 100000; ++j){
 		T0 = T1;
 		q0 = q1;
-		er = fscanf (qFile, "%lf", &T1);
-		er = fscanf (qFile, "%lf", &q1);
+		if(nMolecule == 1){
+			er = fscanf (qFile, "%lf", &T1);
+			er = fscanf (qFile, "%lf", &q1);
+			er = fscanf (qFile, "%lf", &skip);
+		}
+		if(nMolecule == 6){
+			er = fscanf (qFile, "%lf", &T1);
+			er = fscanf (qFile, "%lf", &q1);
+		}
 		if (er <= 0) break;
 		if(T0 < T && T1 >= T){
 			double tt = (T - T0) / (T1 - T0);
 			q = (q1 - q0) * tt + q0;
 			break;
+		}
+		if(j == 100000 - 1){
+			printf("Error: partition function not complete\n");
+			return 0;
 		}
 	}
 	fclose(qFile);
@@ -236,7 +248,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip, 11, paramFile);
 		fscanf (paramFile, "%s", &param.bins);
 		fgets(skip2, 3, paramFile);
-		//read putputEdges
+		//read outputEdges
 		fgets(skip, 18, paramFile);
 		fscanf (paramFile, "%s", &param.edges);
 		fgets(skip2, 3, paramFile);
@@ -471,90 +483,40 @@ __host__ int readPFile(Param &param, double *P_h){
 //Author Simon Grimm
 //January 2015
 // *******************************************************************
-__host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
+__host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
 	FILE *dataFile;
-	dataFile  = fopen(m.dataFilename[fi], "r");
+	char dataFilename[160];
+	sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
+	dataFile = fopen(dataFilename, "rb");
 
 	if(dataFile == NULL){
-		printf("Error: line list file not found %s\n", m.dataFilename[fi]);
+		printf("Error: line list file not found %s\n", dataFilename);
 		return 0;
 	}
 	//read line list file		
+	double gammaAir, gammaSelf;
+	double mass;
+	int id, idAFGL;
+	double S;
 
-	char c1[4];
-	//char c2[2];
-	char c3[13];
-	char c4[11];
-	char c5[11];
-	char c6[6];
-	char c7[6];
-	char c8[11];
-	char c9[5];
-	char c10[9];
-	char c11[16];
-	char c12[16];
-	char c13[16];
-	char c14[16];
-	char c15[7];
-	char c16[13];
-	char c17[2];
-	char c18[8];
-	char c19[8];
-	
-	char skip[6];
-
-//int count[40];
-//for(int cc = 0; cc < 40; ++cc){
-//count[cc] = 0;	
-//}
 	for(int i = 0; i < m.NL[fi]; ++i){
-		fgets(skip, 1, dataFile);
-		fgets(c1, 4, dataFile);		//Use combined notation for Id (AFGL and molecule + abundance number
-		fgets(c3, 13, dataFile);
-		fgets(c4, 11, dataFile);
-		fgets(c5, 11, dataFile);
-		fgets(c6, 6, dataFile);
-		fgets(c7, 6, dataFile);
-		fgets(c8, 11, dataFile);
-		fgets(c9, 5, dataFile);
-		fgets(c10, 9, dataFile);
-		
-		fgets(c11, 16, dataFile);
-		fgets(c12, 16, dataFile);
-		fgets(c13, 16, dataFile);
-		fgets(c14, 16, dataFile);
-		fgets(c15, 7, dataFile);
-		fgets(c16, 13, dataFile);
-		fgets(c17, 2, dataFile);
-		fgets(c18, 8, dataFile);
-		fgets(c19, 8, dataFile);
-		fgets(skip, 6, dataFile);
-	
-//		fgets(skip, 36, dataFile);
-	
-		L.nu_h[i] = strtod(c3, NULL);		
-		L.S_h[i] = strtod(c4, NULL);		
-		L.A_h[i] = strtod(c5, NULL);		
-		L.delta_h[i] = strtod(c10, NULL);
-		L.EL_h[i] = strtod(c8, NULL);		
-		double gammaAir = strtod(c6, NULL);
-		double gammaSelf = strtod(c7, NULL);
-		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
-		L.n_h[i] = strtod(c9, NULL);
-		L.ialphaD_h[i] = 0.0;
+		fread(&id, sizeof(int), 1, dataFile);
+		fread(&L.nu_h[i], sizeof(double), 1, dataFile);
+		fread(&S, sizeof(double), 1, dataFile);
+		fread(&L.EL_h[i], sizeof(double), 1, dataFile);
+		fread(&L.A_h[i], sizeof(double), 1, dataFile);
+		fread(&L.delta_h[i], sizeof(double), 1, dataFile);
+		fread(&gammaAir, sizeof(double), 1, dataFile);
+		fread(&gammaSelf, sizeof(double), 1, dataFile);
+		fread(&L.n_h[i], sizeof(double), 1, dataFile);
 
-//printf("%g %g %g %g %g %g %g %g\n", L.nu_h[i], L.S_h[i], L.A_h[i], gammaAir, gammaSelf, L.EL_h[i], L.n_h[i], L.delta_h[i]);		
-		int id= std::atoi(c1);
-		int idAFGL;
-//count[0] += 1;
-		//Assign the Isotopologue properties
 		for(int j = 0; j < m.nISO; ++j){
 			if(id == m.ISO[j].id){
-				L.mass_h[i] = m.ISO[j].m;
-				L.Q_h[i] = m.ISO[j].Q;
+				mass = m.ISO[j].m / def_NA;
 				idAFGL = m.ISO[j].AFGL;
 			}
 		}
+
 		double Q = 0.0;
 		int Qcheck = 0;
 		//Assign the Partition function
@@ -565,17 +527,19 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 			}
 		}
 		if(Qcheck == 0){
-			printf("Error: partition function for AFGL %d not found\n", idAFGL);
+			printf("Error: partition function for AFGL %d not found. %d %d\n", idAFGL, i, id);
 			return 0;
 
 		}
-		L.Q_h[i] /= exp(Q);
+
+		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
+		S /= exp(Q);
+		L.S_h[i] = S;
+		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith, 1.0/nu is missing here and inserted later
+                L.ID_h[i] = i % maxlines;
 		
-//printf("%d %d %d %g %g %d %g %d\n", i, id, idAFGL, exp(Q), L.Q_h[i], part.n, Q, Qcheck);
 	}
-//for(int cc = 0; cc < 40; ++cc){
-//printf("%d %d\n", cc, count[cc]);	
-//}
+
 	fclose(dataFile);
 	return 1;
 }
@@ -584,43 +548,59 @@ __host__ int readFile(Molecule &m, Partition &part, Line &L, double qalphaL, int
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
-__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int fi, double T){
+__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int fi){
 	FILE *dataFile;
-	dataFile  = fopen(m.dataFilename[fi], "rb");
+	char dataFilename[160];
+	sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
+	dataFile  = fopen(dataFilename, "rb");
 
 	if(dataFile == NULL){
-		printf("Error: line list file not found %s\n", m.dataFilename[fi]);
+		printf("Error: line list file not found %s\n", dataFilename);
 		return 0;
 	}
 	//read line list file		
 
 	double mass = m.ISO[0].m / def_NA;
 	double Q = part.Q[0];
-	double c = def_h * def_c / (def_kB * T);
+	double c = def_h * def_c / (def_kB * param.T);
 	double A, EL;
+	double S;
 	for(int i = 0; i < m.NL[fi]; ++i){
 	
 		fread(&L.nu_h[i], sizeof(double), 1, dataFile);		
-		fread(&L.S_h[i], sizeof(double), 1, dataFile);		
+		fread(&S, sizeof(double), 1, dataFile);		
 		fread(&EL, sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 
 
-		L.S_h[i] *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q;
-		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * T));      //inverse Doppler halfwdith
+		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith
+		S *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q * L.ialphaD_h[i];
 		L.vy_h[i] = A / (4.0 * M_PI * def_c);						//alphaL
-		L.va_h[i] = (float)((param.numin - L.nu_h[i]) * L.ialphaD_h[i]);
-		L.vb_h[i] = (float)(param.dnu * L.ialphaD_h[i]);
-		L.vcut_h[i] = (float)(param.cut * L.ialphaD_h[i]);
+		if(param.useIndividualX == 0){
+			L.va_h[i] = (float)((param.numin - L.nu_h[i]) * L.ialphaD_h[i]);
+			L.vb_h[i] = (float)(param.dnu * L.ialphaD_h[i]);
+		}
+		else{
+			L.va_h[i] = (float)(-L.nu_h[i] * L.ialphaD_h[i]);
+			L.vb_h[i] = (float)(L.ialphaD_h[i]);
+		}
+
+		L.vcut2_h[i] = (float)(param.cut * param.cut * L.ialphaD_h[i] * L.ialphaD_h[i]); //square of modified cut lenght
+		if(param.cutMode == 2){
+			L.vcut2_h[i] = (float)(param.cut * param.cut);
+		}
 		L.ID_h[i] = i % maxlines;
+		L.S_h[i] = S;
+		L.S1_h[i] = 0.0;
+//if(i < 100000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
 
 		if(L.nu_h[i] == 0.0){
-			L.S_h[i] = 0.0;
+			L.S1_h[i] = 0.0;
 			L.ialphaD_h[i] = 0.0;
 			L.vy_h[i] = 0.0;
 			L.va_h[i] = 0.0f;
 			L.vb_h[i] = 0.0f;
-			L.vcut_h[i] = 0.0f;
+			L.vcut2_h[i] = 0.0f;
 		}
 
 //if(i < 10000) printf("%d %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i]);		
@@ -634,12 +614,16 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
-__host__ int alphaLExomol(Molecule &m, Line &L, int fi, double T, double P){
+__host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, double P){
 	for(int i = 0; i < m.NL[fi]; ++i){
 //read this numbers for ExoMol define Files
-		L.vy_h[i] += 0.0700 * pow(296.0 / T, 0.5) * (P / 0.986923);
+		L.vy_h[i] += (0.0700 * pow(296.0 / T, 0.5) * (P / 0.986923));
 		L.vy_h[i] *= L.ialphaD_h[i]; 
-//if(i < 10000) printf("%d %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.vy_h[i]);
+		L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
+		if(param.cutMode == 1){
+			L.vcut2_h[i] = (float)(param.cut * param.cut * L.vy_h[i] * L.vy_h[i]);
+		}
+//if(i < 100000) printf("%d %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.vy_h[i], exp(-EL * c / T) * (1.0 - exp(-c * nu / T)));
 	}
 	return 1;
 }
@@ -768,13 +752,16 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 __host__ void Alloc_Line(Line &L, Molecule &m){
 	L.nu_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.S_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.S1_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.A_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.delta_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.EL_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.vy_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.va_h = (float*)malloc(m.NLmax * sizeof(float));
+	L.vb_h = (float*)malloc(m.NLmax * sizeof(float));
+	L.vcut2_h = (float*)malloc(m.NLmax * sizeof(float));
 	L.ialphaD_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.n_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.mass_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
 
@@ -782,23 +769,27 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
+	cudaMalloc((void **) &L.S1_d, n * sizeof(double));
 	cudaMalloc((void **) &L.A_d, n * sizeof(double));
 	cudaMalloc((void **) &L.delta_d, n * sizeof(double));
 	cudaMalloc((void **) &L.EL_d, n * sizeof(double));
 	cudaMalloc((void **) &L.vy_d, n * sizeof(double));
+	cudaMalloc((void **) &L.va_d, n * sizeof(float));
+	cudaMalloc((void **) &L.vb_d, n * sizeof(float));
+	cudaMalloc((void **) &L.vcut2_d, n * sizeof(float));
 	cudaMalloc((void **) &L.ialphaD_d, n * sizeof(double));
 	cudaMalloc((void **) &L.n_d, n * sizeof(double));
-	cudaMalloc((void **) &L.mass_d, n * sizeof(double));
 	cudaMalloc((void **) &L.Q_d, n * sizeof(double));
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
 }
 __host__ void Alloc2_Line(Line &L, Molecule &m){
 	L.nu_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.S_h = (double*)malloc(m.NLmax * sizeof(double));
+	L.S1_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.vy_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.va_h = (float*)malloc(m.NLmax * sizeof(float));
 	L.vb_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.vcut_h = (float*)malloc(m.NLmax * sizeof(float));
+	L.vcut2_h = (float*)malloc(m.NLmax * sizeof(float));
 	L.ialphaD_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
@@ -807,10 +798,11 @@ __host__ void Alloc2_Line(Line &L, Molecule &m){
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
+	cudaMalloc((void **) &L.S1_d, n * sizeof(double));
 	cudaMalloc((void **) &L.vy_d, n * sizeof(double));
 	cudaMalloc((void **) &L.va_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vb_d, n * sizeof(float));
-	cudaMalloc((void **) &L.vcut_d, n * sizeof(float));
+	cudaMalloc((void **) &L.vcut2_d, n * sizeof(float));
 	cudaMalloc((void **) &L.ialphaD_d, n * sizeof(double));
 	cudaMalloc((void **) &L.Q_d, n * sizeof(double));
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
@@ -820,71 +812,89 @@ __host__ void Copy_Line(Line &L, Molecule &m, int iL, int NL){
 
 	cudaMemcpy(L.nu_d, L.nu_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.S_d, L.S_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.S1_d, L.S1_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vy_d, L.vy_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.va_d, L.va_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vb_d, L.vb_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vcut2_d, L.vcut2_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.A_d, L.A_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.delta_d, L.delta_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.EL_d, L.EL_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vy_d, L.vy_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.ialphaD_d, L.ialphaD_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.n_d, L.n_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.mass_d, L.mass_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.Q_d, L.Q_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.ID_d, L.ID_h + iL, NL * sizeof(int), cudaMemcpyHostToDevice);
 }
 
 __host__ void Copy2_Line(Line &L, Molecule &m, int iL, int NL){
 
 	cudaMemcpy(L.nu_d, L.nu_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.S_d, L.S_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.S1_d, L.S1_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.vy_d, L.vy_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.va_d, L.va_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.vb_d, L.vb_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vcut_d, L.vcut_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vcut2_d, L.vcut2_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.ialphaD_d, L.ialphaD_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.Q_d, L.Q_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.ID_d, L.ID_h + iL, NL * sizeof(int), cudaMemcpyHostToDevice);
+}
+__host__ void Copy2b_Line(Line &L, Molecule &m, int iL, int NL){
+
+	cudaMemcpy(L.nu_h + iL, L.nu_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(L.vy_h + iL, L.vy_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(L.ialphaD_h + iL, L.ialphaD_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
 }
 
 __host__ void free_Line(Line &L){
 	free(L.nu_h);
 	free(L.S_h);
+	free(L.S1_h);
 	free(L.A_h);
 	free(L.delta_h);
 	free(L.EL_h);
 	free(L.vy_h);
+	free(L.va_h);
+	free(L.vb_h);
+	free(L.vcut2_h);
 	free(L.ialphaD_h);
 	free(L.n_h);
-	free(L.mass_h);
 	free(L.Q_h);
 	free(L.ID_h);
 
 	cudaFree(L.nu_d);
 	cudaFree(L.S_d);
+	cudaFree(L.S1_d);
 	cudaFree(L.A_d);
 	cudaFree(L.delta_d);
 	cudaFree(L.EL_d);
 	cudaFree(L.vy_d);
+	cudaFree(L.va_d);
+	cudaFree(L.vb_d);
+	cudaFree(L.vcut2_d);
 	cudaFree(L.ialphaD_d);
 	cudaFree(L.n_d);
-	cudaFree(L.mass_d);
 	cudaFree(L.Q_d);
 	cudaFree(L.ID_d);
 }
 __host__ void free2_Line(Line &L){
 	free(L.nu_h);
 	free(L.S_h);
+	free(L.S1_h);
 	free(L.vy_h);
 	free(L.va_h);
 	free(L.vb_h);
-	free(L.vcut_h);
+	free(L.vcut2_h);
 	free(L.ialphaD_h);
 	free(L.Q_h);
 	free(L.ID_h);
 
 	cudaFree(L.nu_d);
 	cudaFree(L.S_d);
+	cudaFree(L.S1_d);
 	cudaFree(L.vy_d);
 	cudaFree(L.va_d);
 	cudaFree(L.vb_d);
-	cudaFree(L.vcut_d);
+	cudaFree(L.vcut2_d);
 	cudaFree(L.ialphaD_d);
 	cudaFree(L.Q_d);
 	cudaFree(L.ID_d);

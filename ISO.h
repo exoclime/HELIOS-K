@@ -11,7 +11,7 @@
 //Author: Simon Grimm
 //November 2014
 // ****************************************************
-__host__ void Init(Molecule &m, Param param){
+void Init(Molecule &m, Param param){
 	if(m.id == 1){//H2O
 		m.nISO = 6;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
@@ -26,16 +26,14 @@ __host__ void Init(Molecule &m, Param param){
 		//HITRAN2012
 		m.NL[0] = 224515;	//number of lines
 		m.NLmax = 224515;	//same as the number of lines
-		sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit12.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 30000;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit12.");
 		//HITRAN2008
 		//m.NL[0] = 69201;	//number of lines
 		//m.NLmax = 69201;	//same as the number of lines
-		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit08.par");
-		//Test
-		//m.NL[0] = 64123;	//number of lines
-		//m.NLmax = 64123;	//same as the number of lines
-		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_H2O.bin");
-		
+		//sprintf(m.dataFilename[0], "%s%s", param.path, "01_hit08.");
 		
 		if(param.useHITEMP == 1){
 			m.nFiles = 34;			//number of data files
@@ -76,41 +74,96 @@ __host__ void Init(Molecule &m, Param param){
 
 			m.NLmax = 4972481;		//The naximum of number of lines per file
 
-			sprintf(m.dataFilename[ 0], "%s%s", param.path, "01_00000-00050_HITEMP2010.par");
-			sprintf(m.dataFilename[ 1], "%s%s", param.path, "01_00050-00150_HITEMP2010.par");
-			sprintf(m.dataFilename[ 2], "%s%s", param.path, "01_00150-00250_HITEMP2010.par");
-			sprintf(m.dataFilename[ 3], "%s%s", param.path, "01_00250-00350_HITEMP2010.par");
-			sprintf(m.dataFilename[ 4], "%s%s", param.path, "01_00350-00500_HITEMP2010.par");
-			sprintf(m.dataFilename[ 5], "%s%s", param.path, "01_00500-00600_HITEMP2010.par");
-			sprintf(m.dataFilename[ 6], "%s%s", param.path, "01_00600-00700_HITEMP2010.par");
-			sprintf(m.dataFilename[ 7], "%s%s", param.path, "01_00700-00800_HITEMP2010.par");
-			sprintf(m.dataFilename[ 8], "%s%s", param.path, "01_00800-00900_HITEMP2010.par");
-			sprintf(m.dataFilename[ 9], "%s%s", param.path, "01_00900-01000_HITEMP2010.par");
-			sprintf(m.dataFilename[10], "%s%s", param.path, "01_01000-01150_HITEMP2010.par");
-			sprintf(m.dataFilename[11], "%s%s", param.path, "01_01150-01300_HITEMP2010.par");
-			sprintf(m.dataFilename[12], "%s%s", param.path, "01_01300-01500_HITEMP2010.par");
-			sprintf(m.dataFilename[13], "%s%s", param.path, "01_01500-01750_HITEMP2010.par");
-			sprintf(m.dataFilename[14], "%s%s", param.path, "01_01750-02000_HITEMP2010.par");
-			sprintf(m.dataFilename[15], "%s%s", param.path, "01_02000-02250_HITEMP2010.par");
-			sprintf(m.dataFilename[16], "%s%s", param.path, "01_02250-02500_HITEMP2010.par");
-			sprintf(m.dataFilename[17], "%s%s", param.path, "01_02500-02750_HITEMP2010.par");
-			sprintf(m.dataFilename[18], "%s%s", param.path, "01_02750-03000_HITEMP2010.par");
-			sprintf(m.dataFilename[19], "%s%s", param.path, "01_03000-03250_HITEMP2010.par");
-			sprintf(m.dataFilename[20], "%s%s", param.path, "01_03250-03500_HITEMP2010.par");
-			sprintf(m.dataFilename[21], "%s%s", param.path, "01_03500-04150_HITEMP2010.par");
-			sprintf(m.dataFilename[22], "%s%s", param.path, "01_04150-04500_HITEMP2010.par");
-			sprintf(m.dataFilename[23], "%s%s", param.path, "01_04500-05000_HITEMP2010.par");
-			sprintf(m.dataFilename[24], "%s%s", param.path, "01_05000-05500_HITEMP2010.par");
-			sprintf(m.dataFilename[25], "%s%s", param.path, "01_05500-06000_HITEMP2010.par");
-			sprintf(m.dataFilename[26], "%s%s", param.path, "01_06000-06500_HITEMP2010.par");
-			sprintf(m.dataFilename[27], "%s%s", param.path, "01_06500-07000_HITEMP2010.par");
-			sprintf(m.dataFilename[28], "%s%s", param.path, "01_07000-07500_HITEMP2010.par");
-			sprintf(m.dataFilename[29], "%s%s", param.path, "01_07500-08000_HITEMP2010.par");
-			sprintf(m.dataFilename[30], "%s%s", param.path, "01_08000-08500_HITEMP2010.par");
-			sprintf(m.dataFilename[31], "%s%s", param.path, "01_08500-09000_HITEMP2010.par");
-			sprintf(m.dataFilename[32], "%s%s", param.path, "01_09000-11000_HITEMP2010.par");
-			sprintf(m.dataFilename[33], "%s%s", param.path, "01_11000-30000_HITEMP2010.par");
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 50;
+			m.fileLimit[ 2] = 150;
+			m.fileLimit[ 3] = 250;
+			m.fileLimit[ 4] = 350;
+			m.fileLimit[ 5] = 500;
+			m.fileLimit[ 6] = 600;
+			m.fileLimit[ 7] = 700;
+			m.fileLimit[ 8] = 800;
+			m.fileLimit[ 9] = 900;
+			m.fileLimit[10] = 1000;
+			m.fileLimit[11] = 1150;
+			m.fileLimit[12] = 1300;
+			m.fileLimit[13] = 1500;
+			m.fileLimit[14] = 1750;
+			m.fileLimit[15] = 2000;
+			m.fileLimit[16] = 2250;
+			m.fileLimit[17] = 2500;
+			m.fileLimit[18] = 2750;
+			m.fileLimit[19] = 3000;
+			m.fileLimit[20] = 3250;
+			m.fileLimit[21] = 3500;
+			m.fileLimit[22] = 4150;
+			m.fileLimit[23] = 4500;
+			m.fileLimit[24] = 5000;
+			m.fileLimit[25] = 5500;
+			m.fileLimit[26] = 6000;
+			m.fileLimit[27] = 6500;
+			m.fileLimit[28] = 7000;
+			m.fileLimit[29] = 7500;
+			m.fileLimit[30] = 8000;
+			m.fileLimit[31] = 8500;
+			m.fileLimit[32] = 9000;
+			m.fileLimit[33] = 11000;
+			m.fileLimit[34] = 30000;
+
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s01_%05d-%05d_HITEMP2010.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
 		}
+		if(param.useHITEMP == 2){
+			m.nStates = 221097;
+			m.nFiles = 16;
+
+			m.NL[ 0] = 17490213;
+			m.NL[ 1] = 17022666;
+			m.NL[ 2] = 16530696;
+			m.NL[ 3] = 16098480;
+			m.NL[ 4] = 30866786;
+			m.NL[ 5] = 29161188;
+			m.NL[ 6] = 13954797;
+			m.NL[ 7] = 26727621;
+			m.NL[ 8] = 37249655;
+			m.NL[ 9] = 44635821;
+			m.NL[10] = 39325123;
+			m.NL[11] = 50083780;
+			m.NL[12] = 52289427;
+			m.NL[13] = 76679376;
+			m.NL[14] = 31640190;
+			m.NL[15] = 6050420;
+
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 250; 
+			m.fileLimit[ 2] = 500;
+			m.fileLimit[ 3] = 750;
+			m.fileLimit[ 4] = 1000;
+			m.fileLimit[ 5] = 1500;
+			m.fileLimit[ 6] = 2000;
+			m.fileLimit[ 7] = 2250;
+			m.fileLimit[ 8] = 2750;
+			m.fileLimit[ 9] = 3500;
+			m.fileLimit[10] = 4500;
+			m.fileLimit[11] = 5500;
+			m.fileLimit[12] = 7000;
+			m.fileLimit[13] = 9000;
+			m.fileLimit[14] = 14000;
+			m.fileLimit[15] = 20000; 
+			m.fileLimit[16] = 30000; 
+
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s1H2-16O__BT2__%05d-%05d.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+
+			m.NLmax = 76679376;
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){11,  161,	1.0,    0.0,    0,     18.010565};
+		}
+
+
 	}
 	if(m.id == 2){//CO2
 		m.nFiles = 1;		//number of data files
@@ -130,7 +183,10 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[8] = (Isotopologue){29,  727,	1.36847E-07,    1.1002E+04,    1,     45.998262};
 		m.ISO[9] = (Isotopologue){20,  838,	4.44600E-08,    6.5350E+02,    2,     49.001675};
 		//m.ISO[0] = (Isotopologue){31,  837	1.65354E-08,    7.6152E+03,   12,     48.001646};
-		sprintf(m.dataFilename[0], "%s%s", param.path, "02_hit12.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 12785;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "02_hit12.");
 
 		if(param.useHITEMP == 1){
 			m.nFiles = 20;			//number of data files
@@ -157,26 +213,31 @@ __host__ void Init(Molecule &m, Param param){
 
 			m.NLmax = 1140808;              //The naximum of number of lines per file
 
-			sprintf(m.dataFilename[ 0], "%s%s", param.path, "02_00000-00500_HITEMP2010.par");
-			sprintf(m.dataFilename[ 1], "%s%s", param.path, "02_00500-00625_HITEMP2010.par");
-			sprintf(m.dataFilename[ 2], "%s%s", param.path, "02_00625-00750_HITEMP2010.par");
-			sprintf(m.dataFilename[ 3], "%s%s", param.path, "02_00750-01000_HITEMP2010.par");
-			sprintf(m.dataFilename[ 4], "%s%s", param.path, "02_01000-01500_HITEMP2010.par");
-			sprintf(m.dataFilename[ 5], "%s%s", param.path, "02_01500-02000_HITEMP2010.par");
-			sprintf(m.dataFilename[ 6], "%s%s", param.path, "02_02000-02125_HITEMP2010.par");
-			sprintf(m.dataFilename[ 7], "%s%s", param.path, "02_02125-02250_HITEMP2010.par");
-			sprintf(m.dataFilename[ 8], "%s%s", param.path, "02_02250-02500_HITEMP2010.par");
-			sprintf(m.dataFilename[ 9], "%s%s", param.path, "02_02500-03000_HITEMP2010.par");
-			sprintf(m.dataFilename[10], "%s%s", param.path, "02_03000-03250_HITEMP2010.par");
-			sprintf(m.dataFilename[11], "%s%s", param.path, "02_03250-03500_HITEMP2010.par");
-			sprintf(m.dataFilename[12], "%s%s", param.path, "02_03500-03750_HITEMP2010.par");
-			sprintf(m.dataFilename[13], "%s%s", param.path, "02_03750-04000_HITEMP2010.par");
-			sprintf(m.dataFilename[14], "%s%s", param.path, "02_04000-04500_HITEMP2010.par");
-			sprintf(m.dataFilename[15], "%s%s", param.path, "02_04500-05000_HITEMP2010.par");
-			sprintf(m.dataFilename[16], "%s%s", param.path, "02_05000-05500_HITEMP2010.par");
-			sprintf(m.dataFilename[17], "%s%s", param.path, "02_05500-06000_HITEMP2010.par");
-			sprintf(m.dataFilename[18], "%s%s", param.path, "02_06000-06500_HITEMP2010.par");
-			sprintf(m.dataFilename[19], "%s%s", param.path, "02_06500-12785_HITEMP2010.par");
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 500;
+			m.fileLimit[ 2] = 625;
+			m.fileLimit[ 3] = 750;
+			m.fileLimit[ 4] = 1000;
+			m.fileLimit[ 5] = 1500;
+			m.fileLimit[ 6] = 2000;
+			m.fileLimit[ 7] = 2125;
+			m.fileLimit[ 8] = 2250;
+			m.fileLimit[ 9] = 2500;
+			m.fileLimit[10] = 3000;
+			m.fileLimit[11] = 3250;
+			m.fileLimit[12] = 3500;
+			m.fileLimit[13] = 3750;
+			m.fileLimit[14] = 4000;
+			m.fileLimit[15] = 4500;
+			m.fileLimit[16] = 5000;
+			m.fileLimit[17] = 5500;
+			m.fileLimit[18] = 6000;
+			m.fileLimit[19] = 6500;
+			m.fileLimit[20] = 12785;
+	
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s02_%05d-%05d_HITEMP2010.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
 		}
 
 	}
@@ -193,7 +254,10 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[3] = (Isotopologue){34,  667,  7.40475E-04,    4.3331E+04,    6,     48.988960};
 		m.ISO[4] = (Isotopologue){35,  676,  3.70237E-04,    2.1405E+04,    6,     48.988960};
 
-		sprintf(m.dataFilename[0], "%s%s", param.path, "03_hit12.par");
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 6997;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "03_hit12.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -212,7 +276,10 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[3] = (Isotopologue){34,  448,  1.98582E-03,    5.3147E+03,    9,     46.005308};
 		m.ISO[4] = (Isotopologue){35,  447,  3.69280E-04,    3.0971E+04,   54,     45.005278};
 
-		sprintf(m.dataFilename[0], "%s%s", param.path, "04_hit08.par");
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 7797;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "04_hit08.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -231,7 +298,11 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[3] = (Isotopologue){54,  27,	3.67867E-04,    6.5934E+02,    6,     28.999130};
 		m.ISO[4] = (Isotopologue){55,  38,	2.22250E-05,    2.3582E+02,    2,     31.002516};
 		m.ISO[5] = (Isotopologue){56,  37,	4.13292E-06,    1.3809E+03,   12,     30.002485};
-		sprintf(m.dataFilename[0], "%s%s", param.path, "05_hit12.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 8465;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "05_hit12.");
 
 		if(param.useHITEMP == 1){
 			m.nFiles = 1;			//number of data files
@@ -239,7 +310,10 @@ __host__ void Init(Molecule &m, Param param){
 
 			m.NLmax = 113631;              //The naximum of number of lines per file
 
-			sprintf(m.dataFilename[0], "%s%s", param.path, "05_HITEMP2010.par");
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 8465;
+
+			sprintf(m.dataFilename[0], "%s%s", param.path, "05_HITEMP2010.");
 		}
 	}
 	if(m.id == 6){//CH4
@@ -254,13 +328,18 @@ __host__ void Init(Molecule &m, Param param){
 			m.ISO[1] = (Isotopologue){62,  311,	1.11031E-02,    1.1808E+03,    2,     17.034655};
 			m.ISO[2] = (Isotopologue){63,  212,	6.15751E-04,    4.7954E+03,    3,     17.037475};
 			m.ISO[3] = (Isotopologue){64,  312,	6.91785E-06,    9.5990E+03,    6,     18.040830};
-			sprintf(m.dataFilename[0], "%s%s", param.path, "06_hit12.par");
+
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 11510;
+
+			sprintf(m.dataFilename[0], "%s%s", param.path, "06_hit12.");
 		}
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
 		}
 		if(param.useHITEMP == 2){
+			m.nStates = 8194057;
 
 			m.nFiles = 121;
 			m.NL[0] = 7312353;
@@ -385,14 +464,17 @@ __host__ void Init(Molecule &m, Param param){
 			m.NL[119] = 29207069;
 			m.NL[120] = 11;
 
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100;
+			}
 
 			m.NLmax = 192273315;
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){61,  211,     1.0,    0.0,    0,     16.031300};
 		
-			for(int i = 0; i < 121; ++i){
-				sprintf(m.dataFilename[i], "%s12C-1H4__YT10to10__%05d-%05d.bin", param.path, i * 100, i * 100 + 100);
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s12C-1H4__YT10to10__%05d-%05d.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
 			}
 		}
 	}
@@ -405,7 +487,11 @@ __host__ void Init(Molecule &m, Param param){
 		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
 		m.ISO[0] = (Isotopologue){111,  4111,  .995872E+00,    1.7252E+03,    3,     17.026549};
 		m.ISO[1] = (Isotopologue){112,  5111,  3.66129E-03,    1.1527E+03,    2,     18.023583};
-		sprintf(m.dataFilename[0], "%s%s", param.path, "11_hit12.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 7000;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "11_hit12.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -421,7 +507,11 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[0] = (Isotopologue){231,  124,  .985114E+00,    8.9529E+02,    6,     27.010899};
 		m.ISO[1] = (Isotopologue){232,  134,  1.10676E-02,    1.8403E+03,   12,     28.014254};
 		m.ISO[2] = (Isotopologue){233,  125,  3.62174E-03,    6.2141E+02,    4,     28.007933};
-		sprintf(m.dataFilename[0], "%s%s", param.path, "23_hit08.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 3424;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "23_hit08.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -437,7 +527,10 @@ __host__ void Init(Molecule &m, Param param){
 		m.ISO[0] = (Isotopologue){261,  1221,  .977599E+00,    4.1403E+02,    1,     26.015650};
 		m.ISO[1] = (Isotopologue){262,  1231,  2.19663E-02,    1.6562E+03,    8,     27.019005};
 		m.ISO[2] = (Isotopologue){263,  1222,  3.04550E-04,    1.5818E+03,    6,     27.021825};
-		sprintf(m.dataFilename[0], "%s%s", param.path, "26_hit12.par");
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 9890;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "26_hit12.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -446,7 +539,7 @@ __host__ void Init(Molecule &m, Param param){
 }
 
 
-__host__ int InitCia(Molecule &m, ciaSystem &cia, Param param){
+int InitCia(Molecule &m, ciaSystem &cia, Param param){
 	m.NLmax = 0;
 	cia.Nsets = 0;
 	cia.mass1 = 1.0;

@@ -1,4 +1,4 @@
-#define VERSION 1.54
+#define VERSION 1.55
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -16,10 +16,12 @@
 #define nlmax 32768		//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
 #define maxbins 1000		//Maximum number of bins
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
-#define maxlines 50000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+//#define maxlines 50000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+#define maxlines 8000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
 
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
+#define NXLOW 1000000		//Linef versus Line2f
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
@@ -37,7 +39,9 @@ struct Molecule{
 	int NLmax;
 	Isotopologue *ISO;
 	char dataFilename[122][160];
+	int fileLimit[123];
 	int nFiles;
+	int nStates;		//Number of states in EXOMOL linelist
 	double meanMass;
 };
 
@@ -99,16 +103,16 @@ struct Param{
 struct Line{
 	double *nu_h, *nu_d;            //Wavenumber
 	double *S_h, *S_d;              //Intensity
+	double *S1_h, *S1_d;            //modified Intensity
 	double *A_h, *A_d;              //Einstein A coefficient
 	double *delta_h, *delta_d;      //pressure induced line shift
-	double *EL_h, *EL_d;            //lower state energy
+	double *EL_h, *EL_d;      //pressure induced line shift
 	double *vy_h, *vy_d;	 	//Lorentz Halfwidth / Doppler Halfwidth
 	float *va_h, *va_d;	 	//(numin - nu) * ialphaD
 	float *vb_h, *vb_d;	 	//dnu * ialphaD
-	float *vcut_h, *vcut_d;	 	//cut * ialphaD
+	float *vcut2_h, *vcut2_d; 	//(cut * ialphaD)^2
 	double *ialphaD_h, *ialphaD_d;  //Doppler Halfwidth
 	double *n_h, *n_d;              //temperature dependent exponent
-	double *mass_h, *mass_d;        //mass
 	double *Q_h, *Q_d;              //partition function
 	int *ID_h, *ID_d;		//line id used for sorting
 

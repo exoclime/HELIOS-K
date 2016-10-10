@@ -155,7 +155,7 @@ __device__ void Sigmabf(float x, const float y, float &s1, float &s2, float &s3,
 
 	float yy = y * y;
 
-	if(x < 0.0f) x = -x;
+	x = fabsf(x);
 
 	int n0 = (int)(ceil(x / a)); //starting point for sigma3 series
 	int n3p, n3n;
@@ -220,7 +220,7 @@ __device__ double voigt_916(const double x, const double y, const double a, cons
 	t1 += a2ipi * y * (-cos2xy * s1 + 0.5 * (s2 + s3));
 	
 	if(x == 0) t1 = erfcx(y);
-	if(y == 0) t1 = exp(-x * x);
+	if(y == 0) t1 = ex2;
 	//if(x*x + y*y > 1.0e18) t1 = y / (sqrt(M_PI) * (x * x + y * y));
 	
 	return t1;
@@ -231,7 +231,7 @@ __device__ float voigt_916f(const float x, const float y, const float a, const i
 	float ex2 = expf(-x * x);
 
 	//Compute Sigma Series
-	if(x != 0.0 && y != 0.0) Sigmabf(x, y, s1, s2, s3, a, ex2, id);
+	      if(x != 0.0f && y != 0.0f) Sigmabf(x, y, s1, s2, s3, a, ex2, id);
 
 	float xy = x * y;
 	float a2ipi = 2.0f * a / M_PIf;
@@ -241,43 +241,103 @@ __device__ float voigt_916f(const float x, const float y, const float a, const i
 	float t1 = ex2 * erfcxf(y) * cos2xy;
 	t1 += a2ipi * x * sinxy * ex2 * sinxy / xy;
 	t1 += a2ipi * y * (-cos2xy * s1 + 0.5f * (s2 + s3));
-	
+
 	if(x == 0) t1 = erfcxf(y);
-	if(y == 0) t1 = expf(-x * x);
-	//if(x*x + y*y > 1.0e18) t1 = y / (sqrt(M_PIf) * (x * x + y * y));
-	
+	if(y == 0) t1 = ex2;
+	//if(x*x + y*y > 1.0e18) t1 = y / (sqrt(M_PI) * (x * x + y * y));
+
 	return t1;
 }
 
+
 // *************************************************
-//This kernel calculates the integrate line strength, the Lorentz and the Doppler halfwidths
+//This kernel calculates the integrated line strength, the Lorentz and the Doppler halfwidths
 //
 //Author Simon Grimm
 //November 2014
 // *************************************************
-__global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *vy_d, double *ialphaD_d, double *n_d, double *mass_d, double *delta_d, double *Q_d, int *ID_d, int NL, double T, double P, int kk){
+__global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *vy_d, double *ialphaD_d, double *n_d, double *delta_d, int *ID_d, int NL, double T, double P, int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
 
 	if(id < NL){
-		double m = mass_d[id] / def_NA;			// mass in g
 
 		double nu = nu_d[id] + delta_d[id] * P;
 		if(nu == 0.0) nu = 0.0000001;
 		nu_d[id] = nu;
-		double S = S_d[id] / m;				//cm / g
+		double S = S_d[id];				//cm / g
 //printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], m, mass_d[id], Q_d[id]);
 		double EL = EL_d[id];  				//1/cm
-		double Q = Q_d[id];				//Q0 / Q(T)
 		double alphaL = vy_d[id];
 		
-		S_d[id] = S * Q * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * def_T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * def_T0))); 
-		ialphaD_d[id] = def_c / nu * sqrt( m / (2.0 * def_kB * T));	//inverse Doppler halfwidth
+		S_d[id] = (float)(S * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * def_T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * def_T0)))); 
+		ialphaD_d[id] /= nu;	//inverse Doppler halfwidth
 		alphaL *= P * pow(def_T0 / T, n_d[id]);
 		alphaL += A_d[id] / (4.0 * M_PI * def_c);				//1/cm
 		vy_d[id] = alphaL * ialphaD_d[id];
 		ID_d[id] = id;
+//if(id < 1000) printf("%d %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], vy_d[id]);
+	}
+}
+// *************************************************
+//This kernel calculates the integrated line strength, the Lorentz and the Doppler halfwidths
+//
+//Author Simon Grimm
+//October 2016
+// *************************************************
+__global__ void S2_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, double *ialphaD_d, double *n_d, double *delta_d, double *EL_d, int *ID_d, float *va_d, float *vb_d, float *vcut2_d, double *S1_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int useIndividualX, const double T, const double P, const int kk){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx + kk;
+
+	if(id < NL){
+
+		double nu = nu_d[id] + delta_d[id] * P;
+		nu_d[id] = nu;
+		double alphaL = vy_d[id];
+		double ialphaD = ialphaD_d[id] / nu;
+		double EL = EL_d[id];
+	
+		double c = def_h * def_c / def_kB;
+		S_d[id] *= exp(-EL * c / T + EL * c / def_T0) * (1.0 - exp(-c * nu / T)) / (1.0 - exp(-c * nu / def_T0)) * ialphaD;
+	
+		ialphaD_d[id] = ialphaD;	//inverse Doppler halfwidth
+		alphaL *= P * pow(def_T0 / T, n_d[id]);
+		alphaL += (A_d[id] / (4.0 * M_PI * def_c));				//1/cm
+		vy_d[id] = alphaL * ialphaD;
+		ID_d[id] = id;
+              
+		if(useIndividualX == 0){
+			va_d[id] = (float)((numin - nu) * ialphaD);
+			vb_d[id] = (float)(dnu * ialphaD);
+		}
+		else{
+			va_d[id] = (float)(-nu * ialphaD);
+			vb_d[id] = (float)(ialphaD);
+		}
+
+		vcut2_d[id] = (float)(cut * cut * ialphaD * ialphaD); //square of modified cut lenght
+		if(cutMode == 1){
+			vcut2_d[id] = (float)(cut * cut * vy_d[id] * vy_d[id]);
+		}
+		if(cutMode == 2){
+			vcut2_d[id] = (float)(cut * cut);
+		}
+
+                S1_d[id] = S_d[id] * vy_d[id] / M_PI;
+                if(nu == 0.0){
+                        S1_d[id] = 0.0;
+                        ialphaD_d[id] = 0.0;
+                        vy_d[id] = 0.0;
+                        va_d[id] = 0.0f;
+                        vb_d[id] = 0.0f;
+                        vcut2_d[id] = 0.0f;
+                }
+//if(id < 1000) printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL, exp(-c * nu / T));
+
+
+
 	}
 }
 
@@ -303,12 +363,12 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 //This kernel initializes K_d with kmin
 //
 //Author Simon Grimm
-//January 2015
+//September 2016
 // *************************************************
-__global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
+__global__ void InitialK_kernel(double *K_d, const double Nx, const double kmin, const int k){
 
 	int idx = threadIdx.x;
-	int id = blockIdx.x * blockDim.x + idx;
+	int id = blockIdx.x * blockDim.x + idx + k;
 
 	if(id < Nx){
 		K_d[id] = kmin;
@@ -319,12 +379,12 @@ __global__ void InitialK_kernel(double *K_d, double Nx, double kmin){
 // This kernel initializes the location of nu 
 //
 // Author Simon Grimm
-// August 2015
+// September 2016
 // *************************************************
-__global__ void setX_kernel(double *x_d, double Nx, double numin, double dnu, int Nxb, int useIndividualX, double *binBoundaries_d){
+__global__ void setX_kernel(double *x_d, const double Nx, const double numin, const double dnu, const int Nxb, int useIndividualX, double *binBoundaries_d, const int k){
 
 	int idx = threadIdx.x;
-	int id = blockIdx.x * blockDim.x + idx;
+	int id = blockIdx.x * blockDim.x + idx + k;
 
 	if(id < Nx){
 		if(useIndividualX == 0){
@@ -346,11 +406,11 @@ __global__ void setX_kernel(double *x_d, double Nx, double numin, double dnu, in
 //Nxb is the number of points ber bin
 //
 //Author Simon Grimm
-//January 2015
+//Septermber 2016
 // *************************************************
-__global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb, double *binBoundaries_d, int nbins, double numax, double *x_d, int useIndividualX){
+__global__ void binKey_kernel(int *binKey_d, const int Nx, const int Nxb, double *binBoundaries_d, const int nbins, const double numax, double *x_d, int useIndividualX, const int k){
 
-	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
 
 	if(id < Nx){
 		//int bin = id / Nxb;
@@ -382,11 +442,11 @@ __global__ void binKey_kernel(int *binKey_d, int Nx, int Nxb, double *binBoundar
 //nbins is the number of bins
 //
 //Author Simon Grimm
-//August 2015
+//September 2016
 // *************************************************
-__global__ void binIndex_kernel(int *binKey_d, int *binIndex_d, int Nx, int nbins){
+__global__ void binIndex_kernel(int *binKey_d, int *binIndex_d, const int Nx, const int nbins, const int k){
 
-	int id = blockIdx.x * blockDim.x + threadIdx.x;
+	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
 
 	if(id < Nx - 1){
 		int bin = binKey_d[id];
@@ -612,16 +672,17 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // *************************************************
 template <int NB>
-__global__ void Line_kernel(double *nu_d, double *S_d, double *vy_d, double *ialphaD_d, double *K_d, double *x_d, const double dnu, const double numin, const int Nx, const int NL, int2 *Limits_d, const double cut, const int cutMode, const int nl, const int ii, const int kk, const int useIndividualX){
+__global__ void Line_kernel(double *S_d, double *S1_d, double *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, double *x_d, const int Nx, const int NL, int2 *Limits_d, const int nl, const int ii, const int kk, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
 
-	__shared__ double nu_s[NB];
-	__shared__ double S_s[NB];
-	__shared__ double ialphaD_s[NB];
-	__shared__ double y_s[NB];
-	__shared__ double cut_s[NB];
+	__shared__ float S_s[NB];
+	__shared__ float S1_s[NB];
+	__shared__ float vy_s[NB];
+	__shared__ float va_s[NB];
+	__shared__ float vb_s[NB];
+	__shared__ float vcut2_s[NB];
 
 	double K = 0.0;
 	int2 Limits;
@@ -633,61 +694,76 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *vy_d, double *ial
 		Limits.y = 0;
 	}
 
-	double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
-	double sqln2 = 1.0;//sqrt(log(2.0)); //This factor will cancel out, because alphaD = sqln2 * vo sqrt(2kt/mc2)
-	double isqrtpi = 1.0 / sqrt(M_PI);
-
-	double nu = -numin;
-	if(useIndividualX == 0){
-		nu = numin + id * dnu;
-	}
-	else{
-		if(id < Nx){
-			nu = x_d[id];
-		}
-	}
-
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){
-			nu_s[idx] = nu_d[i + idx + ii + Limits.x];
-			ialphaD_s[idx] = sqln2 * ialphaD_d[i + idx + ii + Limits.x];
-			y_s[idx] = vy_d[i + idx + ii + Limits.x];
-			S_s[idx] = S_d[i + idx + ii + Limits.x] * ialphaD_s[idx];
-			if(cutMode == 0) cut_s[idx] = cut;
-			else if (cutMode == 1) cut_s[idx] = cut * y_s[idx] / ialphaD_s[idx];
-			else if (cutMode == 2) cut_s[idx] = cut / ialphaD_s[idx];
+			vy_s[idx] = (float)(vy_d[i + idx + ii + Limits.x]);
+			va_s[idx] = va_d[i + idx + ii + Limits.x];
+			vb_s[idx] = vb_d[i + idx + ii + Limits.x];
+			S_s[idx] = (float)(S_d[i + idx + ii + Limits.x]);
+			S1_s[idx] = (float)(S1_d[i + idx + ii + Limits.x]);
+			vcut2_s[idx] = vcut2_d[i + idx + ii + Limits.x];
 		}
 		else{
-			nu_s[idx] = 0.0;
-			S_s[idx] = 0.0;
-			ialphaD_s[idx] = 0.0;
-			y_s[idx] = 0.0;
-			cut_s[idx] = 0.0;
+			S_s[idx] = 0.0f;
+			S1_s[idx] = 0.0f;
+			vy_s[idx] = 0.0f;
+			va_s[idx] = 0.0f;
+			vb_s[idx] = 0.0f;
+			vcut2_s[idx] = 0.0f;
 		}
 		__syncthreads();
-//if(i + idx + ii + Limits.x < 100) printf("%d %g %g %g %g\n", i + idx + ii + Limits.x, nu_d[i + idx + ii + Limits.x], S_d[i + idx + ii + Limits.x], ialphaD_d[i + idx + ii + Limits.x], vy_d[i + idx + ii + Limits.x]);
-
+		float x;
 # if PROFILE == 1
+
 		for(int k = 0; k < NB; ++k){
 			//Check smallest values for x and y
-			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
-				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
-				double xxyy = x * x + y_s[k] * y_s[k];
-//				if(__any(xxyy < 100)){
-				if(xxyy < 100.0){
-					K += S_s[k] * voigt_916(x, y_s[k], a, id) * isqrtpi;
+			if(useIndividualX == 0){
+				x = va_s[k] + id * vb_s[k];
+			}
+			else{
+				int bin = id / Nxb;
+				double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
+				int bstart = bin * Nxb;
+				x = (float)(binBoundaries_d[bin] * vb_s[k] + va_s[k] + (id - bstart) * dnu * vb_s[k]);
+			}
+			float t1 = x * x;
+			if(i + k + ii + Limits.x < NL && t1 < vcut2_s[k]){
+				float y = vy_s[k];
+				float xxyy = t1 + y * y;
+				if(xxyy < 100.0f){
+//printf("%d %g\n", id, y);
+					float s1, s2, s3;
+					float ex2 = expf(-x * x);
+
+					//Compute Sigma Series
+					if(x != 0.0f && y != 0.0f) Sigmabf(x, y, s1, s2, s3, a, ex2, ii);
+
+					float xy = x * y;
+					float cos2xy = cosf(2.0f * xy);
+					float sinxy = sinf(xy);
+
+					float t1 = ex2 * erfcxf(y) * cos2xy;
+					float t2 = sinxy * ex2 * sinxy / y;
+					float t3 = y * (-cos2xy * s1 + 0.5f * (s2 + s3));
+					t1 += c * (t2 + t3);
+					
+					if(x == 0.0f) t1 = erfcxf(y);
+					if(y == 0.0f) t1 = ex2;
+
+					K += S_s[k] * t1 * b;
 				}
-				else if(xxyy < 1.0e6){
-//				else if(__any(xxyy < 1e6)){
-					//2nd order Gauss Hermite Quadrature
-					double t = y_s[k] / 3.0;
-					double t1 = 2.0 * t / (M_PI * xxyy);
-					double t2 = t * (xxyy + 1.5) / (M_PI * (xxyy + 1.5) * (xxyy + 1.5) - 4.0 * x * x * 1.5);
-					K += S_s[k] * (t1 + t2);
+				else if(xxyy < 1.0e6f){
+					t1 *= 6.0f;
+					float t2 = xxyy + 1.5f;
+					float t3 = M_PIf * t2;
+
+					float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
+					K += S1_s[k] * t4;
 				}
 				else{
 					//1 order Gauss Hermite Quadrature
-					K += S_s[k] * y_s[k] / (M_PI * xxyy);
+					K += S1_s[k] / xxyy;
+//if(i + k + ii < 100) printf("%g %g %g\n", S1_s[k], x, y);
 				}
 			}
 		}
@@ -695,18 +771,36 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *vy_d, double *ial
 #endif
 # if PROFILE == 2
 		for(int k = 0; k < NB; ++k){
-			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
-				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
-				double xxyy = x * x + y_s[k] * y_s[k];
-				K += S_s[k] * y_s[k] / (M_PI * xxyy);
+			if(useIndividualX == 0){
+				x = va_s[k] + id * vb_s[k];
+			}
+			else{
+				int bin = id / Nxb;
+				double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
+				int bstart = bin * Nxb;
+				x = binBoundaries_d[bin] * vb_s[k] + va_s[k] + (id - bstart) * dnu * vb_s[k];
+			}
+			float t1 = x * x;
+			if(i + k + ii + Limits.x < NL && t1 < vcut2_s[k]){
+				float xxyy = t1 + y_s[k] * y_s[k];
+				K += S1_s[k] / xxyy;
 			}	
 		}
 #endif
 # if PROFILE == 3
 		for(int k = 0; k < NB; ++k){
-			if(i + k + ii + Limits.x < NL && fabs(nu - nu_s[k]) < cut_s[k]){
-				double x = fabs((nu - nu_s[k]) * ialphaD_s[k]);
-				K += S_s[k] * isqrtpi * exp(-x * x);
+			if(useIndividualX == 0){
+				x = va_s[k] + id * vb_s[k];
+			}
+			else{
+				int bin = id / Nxb;
+				double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
+				int bstart = bin * Nxb;
+				x = binBoundaries_d[bin] * vb_s[k] + va_s[k] + (id - bstart) * dnu * vb_s[k];
+			}
+			float t1 = x * x;
+			if(i + k + ii + Limits.x < NL && t1 < vcut2_s[k]){
+				K += S_s[k] * b * expf(-x * x);
 			}	
 		}
 #endif
@@ -719,110 +813,149 @@ __global__ void Line_kernel(double *nu_d, double *S_d, double *vy_d, double *ial
 }
 
 
-template <int NB, int E>
-__global__ void Line2_kernel(double *nu_d, double *S_d, double *ialphaD_d, double *vy_d, double *K_d, const double dnu, const double numin, const int il, const int nstart, const int Nk, const double cut, const int nl){
+// *************************************************
+//This kernel computes the line shape
+//
+// E = 0 first order
+// E = 1 third order
+// E = 2 higher oder
+// E = -1 first order with reduces resolution in x 
+//
+//Author Simon Grimm
+//October 2016
+// *************************************************
+template <int NB, const int E>
+__global__ void Line2f_kernel(double *S1_d, double *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il, const int nstart, const int Nk, const int nl, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx;
-	__shared__ double nu_s[NB];
-	__shared__ double S_s[NB];
-	__shared__ double vy_s[NB];
-	__shared__ double ialphaD_s[NB];
-
-	if(idx < nl){ 
-		nu_s[idx] = nu_d[il + idx];
-		S_s[idx] = S_d[il + idx];
-		vy_s[idx] = vy_d[il + idx];
-		ialphaD_s[idx] = ialphaD_d[il + idx];
-	}
-	__syncthreads();
-	if(id < Nk){
-		int ii = nstart + id;
-		double K = K_d[ii];
-		for(int ill = 0; ill < nl; ++ill){
-			double nuc = nu_s[ill];
-
-			double S = S_s[ill];
-			double y = vy_s[ill];
-			double ialphaD = ialphaD_s[ill];
-
-			double nu = numin + ii * dnu;
-
-			if(fabs(nu - nuc) < cut){	
-
-				double x = fabs(nu - nuc) * ialphaD;
-				double xxyy = x * x + y * y;
-
-				if(/*E == 0 && */xxyy >= 1.0e6){
-				//1 order Gauss Hermite Quadrature
-					K += S * y / (M_PI * xxyy);
-				}
-				if(/*E == 1 &&*/ xxyy >= 100.0 && xxyy < 1.0e6){
-				//2nd order Gauss Hermite Quadrature
-					double t = y / 3.0;
-					double t1 = 2.0 * t / (M_PI * xxyy);
-					double t2 = t * (xxyy + 1.5) / (M_PI * (xxyy + 1.5) * (xxyy + 1.5) - 4.0 * x * x * 1.5);
-					K += S * (t1 + t2);
-				}
-				if(/*E == 2 &&*/ xxyy < 100.0){
-					double isqrtpi = 1.0 / sqrt(M_PI);
-					double a = M_PI * sqrt(-1.0 / log(TOL * 0.5));
-					K += S * voigt_916(x, y, a, ii) * isqrtpi;
-				}
-			}
-		}
-		K_d[ii] = K;
-	}
-}
-template <int NB, int E>
-__global__ void Line2f_kernel(double *S_d, double *vy_d, float *va_d, float *vb_d, float *vcut_d, double *K_d, const int il, const int nstart, const int Nk, const int nl){
-
-	int idx = threadIdx.x;
-	int id = blockIdx.x * blockDim.x + idx;
-	__shared__ float S_s[NB];
+	__shared__ float S1_s[NB];
 	__shared__ float vy_s[NB];
 	__shared__ float va_s[NB];
 	__shared__ float vb_s[NB];
-	__shared__ float vcut_s[NB];
+	__shared__ float vcut2_s[NB];
 
 	if(idx < nl){ 
-		S_s[idx] = (float)(S_d[il + idx]);
+		S1_s[idx] = (float)(S1_d[il + idx]);
 		vy_s[idx] = (float)(vy_d[il + idx]);
 		va_s[idx] = va_d[il + idx];
 		vb_s[idx] = vb_d[il + idx];
-		vcut_s[idx] = vcut_d[il + idx];
+		vcut2_s[idx] = vcut2_d[il + idx];
+
 	}
 	__syncthreads();
+	float x;
+	double dnu;
+	double bb;
 	if(id < Nk){
 		int ii = nstart + id;
-		double K = K_d[ii];
+		double K = 0.0;
+		if(useIndividualX != 0){
+			int bin = ii / Nxb;
+			bb = binBoundaries_d[bin];
+			dnu = (binBoundaries_d[bin + 1] - bb) / ((double)(Nxb));
+			int bstart = bin * Nxb;
+			if(E >= 0){
+				dnu *= (ii - bstart);
+			}
+			else{
+				dnu *= (ii * 10 - bstart);
+
+			}
+		}
 		for(int ill = 0; ill < nl; ++ill){
-
 			float y = vy_s[ill];
-			float x = va_s[ill] + ii * vb_s[ill];
+			if(useIndividualX == 0){
+				if(E >= 0){
+					x = va_s[ill] + ii * vb_s[ill];
+				}
+				else{
+					x = va_s[ill] + ii * 10 * vb_s[ill];
+				}
+			}
+			else{
+				x = bb * vb_s[ill] + va_s[ill] + dnu * vb_s[ill];
+			}
+			float t1 = x * x;
 
-			if(fabsf(x) < vcut_s[ill]){	
+			if(t1 < vcut2_s[ill]){	
 
-				float xxyy = x * x + y * y;
+				float xxyy = t1 + y * y;
+//printf("%g %g %g\n", S1_s[ill], x, y);
 
-				if(E == 0 && xxyy >= 1.0e6f){
+				if(E <= 0 && xxyy >= 1.0e6f){
 				//1 order Gauss Hermite Quadrature
-					K += S_s[ill] * y / (M_PIf * xxyy);
+					K += S1_s[ill] / xxyy;
 				}
 				if(E == 1 && xxyy >= 100.0f && xxyy < 1.0e6f){
 				//2nd order Gauss Hermite Quadrature
-					float t = y / 3.0f;
-					float t1 = 2.0f * t / (M_PIf * xxyy);
-					float t2 = t * (xxyy + 1.5f) / (M_PIf * (xxyy + 1.5f) * (xxyy + 1.5f) - 4.0f * x * x * 1.5f);
-					K += S_s[ill] * (t1 + t2);
+					t1 *= 6.0f;
+					float t2 = xxyy + 1.5f;
+					float t3 = M_PIf * t2;
+				
+					float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
+					K += S1_s[ill] * t4;
 				}
 				if(E == 2 && xxyy < 100.0f){
-					float isqrtpif = 1.0f / sqrtf(M_PIf);
-					float af = M_PI * sqrtf(-1.0f / logf(TOLF * 0.5f));
-					K += S_s[ill] * voigt_916f(x, y, af, ii) * isqrtpif;
+					float s1, s2, s3;
+					float ex2 = expf(-x * x);
+
+					//Compute Sigma Series
+					if(x != 0.0 && y != 0.0) Sigmabf(x, y, s1, s2, s3, a, ex2, ii);
+
+					float xy = x * y;
+					float cos2xy = cosf(2.0f * xy);
+					float sinxy = sinf(xy);
+
+					float t1 = ex2 * erfcxf(y) * cos2xy;
+					float t2 = sinxy * ex2 * sinxy / y;
+					float t3 = y * (-cos2xy * s1 + 0.5f * (s2 + s3));
+					t1 += c * (t2 + t3);
+					
+					if(x == 0.0f) t1 = erfcxf(y);
+					if(y == 0.0f) t1 = ex2;
+
+					K += S1_s[ill] * t1 * b;
 				}
 			}
 		}
-		K_d[ii] = K;
+		K_d[ii] += K;
 	}
 }
+// *************************************************
+// This kernel initializes the location of nu 
+//
+// Author Simon Grimm
+// September 2016
+// *************************************************
+__global__ void InterpolateX1_kernel(double *K_d, double *K1_d, const double Nx, const int Nxb, int useIndividualX, double *binBoundaries_d, const int k){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx + k;
+
+
+//	if(id < Nx / 10){
+//		K_d[id] = K1_d[id];
+//	}
+
+
+	if(id < Nx){
+		if(useIndividualX == 0){
+			int i1 = id / 10;
+
+			double K0 = K1_d[i1];
+			double K1 = K1_d[i1 + 1];
+
+			K_d[id] += (K0 + (K1 - K0) / 10.0 * (id - i1 * 10));
+
+		}
+		else{
+//			int bin = id / Nxb;
+//			double dnu = (binBoundaries_d[bin + 1] - binBoundaries_d[bin]) / ((double)(Nxb));
+//			int start = bin * Nxb;
+//			x_d[id] = binBoundaries_d[bin] + (id - start) * dnu;
+		}
+	}
+
+}
+
