@@ -50,11 +50,8 @@ int main(int argc, char*argv[]){
 		return 0;
 	}
 	if(param.dev >= devCount || param.dev < 0){
-		printf("Error: Devive Number is not allowed\n");
+		printf("Error: Device Number is not allowed\n");
 		return 0;
-	}
-	if(param.Nxb != 0){
-		param.useIndividualX = 1;
 	}
 
 	char filemode[16];
@@ -64,6 +61,37 @@ int main(int argc, char*argv[]){
 	else{
 		sprintf(filemode, "w");
 	}
+
+	FILE *InfoFile;
+	char InfoFilename[160];
+	sprintf(InfoFilename, "Info_%s.dat", param.name);
+	InfoFile = fopen(InfoFilename, filemode);
+
+	int runtimeVersion;
+	int driverVersion;
+
+	cudaRuntimeGetVersion(&runtimeVersion);
+	cudaDriverGetVersion(&driverVersion);
+
+	cudaSetDevice(param.dev);
+	cudaDeviceProp devProp;
+	for(int i = 0; i < 2; ++i){
+		FILE *infofile;
+		if(i == 0) infofile = InfoFile;
+		if(i == 1) infofile = stdout;
+
+		for(int j = 0; j < devCount; ++j){
+			cudaGetDeviceProperties(&devProp, j);
+			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu",
+				devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
+				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
+
+		}
+	}
+	if(param.Nxb != 0){
+		param.useIndividualX = 1;
+	}
+
 
 	if(param.useHITEMP < 2){
 		sprintf(qFilename, "%s", "q.dat");
@@ -152,33 +180,10 @@ int main(int argc, char*argv[]){
 		time[i] = 0.0;
 	}
 
-	FILE *InfoFile;
-	char InfoFilename[160];
-	sprintf(InfoFilename, "Info_%s.dat", param.name);
-	InfoFile = fopen(InfoFilename, filemode);
-
-	int runtimeVersion;
-	int driverVersion;
-
-	cudaRuntimeGetVersion(&runtimeVersion);
-	cudaDriverGetVersion(&driverVersion);
-
-
-	cudaSetDevice(param.dev);
-	cudaDeviceProp devProp;
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;
 		if(i == 0) infofile = InfoFile;
 		if(i == 1) infofile = stdout;
-
-		for(int j = 0; j < devCount; ++j){
-			cudaGetDeviceProperties(&devProp, j);
-			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu",
-				devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
-				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
-
-		}
-
 		fprintf(infofile, "\nVersion: %g\n", VERSION);
 		fprintf(infofile, "Using device %d\n\n", param.dev);
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);

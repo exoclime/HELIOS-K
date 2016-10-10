@@ -126,7 +126,6 @@ __host__ int readPartitionExomol(int nMolecule, char *qFilename, Partition &part
 __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*argv[]){
 	//Read parameters from param.dat file
 	FILE *paramFile;
-	param.dev = 0;
 	paramFile = fopen(paramFilename, "r");
 		char skip[160];
 		char skip2[160];
