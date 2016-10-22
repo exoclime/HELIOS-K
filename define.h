@@ -1,4 +1,4 @@
-#define VERSION 1.55
+#define VERSION 1.56
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -21,7 +21,8 @@
 
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
-#define NXLOW 1000000		//Linef versus Line2f
+#define NXLOW 100000		//Linef versus Line2f
+#define RLOW 1			//user lower resolution at the line wings
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
@@ -102,12 +103,15 @@ struct Param{
 
 struct Line{
 	double *nu_h, *nu_d;            //Wavenumber
-	double *S_h, *S_d;              //Intensity
-	double *S1_h, *S1_d;            //modified Intensity
+	double *S_h, *S_d;        //Intensity
+	float *Sf_d;
+	double *S1_h, *S1_d;     //modified Intensity
+	float *S1f_d;
 	double *A_h, *A_d;              //Einstein A coefficient
 	double *delta_h, *delta_d;      //pressure induced line shift
-	double *EL_h, *EL_d;      //pressure induced line shift
-	double *vy_h, *vy_d;	 	//Lorentz Halfwidth / Doppler Halfwidth
+	double *EL_h, *EL_d;  		//Energy of lower state
+	double *vy_h, *vy_d; 	//Lorentz Halfwidth / Doppler Halfwidth
+	float *vyf_d;
 	float *va_h, *va_d;	 	//(numin - nu) * ialphaD
 	float *vb_h, *vb_d;	 	//dnu * ialphaD
 	float *vcut2_h, *vcut2_d; 	//(cut * ialphaD)^2

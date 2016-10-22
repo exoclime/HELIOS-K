@@ -768,11 +768,14 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
+	cudaMalloc((void **) &L.Sf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.S1_d, n * sizeof(double));
+	cudaMalloc((void **) &L.S1f_d, n * sizeof(float));
 	cudaMalloc((void **) &L.A_d, n * sizeof(double));
 	cudaMalloc((void **) &L.delta_d, n * sizeof(double));
 	cudaMalloc((void **) &L.EL_d, n * sizeof(double));
 	cudaMalloc((void **) &L.vy_d, n * sizeof(double));
+	cudaMalloc((void **) &L.vyf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.va_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vb_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vcut2_d, n * sizeof(float));
@@ -797,8 +800,11 @@ __host__ void Alloc2_Line(Line &L, Molecule &m){
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
+	cudaMalloc((void **) &L.Sf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.S1_d, n * sizeof(double));
+	cudaMalloc((void **) &L.S1f_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vy_d, n * sizeof(double));
+	cudaMalloc((void **) &L.vyf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.va_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vb_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vcut2_d, n * sizeof(float));
@@ -862,11 +868,14 @@ __host__ void free_Line(Line &L){
 
 	cudaFree(L.nu_d);
 	cudaFree(L.S_d);
+	cudaFree(L.Sf_d);
 	cudaFree(L.S1_d);
+	cudaFree(L.S1f_d);
 	cudaFree(L.A_d);
 	cudaFree(L.delta_d);
 	cudaFree(L.EL_d);
 	cudaFree(L.vy_d);
+	cudaFree(L.vyf_d);
 	cudaFree(L.va_d);
 	cudaFree(L.vb_d);
 	cudaFree(L.vcut2_d);
@@ -889,8 +898,11 @@ __host__ void free2_Line(Line &L){
 
 	cudaFree(L.nu_d);
 	cudaFree(L.S_d);
+	cudaFree(L.Sf_d);
 	cudaFree(L.S1_d);
+	cudaFree(L.S1f_d);
 	cudaFree(L.vy_d);
+	cudaFree(L.vyf_d);
 	cudaFree(L.va_d);
 	cudaFree(L.vb_d);
 	cudaFree(L.vcut2_d);

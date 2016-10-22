@@ -1,4 +1,4 @@
-name = g
+name = hl
 T = 100.0
 P = 1.0
 PFile = -
@@ -7,8 +7,8 @@ Molecule = 1
 ciaSystem = -
 pathToData = /disk/zbox/sigrimm/HITEMP/ 
 numin = 6000.0
-numax = 7000.0
-dnu = 0.001
+numax = 6100.0
+dnu = 0.0001
 Nnu per bin = 0
 cutMode = 0
 cut = 100.0 

@@ -286,7 +286,7 @@ __global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, d
 //Author Simon Grimm
 //October 2016
 // *************************************************
-__global__ void S2_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, double *ialphaD_d, double *n_d, double *delta_d, double *EL_d, int *ID_d, float *va_d, float *vb_d, float *vcut2_d, double *S1_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int useIndividualX, const double T, const double P, const int kk){
+__global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, double *vy_d, float *vyf_d, double *ialphaD_d, double *n_d, double *delta_d, double *EL_d, int *ID_d, float *va_d, float *vb_d, float *vcut2_d, double *S1_d, float *S1f_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int useIndividualX, const double T, const double P, const int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -325,19 +325,34 @@ __global__ void S2_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, 
 			vcut2_d[id] = (float)(cut * cut);
 		}
 
-                S1_d[id] = S_d[id] * vy_d[id] / M_PI;
-                if(nu == 0.0){
-                        S1_d[id] = 0.0;
-                        ialphaD_d[id] = 0.0;
-                        vy_d[id] = 0.0;
-                        va_d[id] = 0.0f;
-                        vb_d[id] = 0.0f;
-                        vcut2_d[id] = 0.0f;
-                }
+		S1_d[id] = S_d[id] * vy_d[id] / M_PI;
+		if(nu == 0.0){
+			S_d[id] = 0.0;
+			S1_d[id] = 0.0;
+			ialphaD_d[id] = 0.0;
+			vy_d[id] = 0.0;
+			va_d[id] = 0.0f;
+			vb_d[id] = 0.0f;
+			vcut2_d[id] = 0.0f;
+		}
+		vyf_d[id] = (float)(vy_d[id]); 
+		Sf_d[id] = (float)(S_d[id]); 
+		S1f_d[id] = (float)(S1_d[id]); 
 //if(id < 1000) printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL, exp(-c * nu / T));
 
 
 
+	}
+}
+__global__ void Sf_kernel(double *S_d, float *Sf_d, double *vy_d, float *vyf_d, double *S1_d, float *S1f_d, const int NL, const int kk){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx + kk;
+
+	if(id < NL){
+		vyf_d[id] = (float)(vy_d[id]); 
+		Sf_d[id] = (float)(S_d[id]); 
+		S1f_d[id] = (float)(S1_d[id]); 
 	}
 }
 
@@ -672,7 +687,7 @@ __global__ void MaxLimits_kernel(int2 *Limits_d, int *MaxLimits_d, int n, int NL
 //November 2014
 // *************************************************
 template <int NB>
-__global__ void Line_kernel(double *S_d, double *S1_d, double *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, double *x_d, const int Nx, const int NL, int2 *Limits_d, const int nl, const int ii, const int kk, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
+__global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, double *x_d, const int Nx, const int NL, int2 *Limits_d, const int nl, const int ii, const int kk, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -696,11 +711,11 @@ __global__ void Line_kernel(double *S_d, double *S1_d, double *vy_d, float *va_d
 
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){
-			vy_s[idx] = (float)(vy_d[i + idx + ii + Limits.x]);
+			vy_s[idx] = vy_d[i + idx + ii + Limits.x];
 			va_s[idx] = va_d[i + idx + ii + Limits.x];
 			vb_s[idx] = vb_d[i + idx + ii + Limits.x];
-			S_s[idx] = (float)(S_d[i + idx + ii + Limits.x]);
-			S1_s[idx] = (float)(S1_d[i + idx + ii + Limits.x]);
+			S_s[idx] = S_d[i + idx + ii + Limits.x];
+			S1_s[idx] = S1_d[i + idx + ii + Limits.x];
 			vcut2_s[idx] = vcut2_d[i + idx + ii + Limits.x];
 		}
 		else{
@@ -819,13 +834,13 @@ __global__ void Line_kernel(double *S_d, double *S1_d, double *vy_d, float *va_d
 // E = 0 first order
 // E = 1 third order
 // E = 2 higher oder
-// E = -1 first order with reduces resolution in x 
+// E = -1 first order with reduced resolution in x 
 //
 //Author Simon Grimm
 //October 2016
 // *************************************************
 template <int NB, const int E>
-__global__ void Line2f_kernel(double *S1_d, double *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il, const int nstart, const int Nk, const int nl, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
+__global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il, const int nstart, const int Nk, const int nl, const int useIndividualX, const int Nxb, double *binBoundaries_d, const float a, const float b, const float c){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx;
@@ -836,8 +851,8 @@ __global__ void Line2f_kernel(double *S1_d, double *vy_d, float *va_d, float *vb
 	__shared__ float vcut2_s[NB];
 
 	if(idx < nl){ 
-		S1_s[idx] = (float)(S1_d[il + idx]);
-		vy_s[idx] = (float)(vy_d[il + idx]);
+		S1_s[idx] = S1_d[il + idx];
+		vy_s[idx] = vy_d[il + idx];
 		va_s[idx] = va_d[il + idx];
 		vb_s[idx] = vb_d[il + idx];
 		vcut2_s[idx] = vcut2_d[il + idx];
@@ -887,6 +902,46 @@ __global__ void Line2f_kernel(double *S1_d, double *vy_d, float *va_d, float *vb
 				//1 order Gauss Hermite Quadrature
 					K += S1_s[ill] / xxyy;
 				}
+				if(E == 10){ //correct interpolation
+
+					int i0 = (int)((-sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
+					i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+					float x0 = va_s[ill] + i0 * vb_s[ill];
+					float xxyy0 = x0 * x0 + y * y;
+					float Kc0 = S1_s[ill] / xxyy0;
+					
+					//float Kc = Kc0 - Kc0 / 10.0 * id;
+					float Kc = Kc0 - Kc0 / 10.0 * (ii - i0);
+
+
+					if(Kc >= 0.0f && Kc <= Kc0){
+						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
+						K -= Kc;
+					}
+					
+
+				}
+				if(E == 11){ //correct interpolation
+
+					int i0 = (int)((sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
+					i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+					float x0 = va_s[ill] + i0 * vb_s[ill];
+					float xxyy0 = x0 * x0 + y * y;
+					float Kc0 = S1_s[ill] / xxyy0;
+					
+					//float Kc = Kc0 - Kc0 / 10.0 * id;
+					float Kc = Kc0 / 10.0 * (ii - i0);
+
+
+					if(Kc >= 0.0f && Kc <= Kc0){
+						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
+						K -= Kc;
+					}
+					
+
+				}
 				if(E == 1 && xxyy >= 100.0f && xxyy < 1.0e6f){
 				//2nd order Gauss Hermite Quadrature
 					t1 *= 6.0f;
@@ -933,12 +988,6 @@ __global__ void InterpolateX1_kernel(double *K_d, double *K1_d, const double Nx,
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + k;
 
-
-//	if(id < Nx / 10){
-//		K_d[id] = K1_d[id];
-//	}
-
-
 	if(id < Nx){
 		if(useIndividualX == 0){
 			int i1 = id / 10;
@@ -957,5 +1006,15 @@ __global__ void InterpolateX1_kernel(double *K_d, double *K1_d, const double Nx,
 		}
 	}
 
+}
+__global__ void InterpolateX2_kernel(double *K_d, double *K1_d, const double Nx, const int Nxb, int useIndividualX, double *binBoundaries_d, const int k){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx + k;
+
+
+	if(id < Nx){
+		K_d[id] += K1_d[id];
+	}
 }
 
