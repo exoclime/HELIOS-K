@@ -834,7 +834,9 @@ __global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, f
 // E = 0 first order
 // E = 1 third order
 // E = 2 higher oder
-// E = -1 first order with reduced resolution in x 
+// E = -1 first order with reduced resolution in x
+// E = 10, 11 correct boundary to lower resolution
+// E = 12, 13 correct boundary to cut off 
 //
 //Author Simon Grimm
 //October 2016
@@ -892,55 +894,15 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 				x = bb * vb_s[ill] + va_s[ill] + dnu * vb_s[ill];
 			}
 			float t1 = x * x;
+			float xxyy = t1 + y * y;
 
 			if(t1 < vcut2_s[ill]){	
 
-				float xxyy = t1 + y * y;
 //printf("%g %g %g\n", S1_s[ill], x, y);
 
 				if(E <= 0 && xxyy >= 1.0e6f){
 				//1 order Gauss Hermite Quadrature
 					K += S1_s[ill] / xxyy;
-				}
-				if(E == 10){ //correct interpolation
-
-					int i0 = (int)((-sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
-					i0 = (i0 / 10) * 10;
-//printf("%d %d %d %d\n", id, ii, nstart, i0);
-					float x0 = va_s[ill] + i0 * vb_s[ill];
-					float xxyy0 = x0 * x0 + y * y;
-					float Kc0 = S1_s[ill] / xxyy0;
-					
-					//float Kc = Kc0 - Kc0 / 10.0 * id;
-					float Kc = Kc0 - Kc0 / 10.0 * (ii - i0);
-
-
-					if(Kc >= 0.0f && Kc <= Kc0){
-						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
-						K -= Kc;
-					}
-					
-
-				}
-				if(E == 11){ //correct interpolation
-
-					int i0 = (int)((sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
-					i0 = (i0 / 10) * 10;
-//printf("%d %d %d %d\n", id, ii, nstart, i0);
-					float x0 = va_s[ill] + i0 * vb_s[ill];
-					float xxyy0 = x0 * x0 + y * y;
-					float Kc0 = S1_s[ill] / xxyy0;
-					
-					//float Kc = Kc0 - Kc0 / 10.0 * id;
-					float Kc = Kc0 / 10.0 * (ii - i0);
-
-
-					if(Kc >= 0.0f && Kc <= Kc0){
-						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
-						K -= Kc;
-					}
-					
-
 				}
 				if(E == 1 && xxyy >= 100.0f && xxyy < 1.0e6f){
 				//2nd order Gauss Hermite Quadrature
@@ -971,6 +933,73 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 					if(y == 0.0f) t1 = ex2;
 
 					K += S1_s[ill] * t1 * b;
+				}
+				if(E == 10){ //correct interpolation
+
+					int i0 = (int)((-sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
+					i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+					float x0 = va_s[ill] + i0 * vb_s[ill];
+					float xxyy0 = x0 * x0 + y * y;
+					float Kc0 = S1_s[ill] / xxyy0;
+					
+					float Kc = Kc0 - Kc0 / 10.0 * (ii - i0);
+
+
+					if(Kc >= 0.0f && Kc <= Kc0){
+						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
+						K -= Kc;
+					}
+				}
+				if(E == 11){ //correct interpolation
+
+					int i0 = (int)((sqrtf((1.0e6f - y * y)) - va_s[ill]) / vb_s[ill]);
+					i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+					float x0 = va_s[ill] + (i0 + 10) * vb_s[ill];
+					float xxyy0 = x0 * x0 + y * y;
+					float Kc0 = S1_s[ill] / xxyy0;
+					
+					float Kc = Kc0 / 10.0 * (ii - i0);
+
+
+					if(Kc >= 0.0f && Kc <= Kc0){
+						if(xxyy >= 1.0e6f) K += S1_s[ill] / xxyy;
+						K -= Kc;
+					}
+					
+				}
+			}
+			if(E == 12){ //correct interpolation
+				int i0 = (int)((sqrtf((vcut2_s[ill])) - va_s[ill]) / vb_s[ill]);
+				i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+				float x0 = va_s[ill] + i0 * vb_s[ill];
+				float xxyy0 = x0 * x0 + y * y;
+				float Kc0 = S1_s[ill] / xxyy0;
+				
+				float Kc = Kc0 - Kc0 / 10.0 * (ii - i0);
+
+
+				if(Kc >= 0.0f && Kc <= Kc0){
+					if(t1 < vcut2_s[ill]) K += S1_s[ill] / xxyy;
+					K -= Kc;
+				}
+			}
+			if(E == 13){ //correct interpolation
+				int i0 = (int)((-sqrtf((vcut2_s[ill])) - va_s[ill]) / vb_s[ill]);
+				i0 = (i0 / 10) * 10;
+//printf("%d %d %d %d\n", id, ii, nstart, i0);
+				float x0 = va_s[ill] + (i0 + 10) * vb_s[ill];
+				float xxyy0 = x0 * x0 + y * y;
+				float Kc0 = S1_s[ill] / xxyy0;
+				
+				float Kc = Kc0 / 10.0 * (ii - i0);
+
+
+				if(Kc >= 0.0f && Kc <= Kc0){
+					if(t1 < vcut2_s[ill]) K += S1_s[ill] / xxyy;
+					K -= Kc;
 				}
 			}
 		}

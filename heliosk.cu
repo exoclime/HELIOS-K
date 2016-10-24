@@ -427,9 +427,7 @@ int main(int argc, char*argv[]){
 		printf("File range %d to %d\n", fi0 + 1, fi1);
 
 		for(int fi = fi0; fi < fi1; ++fi){
-			cudaMemset(K1_d, 0, Nx1 * sizeof(double));	
-			cudaMemset(Kc_d, 0, Nx * sizeof(double));	
-
+			
 			time[1] = 0;
 			time[2] = 0;
 
@@ -475,6 +473,8 @@ int main(int argc, char*argv[]){
 				//Copy Line data to the device
 
 				for(int iL = 0; iL < m.NL[fi]; iL += maxlines){
+					cudaMemset(K1_d, 0, Nx1 * sizeof(double));	
+					cudaMemset(Kc_d, 0, Nx * sizeof(double));	
 					int NL = min(maxlines, m.NL[fi] - iL);
 					printf("processing Line file part %d of %d with %d lines\n", (iL + maxlines - 1) / maxlines + 1, (m.NL[fi] + maxlines - 1)/ maxlines, NL);
 
@@ -745,7 +745,6 @@ if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							}
 						}
 						//lower resolution interpolation correction
-
 						const int nlb = 512;
 						for(int il = 0; il < NL; il += nlb){ //loop over lines
 							int ii11 = 0;
@@ -820,6 +819,73 @@ if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								}
 								nstart += nthmax;
 							}
+						}
+						for(int il = 0; il < NL; il += nlb){ //loop over lines
+							int ii11 = 0;
+							int ii00 = Nx;
+							for(int iil = 0; iil < nlb; ++iil){
+								if(il + iil < NL){
+									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
+									int ii0 = (Inu + (int)(cut / param.dnu)) / 10 * 10;
+									int ii1 = ii0 + 12;
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+
+									if(ii0 < Nx && ii1 >= 0.0){
+										ii1 = min(Nx, ii1);
+										ii0 = max(0, ii0);
+
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
+									}
+								}
+							}
+							int nt = ii11 - ii00;
+							int nstart = ii00;
+							int nll = min(nlb, NL - il);	
+if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+							for(int k = 0; k < nt; k += nthmax){
+								int Nk = min(nthmax, nt - k);
+								if(Nk > 0 && nll > 0){
+									Line2f_kernel < nlb, 12 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+								}
+								nstart += nthmax;
+							}
+						}
+						for(int il = 0; il < NL; il += nlb){ //loop over lines
+							int ii11 = 0;
+							int ii00 = Nx;
+							for(int iil = 0; iil < nlb; ++iil){
+								if(il + iil < NL){
+									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
+									int ii0 = (Inu - (int)(cut / param.dnu)) / 10 * 10;
+									int ii1 = ii0 + 12;
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+
+									if(ii0 < Nx && ii1 >= 0.0){
+										ii1 = min(Nx, ii1);
+										ii0 = max(0, ii0);
+
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
+									}
+								}
+							}
+							int nt = ii11 - ii00;
+							int nstart = ii00;
+							int nll = min(nlb, NL - il);	
+if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+							for(int k = 0; k < nt; k += nthmax){
+								int Nk = min(nthmax, nt - k);
+								if(Nk > 0 && nll > 0){
+									Line2f_kernel < nlb, 13 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+								}
+								nstart += nthmax;
+							}
+						}
+						for(int k = 0; k < Nx; k += nthmax){
+							int Nk = min(nthmax, Nx - k);
+							InterpolateX2_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, Kc_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
+							InterpolateX1_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, K1_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
 						}
 #endif
 						//search second order regimes of the Voigt profile
@@ -928,13 +994,6 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 					gettimeofday(&tt1, NULL);
 
 				} // End of maxLines loop
-#if RLOW == 1
-				for(int k = 0; k < Nx; k += nthmax){
-					int Nk = min(nthmax, Nx - k);
-					InterpolateX1_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, K1_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
-					InterpolateX2_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, Kc_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
-				}
-#endif
 			} // End of pressure loop
 
 			InfoFile = fopen(InfoFilename, "a");
