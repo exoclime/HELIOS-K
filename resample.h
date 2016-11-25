@@ -369,7 +369,7 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 
 		if(K == kmin && K1 > kmin){
 			int n = id - ib * NLb + 1;
-//printf("%d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
+//printf("cut bin %d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
 			Nmin_d[ib] = n;
 
 		}
@@ -378,8 +378,8 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 //printf("empty bin %d\n", ib);
 			Nmin_d[ib] = NLb;
 		}
-		if(K1 == kmin && id == NL - 2){
-//printf("empty last bin %d\n", ib);
+		if(K1 == kmin && id == NL - 3){
+//printf("empty last bin %d %d\n", ib, id);
 			Nmin_d[ib] = NLb;
 		}
 	}

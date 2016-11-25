@@ -1310,15 +1310,19 @@ printf("\n\n");
 cudaMemcpy(K2_h, K2_d, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 cudaDeviceSynchronize();
-
+//printf only cut and empty bins
 for(int i = 0; i < param.nbins; ++i){
 	int il = i * param.Nxb;
 	if(K_h[il] == param.kmin){
 		for(int j = 0; j < param.Nxb; ++j){
-			printf("%g %.20g\n", j / (double)(param.Nxb), K2_h[j + il]);
+//			printf("%g %.20g\n", j / (double)(param.Nxb), K2_h[j + il]);
 		}
-		printf("\n\n");
+//		printf("\n\n");
 	}
+}
+//print all bins
+for(int i = 0; i < Nx; ++i){
+	printf("%d %.20g %.20g\n", i, K_h[i], K2_h[i]);
 }
 */
 			copyK2_kernel< 512 > <<< param.nbins, 512 >>> (K_d + iP * Nx, K2_d, param.kmin, param.Nxb);
