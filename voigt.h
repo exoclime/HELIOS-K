@@ -468,7 +468,6 @@ __global__ void binIndex_kernel(int *binKey_d, int *binIndex_d, const int Nx, co
 		int bin1 = binKey_d[id + 1];
 
 		if(bin1 > bin){
-//printf("bin Index %d %d %d %d %d\n", bin1, bin, id + 1, Nx, nbins);
 			binIndex_d[bin1] = id + 1;
 		}
 	}

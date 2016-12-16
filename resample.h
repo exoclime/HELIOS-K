@@ -109,7 +109,6 @@ __global__ void QR_kernel(double *V_d, double *C_d, double *D_d, int NL, int NC)
 			}
 		}
 		__syncthreads();
-
 		if(idy < 32){
 			volatile double *a = a_s;
 			a[idy] = fmax(a[idy], a[idy + 32]);
@@ -119,6 +118,7 @@ __global__ void QR_kernel(double *V_d, double *C_d, double *D_d, int NL, int NC)
 			a[idy] = fmax(a[idy], a[idy + 2]);
 			a[idy] = fmax(a[idy], a[idy + 1]);
 		}
+		__syncthreads();
 		scale = a_s[0];
 		__syncthreads();
 		a_s[idy] = 0.0;
@@ -127,6 +127,7 @@ __global__ void QR_kernel(double *V_d, double *C_d, double *D_d, int NL, int NC)
 			if(idy + k < NL && idy + k >= i){
 				double V = V_d[(idy + k) + NL * i] / scale;
 				V_d[(idy + k) + NL * i] = V;
+//if(i == 1) printf("s %d %d %d %g %g %d %d\n", (idy + k) + NL * i, k, i, V_d[(idy + k) + NL * i], scale, NL, NC);
 				a_s[idy] += V * V;
 			}
 		}
@@ -253,7 +254,7 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 		for(int k = 0; k < NL; k += nb){
 			if(idy + k < NL && idy + k >= j){
 				double b = b_d[idy + k + idx * NL];
-//if(idx == 18 && j == 2) printf("%d %g\n", idy + k + idx * NL, b);
+//printf("%d %d %d %g\n", (idy + k) + NL * j, k, j, V_d[(idy + k) + NL * j]);
 				a_s[idy] += V_d[(idy + k) + NL * j] * b;
 			}
 		}
@@ -367,18 +368,18 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 		double K = K_d[id];
 		double K1 = K_d[id + 1];
 
-		if(K == kmin && K1 > kmin){
+		if(K <= kmin && K1 > kmin){
 			int n = id - ib * NLb + 1;
 //printf("cut bin %d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
 			Nmin_d[ib] = n;
 
 		}
 		//find complete empty bins
-		if(K == kmin && id % NLb == NLb - 1){
+		if(K <= kmin && id % NLb == NLb - 1){
 //printf("empty bin %d\n", ib);
 			Nmin_d[ib] = NLb;
 		}
-		if(K1 == kmin && id == NL - 3){
+		if(K1 <= kmin && id == NL - 3){
 //printf("empty last bin %d %d\n", ib, id);
 			Nmin_d[ib] = NLb;
 		}
@@ -401,7 +402,7 @@ __global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, 
 
 	double K = K_d[idx * NLb];
 	int Nmin = Nmin_d[idx];
-	if(K == kmin){
+	if(K <= kmin){
 
 		for(int k = 0; k < NLb; k += nb){
 			if(idy + k < NLb){
@@ -411,7 +412,7 @@ __global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, 
 				double Kl = K_d[idx * NLb + il];
 				double Kr = K_d[idx * NLb + il + 1];
 				double Ki = Kl + (Kr - Kl) * (ii - il);
-
+//if(idx == 3) printf("K %d %d %g %g %g\n", idx * NLb + k + idy, Nmin, Kl, Kr, Ki);
 				K2_d[idx * NLb + k + idy] = Ki;
 			}
 		}
@@ -432,7 +433,7 @@ __global__ void copyK2_kernel(double *K_d, double *K2_d, double kmin, int NLb){
 
 	double K = K_d[idx * NLb];
 
-	if(K == kmin){
+	if(K <= kmin){
 
 		for(int k = 0; k < NLb; k += nb){
 			if(idy + k < NLb){
@@ -459,6 +460,7 @@ __global__ void lnK_kernel(double *K_d, int NL){
 	if(id < NL){
 		double K = K_d[id];
 		K_d[id] = log(K);
+//printf("%d %g %g\n", id, K_d[id], K);
 	}
 }
 

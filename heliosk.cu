@@ -82,7 +82,7 @@ int main(int argc, char*argv[]){
 
 		for(int j = 0; j < devCount; ++j){
 			cudaGetDeviceProperties(&devProp, j);
-			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu",
+			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu\n",
 				devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
 				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
 
@@ -132,14 +132,18 @@ int main(int argc, char*argv[]){
 	}
 	cudaMemcpy(binBoundaries_d, binBoundaries_h, (param.nbins + 1) * sizeof(double), cudaMemcpyHostToDevice);
 
-	//for(int i = 0; i < param.nbins + 1; ++i){
-	//	printf("%d %g\n", i, binBoundaries_h[i]);
-	//}	
+//for(int i = 0; i < param.nbins + 1; ++i){
+//	printf("binboundaries %d %g\n", i, binBoundaries_h[i]);
+//}	
 
 	int Nx;
 	if(param.useIndividualX == 0){
 		Nx = (int)((param.numax - param.numin) / param.dnu) + 1;
 		param.Nxb = Nx / param.nbins;
+		if((Nx - 1) % param.nbins != 0){
+			printf("Error: range cannot be divided evenly in bins. %d %d %g\n", Nx, param.nbins,  Nx / ((double)(param.nbins)));
+			return 0;
+		}
 	}
 	else{
 		Nx = param.nbins * param.Nxb + 1;
@@ -154,7 +158,7 @@ int main(int argc, char*argv[]){
 	}
 
 
-	int Nx1 = (Nx + 9) / 10;
+	int Nx1 = (Nx + 9) / 10 + 1;
 
 	//If the output edges file is used store the edges
 	double *outputEdges_h;
@@ -379,7 +383,7 @@ int main(int argc, char*argv[]){
 	cudaMemcpy(binKey_h, binKey_d, Nx * sizeof(int), cudaMemcpyDeviceToHost);
 	for(int i = 0; i < Nx; ++i){
 		int bin = binKey_h[i];
-		printf("%d %g %d %d %d\n", i, x_h[i], bin, binIndex_h[bin], binIndex_h[bin + 1]);
+		printf("%d %.10g %d %d %d\n", i, x_h[i], bin, binIndex_h[bin], binIndex_h[bin + 1]);
 	}
 	*/
 
@@ -887,6 +891,7 @@ if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							InterpolateX2_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, Kc_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
 							InterpolateX1_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, K1_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
 						}
+
 #endif
 						//search second order regimes of the Voigt profile
 						const int nl2 = 512;
@@ -1412,14 +1417,16 @@ for(int i = 0; i < Nx; ++i){
 			cudaMemcpy(K_h, K_d + iP * Nx, Nx * sizeof(double), cudaMemcpyDeviceToHost);
 			if(param.useIndividualBins == 0){
 				for(int i = 0; i < param.nbins; ++i){
-					int il = i * param.Nxb;
+					int Nxb = param.Nxb;
+					int il = i * Nxb;
 					int Nxmin = Nxmin_h[i];
+					if(Nxmin == Nxb) continue;
 					int iedge = 0; //index of edge
 					int nedge = 0; //number of points per edge intervall
 					double sedge = 0.0; //sum of points in edge intervall
-					for(int j = 0; j < param.Nxb; ++j){
-						double y = Nxmin / ((double)(param.Nxb - 1)) + j / ((double)(param.Nxb - 1)) * (param.Nxb - Nxmin - 1) / ((double)(param.Nxb - 1));
-						double y1 = Nxmin / ((double)(param.Nxb - 1)) + (j + 1) / ((double)(param.Nxb - 1)) * (param.Nxb - Nxmin - 1) / ((double)(param.Nxb - 1));
+					for(int j = 0; j < Nxb; ++j){
+						double y = Nxmin / ((double)(Nxb - 1)) + j / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
+						double y1 = Nxmin / ((double)(Nxb - 1)) + (j + 1) / ((double)(Nxb - 1)) * (Nxb - Nxmin - 1) / ((double)(Nxb - 1));
 						if(param.useOutputEdges == 0){
 							if(param.nP == 1){
 								fprintf(Out2File, "%g %.20g\n", y, K_h[j + il] * unitScale);

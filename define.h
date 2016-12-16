@@ -1,4 +1,4 @@
-#define VERSION 1.56
+#define VERSION 1.57
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -22,7 +22,7 @@
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
 #define NXLOW 100000		//Linef versus Line2f
-#define RLOW 1			//user lower resolution at the line wings
+#define RLOW 0			//user lower resolution at the line wings
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
