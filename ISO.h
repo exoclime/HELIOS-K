@@ -270,11 +270,11 @@ void Init(Molecule &m, Param param){
 		m.nISO = 5;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
-		m.ISO[0] = (Isotopologue){31,  446,  .990333E+00,    5.0018E+03,    9,     44.001062};
-		m.ISO[1] = (Isotopologue){32,  456,  3.64093E-03,    3.3619E+03,    6,     44.998096};
-		m.ISO[2] = (Isotopologue){33,  546,  3.64093E-03,    3.4586E+03,    6,     44.998096};
-		m.ISO[3] = (Isotopologue){34,  448,  1.98582E-03,    5.3147E+03,    9,     46.005308};
-		m.ISO[4] = (Isotopologue){35,  447,  3.69280E-04,    3.0971E+04,   54,     45.005278};
+		m.ISO[0] = (Isotopologue){41,  446,  .990333E+00,    5.0018E+03,    9,     44.001062};
+		m.ISO[1] = (Isotopologue){42,  456,  3.64093E-03,    3.3619E+03,    6,     44.998096};
+		m.ISO[2] = (Isotopologue){43,  546,  3.64093E-03,    3.4586E+03,    6,     44.998096};
+		m.ISO[3] = (Isotopologue){44,  448,  1.98582E-03,    5.3147E+03,    9,     46.005308};
+		m.ISO[4] = (Isotopologue){45,  447,  3.69280E-04,    3.0971E+04,   54,     45.005278};
 
 		m.fileLimit[ 0] = 0;
 		m.fileLimit[ 1] = 7797;
