@@ -561,17 +561,17 @@ int InitCia(Molecule &m, ciaSystem &cia, Param param){
 	else if(strcmp(param.ciaSystem, "H2-He") == 0){
 		cia.Nsets = 339;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_2011.cia");
-		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
+		cia.mass1 = 4.002602; //mass of He in g / mol
 	}
 	else if(strcmp(param.ciaSystem, "H2-He_eq") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_eq_2011.cia");
-		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
+		cia.mass1 = 4.002602; //mass of He in g / mol
 	}
 	else if(strcmp(param.ciaSystem, "H2-He_norm") == 0){
 		cia.Nsets = 10;
 		sprintf(cia.dataFilename, "%s%s", param.path, "H2-He_norm_2011.cia");
-		cia.mass1 = 2.0 * 4.002602; //mass of He in g / mol
+		cia.mass1 = 4.002602; //mass of He in g / mol
 	}
 	else if(strcmp(param.ciaSystem, "H2-CH4_eq") == 0){
 		cia.Nsets = 10;

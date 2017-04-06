@@ -53,6 +53,10 @@ int main(int argc, char*argv[]){
 		printf("Error: Device Number is not allowed\n");
 		return 0;
 	}
+	if(param.useIndividualX == 1 && RLOW == 1){
+		printf("Error: bins file and RLOW  not allowed\n");
+		return 0;
+	}
 
 	char filemode[16];
 	if(param.replaceFiles == 0){
@@ -138,15 +142,24 @@ int main(int argc, char*argv[]){
 
 	int Nx;
 	if(param.useIndividualX == 0){
-		Nx = (int)((param.numax - param.numin) / param.dnu) + 1;
+		Nx = (int)((param.numax - param.numin) / param.dnu + 0.5); //+ 0.5 to round correctly between double and int
+		if((param.numax - param.numin) / param.dnu + 0.5 >= 2147483647){
+			printf("Error: Nx too large, integer overflow. %d %g\n", Nx, (param.numax - param.numin) / param.dnu);
+			return 0;
+		}
+printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - param.numin) / param.dnu + 0.5);
 		param.Nxb = Nx / param.nbins;
-		if((Nx - 1) % param.nbins != 0){
+		if(Nx % param.nbins != 0){
 			printf("Error: range cannot be divided evenly in bins. %d %d %g\n", Nx, param.nbins,  Nx / ((double)(param.nbins)));
 			return 0;
 		}
 	}
 	else{
-		Nx = param.nbins * param.Nxb + 1;
+		Nx = param.nbins * param.Nxb;
+		if(param.nbins * param.Nxb >= 2147483647){
+			printf("Error: Nx too large, integer overflow. %d %g\n", Nx, param.nbins * param.Nxb);
+			return 0;
+		}
 		if(param.doResampling > 0){
 			printf("Error: The resampling function is not supported for unequal spacing option\n");
 			return 0;
@@ -158,7 +171,7 @@ int main(int argc, char*argv[]){
 	}
 
 
-	int Nx1 = (Nx + 9) / 10 + 1;
+	int Nx1 = (Nx + 9) / 10;
 
 	//If the output edges file is used store the edges
 	double *outputEdges_h;
@@ -469,6 +482,19 @@ int main(int argc, char*argv[]){
 			cudaDeviceSynchronize();
 			gettimeofday(&tt1, NULL);
 			//start the loop around the Pressure values. only 1 iteration if no Pressure file is given
+
+			double *nuP;
+			double *ialphaDP;
+			double *vyP;
+			nuP = NULL;
+			ialphaDP = NULL;
+			vyP = NULL;
+			if(Nx > NXLOW){
+				int n = min(maxlines, m.NLmax);
+				nuP = (double*)malloc(n * sizeof(double));
+				ialphaDP = (double*)malloc(n * sizeof(double));
+				vyP = (double*)malloc(n * sizeof(double));
+			}
 			for(int iP = 0; iP < param.nP; ++iP){
 
 				if(param.useHITEMP == 2){
@@ -482,8 +508,12 @@ int main(int argc, char*argv[]){
 					int NL = min(maxlines, m.NL[fi] - iL);
 					printf("processing Line file part %d of %d with %d lines\n", (iL + maxlines - 1) / maxlines + 1, (m.NL[fi] + maxlines - 1)/ maxlines, NL);
 
-					if(param.useHITEMP < 2) Copy_Line(L, m, iL, NL);
-					else Copy2_Line(L, m, iL, NL);
+					if(param.useHITEMP < 2){
+						Copy_Line(L, m, iL, NL);
+					}
+					else{
+						Copy2_Line(L, m, iL, NL);
+					}
 					//************************
 
 					//***************************
@@ -590,7 +620,9 @@ int main(int argc, char*argv[]){
 						Sortf_kernel <<< (Nk + 127) / 128, 128 >>> (L.Q_d, L.S1f_d, L.ID_d, NL, k);
 					}
 					if(Nx > NXLOW){
-						Copy2b_Line(L, m, iL, NL);
+						cudaMemcpy(nuP, L.nu_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
+						cudaMemcpy(ialphaDP, L.ialphaD_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
+						cudaMemcpy(vyP, L.vy_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
 					}
 					//********************************
 
@@ -686,22 +718,53 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 						for(int il = 0; il < NL; il += nl){ //loop over lines
 							int ii11 = 0;
 							int ii00 = Nx;
-							for(int iil = 0; iil < nl; ++iil){
-								if(il + iil < NL){
-									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
-									int ii0 = Inu - (int)(cut / param.dnu) - 1;
-									int ii1 = Inu + (int)(cut / param.dnu) + 2;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+							if(param.useIndividualX == 0){
+								for(int iil = 0; iil < nl; ++iil){
+									if(il + iil < NL){
+										int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
+										int ii0 = Inu - (int)(cut / param.dnu) - 1;
+										int ii1 = Inu + (int)(cut / param.dnu) + 2;
 
-									if(ii0 < Nx && ii1 >= 0.0){
-										ii1 = min(Nx, ii1);
-										ii0 = max(0, ii0);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
 									}
 								}
 							}
+							else{
+								double nu00 = param.numax;
+								double nu11 = param.numin;
+								for(int iil = 0; iil < nl; ++iil){
+									if(il + iil < NL){
+										double nu0 = nuP[il + iil] - cut;
+										double nu1 = nuP[il + iil] + cut;
+
+										nu11 = fmax(nu11, nu1);
+										nu00 = fmin(nu00, nu0);
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu11){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii11 = (nu11 - binBoundaries_h[bin]) / dnu + bstart + 2;
+										break;
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu00){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii00 = (nu00 - binBoundaries_h[bin]) / dnu + bstart - 1;
+										break;
+									}
+								}
+							}
+
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
+
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nl, NL - il);	
@@ -722,20 +785,17 @@ if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							int ii00 = Nx1;
 							for(int iil = 0; iil < nl; ++iil){
 								if(il + iil < NL){
-									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / (param.dnu * 10));
+									int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu * 10));
 									int ii0 = Inu - (int)(cut / (param.dnu * 10)) - 1;
 									int ii1 = Inu + (int)(cut / (param.dnu * 10)) + 2;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
-									if(ii0 < Nx1 && ii1 >= 0.0){
-										ii1 = min(Nx1, ii1);
-										ii0 = max(0, ii0);
-
-										ii11 = max(ii11, ii1);
-										ii00 = min(ii00, ii0);
-									}
+									ii11 = max(ii11, ii1);
+									ii00 = min(ii00, ii0);
 								}
 							}
+							ii11 = min(Nx1, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nl, NL - il);	
@@ -756,25 +816,23 @@ if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							for(int iil = 0; iil < nlb; ++iil){
 								if(il + iil < NL){
 
-									double aD2 = 1.0 / (L.ialphaD_h[il + iil + iL] * L.ialphaD_h[il + iil + iL]);
-									double aL2 = L.vy_h[il + iil + iL] * L.vy_h[il + iil + iL] * aD2;
+									double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+									double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
 									double Dnu2 = 1.0e6 * aD2 - aL2;
 									double Dnu = 0.0;
 									if(Dnu2 > 0.0){
 										Dnu = sqrt(Dnu2);
-										int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / (param.dnu));
+										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
 										int ii0 = ((Inu - (int)(Dnu / (param.dnu))) / 10) * 10;
 										int ii1 = ii0 + 12;
-										if(ii0 < Nx && ii1 >= 0.0){
-											ii1 = min(Nx, ii1);
-											ii0 = max(0, ii0);
 
-											ii11 = max(ii11, ii1);
-											ii00 = min(ii00, ii0);
-										}
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
 									}
 								}
 							}
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nlb, NL - il);	
@@ -793,25 +851,23 @@ if(il % 10000 == 0) printf("Bcl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							for(int iil = 0; iil < nlb; ++iil){
 								if(il + iil < NL){
 
-									double aD2 = 1.0 / (L.ialphaD_h[il + iil + iL] * L.ialphaD_h[il + iil + iL]);
-									double aL2 = L.vy_h[il + iil + iL] * L.vy_h[il + iil + iL] * aD2;
+									double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+									double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
 									double Dnu2 = 1.0e6 * aD2 - aL2;
 									double Dnu = 0.0;
 									if(Dnu2 > 0.0){
 										Dnu = sqrt(Dnu2);
-										int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / (param.dnu));
+										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
 										int ii0 = ((Inu + (int)(Dnu / (param.dnu))) / 10) * 10;
 										int ii1 = ii0 + 12;
-										if(ii0 < Nx && ii1 >= 0.0){
-											ii1 = min(Nx, ii1);
-											ii0 = max(0, ii0);
 
-											ii11 = max(ii11, ii1);
-											ii00 = min(ii00, ii0);
-										}
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
 									}
 								}
 							}
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nlb, NL - il);	
@@ -829,20 +885,17 @@ if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							int ii00 = Nx;
 							for(int iil = 0; iil < nlb; ++iil){
 								if(il + iil < NL){
-									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
+									int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
 									int ii0 = (Inu + (int)(cut / param.dnu)) / 10 * 10;
 									int ii1 = ii0 + 12;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
-									if(ii0 < Nx && ii1 >= 0.0){
-										ii1 = min(Nx, ii1);
-										ii0 = max(0, ii0);
-
-										ii11 = max(ii11, ii1);
-										ii00 = min(ii00, ii0);
-									}
+									ii11 = max(ii11, ii1);
+									ii00 = min(ii00, ii0);
 								}
 							}
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nlb, NL - il);	
@@ -860,20 +913,17 @@ if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							int ii00 = Nx;
 							for(int iil = 0; iil < nlb; ++iil){
 								if(il + iil < NL){
-									int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
+									int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
 									int ii0 = (Inu - (int)(cut / param.dnu)) / 10 * 10;
 									int ii1 = ii0 + 12;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, L.nu_h[il + iil + iL], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
-									if(ii0 < Nx && ii1 >= 0.0){
-										ii1 = min(Nx, ii1);
-										ii0 = max(0, ii0);
-
-										ii11 = max(ii11, ii1);
-										ii00 = min(ii00, ii0);
-									}
+									ii11 = max(ii11, ii1);
+									ii00 = min(ii00, ii0);
 								}
 							}
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nlb, NL - il);	
@@ -898,22 +948,20 @@ if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 						for(int il = 0; il < NL; il += nl2){ //loop over lines
 							int ii11 = 0;
 							int ii00 = Nx;
-							for(int iil = 0; iil < nl2; ++iil){
-								if(il + iil < NL){
+							if(param.useIndividualX == 0){
+								for(int iil = 0; iil < nl2; ++iil){
+									if(il + iil < NL){
 
-									double aD2 = 1.0 / (L.ialphaD_h[il + iil + iL] * L.ialphaD_h[il + iil + iL]);
-									double aL2 = L.vy_h[il + iil + iL] * L.vy_h[il + iil + iL] * aD2;
-									double Dnu2 = 1.0e6 * aD2 - aL2;
-									double Dnu = 0.0;
-									if(Dnu2 > 0.0){
-										Dnu = sqrt(Dnu2);
-										int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
-										int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
-										int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
-//printf("%d %d %d\n", il + iil, ii0, ii1);
-										if(ii0 < Nx && ii1 >= 0.0){
-											ii1 = min(Nx, ii1);
-											ii0 = max(0, ii0);
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e6 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
+											int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
+											int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
+	//printf("%d %d %d\n", il + iil, ii0, ii1);
 
 											ii11 = max(ii11, ii1);
 											ii00 = min(ii00, ii0);
@@ -921,6 +969,45 @@ if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 									}
 								}
 							}
+							else{
+								double nu00 = param.numax;
+								double nu11 = param.numin;
+								for(int iil = 0; iil < nl; ++iil){
+									if(il + iil < NL){
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e6 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											double nu0 = nuP[il + iil] - Dnu;
+											double nu1 = nuP[il + iil] + Dnu;
+
+											nu11 = fmax(nu11, nu1);
+											nu00 = fmin(nu00, nu0);
+										}
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu11){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii11 = (nu11 - binBoundaries_h[bin]) / dnu + bstart + 2;
+										break;
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu00){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii00 = (nu00 - binBoundaries_h[bin]) / dnu + bstart - 1;
+										break;
+									}
+								}
+							}
+
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nl2, NL - il);	
@@ -943,29 +1030,64 @@ if(il % 10000 == 0) printf("B %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 						for(int il = 0; il < NL; il += nl3){ //loop over lines
 							int ii11 = 0;
 							int ii00 = Nx;
-							for(int iil = 0; iil < nl3; ++iil){
-								if(il + iil < NL){
+							if(param.useIndividualX == 0){
+								for(int iil = 0; iil < nl3; ++iil){
+									if(il + iil < NL){
 
-									double aD2 = 1.0 / (L.ialphaD_h[il + iil + iL] * L.ialphaD_h[il + iil + iL]);
-									double aL2 = L.vy_h[il + iil + iL] * L.vy_h[il + iil + iL] * aD2;
-									double Dnu2 = 1.0e2 * aD2 - aL2;
-									double Dnu = 0.0;
-									if(Dnu2 > 0.0){
-										Dnu = sqrt(Dnu2);
-										int Inu = (int)((L.nu_h[il + iil + iL] - param.numin) / param.dnu);
-										int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
-										int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
-//printf("%d %d %d\n", il + iil, ii0, ii1);
-										if(ii0 < Nx && ii1 >= 0.0){
-											ii1 = min(Nx, ii1);
-											ii0 = max(0, ii0);
-
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e2 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
+											int ii0 = Inu - (int)(Dnu / param.dnu) - 1;
+											int ii1 = Inu + (int)(Dnu / param.dnu) + 2;
+	//printf("%d %d %d\n", il + iil, ii0, ii1);
 											ii11 = max(ii11, ii1);
 											ii00 = min(ii00, ii0);
 										}
 									}
 								}
 							}
+							else{
+								double nu00 = param.numax;
+								double nu11 = param.numin;
+								for(int iil = 0; iil < nl; ++iil){
+									if(il + iil < NL){
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e2 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											double nu0 = nuP[il + iil] - Dnu;
+											double nu1 = nuP[il + iil] + Dnu;
+
+											nu11 = fmax(nu11, nu1);
+											nu00 = fmin(nu00, nu0);
+										}
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu11){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii11 = (nu11 - binBoundaries_h[bin]) / dnu + bstart + 2;
+										break;
+									}
+								}
+								for(int bin = 0; bin < param.nbins; ++bin){
+									if(binBoundaries_h[bin + 1] > nu00){
+										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+										int bstart = bin * param.Nxb;
+										ii00 = (nu00 - binBoundaries_h[bin]) / dnu + bstart - 1;
+										break;
+									}
+								}
+							}
+							ii11 = min(Nx, ii11);
+							ii00 = max(0, ii00);
 							int nt = ii11 - ii00;
 							int nstart = ii00;
 							int nll = min(nl3, NL - il);	
@@ -981,7 +1103,6 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 
 					} //end if NXLOW if
 					//*************************************
-
 					cudaDeviceSynchronize();
 					error = cudaGetLastError();
 					if(error != 0){
@@ -1000,6 +1121,9 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 
 				} // End of maxLines loop
 			} // End of pressure loop
+			free(nuP);
+			free(ialphaDP);
+			free(vyP);
 
 			InfoFile = fopen(InfoFilename, "a");
 			fprintf(InfoFile,"File %d of %d\n", fi + 1, fi1);
@@ -1015,6 +1139,8 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	free(binBoundaries_h);
 	cudaFree(binIndex_d);
 	cudaFree(binBoundaries_d);	
+	cudaFree(K1_d);
+	cudaFree(Kc_d);
 
 	//***************************
 	//Write the full line profile
@@ -1204,6 +1330,7 @@ printf("\n\n");
 		cudaFree(Pmn_d);
 		cudaFree(Rmn_d);
 	}
+	cudaFree(x_d);
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
 	if(error != 0){
@@ -1252,6 +1379,11 @@ printf("\n\n");
 	//Prepare Resampling and do QR factorization, the same for all bins
 	// this doesn't work with individual bins
 	//*********************************
+
+//size_t free_byte;
+//size_t total_byte;
+//cudaMemGetInfo( &free_byte, &total_byte );
+//printf("***MEMRORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
 	int *Nxmin_h, *Nxmin_d;		
 	Nxmin_h = (int*)malloc(param.nbins * sizeof(int));
 	cudaMalloc((void **) &Nxmin_d, param.nbins * sizeof(int));
@@ -1264,6 +1396,8 @@ printf("\n\n");
 		double *K2_h, *K2_d;
 		K2_h = (double*)malloc(Nx * sizeof(double));
 		cudaMalloc((void **) &K2_d, Nx * sizeof(double));
+//cudaMemGetInfo( &free_byte, &total_byte );
+//printf("***MEMRORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
 
 		double *V_d;			//Vandermonde like matrix for least sqaures
 		double *C_d, *D_d;
@@ -1639,9 +1773,6 @@ for(int i = 0; i < Nx; ++i){
 	free(binIndex_h);
 
 	cudaFree(K_d);
-	cudaFree(K1_d);
-	cudaFree(Kc_d);
-	cudaFree(x_d);
 	cudaFree(Nxmin_d);
 
 	error = cudaGetLastError();

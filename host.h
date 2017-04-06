@@ -843,12 +843,6 @@ __host__ void Copy2_Line(Line &L, Molecule &m, int iL, int NL){
 	cudaMemcpy(L.Q_d, L.Q_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
 	cudaMemcpy(L.ID_d, L.ID_h + iL, NL * sizeof(int), cudaMemcpyHostToDevice);
 }
-__host__ void Copy2b_Line(Line &L, Molecule &m, int iL, int NL){
-
-	cudaMemcpy(L.nu_h + iL, L.nu_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(L.vy_h + iL, L.vy_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
-	cudaMemcpy(L.ialphaD_h + iL, L.ialphaD_d, NL * sizeof(double), cudaMemcpyDeviceToHost);
-}
 
 __host__ void free_Line(Line &L){
 	free(L.nu_h);

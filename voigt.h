@@ -380,7 +380,7 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 //Author Simon Grimm
 //September 2016
 // *************************************************
-__global__ void InitialK_kernel(double *K_d, const double Nx, const double kmin, const int k){
+__global__ void InitialK_kernel(double *K_d, const int Nx, const double kmin, const int k){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + k;
@@ -878,6 +878,7 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 				dnu *= (ii * 10 - bstart);
 
 			}
+//printf("a %d %d %d %g %g %d %g\n", id, ii, bin, bb, dnu, bstart, dnu);
 		}
 		for(int ill = 0; ill < nl; ++ill){
 			float y = vy_s[ill];
@@ -892,6 +893,7 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 			else{
 				x = bb * vb_s[ill] + va_s[ill] + dnu * vb_s[ill];
 			}
+//printf("x %d %d %g %g %g\n", ill, id, x, vb_s[ill], va_s[ill]);
 			float t1 = x * x;
 			float xxyy = t1 + y * y;
 
