@@ -1,3 +1,5 @@
+#include <algorithm> //max
+using namespace std;
 //**************************************************
 // This function initializes the Properties for the Isotopologues
 // The values are taken from HITRAN molparam.txt
@@ -11,7 +13,7 @@
 //Author: Simon Grimm
 //November 2014
 // ****************************************************
-void Init(Molecule &m, Param param){
+void Init(Molecule &m, Param param, char *qFilename){
 	if(m.id == 1){//H2O
 		m.nISO = 6;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
@@ -72,7 +74,10 @@ void Init(Molecule &m, Param param){
 			m.NL[32] = 3573701;
 			m.NL[33] = 1461436;
 
-			m.NLmax = 4972481;		//The naximum of number of lines per file
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles; ++i){
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
 
 			m.fileLimit[ 0] = 0;
 			m.fileLimit[ 1] = 50;
@@ -115,8 +120,11 @@ void Init(Molecule &m, Param param){
 			}
 		}
 		if(param.useHITEMP == 2){
+			char name[] = "1H2-16O__BT2";
 			m.nStates = 221097;
 			m.nFiles = 16;
+			m.defaultL = 0.07;
+			m.defaultn = 0.5;
 
 			m.NL[ 0] = 17490213;
 			m.NL[ 1] = 17022666;
@@ -152,12 +160,14 @@ void Init(Molecule &m, Param param){
 			m.fileLimit[14] = 14000;
 			m.fileLimit[15] = 20000; 
 			m.fileLimit[16] = 30000; 
-
+			
+			m.NLmax = 0;
 			for(int i = 0; i < m.nFiles; ++i){
-				sprintf(m.dataFilename[i], "%s1H2-16O__BT2__%05d-%05d.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+				m.NLmax = max(m.NLmax, m.NL[i]);
 			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
 
-			m.NLmax = 76679376;
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){11,  161,	1.0,    0.0,    0,     18.010565};
@@ -210,8 +220,12 @@ void Init(Molecule &m, Param param){
 			m.NL[17] = 177444;
 			m.NL[18] = 344265;
 			m.NL[19] = 494516;
+			m.NLmax = 0;
 
-			m.NLmax = 1140808;              //The naximum of number of lines per file
+			for(int i = 0; i < m.nFiles; ++i){
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+
 
 			m.fileLimit[ 0] = 0;
 			m.fileLimit[ 1] = 500;
@@ -339,8 +353,10 @@ void Init(Molecule &m, Param param){
 			printf("Error: no HITEMP data for this molecule\n");
 		}
 		if(param.useHITEMP == 2){
+			char name[] = "12C-1H4__YT10to10";
 			m.nStates = 8194057;
-
+			m.defaultL = 0.0488;
+			m.defaultn = 0.4;
 			m.nFiles = 121;
 			m.NL[0] = 7312353;
 			m.NL[1] = 7417002;
@@ -464,18 +480,19 @@ void Init(Molecule &m, Param param){
 			m.NL[119] = 29207069;
 			m.NL[120] = 11;
 
+			m.NLmax = 0;
 			for(int i = 0; i < m.nFiles + 1; ++i){
 				m.fileLimit[i] = i * 100;
+				m.NLmax = max(m.NLmax, m.NL[i]);
 			}
-
-			m.NLmax = 192273315;
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){61,  211,     1.0,    0.0,    0,     16.031300};
 		
 			for(int i = 0; i < m.nFiles; ++i){
-				sprintf(m.dataFilename[i], "%s12C-1H4__YT10to10__%05d-%05d.", param.path, m.fileLimit[i], m.fileLimit[i + 1]);
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
 			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
 		}
 	}
 	if(m.id == 11){//NH3
@@ -496,6 +513,148 @@ void Init(Molecule &m, Param param){
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
 		}
+
+		if(param.useHITEMP == 2){
+			char name[] = "14N-1H3__BYTe";
+			m.nStates = 4167360;
+			m.nFiles = 120;
+			m.defaultL = 0.053;
+			m.defaultn = 0.5;
+			m.NL[0] = 982907;
+			m.NL[1] = 1037545;
+			m.NL[2] = 1062896;
+			m.NL[3] = 1082795;
+			m.NL[4] = 1113869;
+			m.NL[5] = 1178862;
+			m.NL[6] = 1259075;
+			m.NL[7] = 1330374;
+			m.NL[8] = 1392503;
+			m.NL[9] = 1448135;
+			m.NL[10] = 1473957;
+			m.NL[11] = 1525679;
+			m.NL[12] = 1609146;
+			m.NL[13] = 1721833;
+			m.NL[14] = 1844544;
+			m.NL[15] = 1967673;
+			m.NL[16] = 2058265;
+			m.NL[17] = 2102558;
+			m.NL[18] = 2129362;
+			m.NL[19] = 2144368;
+			m.NL[20] = 2186309;
+			m.NL[21] = 2271167;
+			m.NL[22] = 2373033;
+			m.NL[23] = 2501654;
+			m.NL[24] = 2622434;
+			m.NL[25] = 2723233;
+			m.NL[26] = 2802387;
+			m.NL[27] = 2898849;
+			m.NL[28] = 3023510;
+			m.NL[29] = 3195291;
+			m.NL[30] = 3405551;
+			m.NL[31] = 3617557;
+			m.NL[32] = 3785845;
+			m.NL[33] = 3913479;
+			m.NL[34] = 3991611;
+			m.NL[35] = 4039425;
+			m.NL[36] = 4118227;
+			m.NL[37] = 4238610;
+			m.NL[38] = 4397129;
+			m.NL[39] = 4594598;
+			m.NL[40] = 4801158;
+			m.NL[41] = 4972457;
+			m.NL[42] = 5120515;
+			m.NL[43] = 5289932;
+			m.NL[44] = 5467013;
+			m.NL[45] = 5693057;
+			m.NL[46] = 5974425;
+			m.NL[47] = 6256099;
+			m.NL[48] = 6503065;
+			m.NL[49] = 6706294;
+			m.NL[50] = 6860855;
+			m.NL[51] = 6960417;
+			m.NL[52] = 7079819;
+			m.NL[53] = 7234325;
+			m.NL[54] = 7442462;
+			m.NL[55] = 7711422;
+			m.NL[56] = 8010525;
+			m.NL[57] = 8276442;
+			m.NL[58] = 8531943;
+			m.NL[59] = 8789752;
+			m.NL[60] = 9055326;
+			m.NL[61] = 9368728;
+			m.NL[62] = 9745838;
+			m.NL[63] = 10130895;
+			m.NL[64] = 10481180;
+			m.NL[65] = 10780525;
+			m.NL[66] = 11006291;
+			m.NL[67] = 11163868;
+			m.NL[68] = 11333508;
+			m.NL[69] = 11540059;
+			m.NL[70] = 11809529;
+			m.NL[71] = 12166183;
+			m.NL[72] = 12557951;
+			m.NL[73] = 12937073;
+			m.NL[74] = 13293545;
+			m.NL[75] = 13639572;
+			m.NL[76] = 13986280;
+			m.NL[77] = 14379711;
+			m.NL[78] = 14829655;
+			m.NL[79] = 15288793;
+			m.NL[80] = 15725255;
+			m.NL[81] = 16113244;
+			m.NL[82] = 16426095;
+			m.NL[83] = 16667848;
+			m.NL[84] = 16904219;
+			m.NL[85] = 17157959;
+			m.NL[86] = 17476169;
+			m.NL[87] = 17898755;
+			m.NL[88] = 18383515;
+			m.NL[89] = 18882490;
+			m.NL[90] = 19373298;
+			m.NL[91] = 19837694;
+			m.NL[92] = 20239006;
+			m.NL[93] = 20646768;
+			m.NL[94] = 21096539;
+			m.NL[95] = 21547715;
+			m.NL[96] = 21982458;
+			m.NL[97] = 22373923;
+			m.NL[98] = 22702270;
+			m.NL[99] = 22934619;
+			m.NL[100] = 22339283;
+			m.NL[101] = 21108601;
+			m.NL[102] = 19952989;
+			m.NL[103] = 18926591;
+			m.NL[104] = 18011268;
+			m.NL[105] = 17192700;
+			m.NL[106] = 16452057;
+			m.NL[107] = 15692461;
+			m.NL[108] = 14961423;
+			m.NL[109] = 14165788;
+			m.NL[110] = 13409218;
+			m.NL[111] = 12705679;
+			m.NL[112] = 12056386;
+			m.NL[113] = 11407255;
+			m.NL[114] = 10751832;
+			m.NL[115] = 10124085;
+			m.NL[116] = 9474612;
+			m.NL[117] = 8854492;
+			m.NL[118] = 8273327;
+			m.NL[119] = 7750733;
+
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){111,  4111,  .995872E+00,    1.7252E+03,    3,     17.026549};
+		}
+
 	}
 	if(m.id == 23){//HCN
 		m.nFiles = 1;		//number of data files
@@ -516,6 +675,25 @@ void Init(Molecule &m, Param param){
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
 		}
+		if(param.useHITEMP == 2){
+			char name[] = "1H-12C-14N__Harris";
+			m.defaultL = 0.084;
+			m.defaultn = 0.5;
+			m.nStates = 168110;
+			m.nFiles = 1;
+			m.NL[0] = 34418408;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 17586;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
+			sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+			m.ISO[0] = (Isotopologue){231,  124,  .985114E+00,    8.9529E+02,    6,     27.010899};
+		}
 	}
 	if(m.id == 26){//C2H2
 		m.nFiles = 1;		//number of data files
@@ -534,6 +712,84 @@ void Init(Molecule &m, Param param){
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
+		}
+	}
+	if(m.id == 31){//H2S
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 54235;
+		m.NLmax = 54235;
+		m.nISO = 3;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){311,  121,  .949884E+00,    5.0307E+02,    1,     33.987721};
+		m.ISO[1] = (Isotopologue){312,  141,  4.21369E-02,    5.0435E+02,    1,     35.983515};
+		m.ISO[1] = (Isotopologue){313,  131,  7.49766E-03,    2.0149E+03,    4,     34.987105};
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 11330;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "31_hit12.");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "1H2-32S__AYT2";
+			m.nStates = 220618;
+			m.defaultL = 0.07;
+			m.defaultn = 0.5;
+
+			m.nFiles = 35;
+			m.NL[0] = 7226596;
+			m.NL[1] = 7089219;
+			m.NL[2] = 7227349;
+			m.NL[3] = 7407306;
+			m.NL[4] = 7808607;
+			m.NL[5] = 8393450;
+			m.NL[6] = 9177141;
+			m.NL[7] = 10224670;
+			m.NL[8] = 11359454;
+			m.NL[9] = 11926204;
+			m.NL[10] = 9383613;
+			m.NL[11] = 6651647;
+			m.NL[12] = 4578893;
+			m.NL[13] = 3007385;
+			m.NL[14] = 1891135;
+			m.NL[15] = 1107584;
+			m.NL[16] = 590239;
+			m.NL[17] = 295196;
+			m.NL[18] = 132366;
+			m.NL[19] = 52319;
+			m.NL[20] = 25093;
+			m.NL[21] = 16301;
+			m.NL[22] = 12454;
+			m.NL[23] = 9865;
+			m.NL[24] = 7923;
+			m.NL[25] = 6177;
+			m.NL[26] = 4697;
+			m.NL[27] = 3448;
+			m.NL[28] = 2525;
+			m.NL[29] = 1807;
+			m.NL[30] = 1192;
+			m.NL[31] = 719;
+			m.NL[32] = 352;
+			m.NL[33] = 185;
+			m.NL[34] = 69;
+
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 1000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){311,  121,  .949884E+00,    5.0307E+02,    1,     33.987721};
+		
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
 		}
 	}
 }

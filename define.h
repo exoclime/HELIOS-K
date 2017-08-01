@@ -1,4 +1,4 @@
-#define VERSION 1.58
+#define VERSION 1.59
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -22,7 +22,6 @@
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
 #define NXLOW 100000		//Linef versus Line2f
-#define RLOW 0			//user lower resolution at the line wings
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
@@ -44,6 +43,8 @@ struct Molecule{
 	int nFiles;
 	int nStates;		//Number of states in EXOMOL linelist
 	double meanMass;
+	double defaultL;	//default value for Lorentz half width for EXOMOL
+	double defaultn;		//default value for temperature exponent for EXOMOL
 };
 
 struct Partition{
@@ -99,6 +100,7 @@ struct Param{
 	int units;
 	int useIndividualX;
 	int replaceFiles;
+	int RLOW;
 };
 
 struct Line{

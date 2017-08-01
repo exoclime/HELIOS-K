@@ -53,7 +53,7 @@ int main(int argc, char*argv[]){
 		printf("Error: Device Number is not allowed\n");
 		return 0;
 	}
-	if(param.useIndividualX == 1 && RLOW == 1){
+	if(param.useIndividualX == 1 && param.RLOW == 1){
 		printf("Error: bins file and RLOW  not allowed\n");
 		return 0;
 	}
@@ -98,15 +98,7 @@ int main(int argc, char*argv[]){
 
 
 	if(param.useHITEMP < 2){
-		sprintf(qFilename, "%s", "q.dat");
-	}
-	else{
-		if(param.nMolecule == 1){
-			sprintf(qFilename, "%s", "1H2-16O__BT2.pf");
-		}
-		if(param.nMolecule == 6){
-			sprintf(qFilename, "%s", "12C-1H4__YT10to10.pf");
-		}
+		sprintf(qFilename, "%s%s", param.path, "q.dat");
 	}
 
 	//If the bin file is used store the boundaries of the bins
@@ -197,6 +189,16 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		time[i] = 0.0;
 	}
 
+	//Allocate Molecule properties
+	Molecule m;
+	m.NL[0] = 0;
+	m.id = param.nMolecule;	//1 = H2O, 2 = CO, 5 = CO, 6 = CH4
+	m.nISO = 0;
+	m.defaultL = 0.0;
+	m.defaultn = 0.0;
+	//Initialize the Isotopologue properties for ISO.h
+	Init(m, param, qFilename);
+
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;
 		if(i == 0) infofile = InfoFile;
@@ -248,7 +250,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "Units = %d\n", param.units);
 		fprintf(infofile, "Profile = %d\n", PROFILE);
 		fprintf(infofile, "Replace files = %d\n", param.replaceFiles);
-		fprintf(infofile, "RLOW = %d\n", RLOW);
+		fprintf(infofile, "default L = %g\n", m.defaultL);
+		fprintf(infofile, "default n = %g\n", m.defaultn);
+		fprintf(infofile, "RLOW = %d\n", param.RLOW);
 		if(param.useOutputEdges == 1){
 			fprintf(infofile, "use output edges: %s\n", param.edges);
 		}
@@ -259,28 +263,20 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	//Compute partition function
 	Partition part;
 	if(param.useHITEMP < 2){
-		er = ChebCoeff(qFilename, part, param.T);
+		er = ChebCoeff(param, qFilename, part, param.T);
 	}
 	else{
-		er = readPartitionExomol(param.nMolecule, qFilename, part, param.T);
+		er = readPartitionExomol(param, param.nMolecule, qFilename, part, param.T);
 	}
 	if(er == 0){
 		return 0;
 	}
 
-	//Allocate Molecule properties
-	Molecule m;
-	m.NL[0] = 0;
-	m.id = param.nMolecule;	//1 = H2O, 2 = CO, 5 = CO, 6 = CH4
-	m.nISO = 0;
-	//Initialize the Isotopologue properties for ISO.h
-	Init(m, param);
-
 	if(m.NL[0] == 0 && param.nMolecule != 0){
 		printf("Molecule Id is not allowed\n");
 		return 0;
 	}
-	if(param.useHITEMP == 2 && (m.id != 6 && m.id != 1)){
+	if(param.useHITEMP == 2 && m.defaultL == 0.0){
 		printf("Molecule Id is not allowed for ExoMol\n");
 		return 0;
 	}
@@ -712,237 +708,236 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 						}
 					}
 					else{
+						if(param.RLOW == 0){
+							const int nl = 512;
+							for(int il = 0; il < NL; il += nl){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx;
+								if(param.useIndividualX == 0){
+									for(int iil = 0; iil < nl; ++iil){
+										if(il + iil < NL){
+											int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
+											int ii0 = Inu - (int)(cut / param.dnu) - 1;
+											int ii1 = Inu + (int)(cut / param.dnu) + 2;
 
-#if RLOW == 0
-						const int nl = 512;
-						for(int il = 0; il < NL; il += nl){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx;
-							if(param.useIndividualX == 0){
+	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+
+											ii11 = max(ii11, ii1);
+											ii00 = min(ii00, ii0);
+										}
+									}
+								}
+								else{
+									double nu00 = param.numax;
+									double nu11 = param.numin;
+									for(int iil = 0; iil < nl; ++iil){
+										if(il + iil < NL){
+											double nu0 = nuP[il + iil] - cut;
+											double nu1 = nuP[il + iil] + cut;
+
+											nu11 = fmax(nu11, nu1);
+											nu00 = fmin(nu00, nu0);
+										}
+									}
+									for(int bin = 0; bin < param.nbins; ++bin){
+										if(binBoundaries_h[bin + 1] > nu11){
+											double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+											int bstart = bin * param.Nxb;
+											ii11 = (nu11 - binBoundaries_h[bin]) / dnu + bstart + 2;
+											break;
+										}
+									}
+									for(int bin = 0; bin < param.nbins; ++bin){
+										if(binBoundaries_h[bin + 1] > nu00){
+											double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
+											int bstart = bin * param.Nxb;
+											ii00 = (nu00 - binBoundaries_h[bin]) / dnu + bstart - 1;
+											break;
+										}
+									}
+								}
+
+								ii11 = min(Nx, ii11);
+								ii00 = max(0, ii00);
+
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nl, NL - il);	
+	if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									}
+									nstart += nthmax;
+								}
+							}
+						}
+						else{
+							//lower resolution
+							const int nl = 512;
+							for(int il = 0; il < NL; il += nl){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx1;
 								for(int iil = 0; iil < nl; ++iil){
+									if(il + iil < NL){
+										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu * 10));
+										int ii0 = Inu - (int)(cut / (param.dnu * 10)) - 1;
+										int ii1 = Inu + (int)(cut / (param.dnu * 10)) + 2;
+	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+
+										ii11 = max(ii11, ii1);
+										ii00 = min(ii00, ii0);
+									}
+								}
+								ii11 = min(Nx1, ii11);
+								ii00 = max(0, ii00);
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nl, NL - il);	
+	if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nl, -1 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K1_d, il, nstart, Nk, nll, param.useIndividualX, (param.Nxb + 9) / 10, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									}
+									nstart += nthmax;
+								}
+							}
+							//lower resolution interpolation correction
+							const int nlb = 512;
+							for(int il = 0; il < NL; il += nlb){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx;
+								for(int iil = 0; iil < nlb; ++iil){
+									if(il + iil < NL){
+
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e6 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
+											int ii0 = ((Inu - (int)(Dnu / (param.dnu))) / 10) * 10;
+											int ii1 = ii0 + 12;
+
+											ii11 = max(ii11, ii1);
+											ii00 = min(ii00, ii0);
+										}
+									}
+								}
+								ii11 = min(Nx, ii11);
+								ii00 = max(0, ii00);
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nlb, NL - il);	
+	if(il % 10000 == 0) printf("Bcl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nlb, 10 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									}
+									nstart += nthmax;
+								}
+							}
+							for(int il = 0; il < NL; il += nlb){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx;
+								for(int iil = 0; iil < nlb; ++iil){
+									if(il + iil < NL){
+
+										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
+										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
+										double Dnu2 = 1.0e6 * aD2 - aL2;
+										double Dnu = 0.0;
+										if(Dnu2 > 0.0){
+											Dnu = sqrt(Dnu2);
+											int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
+											int ii0 = ((Inu + (int)(Dnu / (param.dnu))) / 10) * 10;
+											int ii1 = ii0 + 12;
+
+											ii11 = max(ii11, ii1);
+											ii00 = min(ii00, ii0);
+										}
+									}
+								}
+								ii11 = min(Nx, ii11);
+								ii00 = max(0, ii00);
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nlb, NL - il);	
+	if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nlb, 11 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									}
+									nstart += nthmax;
+								}
+							}
+							for(int il = 0; il < NL; il += nlb){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx;
+								for(int iil = 0; iil < nlb; ++iil){
 									if(il + iil < NL){
 										int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
-										int ii0 = Inu - (int)(cut / param.dnu) - 1;
-										int ii1 = Inu + (int)(cut / param.dnu) + 2;
-
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+										int ii0 = (Inu + (int)(cut / param.dnu)) / 10 * 10;
+										int ii1 = ii0 + 12;
+	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
 									}
 								}
+								ii11 = min(Nx, ii11);
+								ii00 = max(0, ii00);
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nlb, NL - il);	
+	if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nlb, 12 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									}
+									nstart += nthmax;
+								}
 							}
-							else{
-								double nu00 = param.numax;
-								double nu11 = param.numin;
-								for(int iil = 0; iil < nl; ++iil){
+							for(int il = 0; il < NL; il += nlb){ //loop over lines
+								int ii11 = 0;
+								int ii00 = Nx;
+								for(int iil = 0; iil < nlb; ++iil){
 									if(il + iil < NL){
-										double nu0 = nuP[il + iil] - cut;
-										double nu1 = nuP[il + iil] + cut;
-
-										nu11 = fmax(nu11, nu1);
-										nu00 = fmin(nu00, nu0);
-									}
-								}
-								for(int bin = 0; bin < param.nbins; ++bin){
-									if(binBoundaries_h[bin + 1] > nu11){
-										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
-										int bstart = bin * param.Nxb;
-										ii11 = (nu11 - binBoundaries_h[bin]) / dnu + bstart + 2;
-										break;
-									}
-								}
-								for(int bin = 0; bin < param.nbins; ++bin){
-									if(binBoundaries_h[bin + 1] > nu00){
-										double dnu = (binBoundaries_h[bin + 1] - binBoundaries_h[bin]) / ((double)(param.Nxb));
-										int bstart = bin * param.Nxb;
-										ii00 = (nu00 - binBoundaries_h[bin]) / dnu + bstart - 1;
-										break;
-									}
-								}
-							}
-
-							ii11 = min(Nx, ii11);
-							ii00 = max(0, ii00);
-
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nl, NL - il);	
-if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
-							}
-						}
-
-#else						//lower resolution
-						const int nl = 512;
-						for(int il = 0; il < NL; il += nl){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx1;
-							for(int iil = 0; iil < nl; ++iil){
-								if(il + iil < NL){
-									int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu * 10));
-									int ii0 = Inu - (int)(cut / (param.dnu * 10)) - 1;
-									int ii1 = Inu + (int)(cut / (param.dnu * 10)) + 2;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
-
-									ii11 = max(ii11, ii1);
-									ii00 = min(ii00, ii0);
-								}
-							}
-							ii11 = min(Nx1, ii11);
-							ii00 = max(0, ii00);
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nl, NL - il);	
-if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nl, -1 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K1_d, il, nstart, Nk, nll, param.useIndividualX, (param.Nxb + 9) / 10, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
-							}
-						}
-						//lower resolution interpolation correction
-						const int nlb = 512;
-						for(int il = 0; il < NL; il += nlb){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx;
-							for(int iil = 0; iil < nlb; ++iil){
-								if(il + iil < NL){
-
-									double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
-									double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
-									double Dnu2 = 1.0e6 * aD2 - aL2;
-									double Dnu = 0.0;
-									if(Dnu2 > 0.0){
-										Dnu = sqrt(Dnu2);
-										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
-										int ii0 = ((Inu - (int)(Dnu / (param.dnu))) / 10) * 10;
+										int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
+										int ii0 = (Inu - (int)(cut / param.dnu)) / 10 * 10;
 										int ii1 = ii0 + 12;
+	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
 									}
 								}
-							}
-							ii11 = min(Nx, ii11);
-							ii00 = max(0, ii00);
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nlb, NL - il);	
-if(il % 10000 == 0) printf("Bcl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nlb, 10 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
-							}
-						}
-						for(int il = 0; il < NL; il += nlb){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx;
-							for(int iil = 0; iil < nlb; ++iil){
-								if(il + iil < NL){
-
-									double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
-									double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
-									double Dnu2 = 1.0e6 * aD2 - aL2;
-									double Dnu = 0.0;
-									if(Dnu2 > 0.0){
-										Dnu = sqrt(Dnu2);
-										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu));
-										int ii0 = ((Inu + (int)(Dnu / (param.dnu))) / 10) * 10;
-										int ii1 = ii0 + 12;
-
-										ii11 = max(ii11, ii1);
-										ii00 = min(ii00, ii0);
+								ii11 = min(Nx, ii11);
+								ii00 = max(0, ii00);
+								int nt = ii11 - ii00;
+								int nstart = ii00;
+								int nll = min(nlb, NL - il);	
+	if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+								for(int k = 0; k < nt; k += nthmax){
+									int Nk = min(nthmax, nt - k);
+									if(Nk > 0 && nll > 0){
+										Line2f_kernel < nlb, 13 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
 									}
+									nstart += nthmax;
 								}
 							}
-							ii11 = min(Nx, ii11);
-							ii00 = max(0, ii00);
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nlb, NL - il);	
-if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nlb, 11 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
+							for(int k = 0; k < Nx; k += nthmax){
+								int Nk = min(nthmax, Nx - k);
+								InterpolateX2_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, Kc_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
+								InterpolateX1_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, K1_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
 							}
 						}
-						for(int il = 0; il < NL; il += nlb){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx;
-							for(int iil = 0; iil < nlb; ++iil){
-								if(il + iil < NL){
-									int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
-									int ii0 = (Inu + (int)(cut / param.dnu)) / 10 * 10;
-									int ii1 = ii0 + 12;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
-
-									ii11 = max(ii11, ii1);
-									ii00 = min(ii00, ii0);
-								}
-							}
-							ii11 = min(Nx, ii11);
-							ii00 = max(0, ii00);
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nlb, NL - il);	
-if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nlb, 12 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
-							}
-						}
-						for(int il = 0; il < NL; il += nlb){ //loop over lines
-							int ii11 = 0;
-							int ii00 = Nx;
-							for(int iil = 0; iil < nlb; ++iil){
-								if(il + iil < NL){
-									int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
-									int ii0 = (Inu - (int)(cut / param.dnu)) / 10 * 10;
-									int ii1 = ii0 + 12;
-//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
-
-									ii11 = max(ii11, ii1);
-									ii00 = min(ii00, ii0);
-								}
-							}
-							ii11 = min(Nx, ii11);
-							ii00 = max(0, ii00);
-							int nt = ii11 - ii00;
-							int nstart = ii00;
-							int nll = min(nlb, NL - il);	
-if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
-							for(int k = 0; k < nt; k += nthmax){
-								int Nk = min(nthmax, nt - k);
-								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nlb, 13 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
-								}
-								nstart += nthmax;
-							}
-						}
-						for(int k = 0; k < Nx; k += nthmax){
-							int Nk = min(nthmax, Nx - k);
-							InterpolateX2_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, Kc_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
-							InterpolateX1_kernel <<< (Nk + 511) / 512, 512 >>> (K_d + iP * Nx, K1_d, Nx, param.Nxb, param.useIndividualX, binBoundaries_d, k);
-						}
-
-#endif
 						//search second order regimes of the Voigt profile
 						const int nl2 = 512;
 						for(int il = 0; il < NL; il += nl2){ //loop over lines
@@ -972,7 +967,7 @@ if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							else{
 								double nu00 = param.numax;
 								double nu11 = param.numin;
-								for(int iil = 0; iil < nl; ++iil){
+								for(int iil = 0; iil < nl2; ++iil){
 									if(il + iil < NL){
 										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
 										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;
@@ -1053,7 +1048,7 @@ if(il % 10000 == 0) printf("B %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							else{
 								double nu00 = param.numax;
 								double nu11 = param.numin;
-								for(int iil = 0; iil < nl; ++iil){
+								for(int iil = 0; iil < nl3; ++iil){
 									if(il + iil < NL){
 										double aD2 = 1.0 / (ialphaDP[il + iil] * ialphaDP[il + iil]);
 										double aL2 = vyP[il + iil] * vyP[il + iil] * aD2;

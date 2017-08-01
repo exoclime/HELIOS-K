@@ -17,7 +17,7 @@ __host__ void Chebyshev(double T, double *Cheb, int n){
 //Author: Simon Grimm
 //November 2014
 // *****************************************
-__host__ int ChebCoeff(char *qFilename, Partition &part, double T){
+__host__ int ChebCoeff(Param &param, char *qFilename, Partition &part, double T){
 
 	//Calculate Chebychev polynomial
 	double Cheb[NCheb];
@@ -28,7 +28,7 @@ __host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 	//Check size of q.dat file
 	qFile = fopen(qFilename, "r");
 	if(qFile == NULL){
-		printf("Error: q.dat file not found\n");
+		printf("Error: q.dat file not found. Path:%s\n", param.path);
 		return 0;
 	}
 	int j;
@@ -72,13 +72,13 @@ __host__ int ChebCoeff(char *qFilename, Partition &part, double T){
 //Author: Simon Grimm
 //August 2016
 // *****************************************
-__host__ int readPartitionExomol(int nMolecule, char *qFilename, Partition &part, double T){
+__host__ int readPartitionExomol(Param &param, int nMolecule, char *qFilename, Partition &part, double T){
 
 	//Read Chebychev Coefficients from q file	
 	FILE *qFile;
 	qFile = fopen(qFilename, "r");
 	if(qFile == NULL){
-		printf("Error: partition file not found %s\n", qFilename);
+		printf("Error: partition file not found %s. Path: %s\n", qFilename, param.path);
 		return 0;
 	}
 	double T0, T1;
@@ -96,9 +96,13 @@ __host__ int readPartitionExomol(int nMolecule, char *qFilename, Partition &part
 			er = fscanf (qFile, "%lf", &q1);
 			er = fscanf (qFile, "%lf", &skip);
 		}
-		if(nMolecule == 6){
+		else if(nMolecule == 6 || nMolecule == 11 || nMolecule == 23 || nMolecule == 31){
 			er = fscanf (qFile, "%lf", &T1);
 			er = fscanf (qFile, "%lf", &q1);
+		}
+		else{
+			printf("Error partition file not spezified\n");
+			return 0;
 		}
 		if (er <= 0) break;
 		if(T0 < T && T1 >= T){
@@ -270,6 +274,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		//read ReplaceFiles
 		fgets(skip, 15, paramFile);
 		fscanf (paramFile, "%d", &param.replaceFiles);
+		fgets(skip2, 3, paramFile);
+		//read RLOW
+		fgets(skip, 7, paramFile);
+		fscanf (paramFile, "%d", &param.RLOW);
 		fgets(skip2, 3, paramFile);
 
 	fclose(paramFile);
@@ -571,7 +579,6 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		fread(&EL, sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 
-
 		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith
 		S *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q * L.ialphaD_h[i];
 		L.vy_h[i] = A / (4.0 * M_PI * def_c);						//alphaL
@@ -616,7 +623,8 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 __host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, double P){
 	for(int i = 0; i < m.NL[fi]; ++i){
 //read this numbers for ExoMol define Files
-		L.vy_h[i] += (0.0700 * pow(296.0 / T, 0.5) * (P / 0.986923));
+
+		L.vy_h[i] += (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923));
 		L.vy_h[i] *= L.ialphaD_h[i]; 
 		L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
 		if(param.cutMode == 1){

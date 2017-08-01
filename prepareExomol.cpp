@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "define.h"
 #include "ISO.h"
-#include <math.h>
 #include <algorithm>
 
 //Works only for Methane and H2O for now
@@ -23,6 +23,15 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	}
 	if(m.id == 6) {
 		sprintf(statesFilename, "12C-1H4__YT10to10.states");
+	}
+	if(m.id == 11) {
+		sprintf(statesFilename, "14N-1H3__BYTe.states");
+	}
+	if(m.id == 23) {
+		sprintf(statesFilename, "1H-12C-14N__Harris.states");
+	}
+	if(m.id == 31) {
+		sprintf(statesFilename, "1H2-32S__AYT2.states");
 	}
 	dataFile = fopen(statesFilename, "r");
 
@@ -45,11 +54,10 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 			id[i] = atoi(c1);
 			E[i] = strtod(c2, NULL);
 			g[i] = atoi(c3);
-//if(i < 100000) printf("%d %d %.40g %d\n", i, id[i], E[i], g[i]);
+if(i < 10) printf("%d %d %.40g %d\n", i, id[i], E[i], g[i]);
 			if(i % 1000000 == 0) printf("read states line %d\n", i);
 		}
 	}
-
 	if(m.id == 6){
 		char c1[13];
 		char c2[15];
@@ -65,7 +73,64 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 			id[i] = atoi(c1);
 			E[i] = strtod(c2, NULL);
 			g[i] = atoi(c3);
-//if(i < 100) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+			if(i % 1000000 == 0) printf("read states line %d\n", i);
+		}
+	}
+	if(m.id == 11){
+		char c1[14];
+		char c2[15];
+		char c3[9];
+		char c4[110];
+	
+		for(int i = 0; i < m.nStates; ++i){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 109, dataFile);
+
+			id[i] = atoi(c1);
+			E[i] = strtod(c2, NULL);
+			g[i] = atoi(c3);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+			if(i % 1000000 == 0) printf("read states line %d\n", i);
+		}
+	}
+	if(m.id == 23){
+		char c1[14];
+		char c2[15];
+		char c3[9];
+		char c4[110];
+	
+		for(int i = 0; i < m.nStates; ++i){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 109, dataFile);
+
+			id[i] = atoi(c1);
+			E[i] = strtod(c2, NULL);
+			g[i] = atoi(c3);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+			if(i % 1000000 == 0) printf("read states line %d\n", i);
+		}
+	}
+	if(m.id == 31){
+		char c1[14];
+		char c2[15];
+		char c3[9];
+		char c4[59];
+	
+		for(int i = 0; i < m.nStates; ++i){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 58, dataFile);
+
+			id[i] = atoi(c1);
+			E[i] = strtod(c2, NULL);
+			g[i] = atoi(c3);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
 			if(i % 1000000 == 0) printf("read states line %d\n", i);
 		}
 	}
@@ -165,8 +230,8 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-
-	Init(m, param);
+	char qFilename[160];
+	Init(m, param, qFilename);
 
 	double mass = m.ISO[0].m;	//Molar Mass (g)
 	mass /= def_NA;

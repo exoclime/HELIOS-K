@@ -143,8 +143,8 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-
-	Init(m, param);
+	char qFilename[160];
+	Init(m, param, qFilename);
 
 	for(int i = 0; i < m.nFiles; ++i){
 		readFile(m, i);
