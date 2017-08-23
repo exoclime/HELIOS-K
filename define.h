@@ -42,6 +42,7 @@ struct Molecule{
 	int fileLimit[123];
 	int nFiles;
 	int nStates;		//Number of states in EXOMOL linelist
+	int ntcol;
 	double meanMass;
 	double defaultL;	//default value for Lorentz half width for EXOMOL
 	double defaultn;		//default value for temperature exponent for EXOMOL

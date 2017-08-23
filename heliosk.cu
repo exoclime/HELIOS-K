@@ -436,6 +436,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				else break;
 			}
 		}
+else{
+	fi0 = 0;
+	fi1 = m.nFiles;
+}
 
 		printf("File range %d to %d\n", fi0 + 1, fi1);
 

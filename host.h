@@ -101,7 +101,11 @@ __host__ int readPartitionExomol(Param &param, int nMolecule, char *qFilename, P
 			er = fscanf (qFile, "%lf", &q1);
 		}
 		else{
-			printf("Error partition file not spezified\n");
+			printf("Error: partition file not spezified\n");
+			return 0;
+		}
+		if(T0 == T1 && T0 < T){
+			printf("Error: partition function not valid for given temperature %g %g\n", T0, T);
 			return 0;
 		}
 		if (er <= 0) break;
@@ -551,7 +555,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 	return 1;
 }
 // ******************************************************************
-//This Function reads the prepared Exomol files (user prepareExomol.cpp)
+//This Function reads the prepared Exomol files (use prepareExomol.cpp)
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
@@ -598,7 +602,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		L.ID_h[i] = i % maxlines;
 		L.S_h[i] = S;
 		L.S1_h[i] = 0.0;
-//if(i < 100000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
+//if(i < 1000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
 
 		if(L.nu_h[i] == 0.0){
 			L.S1_h[i] = 0.0;

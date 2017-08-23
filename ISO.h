@@ -123,6 +123,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			char name[] = "1H2-16O__BT2";
 			m.nStates = 221097;
 			m.nFiles = 16;
+			m.ntcol = 3;
 			m.defaultL = 0.07;
 			m.defaultn = 0.5;
 
@@ -358,6 +359,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			m.defaultL = 0.0488;
 			m.defaultn = 0.4;
 			m.nFiles = 121;
+			m.ntcol = 3;
 			m.NL[0] = 7312353;
 			m.NL[1] = 7417002;
 			m.NL[2] = 7376496;
@@ -518,6 +520,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			char name[] = "14N-1H3__BYTe";
 			m.nStates = 4167360;
 			m.nFiles = 120;
+			m.ntcol = 3;
 			m.defaultL = 0.053;
 			m.defaultn = 0.5;
 			m.NL[0] = 982907;
@@ -681,6 +684,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			m.defaultn = 0.5;
 			m.nStates = 168110;
 			m.nFiles = 1;
+			m.ntcol = 4;
 			m.NL[0] = 34418408;
 			m.NLmax = 0;
 			for(int i = 0; i < m.nFiles + 1; ++i){
@@ -740,6 +744,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			m.defaultn = 0.5;
 
 			m.nFiles = 35;
+			m.ntcol = 3;
 			m.NL[0] = 7226596;
 			m.NL[1] = 7089219;
 			m.NL[2] = 7227349;

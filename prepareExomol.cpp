@@ -156,6 +156,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	char c1[13];
 	char c2[14];
 	char c3[13];
+	char c4[19];
 
 	char skip[3];
 	
@@ -169,30 +170,56 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	double S;
 
 	for(int i = 0; i < nT + 1; ++i){
-		fgets(c1, 13, transFile);
-		fgets(skip, 1, transFile);
-		fgets(c2, 14, transFile);
-		fgets(skip, 1, transFile);
-		fgets(c3, 13, transFile);
-		fgets(skip, 2, transFile);
 
-		state1 = atoi(c1);
-		state0 = atoi(c2);
-		A = strtof(c3, NULL);
+		if(m.ntcol == 3){
+			fgets(c1, 13, transFile);
+			fgets(skip, 1, transFile);
+			fgets(c2, 14, transFile);
+			fgets(skip, 1, transFile);
+			fgets(c3, 13, transFile);
+			fgets(skip, 2, transFile);
+			
+
+			state1 = atoi(c1);
+			state0 = atoi(c2);
+			A = strtof(c3, NULL);
+			
+			EL = E[state0 - 1];
+			nu = E[state1 - 1] - E[state0 - 1];
+			gU = g[state1 - 1];
+		}
+		if(m.ntcol == 4){
+			fgets(c1, 13, transFile);
+			fgets(skip, 1, transFile);
+			fgets(c2, 14, transFile);
+			fgets(skip, 1, transFile);
+			fgets(c3, 12, transFile);
+			fgets(skip, 6, transFile);
+			fgets(c4, 13, transFile);
+			fgets(skip, 2, transFile);
+
+
+			
+
+			state1 = atoi(c1);
+			state0 = atoi(c2);
+			A = strtof(c3, NULL);
+			nu = strtof(c4, NULL);	
+//printf("%s|%s|%s|%s\n", c1, c2, c3, c4); 
 		
-		EL = E[state0 - 1];
-		nu = E[state1 - 1] - E[state0 - 1];
-		gU = g[state1 - 1];
+			EL = E[state0 - 1];
+			gU = g[state1 - 1];
+		}
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
 		if(nu == 0.0) S = 0.0;
-//if(i < 100000) printf("%.20g %.20g %.20g %.20g %d %d %.20g %.20g\n", nu, S, EL, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 10 || i % 10000 == 0) printf("%d %.20g %.20g %.20g %.20g %d %d %.20g %.20g\n", i, nu, S, EL, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
 		fwrite(&A, sizeof(double), 1, OutFile);
 		if(feof(transFile)){
-printf("%d %.10g\n", i, nu);
+printf("%d %.10g %d %d %s\n", i, nu, state0, state1, c4);
 			break;
 		}
 
@@ -213,7 +240,7 @@ int main(int argc, char*argv[]){
 
 	Molecule m;
         m.NL[0] = 0;
-        m.id = 6; //1 = H2O, 2 = CO, 5 = CO, 6 = CH4
+        m.id = 23; //1 = H2O, 2 = CO, 5 = CO, 6 = CH4
         m.nISO = 0;
 
 	//Read console input arguments
