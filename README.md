@@ -1,16 +1,10 @@
 # HELIOS-K #
 #### Authors: Simon Grimm, Kevin Heng ####
 
-# Limitations #
-The current version of the code supports only the molecules H2O, CO2, CO and CH4. 
-When HITEMP is used, only H20, C02 and C0 are supported.
-All the other molecules will be included soon. 
-
-
 # Requirements #
 
 HELIOS-K runs on Nvidia GPUs with compute capability of 2.0 or higher. To be able
-to use the Code one has to install the Cuda Toolkit. This can be downloaded
+to use the code one has to install the Cuda Toolkit. This can be downloaded
 from https://developer.nvidia.com/cuda-downloads.
 
 
@@ -25,18 +19,75 @@ HELIOS-K can be startet with
 ```
 ./heliosk
 ```
-followed by optional arguments listed below.
+followed by optional arguments, which are listed below.
+
+
+# Supported molecules #
+HELIOS-K supports molecules from the HITRAN, HITEMP and EXOMOL databases.
+HITRAN and HITEMP include all isotopologues. EXOMOL only the main one.
+
+Currently, the following molecules are supported.
+ * Hitran 2012:
+  * 01: H20
+  * 02: CO2
+  * 03: 03
+  * 04: N20
+  * 05: CO
+  * 06: CH4
+  * 11: NH3
+  * 23: HCN
+  * 26: C2H2
+  * 31: H2S
+* Hitemp 2010:
+  * 01: H20
+  * 02: C02
+  * 05: C0
+* ExoMol:
+  * 01: 1H2-16O BT2
+  * 06: 12C-1H4 YT10to10
+  * 11: 14N-1H3 BYTe
+  * 23: 1H-12C-14N Harris
+  * 31: 1H2-32S AYT2
+  * 80: 51V-16O VOMYT
+
+# Download and preprocess the line lists #
+Before HELIOS-K can be used, the line lists have to be downloaded from HITRAN, HITEMP or
+EXOMOL. For EXOMOL the exomol.sh script can be used to download all the necessary files.
+It can be run with:
+
+```
+bash exomol.sh <id>
+``` 
+where <id> is the molecule id. The current version of the script doesn't inclue H20.
+For HITRAN and HITEMP, the .par files need to be downloaded manually.
+
+After downloading, the files need to be preprocessed into .bin files, which are used 
+by HELIOS-K.
+This can be done with:
+HITRAN:
+```
+./prepare -M <id>
+``` 
+HITEMP:
+```
+./prepare -HITEMP 1 -M <id>
+``` 
+EXOMOL:
+```
+./prepareExomol -M <id>
+``` 
+where <id> is the molecule id.
 
 
 # Input parameters #
-The imput parameters can be specified in the 'param.dat' file. The used
+The input parameters can be specified in the 'param.dat' file. The used
 parameters are listed here, the order can not be changed.
 
  * name: The name is included in th Output filenames
  * T: Temperature in Kelvin
  * P: Pressure in Atmospheres
- * PFile: A '-' ignores this option, otherwise this option specifies a file name which contains multiple values for P
- * useHITEMP: when set to 0, the HITRAN files are read. When set to 1 the HITEMP files are read
+ * PFile: A '-' ignores this option, otherwise this option specifies a filename which contains multiple values for P
+ * useHITEMP: 0: the HITRAN, 1: HITEMP, 2: EXOMOL
  * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
  * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are H2-H2, H2-H2_eq, H2_H2_norm, H2-He, H2-He_eq  
   H2-He_norm, H2-CH4_eq, H2-CH4_norm and H2-H.
@@ -58,13 +109,14 @@ parameters are listed here, the order can not be changed.
  * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_< name >.dat'.
  * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file 'Out_< name >_bin.dat'. When set to 2, then the per bin sorted opacity function is written to different bin files 'Out_< name >_bin< bin number >.dat'.
  * nbins: number of bins
- * binsfile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
+ * binsfile: A '-' ignores this option, otherwise this option specifies a filename which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
  * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
  * kmin: minimal value for the opacity function 
  * qalphaL: q value in the Lorentz half width q = Pself / P 
  * doMean: Calculate the Planck and Rosseland opacity means
  * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
  * ReplaceFile: When set to 1, then all output files are overwritten, when set to 0 then the data is appended to the existing files.
+ * RLOW: When this is set to 1, then the line wings are computed with a 10 times coarser resolution.
 
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the param.dat file. The options are:
@@ -107,8 +159,8 @@ The code parameters are:
  * NmaxSample:	Maximum Number of resample coefficients for K(y)
 
 When using a Desktop GPU running an x session, the runtime of a single kernel
-launch can be limited to a few seconds. Chosing smaller values for nlmax and nthmax 
-splitts the kernel into smaller parts. But it makes the Code a bit slower.
+launch can be limited to a few seconds. Choosing smaller values for nlmax and nthmax 
+splits the kernel into smaller parts. But it makes the Code a bit slower.
 
 
 # Input Files #
@@ -120,7 +172,7 @@ The following input files must be provided:
   for the partition function. The number of coefficients must correspond to the value "NCheb" in the define.h file
  * The file "ISO.h" must contain the specifications for each Molecule:
    * m.NL: The number of Lines in the line list file
-   * m.nISO: The number of Isotopologues per Molecule. It must correspond the HITRNN data files. For Example CO2 is limited to 10, not 11 as the web version is.
+   * m.nISO: The number of Isotopologues per Molecule. It must correspond the HITRAN data files. For Example CO2 is limited to 10, not 11 as the web version is.
    * For each Isotopologue: id, AFGL id, Abundance, Q(296K), gj, Molar Mass(g).
    These values can be found in the "molparam.txt" file from HITRAN. id corresponds to the HITRAN Identity:
 the  first 2 characters are the Molecule id, the third character is the order along the abundances.
@@ -150,7 +202,7 @@ The file must contain line by line the positions in y.
 
 # The P file option #
 When a 'PFile' name is given in the pram.dat file, then this file is used to read multiple values for P. This option is useful to speed up the performance, 
-because multiple reads from the datafiles can be avoided. To many entries in the Pfile can lead to a memory shortage.
+because multiple reads from the datafiles can be avoided. Too many entries in the Pfile can lead to a memory shortage.
   For example:  
   1.0  
   10.0  

@@ -655,7 +655,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			}
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){111,  4111,  .995872E+00,    1.7252E+03,    3,     17.026549};
+			m.ISO[0] = (Isotopologue){111,  4111,  1.0,    0.0,    0,     17.026549};
 		}
 
 	}
@@ -696,7 +696,7 @@ void Init(Molecule &m, Param param, char *qFilename){
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
-			m.ISO[0] = (Isotopologue){231,  124,  .985114E+00,    8.9529E+02,    6,     27.010899};
+			m.ISO[0] = (Isotopologue){231,  124,  1.0,    0.0,    0,     27.010899};
 		}
 	}
 	if(m.id == 26){//C2H2
@@ -789,12 +789,61 @@ void Init(Molecule &m, Param param, char *qFilename){
 
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){311,  121,  .949884E+00,    5.0307E+02,    1,     33.987721};
+			m.ISO[0] = (Isotopologue){311,  121,  1.0,    0.0,    0,     33.987721};
 		
 			for(int i = 0; i < m.nFiles; ++i){
 				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
 			}
 			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
+		}
+	}
+	if(m.id == 80){//VO
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){81,  16,  1.0,    0.0,    0,     66.938871};
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "51V-16O__VOMYT";
+			m.defaultL = 0.07;
+			m.defaultn = 0.5;
+			m.nStates = 638958;
+			m.nFiles = 7;
+			m.ntcol = 4;
+			m.NL[0] = 22585666;
+			m.NL[1] = 31085102;
+			m.NL[2] = 37095100;
+			m.NL[3] = 42355006;
+			m.NL[4] = 49301568;
+			m.NL[5] = 56596408;
+			m.NL[6] = 38112774;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 5000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename, "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			//insert ISO information here
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){81,  16,  1.0,    0.0,    0,     66.938871};
 		}
 	}
 }

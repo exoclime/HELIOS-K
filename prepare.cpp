@@ -121,7 +121,7 @@ int main(int argc, char*argv[]){
         Param param;
         param.dev = 0;
 	param.useHITEMP = 1;
-	sprintf(param.path, "");
+	param.path[0] = 0;
 
 	Molecule m;
         m.NL[0] = 0;

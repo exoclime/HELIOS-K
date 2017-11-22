@@ -149,7 +149,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	else{
 		Nx = param.nbins * param.Nxb;
 		if(param.nbins * param.Nxb >= 2147483647){
-			printf("Error: Nx too large, integer overflow. %d %g\n", Nx, param.nbins * param.Nxb);
+			printf("Error: Nx too large, integer overflow. %d %g\n", Nx, (double)(param.nbins) * (double)(param.Nxb));
 			return 0;
 		}
 		if(param.doResampling > 0){
@@ -1313,7 +1313,7 @@ printf("\n\n");
 			else{
 				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[0] / means_h[2], param.T, P_h[iP]);
 				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[3] / means_h[1], param.T, P_h[iP]);
-				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[2], param.T), P_h[iP];
+				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[2], param.T, P_h[iP]);
 				fprintf(Out4File, "%.20g %.20g %.20g\n", integral1, param.T, P_h[iP]);
 				fprintf(Out4File, "%.20g %.20g %.20g\n", means_h[3], param.T, P_h[iP]);
 				fprintf(Out4File, "%.20g %.20g %.20g\n", 1.0 / integral2, param.T, P_h[iP]);

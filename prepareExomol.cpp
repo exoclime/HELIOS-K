@@ -6,7 +6,6 @@
 #include "ISO.h"
 #include <algorithm>
 
-//Works only for Methane and H2O for now
 
 
 // ******************************************************************
@@ -32,6 +31,9 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	}
 	if(m.id == 31) {
 		sprintf(statesFilename, "1H2-32S__AYT2.states");
+	}
+	if(m.id == 80) {
+		sprintf(statesFilename, "51V-16O__VOMYT.states");
 	}
 	dataFile = fopen(statesFilename, "r");
 
@@ -134,6 +136,25 @@ if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
 			if(i % 1000000 == 0) printf("read states line %d\n", i);
 		}
 	}
+	if(m.id == 80){
+		char c1[14];
+		char c2[15];
+		char c3[9];
+		char c4[110];
+	
+		for(int i = 0; i < m.nStates; ++i){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 109, dataFile);
+
+			id[i] = atoi(c1);
+			E[i] = strtod(c2, NULL);
+			g[i] = atoi(c3);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+			if(i % 1000000 == 0) printf("read states line %d\n", i);
+		}
+	}
 	printf("states file complete\n");
 	return 1;
 }
@@ -213,7 +234,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
 		if(nu == 0.0) S = 0.0;
-if(i < 10 || i % 10000 == 0) printf("%d %.20g %.20g %.20g %.20g %d %d %.20g %.20g\n", i, nu, S, EL, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 10 || i % 100000 == 0) printf("%d %.20g %.20g %.20g %.20g %d %d %.20g %.20g\n", i, nu, S, EL, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
@@ -236,7 +257,7 @@ int main(int argc, char*argv[]){
         Param param;
         param.dev = 0;
 	param.useHITEMP = 2;
-	sprintf(param.path, "");
+	param.path[0] = 0;
 
 	Molecule m;
         m.NL[0] = 0;
@@ -245,10 +266,7 @@ int main(int argc, char*argv[]){
 
 	//Read console input arguments
 	for(int i = 1; i < argc; i += 2){
-		if(strcmp(argv[i], "-HITEMP") == 0){
-			param.useHITEMP = atoi(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-M") == 0){
+		if(strcmp(argv[i], "-M") == 0){
 			m.id = atoi(argv[i + 1]);
 		}
 		else{
@@ -273,6 +291,7 @@ int main(int argc, char*argv[]){
 
 	int nT = 200000000;
 	for(int i = 0; i < m.nFiles; ++i){
+printf("%d %g\n", i, mass);
 		readTransitions(m, id, E, g, nT, mass, i);
 	}
 

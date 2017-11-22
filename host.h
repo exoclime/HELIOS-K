@@ -96,12 +96,12 @@ __host__ int readPartitionExomol(Param &param, int nMolecule, char *qFilename, P
 			er = fscanf (qFile, "%lf", &q1);
 			er = fscanf (qFile, "%lf", &skip);
 		}
-		else if(nMolecule == 6 || nMolecule == 11 || nMolecule == 23 || nMolecule == 31){
+		else if(nMolecule == 6 || nMolecule == 11 || nMolecule == 23 || nMolecule == 31 || nMolecule == 80){
 			er = fscanf (qFile, "%lf", &T1);
 			er = fscanf (qFile, "%lf", &q1);
 		}
 		else{
-			printf("Error: partition file not spezified\n");
+			printf("Error: partition file not specified\n");
 			return 0;
 		}
 		if(T0 == T1 && T0 < T){
@@ -139,7 +139,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		char skip2[160];
 		//read name
 		fgets(skip, 7, paramFile);
-		fscanf (paramFile, "%s", &param.name);
+		fscanf (paramFile, "%s", param.name);
 		fgets(skip2, 3, paramFile);
 		//read T
 		fgets(skip, 4, paramFile);
@@ -151,7 +151,7 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip2, 3, paramFile);
 		//read PFile
 		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%s", &param.PFilename);
+		fscanf (paramFile, "%s", param.PFilename);
 		fgets(skip2, 3, paramFile);
 		//read HITEMP
 		fgets(skip, 12, paramFile);
@@ -163,14 +163,14 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip2, 3, paramFile);
 		//read ciaSystem
 		fgets(skip, 12, paramFile);
-		fscanf (paramFile, "%s", &param.ciaSystem);
+		fscanf (paramFile, "%s", param.ciaSystem);
 		fgets(skip2, 3, paramFile);
 		//read path
 		fgets(skip, 13, paramFile);
-		fscanf (paramFile, "%s", &param.path);
+		fscanf (paramFile, "%s", param.path);
 		fgets(skip2, 3, paramFile);
 		if(strcmp(param.path, "numin") == 0){
-			sprintf(param.path, "");
+			param.path[0] = 0;
 		
 			//fgets(skip, 3, paramFile);
 			fscanf (paramFile, "%lf", &param.numin);
@@ -232,10 +232,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip2, 3, paramFile);
 		//read pathK
 		fgets(skip, 10, paramFile);
-		fscanf (paramFile, "%s", &param.pathK);
+		fscanf (paramFile, "%s", param.pathK);
 		fgets(skip2, 3, paramFile);
 		if(strcmp(param.pathK, "doStoreSK") == 0){
-			sprintf(param.pathK, "");
+			param.pathK[0] = 0;
 		
 			//fgets(skip, 3, paramFile);
 			fscanf (paramFile, "%d", &param.doStoreK);
@@ -253,11 +253,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		fgets(skip2, 3, paramFile);
 		//read binsfile
 		fgets(skip, 11, paramFile);
-		fscanf (paramFile, "%s", &param.bins);
+		fscanf (paramFile, "%s", param.bins);
 		fgets(skip2, 3, paramFile);
 		//read outputEdges
 		fgets(skip, 18, paramFile);
-		fscanf (paramFile, "%s", &param.edges);
+		fscanf (paramFile, "%s", param.edges);
 		fgets(skip2, 3, paramFile);
 		//read kmin
 		fgets(skip, 7, paramFile);
@@ -651,11 +651,8 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 	char c3[9];
 	char c4[9];
 	char c5[12];
-	double numin;
-	double numax;
 	int Ncia;
 	double Tcia0, Tcia1;
-	double max;
 
 	double nu0, nu1;
 	double cia0, cia1;
@@ -678,12 +675,11 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 		fgets(c5, 11, ciaFile);
 		fgets(skip, 37, ciaFile);
 	 
-		numin = strtod(c1, NULL);
-		numax = strtod(c2, NULL);
 		Ncia = atoi(c3);
 		Tcia1 = strtod(c4, NULL);
-		max = strtod(c5, NULL);
-
+		double numax = strtod(c2, NULL);
+//double max = strtod(c5, NULL);
+//double numin = strtod(c1, NULL);
 //printf("%g %g %d %g %g %g\n", numin, numax, Ncia, Tcia1, Tcia0, max);
 
 		fscanf(ciaFile, "%lf", &nu0);
