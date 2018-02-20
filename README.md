@@ -38,11 +38,11 @@ Currently, the following molecules are supported.
   * 23: HCN
   * 26: C2H2
   * 31: H2S
-* Hitemp 2010:
+ * Hitemp 2010:
   * 01: H20
   * 02: C02
   * 05: C0
-* ExoMol:
+ * ExoMol:
   * 01: 1H2-16O BT2
   * 06: 12C-1H4 YT10to10
   * 11: 14N-1H3 BYTe
