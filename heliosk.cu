@@ -31,7 +31,7 @@ int main(int argc, char*argv[]){
 	else printf("There are %d CUDA Devices\n", devCount); 
 
 
-	char qFilename[160];
+	char qFilename[15][160];	//for maximal 15 isotopologues
 	char paramFilename[160];
 	sprintf(paramFilename, "%s", "param.dat");
 
@@ -94,11 +94,6 @@ int main(int argc, char*argv[]){
 	}
 	if(param.Nxb != 0){
 		param.useIndividualX = 1;
-	}
-
-
-	if(param.useHITEMP < 2){
-		sprintf(qFilename, "%s%s", param.path, "q.dat");
 	}
 
 	//If the bin file is used store the boundaries of the bins
@@ -262,11 +257,11 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	
 	//Compute partition function
 	Partition part;
-	if(param.useHITEMP < 2){
-		er = ChebCoeff(param, qFilename, part, param.T);
+	if(m.npfcol == 0){
+		er = ChebCoeff(param, qFilename[0], part, param.T);
 	}
 	else{
-		er = readPartitionExomol(param, param.nMolecule, qFilename, part, param.T);
+		er = readPartition(param, param.nMolecule, qFilename, part, param.T, m);
 	}
 	if(er == 0){
 		return 0;
@@ -497,7 +492,7 @@ else{
 			}
 			for(int iP = 0; iP < param.nP; ++iP){
 
-				if(param.useHITEMP == 2){
+				if(param.useHITEMP >= 2){
 					alphaLExomol(param, m, L, fi, param.T, P_h[iP]);
 				}
 				//Copy Line data to the device

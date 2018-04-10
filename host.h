@@ -70,64 +70,69 @@ __host__ int ChebCoeff(Param &param, char *qFilename, Partition &part, double T)
 // and interpolates Q
 
 //Author: Simon Grimm
-//August 2016
+//March 2018
 // *****************************************
-__host__ int readPartitionExomol(Param &param, int nMolecule, char *qFilename, Partition &part, double T){
-
-	//Read Chebychev Coefficients from q file	
-	FILE *qFile;
-	qFile = fopen(qFilename, "r");
-	if(qFile == NULL){
-		printf("Error: partition file not found %s. Path: %s\n", qFilename, param.path);
-		return 0;
-	}
-	double T0, T1;
-	double q0, q1, q;
-	double skip;
-	T1 = 0;
-	q1 = 1.0;
-	q = 1.0;
-	int er = 0;
-	for(int j = 0; j < 100000; ++j){
-		T0 = T1;
-		q0 = q1;
-		if(nMolecule == 1){
-			er = fscanf (qFile, "%lf", &T1);
-			er = fscanf (qFile, "%lf", &q1);
-			er = fscanf (qFile, "%lf", &skip);
-		}
-		else if(nMolecule == 6 || nMolecule == 11 || nMolecule == 23 || nMolecule == 31 || nMolecule == 80){
-			er = fscanf (qFile, "%lf", &T1);
-			er = fscanf (qFile, "%lf", &q1);
-		}
-		else{
-			printf("Error: partition file not specified\n");
-			return 0;
-		}
-		if(T0 == T1 && T0 < T){
-			printf("Error: partition function not valid for given temperature %g %g\n", T0, T);
-			return 0;
-		}
-		if (er <= 0) break;
-		if(T0 < T && T1 >= T){
-			double tt = (T - T0) / (T1 - T0);
-			q = (q1 - q0) * tt + q0;
-			break;
-		}
-		if(j == 100000 - 1){
-			printf("Error: partition function not complete\n");
-			return 0;
-		}
-	}
-	fclose(qFile);
+__host__ int readPartition(Param &param, int nMolecule, char (*qFilename)[160], Partition &part, double T,  Molecule &m){
 	part.n = 1;
 	
 	part.id = (int*)malloc(sizeof(int));
-	part.Q = (double*)malloc(sizeof(double));
+	part.Q = (double*)malloc( m.nISO * sizeof(double));
 
 
 	part.id = 0;
-	part.Q[0] = q;
+
+	for(int i = 0; i < m.nISO; ++i){
+
+		//Read Chebychev Coefficients from q file	
+		FILE *qFile;
+		qFile = fopen(qFilename[i], "r");
+		printf("Read partition function: %s\n", qFilename[i]);
+		if(qFile == NULL){
+			printf("Error: partition file not found %s. Path: %s\n", qFilename[i], param.path);
+			return 0;
+		}
+		double T0, T1;
+		double q0, q1, q;
+		double skip;
+		T1 = 0;
+		q1 = 1.0;
+		q = 1.0;
+		int er = 0;
+		for(int j = 0; j < 100000; ++j){
+			T0 = T1;
+			q0 = q1;
+			if(m.npfcol == 3){
+				er = fscanf (qFile, "%lf", &T1);
+				er = fscanf (qFile, "%lf", &q1);
+				er = fscanf (qFile, "%lf", &skip);
+			}
+			else if(m.npfcol == 2){
+				er = fscanf (qFile, "%lf", &T1);
+				er = fscanf (qFile, "%lf", &q1);
+			}
+			else{
+				printf("Error: partition file not specified\n");
+				return 0;
+			}
+			if(T0 == T1 && T0 < T && j > 0){
+				printf("Error: partition function not valid for given temperature %g %g\n", T0, T);
+				return 0;
+			}
+			if (er <= 0) break;
+			if(T0 < T && T1 >= T){
+				double tt = (T - T0) / (T1 - T0);
+				q = (q1 - q0) * tt + q0;
+				if(j == 0) q = q1;
+				break;
+			}
+			if(j == 100000 - 1){
+				printf("Error: partition function not complete\n");
+				return 0;
+			}
+		}
+		fclose(qFile);
+		part.Q[i] = q;
+	}
 	return 1;
 }
 
@@ -521,33 +526,38 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		fread(&gammaSelf, sizeof(double), 1, dataFile);
 		fread(&L.n_h[i], sizeof(double), 1, dataFile);
 
+		double Q = 0.0;
 		for(int j = 0; j < m.nISO; ++j){
 			if(id == m.ISO[j].id){
 				mass = m.ISO[j].m / def_NA;
 				idAFGL = m.ISO[j].AFGL;
+				if(m.npfcol != 0) Q = part.Q[j];
 			}
 		}
 
-		double Q = 0.0;
-		int Qcheck = 0;
-		//Assign the Partition function
-		for(int j = 0; j < part.n; ++j){
-			if(idAFGL == part.id[j]){
-				Q = part.Q[j];
-				Qcheck = 1;
+		if(m.npfcol == 0){
+			//use q.dat file
+			int Qcheck = 0;
+			//Assign the Partition function
+			for(int j = 0; j < part.n; ++j){
+				if(idAFGL == part.id[j]){
+					Q = exp(part.Q[j]);
+					Qcheck = 1;
+				}
 			}
-		}
-		if(Qcheck == 0){
-			printf("Error: partition function for AFGL %d not found. %d %d\n", idAFGL, i, id);
-			return 0;
+			if(Qcheck == 0){
+				printf("Error: partition function for AFGL %d not found. %d %d\n", idAFGL, i, id);
+				return 0;
 
+			}
 		}
 
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
-		S /= exp(Q);
+		S /= Q;
 		L.S_h[i] = S;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith, 1.0/nu is missing here and inserted later
                 L.ID_h[i] = i % maxlines;
+///*if(i < 1000) */printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
 	}
 
@@ -602,7 +612,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		L.ID_h[i] = i % maxlines;
 		L.S_h[i] = S;
 		L.S1_h[i] = 0.0;
-//if(i < 1000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
+// /*if(i < 1000) */printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
 
 		if(L.nu_h[i] == 0.0){
 			L.S1_h[i] = 0.0;
@@ -626,15 +636,13 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 // *******************************************************************
 __host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, double P){
 	for(int i = 0; i < m.NL[fi]; ++i){
-//read this numbers for ExoMol define Files
-
 		L.vy_h[i] += (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923));
 		L.vy_h[i] *= L.ialphaD_h[i]; 
 		L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
 		if(param.cutMode == 1){
 			L.vcut2_h[i] = (float)(param.cut * param.cut * L.vy_h[i] * L.vy_h[i]);
 		}
-//if(i < 100000) printf("%d %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.vy_h[i], exp(-EL * c / T) * (1.0 - exp(-c * nu / T)));
+//if(i < 100000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], (float)(L.S_h[i]), L.ialphaD_h[i], L.vy_h[i], (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923)));
 	}
 	return 1;
 }

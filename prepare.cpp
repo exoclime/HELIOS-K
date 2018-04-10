@@ -120,7 +120,7 @@ int main(int argc, char*argv[]){
 
         Param param;
         param.dev = 0;
-	param.useHITEMP = 1;
+	param.useHITEMP = 0;
 	param.path[0] = 0;
 
 	Molecule m;
@@ -143,7 +143,7 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	char qFilename[160];
+	char qFilename[15][160];
 	Init(m, param, qFilename);
 
 	for(int i = 0; i < m.nFiles; ++i){

@@ -17,24 +17,7 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 
 	FILE *dataFile;
 	char statesFilename[160];
-	if(m.id == 1) {
-		sprintf(statesFilename, "1H2-16O__BT2.states");
-	}
-	if(m.id == 6) {
-		sprintf(statesFilename, "12C-1H4__YT10to10.states");
-	}
-	if(m.id == 11) {
-		sprintf(statesFilename, "14N-1H3__BYTe.states");
-	}
-	if(m.id == 23) {
-		sprintf(statesFilename, "1H-12C-14N__Harris.states");
-	}
-	if(m.id == 31) {
-		sprintf(statesFilename, "1H2-32S__AYT2.states");
-	}
-	if(m.id == 80) {
-		sprintf(statesFilename, "51V-16O__VOMYT.states");
-	}
+	sprintf(statesFilename, "%s.states", m.mName);
 	dataFile = fopen(statesFilename, "r");
 
 	if(dataFile == NULL){
@@ -42,7 +25,7 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 		return 0;
 	}
 	if(m.id == 1){
-		char c1[13];
+		char c1[14];
 		char c2[15];
 		char c3[9];
 		char c4[58];
@@ -60,8 +43,27 @@ if(i < 10) printf("%d %d %.40g %d\n", i, id[i], E[i], g[i]);
 			if(i % 1000000 == 0) printf("read states line %d\n", i);
 		}
 	}
+	if(m.id == 5 || m.id == 9 || m.id == 11 || m.id == 23 || m.id == 80){
+		char c1[14];
+		char c2[15];
+		char c3[9];
+		char c4[110];
+	
+		for(int i = 0; i < m.nStates; ++i){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 109, dataFile);
+
+			id[i] = atoi(c1);
+			E[i] = strtod(c2, NULL);
+			g[i] = atoi(c3);
+if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+			if(i % 1000000 == 0) printf("read states line %d\n", i);
+		}
+	}
 	if(m.id == 6){
-		char c1[13];
+		char c1[14];
 		char c2[15];
 		char c3[9];
 		char c4[135];
@@ -71,44 +73,6 @@ if(i < 10) printf("%d %d %.40g %d\n", i, id[i], E[i], g[i]);
 			fgets(c2, 15, dataFile);
 			fgets(c3, 9, dataFile);
 			fgets(c4, 135, dataFile);
-
-			id[i] = atoi(c1);
-			E[i] = strtod(c2, NULL);
-			g[i] = atoi(c3);
-if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
-			if(i % 1000000 == 0) printf("read states line %d\n", i);
-		}
-	}
-	if(m.id == 11){
-		char c1[14];
-		char c2[15];
-		char c3[9];
-		char c4[110];
-	
-		for(int i = 0; i < m.nStates; ++i){
-			fgets(c1, 13, dataFile);
-			fgets(c2, 14, dataFile);
-			fgets(c3, 8, dataFile);
-			fgets(c4, 109, dataFile);
-
-			id[i] = atoi(c1);
-			E[i] = strtod(c2, NULL);
-			g[i] = atoi(c3);
-if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
-			if(i % 1000000 == 0) printf("read states line %d\n", i);
-		}
-	}
-	if(m.id == 23){
-		char c1[14];
-		char c2[15];
-		char c3[9];
-		char c4[110];
-	
-		for(int i = 0; i < m.nStates; ++i){
-			fgets(c1, 13, dataFile);
-			fgets(c2, 14, dataFile);
-			fgets(c3, 8, dataFile);
-			fgets(c4, 109, dataFile);
 
 			id[i] = atoi(c1);
 			E[i] = strtod(c2, NULL);
@@ -136,25 +100,6 @@ if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
 			if(i % 1000000 == 0) printf("read states line %d\n", i);
 		}
 	}
-	if(m.id == 80){
-		char c1[14];
-		char c2[15];
-		char c3[9];
-		char c4[110];
-	
-		for(int i = 0; i < m.nStates; ++i){
-			fgets(c1, 13, dataFile);
-			fgets(c2, 14, dataFile);
-			fgets(c3, 8, dataFile);
-			fgets(c4, 109, dataFile);
-
-			id[i] = atoi(c1);
-			E[i] = strtod(c2, NULL);
-			g[i] = atoi(c3);
-if(i < 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
-			if(i % 1000000 == 0) printf("read states line %d\n", i);
-		}
-	}
 	printf("states file complete\n");
 	return 1;
 }
@@ -164,7 +109,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	FILE *transFile, *OutFile;
 	char transFilename[160], OutFilename[160];
 
-	printf("reading file %d ", fi);
+	printf("reading file %d\n", fi);
 	sprintf(transFilename, "%strans", m.dataFilename[fi]);
 	sprintf(OutFilename, "%sbin", m.dataFilename[fi]);
 	transFile = fopen(transFilename, "r");
@@ -234,13 +179,13 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
 		if(nu == 0.0) S = 0.0;
-if(i < 10 || i % 100000 == 0) printf("%d %.20g %.20g %.20g %.20g %d %d %.20g %.20g\n", i, nu, S, EL, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 10 || i % 100000 == 0) printf("%d %.20g %.20g %.20g %d %.20g %d %d %.20g %.20g\n", i, nu, S, EL, gU, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
 		fwrite(&A, sizeof(double), 1, OutFile);
 		if(feof(transFile)){
-printf("%d %.10g %d %d %s\n", i, nu, state0, state1, c4);
+printf("%d %.20g %.20g %.20g %d %.20g %d %d %.20g %.20g\n", i, nu, S, EL, gU, A, state0, state1, E[state0 - 1], E[state1 - 1]); 
 			break;
 		}
 
@@ -275,7 +220,7 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	char qFilename[160];
+	char qFilename[15][160];
 	Init(m, param, qFilename);
 
 	double mass = m.ISO[0].m;	//Molar Mass (g)

@@ -352,7 +352,8 @@ __global__ void Sf_kernel(double *S_d, float *Sf_d, double *vy_d, float *vyf_d, 
 	if(id < NL){
 		vyf_d[id] = (float)(vy_d[id]); 
 		Sf_d[id] = (float)(S_d[id]); 
-		S1f_d[id] = (float)(S1_d[id]); 
+		S1f_d[id] = (float)(S1_d[id]);
+//if(id > 156000 && id < 158000) printf("S %d %g %f\n", id, S_d[id], Sf_d[id]);
 	}
 }
 
@@ -898,8 +899,6 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 			float xxyy = t1 + y * y;
 
 			if(t1 < vcut2_s[ill]){	
-
-//printf("%g %g %g\n", S1_s[ill], x, y);
 
 				if(E <= 0 && xxyy >= 1.0e6f){
 				//1 order Gauss Hermite Quadrature

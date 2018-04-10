@@ -1,4 +1,4 @@
-#define VERSION 1.60
+#define VERSION 1.61
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -35,17 +35,19 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL[122];		//Number of Lines per file
+	int NL[122];		//Number of Lines per file, (maximum 122 files per molecule)
 	int NLmax;
 	Isotopologue *ISO;
+	char mName[160];	//name of states and trans files
 	char dataFilename[122][160];
 	int fileLimit[123];
 	int nFiles;
 	int nStates;		//Number of states in EXOMOL linelist
-	int ntcol;
+	int ntcol;		//Number of columns in transition files
+	int npfcol;		//number of columns in partition function file
 	double meanMass;
 	double defaultL;	//default value for Lorentz half width for EXOMOL
-	double defaultn;		//default value for temperature exponent for EXOMOL
+	double defaultn;	//default value for temperature exponent for EXOMOL
 };
 
 struct Partition{

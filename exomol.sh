@@ -17,74 +17,93 @@ echo "molecule "$m
 if [ $m -eq 1 ]
 then
   #1 H2O
-  n=16				#number of transition files
   M="1H2-16O__BT2"
   P="H2O/1H2-16O/BT2"
   s=-1				#file range
   ntcol=3			#columns in transition files
+  npfcol=3			#columns in partition function file
 fi
 
 if [ $m -eq 5 ]
 then
-# def file not available yet on EXOMOL
   #5 CO
-  n=1				#number of transition files
   M="12C-16O__Li2015"
   P="CO/12C-16O/Li2015"
-  #s=?				#file range
+  s=22000			#file range
   ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 
 if [ $m -eq 6 ]
 then
   #6 CH4
-  n=121				#number of transition files
   M="12C-1H4__YT10to10"
   P="CH4/12C-1H4/YT10to10"
   s=100				#file range
   ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+
+if [ $m -eq 9 ]
+then
+  #9 SO2
+  M="32S-16O2__ExoAmes"
+  P="SO2/32S-16O2/ExoAmes"
+  s=100				#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 
 if [ $m -eq 11 ]
 then
   #11 NH3
-  n=120				#number of transition files
   M="14N-1H3__BYTe"
   P="NH3/14N-1H3/BYTe"
   s=100				#file range
   ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 if [ $m -eq 23 ]
 then
   #23 HCN
-  n=1				#number of transition files
   M="1H-12C-14N__Harris"
   P="HCN/1H-12C-14N/Harris"
   s=17586			#file range
   ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+
+if [ $m -eq 28 ]
+then
+  #28 PH3
+  M="31P-1H3__SAlTY"
+  P="PH3/31P-1H3/SAlTY"
+  s=100				#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 if [ $m -eq 31 ]
 then
   #31 H2S
-  n=35				#number of transition files
   M="1H2-32S__AYT2"
   P="H2S/1H2-32S/AYT2"
   s=1000			#file range
   ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 if [ $m -eq 80 ]
 then
   #80 VO
-  n=7				#number of transition files
   M="51V-16O__VOMYT"
   P="VO/51V-16O/VOMYT"
   s=5000			#file range
   ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
 fi
 
 
@@ -96,7 +115,7 @@ bzip2 -d $M.states.bz2
 wget http://exomol.com/db/$P/$M.pf
 wget http://exomol.com/db/$P/$M.def
 
-
+n=`grep "No. of transition files" $M.def | cut -c-12`
 mass=`grep "Isotopologue mass" $M.def | cut -c-12`
 dL=`grep "Default value of Lorentzian half-width for all lines" $M.def | cut -c-12`
 dn=`grep "Default value of temperature exponent for all lines" $M.def | cut -c-12`
@@ -156,11 +175,13 @@ if [ $PrintISO -eq 1 ]
 then
   ll=`wc -l < $M.states | awk '{print $1}'`
   echo char name"[]" = \"$M\"";"
+  echo "sprintf(m.mName, "\"%s\", \"$M\"");"
   echo m.defaultL = $dL";"
   echo m.defaultn = $dn";"
   echo m.nStates = $ll";"
   echo m.nFiles = $n";"
   echo m.ntcol = $ntcol";"
+  echo m.npfcol = $npfcol";"
   for (( nu=0; nu<$n; nu++ ))
   do
     echo m.NL[$nu] = ${l[$nu]}";" 
@@ -180,7 +201,7 @@ then
     echo -e '}'
   fi
 
-  echo -e 'sprintf(qFilename, "%s%s%s", param.path, name, ".pf");'
+  echo -e 'sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");'
 
   if [ $n -gt 1 ]
   then
