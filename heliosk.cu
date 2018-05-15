@@ -30,7 +30,43 @@ int main(int argc, char*argv[]){
 	if(devCount == 1) printf("There is %d CUDA Device\n", devCount); 
 	else printf("There are %d CUDA Devices\n", devCount); 
 
+/*
+{
+int Nx = 1000;
+int Ny = 500;
 
+//https://stackoverflow.com/questions/27964995/read-from-cudabindtexture2d
+
+float a = (float)(M_PI * sqrt(-1.0 / log(TOLF * 0.5)));
+float b = (float)(1.0 / sqrt(M_PI));
+float c = (float)(2.0 * a / M_PI);
+
+float *K2d_h, *K2d_d;
+K2d_h = (float*)malloc( Nx * Ny * sizeof(float));
+size_t pitch;
+//with pitch, the 2d memory is extendend in one dimension to set memory alignment, pitch is the new Nx
+cudaMallocPitch((void **) &K2d_d, &pitch, Nx * sizeof(float), Ny);
+printf("%d %d %d\n", Nx, Ny, pitch);
+
+Voigt_2d_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>>(a, b, c, K2d_d, Nx, Ny);
+
+
+cudaChannelFormatDesc desc = cudaCreateChannelDesc<float>(); 
+//cudaBindTexture2D(NULL, tex, d_textureTable, desc, 9, 10, pitch) ;
+
+cudaMemcpy(K2d_h, K2d_d, Nx * Ny * sizeof(float), cudaMemcpyDeviceToHost);
+//cudaMemcpy2D(K2d_h, pitch, K2d_d, Nx * sizeof(float), Ny , cudaMemcpyDeviceToHost);
+cudaDeviceSynchronize();
+
+
+for(int i = 0; i < Nx; ++i){
+	for(int j = 0; j < Ny; ++j){
+		printf("%g %g %g\n", i * 10.0 / double(Nx), j * 10.0 / double(Ny), K2d_h[j * Nx + i]);
+	}
+}
+return 0;
+}
+*/
 	char qFilename[15][160];	//for maximal 15 isotopologues
 	char paramFilename[160];
 	sprintf(paramFilename, "%s", "param.dat");
@@ -248,6 +284,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "default L = %g\n", m.defaultL);
 		fprintf(infofile, "default n = %g\n", m.defaultn);
 		fprintf(infofile, "RLOW = %d\n", param.RLOW);
+		fprintf(infofile, "NXLOW = %d\n", NXLOW);
 		if(param.useOutputEdges == 1){
 			fprintf(infofile, "use output edges: %s\n", param.edges);
 		}

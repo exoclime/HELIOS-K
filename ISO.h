@@ -183,7 +183,441 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){11,  161,	1.0,    0.0,    0,     18.010565};
 		}
-
+		if(param.useHITEMP == 3){
+			char name[] = "1H2-16O__POKAZATEL";
+			sprintf(m.mName, "%s", "1H2-16O__POKAZATEL");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 810269;
+			m.nFiles = 412;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 63545284;
+			m.NL[1] = 62953585;
+			m.NL[2] = 62406329;
+			m.NL[3] = 61806710;
+			m.NL[4] = 61211769;
+			m.NL[5] = 60645422;
+			m.NL[6] = 60081707;
+			m.NL[7] = 59527108;
+			m.NL[8] = 58997522;
+			m.NL[9] = 58454032;
+			m.NL[10] = 57898326;
+			m.NL[11] = 57354828;
+			m.NL[12] = 56822761;
+			m.NL[13] = 56299929;
+			m.NL[14] = 55785749;
+			m.NL[15] = 55257484;
+			m.NL[16] = 54737905;
+			m.NL[17] = 54234508;
+			m.NL[18] = 53719800;
+			m.NL[19] = 53209511;
+			m.NL[20] = 52710632;
+			m.NL[21] = 52216798;
+			m.NL[22] = 51728862;
+			m.NL[23] = 51242841;
+			m.NL[24] = 50767793;
+			m.NL[25] = 50283335;
+			m.NL[26] = 49806042;
+			m.NL[27] = 49334764;
+			m.NL[28] = 48870521;
+			m.NL[29] = 48408485;
+			m.NL[30] = 47944583;
+			m.NL[31] = 47483363;
+			m.NL[32] = 47032973;
+			m.NL[33] = 46586524;
+			m.NL[34] = 46139607;
+			m.NL[35] = 45686142;
+			m.NL[36] = 45247489;
+			m.NL[37] = 44819995;
+			m.NL[38] = 44366512;
+			m.NL[39] = 43949647;
+			m.NL[40] = 43525354;
+			m.NL[41] = 43092528;
+			m.NL[42] = 42680142;
+			m.NL[43] = 42267798;
+			m.NL[44] = 41843019;
+			m.NL[45] = 41430274;
+			m.NL[46] = 41035539;
+			m.NL[47] = 40625567;
+			m.NL[48] = 40219144;
+			m.NL[49] = 39832882;
+			m.NL[50] = 39433757;
+			m.NL[51] = 39038150;
+			m.NL[52] = 38659097;
+			m.NL[53] = 38276595;
+			m.NL[54] = 37896041;
+			m.NL[55] = 37514544;
+			m.NL[56] = 37127988;
+			m.NL[57] = 36765424;
+			m.NL[58] = 36392834;
+			m.NL[59] = 36024995;
+			m.NL[60] = 35663751;
+			m.NL[61] = 35298617;
+			m.NL[62] = 34944150;
+			m.NL[63] = 34593236;
+			m.NL[64] = 34240714;
+			m.NL[65] = 33880586;
+			m.NL[66] = 33525576;
+			m.NL[67] = 33194493;
+			m.NL[68] = 32847204;
+			m.NL[69] = 32512662;
+			m.NL[70] = 32174920;
+			m.NL[71] = 31837631;
+			m.NL[72] = 31526218;
+			m.NL[73] = 31173580;
+			m.NL[74] = 30848655;
+			m.NL[75] = 30516886;
+			m.NL[76] = 30207120;
+			m.NL[77] = 29886457;
+			m.NL[78] = 29576533;
+			m.NL[79] = 29256380;
+			m.NL[80] = 28941993;
+			m.NL[81] = 28648968;
+			m.NL[82] = 28344141;
+			m.NL[83] = 28034160;
+			m.NL[84] = 27734214;
+			m.NL[85] = 27438885;
+			m.NL[86] = 27144461;
+			m.NL[87] = 26852091;
+			m.NL[88] = 26562807;
+			m.NL[89] = 26268028;
+			m.NL[90] = 25992322;
+			m.NL[91] = 25705538;
+			m.NL[92] = 25423068;
+			m.NL[93] = 25137620;
+			m.NL[94] = 24867033;
+			m.NL[95] = 24594433;
+			m.NL[96] = 24311872;
+			m.NL[97] = 24044102;
+			m.NL[98] = 23786062;
+			m.NL[99] = 23507410;
+			m.NL[100] = 23263918;
+			m.NL[101] = 23000316;
+			m.NL[102] = 22735511;
+			m.NL[103] = 22477652;
+			m.NL[104] = 22232337;
+			m.NL[105] = 21972714;
+			m.NL[106] = 21717726;
+			m.NL[107] = 21471849;
+			m.NL[108] = 21222524;
+			m.NL[109] = 20981716;
+			m.NL[110] = 20734222;
+			m.NL[111] = 20499995;
+			m.NL[112] = 20271442;
+			m.NL[113] = 20029427;
+			m.NL[114] = 19804057;
+			m.NL[115] = 19571228;
+			m.NL[116] = 19335526;
+			m.NL[117] = 19117904;
+			m.NL[118] = 18886005;
+			m.NL[119] = 18666584;
+			m.NL[120] = 18441986;
+			m.NL[121] = 18225164;
+			m.NL[122] = 18015981;
+			m.NL[123] = 17791131;
+			m.NL[124] = 17574629;
+			m.NL[125] = 17368280;
+			m.NL[126] = 17158791;
+			m.NL[127] = 16952362;
+			m.NL[128] = 16743232;
+			m.NL[129] = 16540839;
+			m.NL[130] = 16334996;
+			m.NL[131] = 16139076;
+			m.NL[132] = 15940267;
+			m.NL[133] = 15736472;
+			m.NL[134] = 15550474;
+			m.NL[135] = 15358235;
+			m.NL[136] = 15162945;
+			m.NL[137] = 14980680;
+			m.NL[138] = 14785642;
+			m.NL[139] = 14593689;
+			m.NL[140] = 14411900;
+			m.NL[141] = 14230937;
+			m.NL[142] = 14049115;
+			m.NL[143] = 13869788;
+			m.NL[144] = 13693722;
+			m.NL[145] = 13524016;
+			m.NL[146] = 13346961;
+			m.NL[147] = 13173937;
+			m.NL[148] = 13001843;
+			m.NL[149] = 12836207;
+			m.NL[150] = 12677489;
+			m.NL[151] = 12508092;
+			m.NL[152] = 12339773;
+			m.NL[153] = 12176175;
+			m.NL[154] = 12011252;
+			m.NL[155] = 11849977;
+			m.NL[156] = 11689452;
+			m.NL[157] = 11539565;
+			m.NL[158] = 11386333;
+			m.NL[159] = 11233555;
+			m.NL[160] = 11076811;
+			m.NL[161] = 10925692;
+			m.NL[162] = 10783635;
+			m.NL[163] = 10641509;
+			m.NL[164] = 10486323;
+			m.NL[165] = 10346100;
+			m.NL[166] = 10204824;
+			m.NL[167] = 10057861;
+			m.NL[168] = 9921926;
+			m.NL[169] = 9773592;
+			m.NL[170] = 9633923;
+			m.NL[171] = 9501177;
+			m.NL[172] = 9372751;
+			m.NL[173] = 9239376;
+			m.NL[174] = 9108502;
+			m.NL[175] = 8977426;
+			m.NL[176] = 8850163;
+			m.NL[177] = 8731626;
+			m.NL[178] = 8600205;
+			m.NL[179] = 8469901;
+			m.NL[180] = 8354958;
+			m.NL[181] = 8231521;
+			m.NL[182] = 8109897;
+			m.NL[183] = 7980537;
+			m.NL[184] = 7866505;
+			m.NL[185] = 7751710;
+			m.NL[186] = 7633609;
+			m.NL[187] = 7529115;
+			m.NL[188] = 7404183;
+			m.NL[189] = 7297966;
+			m.NL[190] = 7189256;
+			m.NL[191] = 7080320;
+			m.NL[192] = 6974491;
+			m.NL[193] = 6865014;
+			m.NL[194] = 6758330;
+			m.NL[195] = 6653612;
+			m.NL[196] = 6549313;
+			m.NL[197] = 6448230;
+			m.NL[198] = 6341090;
+			m.NL[199] = 6245922;
+			m.NL[200] = 6144754;
+			m.NL[201] = 6047808;
+			m.NL[202] = 5950372;
+			m.NL[203] = 5856896;
+			m.NL[204] = 5763730;
+			m.NL[205] = 5670113;
+			m.NL[206] = 5583587;
+			m.NL[207] = 5487976;
+			m.NL[208] = 5399430;
+			m.NL[209] = 5311892;
+			m.NL[210] = 5223913;
+			m.NL[211] = 5141011;
+			m.NL[212] = 5054055;
+			m.NL[213] = 4965864;
+			m.NL[214] = 4883922;
+			m.NL[215] = 4805252;
+			m.NL[216] = 4720428;
+			m.NL[217] = 4645826;
+			m.NL[218] = 4562340;
+			m.NL[219] = 4483201;
+			m.NL[220] = 4408052;
+			m.NL[221] = 4329692;
+			m.NL[222] = 4255398;
+			m.NL[223] = 4178932;
+			m.NL[224] = 4108751;
+			m.NL[225] = 4034007;
+			m.NL[226] = 3961668;
+			m.NL[227] = 3891961;
+			m.NL[228] = 3823382;
+			m.NL[229] = 3750682;
+			m.NL[230] = 3682246;
+			m.NL[231] = 3619996;
+			m.NL[232] = 3555110;
+			m.NL[233] = 3482747;
+			m.NL[234] = 3423532;
+			m.NL[235] = 3359484;
+			m.NL[236] = 3293612;
+			m.NL[237] = 3231720;
+			m.NL[238] = 3174049;
+			m.NL[239] = 3113984;
+			m.NL[240] = 3051475;
+			m.NL[241] = 2997391;
+			m.NL[242] = 2941919;
+			m.NL[243] = 2883283;
+			m.NL[244] = 2829925;
+			m.NL[245] = 2773571;
+			m.NL[246] = 2722646;
+			m.NL[247] = 2668326;
+			m.NL[248] = 2615504;
+			m.NL[249] = 2565382;
+			m.NL[250] = 2512457;
+			m.NL[251] = 2461276;
+			m.NL[252] = 2411607;
+			m.NL[253] = 2357275;
+			m.NL[254] = 2312711;
+			m.NL[255] = 2265136;
+			m.NL[256] = 2215405;
+			m.NL[257] = 2172406;
+			m.NL[258] = 2126703;
+			m.NL[259] = 2079734;
+			m.NL[260] = 2037120;
+			m.NL[261] = 1996408;
+			m.NL[262] = 1951206;
+			m.NL[263] = 1909330;
+			m.NL[264] = 1870015;
+			m.NL[265] = 1829489;
+			m.NL[266] = 1787365;
+			m.NL[267] = 1749418;
+			m.NL[268] = 1706917;
+			m.NL[269] = 1668210;
+			m.NL[270] = 1634206;
+			m.NL[271] = 1594081;
+			m.NL[272] = 1561266;
+			m.NL[273] = 1524338;
+			m.NL[274] = 1486528;
+			m.NL[275] = 1459049;
+			m.NL[276] = 1426572;
+			m.NL[277] = 1391368;
+			m.NL[278] = 1360892;
+			m.NL[279] = 1328212;
+			m.NL[280] = 1299511;
+			m.NL[281] = 1269161;
+			m.NL[282] = 1237303;
+			m.NL[283] = 1207013;
+			m.NL[284] = 1176729;
+			m.NL[285] = 1146250;
+			m.NL[286] = 1115908;
+			m.NL[287] = 1091822;
+			m.NL[288] = 1061334;
+			m.NL[289] = 1031940;
+			m.NL[290] = 1008240;
+			m.NL[291] = 984076;
+			m.NL[292] = 958478;
+			m.NL[293] = 932601;
+			m.NL[294] = 910169;
+			m.NL[295] = 885270;
+			m.NL[296] = 862238;
+			m.NL[297] = 840305;
+			m.NL[298] = 816332;
+			m.NL[299] = 795097;
+			m.NL[300] = 771329;
+			m.NL[301] = 750466;
+			m.NL[302] = 730919;
+			m.NL[303] = 710066;
+			m.NL[304] = 686190;
+			m.NL[305] = 670611;
+			m.NL[306] = 651176;
+			m.NL[307] = 632699;
+			m.NL[308] = 614830;
+			m.NL[309] = 596672;
+			m.NL[310] = 582422;
+			m.NL[311] = 564097;
+			m.NL[312] = 550924;
+			m.NL[313] = 534325;
+			m.NL[314] = 517564;
+			m.NL[315] = 502065;
+			m.NL[316] = 487280;
+			m.NL[317] = 473291;
+			m.NL[318] = 458215;
+			m.NL[319] = 442091;
+			m.NL[320] = 425589;
+			m.NL[321] = 413527;
+			m.NL[322] = 399363;
+			m.NL[323] = 385721;
+			m.NL[324] = 372955;
+			m.NL[325] = 360682;
+			m.NL[326] = 349944;
+			m.NL[327] = 337237;
+			m.NL[328] = 327431;
+			m.NL[329] = 316290;
+			m.NL[330] = 305728;
+			m.NL[331] = 293821;
+			m.NL[332] = 282571;
+			m.NL[333] = 274358;
+			m.NL[334] = 263242;
+			m.NL[335] = 252795;
+			m.NL[336] = 243813;
+			m.NL[337] = 234264;
+			m.NL[338] = 226171;
+			m.NL[339] = 217573;
+			m.NL[340] = 208468;
+			m.NL[341] = 201875;
+			m.NL[342] = 194596;
+			m.NL[343] = 186633;
+			m.NL[344] = 179917;
+			m.NL[345] = 173142;
+			m.NL[346] = 167686;
+			m.NL[347] = 160652;
+			m.NL[348] = 154675;
+			m.NL[349] = 148613;
+			m.NL[350] = 142142;
+			m.NL[351] = 136632;
+			m.NL[352] = 130219;
+			m.NL[353] = 125425;
+			m.NL[354] = 119123;
+			m.NL[355] = 113675;
+			m.NL[356] = 107743;
+			m.NL[357] = 102563;
+			m.NL[358] = 98131;
+			m.NL[359] = 91965;
+			m.NL[360] = 88649;
+			m.NL[361] = 84326;
+			m.NL[362] = 80712;
+			m.NL[363] = 75947;
+			m.NL[364] = 72654;
+			m.NL[365] = 69178;
+			m.NL[366] = 65585;
+			m.NL[367] = 61641;
+			m.NL[368] = 58630;
+			m.NL[369] = 54629;
+			m.NL[370] = 52365;
+			m.NL[371] = 48769;
+			m.NL[372] = 45718;
+			m.NL[373] = 43112;
+			m.NL[374] = 40754;
+			m.NL[375] = 37906;
+			m.NL[376] = 36021;
+			m.NL[377] = 34287;
+			m.NL[378] = 32013;
+			m.NL[379] = 30205;
+			m.NL[380] = 28424;
+			m.NL[381] = 27158;
+			m.NL[382] = 25391;
+			m.NL[383] = 24482;
+			m.NL[384] = 23041;
+			m.NL[385] = 21616;
+			m.NL[386] = 20305;
+			m.NL[387] = 18771;
+			m.NL[388] = 17431;
+			m.NL[389] = 15980;
+			m.NL[390] = 14676;
+			m.NL[391] = 13241;
+			m.NL[392] = 12105;
+			m.NL[393] = 10701;
+			m.NL[394] = 9523;
+			m.NL[395] = 8717;
+			m.NL[396] = 7739;
+			m.NL[397] = 7120;
+			m.NL[398] = 6561;
+			m.NL[399] = 5908;
+			m.NL[400] = 5498;
+			m.NL[401] = 4816;
+			m.NL[402] = 4306;
+			m.NL[403] = 3623;
+			m.NL[404] = 2841;
+			m.NL[405] = 2232;
+			m.NL[406] = 1760;
+			m.NL[407] = 1305;
+			m.NL[408] = 845;
+			m.NL[409] = 519;
+			m.NL[410] = 187;
+			m.NL[411] = 20;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){11,  161,	1.0,    0.0,    0,     18.010565};
+			//version = 20180501
+		}
 
 	}
 	if(m.id == 2){//CO2
@@ -639,23 +1073,76 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
 	}
-	if(m.id == 9){//SO2
+	if(m.id == 8){//NO
 		m.nFiles = 1;		//number of data files
-		m.NL[0] = 0;
-		m.NLmax = 0;
-		m.nISO = 1;
+		m.NL[0] = 105079;
+		m.NLmax = 105079;
+		m.nISO = 3;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
-		m.ISO[0] = (Isotopologue){91,  626,  1.0,    0.0,    0,     63.961900};
-		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
-		m.npfcol = 0;
+		m.ISO[0] = (Isotopologue){81,  46,   	0.993974,    1142.13,   3,     29.997989};
+		m.ISO[1] = (Isotopologue){82,  56,   	0.003654,    789.26,    2,     30.995023};
+		m.ISO[2] = (Isotopologue){83,  48,   	0.001993,    1204.44,   3,     32.002234};
+
+		sprintf(qFilename[0], "%s%s", param.path, "q39.txt");
+		sprintf(qFilename[1], "%s%s", param.path, "q40.txt");
+		sprintf(qFilename[2], "%s%s", param.path, "q41.txt");
+		m.npfcol = 2;
 
 		m.fileLimit[ 0] = 0;
-		m.fileLimit[ 1] = 0;
-		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
-		if(param.useHITEMP == 0){
-			printf("Error: no Hitran data for this molecule\n");
+		m.fileLimit[ 1] = 9274;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "08_hit16.");
+
+		if(param.useHITEMP == 1){
+			m.nFiles = 1;			//number of data files
+			m.NL[ 0] = 115610;		//number of lines per data file
+			m.NLmax =  115610;              //The naximum of number of lines per file
+
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 9274;
+
+			sprintf(m.dataFilename[0], "%s%s", param.path, "08_HITEMP2010.");
 		}
+		if(param.useHITEMP == 2){
+			char name[] = "14N-16O__NOname";
+			sprintf(m.mName, "%s", "14N-16O__NOname");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 21688;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 2280366;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 40000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){81,  46,  1.0,    0.0,    0,      29.997988};
+			//version = 20170517
+		}
+	}
+	if(m.id == 9){//SO2
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 95121;
+		m.NLmax = 95121;
+		m.nISO = 2;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){91,  626,  0.945678,    6340.30,    1,     63.961901};
+		m.ISO[1] = (Isotopologue){92,  646,  0.041950,    6368.98,    1,     65.957695};
+		sprintf(qFilename[0], "%s%s", param.path, "q42.txt");
+		sprintf(qFilename[1], "%s%s", param.path, "q43.txt");
+		m.npfcol = 2;
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 4093;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "09_hit16.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -932,6 +1419,41 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		}
 
 	}
+	if(m.id == 13){//OH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 33058;
+		m.NLmax = 33058;
+		m.nISO = 3;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){131,  61,  0.997473,    80.35,    2,     17.00274};
+		m.ISO[1] = (Isotopologue){132,  81,  0.002000,    80.88,    2,     19.006986};
+		m.ISO[2] = (Isotopologue){133,  62,  1.553710E-4, 209.32,   3,     18.008915};
+
+		sprintf(qFilename[0], "%s%s", param.path, "q48.txt");
+		sprintf(qFilename[1], "%s%s", param.path, "q49.txt");
+		sprintf(qFilename[2], "%s%s", param.path, "q50.txt");
+		m.npfcol = 2;
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 35875;
+
+		sprintf(m.dataFilename[0], "%s%s", param.path, "13_hit16.");
+
+		if(param.useHITEMP == 1){
+			m.nFiles = 1;			//number of data files
+			m.NL[ 0] = 41557;		//number of lines per data file
+			m.NLmax =  41557;              //The naximum of number of lines per file
+
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 19268;
+
+			sprintf(m.dataFilename[0], "%s%s", param.path, "13_HITEMP2010.");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+	}
 	if(m.id == 23){//HCN
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 4253;
@@ -1023,28 +1545,149 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			printf("Error: no HITEMP data for this molecule\n");
 		}
 		if(param.useHITEMP == 2){
-			printf("Error: no EXOMOL data for this molecule\n");
+			char name[] = "31P-1H3__SAlTY";
+			sprintf(m.mName, "%s", "31P-1H3__SAlTY");
+			m.defaultL = 0.0750 ;
+			m.defaultn = 0.530 ;
+			m.nStates = 9787832;
+			m.nFiles = 100 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 18996939;
+			m.NL[1] = 18543301;
+			m.NL[2] = 17331258;
+			m.NL[3] = 15855561;
+			m.NL[4] = 15178350;
+			m.NL[5] = 15189419;
+			m.NL[6] = 16618207;
+			m.NL[7] = 19049749;
+			m.NL[8] = 22612913;
+			m.NL[9] = 26696382;
+			m.NL[10] = 29957530;
+			m.NL[11] = 31762865;
+			m.NL[12] = 31076117;
+			m.NL[13] = 29411843;
+			m.NL[14] = 27259513;
+			m.NL[15] = 26294909;
+			m.NL[16] = 26477699;
+			m.NL[17] = 28542757;
+			m.NL[18] = 32350239;
+			m.NL[19] = 37466098;
+			m.NL[20] = 43403119;
+			m.NL[21] = 47914839;
+			m.NL[22] = 50475617;
+			m.NL[23] = 49698193;
+			m.NL[24] = 47448367;
+			m.NL[25] = 44610078;
+			m.NL[26] = 43271540;
+			m.NL[27] = 43891634;
+			m.NL[28] = 47015336;
+			m.NL[29] = 52690941;
+			m.NL[30] = 59803089;
+			m.NL[31] = 67755745;
+			m.NL[32] = 73764049;
+			m.NL[33] = 77010826;
+			m.NL[34] = 76063255;
+			m.NL[35] = 73022174;
+			m.NL[36] = 69610036;
+			m.NL[37] = 68179081;
+			m.NL[38] = 69753487;
+			m.NL[39] = 74480890;
+			m.NL[40] = 82458905;
+			m.NL[41] = 92039102;
+			m.NL[42] = 102271933;
+			m.NL[43] = 109837013;
+			m.NL[44] = 113535295;
+			m.NL[45] = 112347913;
+			m.NL[46] = 108512167;
+			m.NL[47] = 104885818;
+			m.NL[48] = 103740267;
+			m.NL[49] = 106780337;
+			m.NL[50] = 113721492;
+			m.NL[51] = 124518419;
+			m.NL[52] = 136994069;
+			m.NL[53] = 149579396;
+			m.NL[54] = 158709160;
+			m.NL[55] = 162448161;
+			m.NL[56] = 161000720;
+			m.NL[57] = 156346617;
+			m.NL[58] = 152896864;
+			m.NL[59] = 152520061;
+			m.NL[60] = 157494207;
+			m.NL[61] = 167162708;
+			m.NL[62] = 181208067;
+			m.NL[63] = 196998289;
+			m.NL[64] = 211718242;
+			m.NL[65] = 222271512;
+			m.NL[66] = 225683107;
+			m.NL[67] = 223816943;
+			m.NL[68] = 218488235;
+			m.NL[69] = 215198980;
+			m.NL[70] = 215981874;
+			m.NL[71] = 223437189;
+			m.NL[72] = 236772204;
+			m.NL[73] = 254689972;
+			m.NL[74] = 274264076;
+			m.NL[75] = 291435430;
+			m.NL[76] = 303245945;
+			m.NL[77] = 306404436;
+			m.NL[78] = 303349306;
+			m.NL[79] = 297385325;
+			m.NL[80] = 294169715;
+			m.NL[81] = 297058048;
+			m.NL[82] = 307750262;
+			m.NL[83] = 325806201;
+			m.NL[84] = 348611531;
+			m.NL[85] = 373049061;
+			m.NL[86] = 393807899;
+			m.NL[87] = 406712172;
+			m.NL[88] = 409482824;
+			m.NL[89] = 404253838;
+			m.NL[90] = 397079438;
+			m.NL[91] = 393091618;
+			m.NL[92] = 397441390;
+			m.NL[93] = 410615106;
+			m.NL[94] = 432522811;
+			m.NL[95] = 459569517;
+			m.NL[96] = 487363916;
+			m.NL[97] = 509550607;
+			m.NL[98] = 519490420;
+			m.NL[99] = 520409264;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){281,  1111,  1.0,    0.0,    0,      33.997237};
+			//version = 20170131
+
 		}
 	}
 	if(m.id == 31){//H2S
 		m.nFiles = 1;		//number of data files
-		m.NL[0] = 54235;
-		m.NLmax = 54235;
+		m.NL[0] = 54228;
+		m.NLmax = 54228;
 		m.nISO = 3;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
-		m.ISO[0] = (Isotopologue){311,  121,  .949884E+00,    5.0307E+02,    1,     33.987721};
-		m.ISO[1] = (Isotopologue){312,  141,  4.21369E-02,    5.0435E+02,    1,     35.983515};
-		m.ISO[2] = (Isotopologue){313,  131,  7.49766E-03,    2.0149E+03,    4,     34.987105};
+		m.ISO[0] = (Isotopologue){311,  121,  .949884E+00,    505.79,    1,     33.987721};
+		m.ISO[1] = (Isotopologue){312,  141,  4.21369E-02,    504.35,    1,     35.983515};
+		m.ISO[2] = (Isotopologue){313,  131,  7.49766E-03,    2014.94,    4,     34.987105};
 
-		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
-		sprintf(qFilename[1], "%s%s", param.path, "q.dat");
-		sprintf(qFilename[2], "%s%s", param.path, "q.dat");
-		m.npfcol = 0;
+		sprintf(qFilename[0], "%s%s", param.path, "q81.txt");
+		sprintf(qFilename[1], "%s%s", param.path, "q82.txt");
+		sprintf(qFilename[2], "%s%s", param.path, "q83.txt");
+		m.npfcol = 2;
 
 		m.fileLimit[ 0] = 0;
 		m.fileLimit[ 1] = 11330;
-		sprintf(m.dataFilename[0], "%s%s", param.path, "31_hit12.");
+		sprintf(m.dataFilename[0], "%s%s", param.path, "31_hit16.");
 
 		if(param.useHITEMP == 1){
 			printf("Error: no HITEMP data for this molecule\n");
@@ -1108,6 +1751,28 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, m.mName, m.fileLimit[i], m.fileLimit[i + 1]);
 			}
 			sprintf(qFilename[0], "%s%s%s", param.path, m.mName, ".pf");
+		}
+	}
+	if(m.id == 47){//SO3
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 14295;
+		m.NLmax = 14295;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){471,  26,  0.943400,    7783.30,    1,     79.95682};
+
+		sprintf(qFilename[0], "%s%s", param.path, "q114.txt");
+		m.npfcol = 2;
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 2825;
+		sprintf(m.dataFilename[0], "%s%s", param.path, "47_hit16.");
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
 		}
 	}
 	if(m.id == 80){//VO
@@ -1377,6 +2042,4858 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO[0] = (Isotopologue){811,  4816,  1.0,    0.0,    0,     63.942862};
 		}
 	}
+	if(m.id == 82){//FeH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){821,  561,  1.0,    0.0,    0,     56.942762};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "56Fe-1H__Yueqi"; 
+			sprintf(m.mName, "%s", "56Fe-1H__Yueqi");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 3563;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 93040;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 7476;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){821,  561,  1.0,    0.0,    0,      56.942762};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "KuruczFeHfx"; 
+			sprintf(m.mName, "%s", "KuruczFeHfx");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nFiles = 1 ;
+			m.npfcol = 2;
+			m.NL[0] = 111404;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 16139;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){821,  561,  1.0,    0.0,    0,      56.942762};
+			//version = 20160726
+		}
+	}
+	if(m.id == 83){//AlO
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){831,  2716,  1.0,    0.0,    0,      42.976454};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "27Al-16O__ATP";
+			sprintf(m.mName, "%s", "27Al-16O__ATP");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 94209;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 4945580;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 35000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){831,  2716,  1.0,    0.0,    0,      42.976454};
+			//version = 20160726
+		}
+	}
+	if(m.id == 84){//SiO
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){841,  2816,  1.0,    0.0,    0,      43.971842};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "28Si-16O__EBJT";
+			sprintf(m.mName, "%s", "28Si-16O__EBJT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 24306;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 254675;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 6050;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){841,  2816,  1.0,    0.0,    0,      43.971842};
+			//version = 20160726
+		}
+	}
+	if(m.id == 85){//CaO
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){851,  4016,  1.0,    0.0,    0,      55.957506};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "40Ca-16O__VBATHY";
+			sprintf(m.mName, "%s", "40Ca-16O__VBATHY");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 130660;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 28417920;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 25000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){851,  4016,  1.0,    0.0,    0,      55.957506};
+			//version = 20160726
+		}
+	}
+	if(m.id == 86){//SiH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){861,  281,  1.0,    0.0,    0,      28.98475156};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "28Si-1H__SiGHTLY";
+			sprintf(m.mName, "%s", "28Si-1H__SiGHTLY");
+			m.defaultL = 0.0700;
+			m.defaultn = 0.500;
+			m.nStates = 11785;
+			m.nFiles = 1;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 1724841;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 32000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){861,  281,  1.0,    0.0,    0,      28.98475156};
+			//version = 20171101
+
+		}
+	}
+	if(m.id == 87){//CaH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){871,  401,  1.0,    0.0,    0,      40.970416};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "40Ca-1H__Yadin";
+			sprintf(m.mName, "%s", "40Ca-1H__Yadin");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 1892;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 26980;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 15278;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){871,  401,  1.0,    0.0,    0,      40.970416};
+			//version = 20160726
+		}
+	}
+	if(m.id == 88){//H3+
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){881,  111,  1.0,    0.0,    0,      3.023475};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "1H3_p__MiZATeP";
+			sprintf(m.mName, "%s", "1H3_p__MiZATeP");
+			m.defaultL = 0.07 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 158721;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 3;
+			m.NL[0] = 127542657;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 25000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){881,  11,  1.0,    0.0,    0,      3.023475};
+			//version = 20170330
+		}
+	}
+       	if(m.id == 300){//Li 7
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     7.016};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0300";
+			sprintf(m.mName, "%s", "gfnew0300");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2863;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 42720;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     7.016};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 400){//Be 9
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.0122};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0400";
+			sprintf(m.mName, "%s", "gfnew0400");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 3832;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 106385;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.0122};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 401){//Be+ 9
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.0122};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0401";
+			sprintf(m.mName, "%s", "gfnew0401");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 897;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 142450;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.0122};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 500){//B 11
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){500,  11,  1.0,    0.0,    0,     10.811};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0500";
+			sprintf(m.mName, "%s", "gfnew0500");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2753;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100682;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){500,  11,  1.0,    0.0,    0,     10.811};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 501){//B+ 11
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){501,  11,  1.0,    0.0,    0,     10.811};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0501";
+			sprintf(m.mName, "%s", "gfnew0501");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5155;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 246859;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){501,  11,  1.0,    0.0,    0,     10.811};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 502){//B+2 11
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){502,  11,  1.0,    0.0,    0,     10.811};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0502";
+			sprintf(m.mName, "%s", "gfnew0502");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 859;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 297766;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){502,  11,  1.0,    0.0,    0,     10.811};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 601){//C+ 12
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0601";
+			sprintf(m.mName, "%s", "gfnew0601");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 13887;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 236750;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 602){//C+2 12
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0602";
+			sprintf(m.mName, "%s", "gfnew0602");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 8673;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 423110;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 700){//N 14
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0031};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0700";
+			sprintf(m.mName, "%s", "gfnew0700");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 14522;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 163400;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0031};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 701){//N+ 14
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0031};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0701";
+			sprintf(m.mName, "%s", "gfnew0701");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4142;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 277952;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0031};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 702){//N+2 14
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0031};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0702";
+			sprintf(m.mName, "%s", "gfnew0702");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 12772;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 479735;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0031};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 800){//O 16
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9949};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0800";
+			sprintf(m.mName, "%s", "gfnew0800");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 13496;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 150032;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9949};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 801){//O+ 16
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9949};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0801";
+			sprintf(m.mName, "%s", "gfnew0801");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9617;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 287048;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9949};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 802){//O+2 16
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9949};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0802";
+			sprintf(m.mName, "%s", "gfnew0802");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 8678;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 474689;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9949};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 900){//F 19
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){900,  19,  1.0,    0.0,    0,     18.9984};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0900";
+			sprintf(m.mName, "%s", "gfnew0900");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5463;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 171001;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){900,  19,  1.0,    0.0,    0,     18.9984};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 901){//F+ 19
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){901,  19,  1.0,    0.0,    0,     18.9984};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0901";
+			sprintf(m.mName, "%s", "gfnew0901");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9367;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 290143;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){901,  19,  1.0,    0.0,    0,     18.9984};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 902){//F+2 19
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){902,  19,  1.0,    0.0,    0,     18.9984};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew0902";
+			sprintf(m.mName, "%s", "gfnew0902");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9852;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 491593;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){902,  19,  1.0,    0.0,    0,     18.9984};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1000){//Ne 20
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     19.9924};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1000";
+			sprintf(m.mName, "%s", "gfnew1000");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 15362;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 390091;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     19.9924};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1001){//Ne+ 20
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     19.9924};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1001";
+			sprintf(m.mName, "%s", "gfnew1001");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 18467;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 349275;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     19.9924};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1002){//Ne+2 20
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     19.9924};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1002";
+			sprintf(m.mName, "%s", "gfnew1002");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9476;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 534501;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     19.9924};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1100){//Na 23
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1100,  23,  1.0,    0.0,    0,     22.9898};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1100";
+			sprintf(m.mName, "%s", "gfnew1100");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 8677;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 312357;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1100,  23,  1.0,    0.0,    0,     22.9898};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1101){//Na+ 23
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1101,  23,  1.0,    0.0,    0,     22.9898};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1101";
+			sprintf(m.mName, "%s", "gfnew1101");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4337;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 637401;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1101,  23,  1.0,    0.0,    0,     22.9898};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1102){//Na+2 23
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1102,  23,  1.0,    0.0,    0,     22.9898};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1102";
+			sprintf(m.mName, "%s", "gfnew1102");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1990;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 552417;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1102,  23,  1.0,    0.0,    0,     22.9898};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1200){//Mg 24
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     23.985};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1200";
+			sprintf(m.mName, "%s", "gfnew1200");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 11319;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 96437;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     23.985};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1201){//Mg+ 24
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     23.985};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1201";
+			sprintf(m.mName, "%s", "gfnew1201");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2832;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 505781;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     23.985};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1202){//Mg+2 24
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     23.985};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1202";
+			sprintf(m.mName, "%s", "gfnew1202");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1643;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 940701;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     23.985};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1300){//Al 27
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1300,  27,  1.0,    0.0,    0,     26.9815};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1300";
+			sprintf(m.mName, "%s", "gfnew1300");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4296;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 84080;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1300,  27,  1.0,    0.0,    0,     26.9815};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1301){//Al+ 27
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1301,  27,  1.0,    0.0,    0,     26.9815};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1301";
+			sprintf(m.mName, "%s", "gfnew1301");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5799;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 199001;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1301,  27,  1.0,    0.0,    0,     26.9815};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1302){//Al+2 27
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1302,  27,  1.0,    0.0,    0,     26.9815};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1302";
+			sprintf(m.mName, "%s", "gfnew1302");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2839;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 727501;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1302,  27,  1.0,    0.0,    0,     26.9815};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+        if(m.id == 1400){//Si 28
+                m.nFiles = 1;           //number of data files
+                m.NL[0] = 0;
+                m.NLmax = 0;
+                m.nISO = 1;
+                m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+                //                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+                m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     27.9769};
+                sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+                m.npfcol = 0;
+                m.fileLimit[ 0] = 0;
+                m.fileLimit[ 1] = 0;
+                sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+                if(param.useHITEMP == 0){
+                        printf("Error: no Hitran data for this molecule\n");
+                }
+                if(param.useHITEMP == 1){
+                        printf("Error: no HITEMP data for this molecule\n");
+                }
+                if(param.useHITEMP == 2){
+                        printf("Error: no EXOMOL data for this molecule\n");
+                }
+                if(param.useHITEMP == 3){
+                        char name[] = "gfnew1400";
+                        sprintf(m.mName, "%s", "gfnew1400");
+                        m.defaultL = 0.0;
+                        m.defaultn = 0.0;
+                        m.nFiles = 1;
+                        m.npfcol = 2;
+                        m.NL[0] = 10635;
+                        m.NLmax = 0;
+                        for(int i = 0; i < m.nFiles + 1; ++i){
+                                m.fileLimit[i] = i * 100431;
+                                m.NLmax = max(m.NLmax, m.NL[i]);
+                        }
+                        sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+                                sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+                        m.nISO = 1;
+                        m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+                        m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     27.9769};
+                        //version =  gfallwn08oct17.dat
+                }
+        }
+	if(m.id == 1401){//Si+ 28
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     27.9769};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1401";
+			sprintf(m.mName, "%s", "gfnew1401");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 3056;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 157484;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     27.9769};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1402){//Si+2 28
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     27.9769};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1402";
+			sprintf(m.mName, "%s", "gfnew1402");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2974;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 244934;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     27.9769};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1500){//P 31
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9737};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1500";
+			sprintf(m.mName, "%s", "gfnew1500");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 12291;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 128339;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9737};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1501){//P+ 31
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9737};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1501";
+			sprintf(m.mName, "%s", "gfnew1501");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2969;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 150889;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9737};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1502){//P+2 31
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9737};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1502";
+			sprintf(m.mName, "%s", "gfnew1502");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2225;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 254723;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9737};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1600){//S 32
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     31.9721};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1600";
+			sprintf(m.mName, "%s", "gfnew1600");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 24734;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 107646;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     31.9721};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1601){//S+ 32
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     31.9721};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1601";
+			sprintf(m.mName, "%s", "gfnew1601");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 7297;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 184643;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     31.9721};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1602){//S+2 32
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     31.9721};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1602";
+			sprintf(m.mName, "%s", "gfnew1602");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 445;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 238196;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     31.9721};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1700){//Cl 35
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     34.9689};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1700";
+			sprintf(m.mName, "%s", "gfnew1700");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 17530;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 131792;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     34.9689};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1701){//Cl+ 35
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     34.9689};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1701";
+			sprintf(m.mName, "%s", "gfnew1701");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9593;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 188248;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     34.9689};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1702){//Cl+2 35
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     34.9689};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1702";
+			sprintf(m.mName, "%s", "gfnew1702");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 968;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 258891;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     34.9689};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1800){//Ar 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.9624};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1800";
+			sprintf(m.mName, "%s", "gfnew1800");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 16650;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 234976;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.9624};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1801){//Ar+ 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.9624};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1801";
+			sprintf(m.mName, "%s", "gfnew1801");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 17190;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 219247;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.9624};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1802){//Ar+2 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.9624};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1802";
+			sprintf(m.mName, "%s", "gfnew1802");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1923;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 286010;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.9624};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1900){//K 39
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     38.9637};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1900";
+			sprintf(m.mName, "%s", "gfnew1900");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 3123;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 179888;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     38.9637};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1901){//K+ 39
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     38.9637};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1901";
+			sprintf(m.mName, "%s", "gfnew1901");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1125;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 364601;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     38.9637};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 1902){//K+2 39
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     38.9637};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew1902";
+			sprintf(m.mName, "%s", "gfnew1902");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 213;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 250859;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     38.9637};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2000){//Ca 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     39.9626};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2000";
+			sprintf(m.mName, "%s", "gfnew2000");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 25410;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 72290;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     39.9626};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2001){//Ca+ 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     39.9626};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2001";
+			sprintf(m.mName, "%s", "gfnew2001");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 3467;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 319401;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     39.9626};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2002){//Ca+2 40
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     39.9626};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2002";
+			sprintf(m.mName, "%s", "gfnew2002");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2973;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 492851;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     39.9626};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2100){//Sc 45
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2100,  45,  1.0,    0.0,    0,     44.9559};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2100";
+			sprintf(m.mName, "%s", "gfnew2100");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 16252;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 63730;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2100,  45,  1.0,    0.0,    0,     44.9559};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2101){//Sc+ 45
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2101,  45,  1.0,    0.0,    0,     44.9559};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2101";
+			sprintf(m.mName, "%s", "gfnew2101");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5402;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 91166;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2101,  45,  1.0,    0.0,    0,     44.9559};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2102){//Sc+2 45
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2102,  45,  1.0,    0.0,    0,     44.9559};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2102";
+			sprintf(m.mName, "%s", "gfnew2102");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1313;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 194595;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2102,  45,  1.0,    0.0,    0,     44.9559};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2200){//Ti 48
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.9479};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2200";
+			sprintf(m.mName, "%s", "gfnew2200");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 36050;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 49359;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.9479};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2201){//Ti+ 48
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.9479};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2201";
+			sprintf(m.mName, "%s", "gfnew2201");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9318;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 82371;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.9479};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2202){//Ti+2 48
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.9479};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2202";
+			sprintf(m.mName, "%s", "gfnew2202");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4179;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 201982;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.9479};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2300){//V 51
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.944};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2300";
+			sprintf(m.mName, "%s", "gfnew2300");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 211129;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 52637;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.944};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2301){//V+ 51
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.944};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2301";
+			sprintf(m.mName, "%s", "gfnew2301");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 21482;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 93274;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.944};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2302){//V+2 51
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.944};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2302";
+			sprintf(m.mName, "%s", "gfnew2302");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 10318;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 191598;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.944};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2400){//Cr 52
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9405};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2400";
+			sprintf(m.mName, "%s", "gfnew2400");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 38788;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 66094;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9405};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2401){//Cr+ 52
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9405};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2401";
+			sprintf(m.mName, "%s", "gfnew2401");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 95312;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 121333;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9405};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2402){//Cr+2 52
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9405};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2402";
+			sprintf(m.mName, "%s", "gfnew2402");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 16013;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 179978;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9405};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2500){//Mn 55
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2500,  55,  1.0,    0.0,    0,     54.938};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2500";
+			sprintf(m.mName, "%s", "gfnew2500");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 42891;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 68339;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2500,  55,  1.0,    0.0,    0,     54.938};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2501){//Mn+ 55
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2501,  55,  1.0,    0.0,    0,     54.938};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2501";
+			sprintf(m.mName, "%s", "gfnew2501");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 61276;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 117399;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2501,  55,  1.0,    0.0,    0,     54.938};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2502){//Mn+2 55
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2502,  55,  1.0,    0.0,    0,     54.938};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2502";
+			sprintf(m.mName, "%s", "gfnew2502");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 18145;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 232265;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2502,  55,  1.0,    0.0,    0,     54.938};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2600){//Fe 56
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.9349};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2600";
+			sprintf(m.mName, "%s", "gfnew2600");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 127897;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 65591;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.9349};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2601){//Fe+ 56
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.9349};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2601";
+			sprintf(m.mName, "%s", "gfnew2601");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 127757;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 132155;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.9349};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2602){//Fe+2 56
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.9349};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2602";
+			sprintf(m.mName, "%s", "gfnew2602");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 37795;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 219781;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.9349};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2700){//Co 59
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2700,  59,  1.0,    0.0,    0,     58.9332};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2700";
+			sprintf(m.mName, "%s", "gfnew2700");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 249130;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 59948;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2700,  59,  1.0,    0.0,    0,     58.9332};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2701){//Co+ 59
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2701,  59,  1.0,    0.0,    0,     58.9332};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2701";
+			sprintf(m.mName, "%s", "gfnew2701");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 24515;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 112008;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2701,  59,  1.0,    0.0,    0,     58.9332};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2702){//Co+2 59
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2702,  59,  1.0,    0.0,    0,     58.9332};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2702";
+			sprintf(m.mName, "%s", "gfnew2702");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9706;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 195704;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2702,  59,  1.0,    0.0,    0,     58.9332};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2800){//Ni 58
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2800,  58,  1.0,    0.0,    0,     57.9353};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2800";
+			sprintf(m.mName, "%s", "gfnew2800");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 16804;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 58897;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2800,  58,  1.0,    0.0,    0,     57.9353};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+        if(m.id == 2801){//Ni+ 58
+                m.nFiles = 1;           //number of data files
+                m.NL[0] = 0;
+                m.NLmax = 0;
+                m.nISO = 1;
+                m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+                //                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+                m.ISO[0] = (Isotopologue){2801,  58,  1.0,    0.0,    0,     57.9353};
+                sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+                m.npfcol = 0;
+                m.fileLimit[ 0] = 0;
+                m.fileLimit[ 1] = 0;
+                sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+                if(param.useHITEMP == 0){
+                        printf("Error: no Hitran data for this molecule\n");
+                }
+                if(param.useHITEMP == 1){
+                        printf("Error: no HITEMP data for this molecule\n");
+                }
+                if(param.useHITEMP == 2){
+                        printf("Error: no EXOMOL data for this molecule\n");
+                }
+                if(param.useHITEMP == 3){
+                        char name[] = "gfnew2801";
+                        sprintf(m.mName, "%s", "gfnew2801");
+                        m.defaultL = 0.0;
+                        m.defaultn = 0.0;
+                        m.nFiles = 1;
+                        m.npfcol = 2;
+                        m.NL[0] = 56546;
+                        m.NLmax = 0;
+                        for(int i = 0; i < m.nFiles + 1; ++i){
+                                m.fileLimit[i] = i * 138842;
+                                m.NLmax = max(m.NLmax, m.NL[i]);
+                        }
+                        sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+                                sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+                        m.nISO = 1;
+                        m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+                        m.ISO[0] = (Isotopologue){2801,  58,  1.0,    0.0,    0,     57.9353};
+                        //version =  gfallwn08oct17.dat
+                }
+        }
+	if(m.id == 2802){//Ni+2 58
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2802,  58,  1.0,    0.0,    0,     57.9353};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2802";
+			sprintf(m.mName, "%s", "gfnew2802");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 21415;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 229781;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2802,  58,  1.0,    0.0,    0,     57.9353};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2900){//Cu 63
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2900,  63,  1.0,    0.0,    0,     62.9296};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2900";
+			sprintf(m.mName, "%s", "gfnew2900");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 18087;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 88019;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2900,  63,  1.0,    0.0,    0,     62.9296};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2901){//Cu+ 63
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2901,  63,  1.0,    0.0,    0,     62.9296};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2901";
+			sprintf(m.mName, "%s", "gfnew2901");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 15077;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 153458;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2901,  63,  1.0,    0.0,    0,     62.9296};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2902){//Cu+2 63
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2902,  63,  1.0,    0.0,    0,     62.9296};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew2902";
+			sprintf(m.mName, "%s", "gfnew2902");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 17590;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 261763;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2902,  63,  1.0,    0.0,    0,     62.9296};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3000){//Zn 64
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3000,  64,  1.0,    0.0,    0,     63.9291};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3000";
+			sprintf(m.mName, "%s", "gfnew3000");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 6282;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 166419;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3000,  64,  1.0,    0.0,    0,     63.9291};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3001){//Zn+ 64
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3001,  64,  1.0,    0.0,    0,     63.9291};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3001";
+			sprintf(m.mName, "%s", "gfnew3001");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 968;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 143243;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3001,  64,  1.0,    0.0,    0,     63.9291};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3002){//Zn+2 64
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3002,  64,  1.0,    0.0,    0,     63.9291};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3002";
+			sprintf(m.mName, "%s", "gfnew3002");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 12681;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 300009;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3002,  64,  1.0,    0.0,    0,     63.9291};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3800){//Sr 88
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.9056};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3800";
+			sprintf(m.mName, "%s", "gfnew3800");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 22776;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 61872;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.9056};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3801){//Sr+ 88
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.9056};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3801";
+			sprintf(m.mName, "%s", "gfnew3801");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 674;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 75312;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.9056};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3900){//Y 89
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9058};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3900";
+			sprintf(m.mName, "%s", "gfnew3900");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5654;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 49043;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9058};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 3901){//Y+ 89
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9058};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew3901";
+			sprintf(m.mName, "%s", "gfnew3901");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 7588;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 90213;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9058};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4000){//Zr 90
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4000,  90,  1.0,    0.0,    0,     89.9043};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4000";
+			sprintf(m.mName, "%s", "gfnew4000");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 6200;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 51900;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4000,  90,  1.0,    0.0,    0,     89.9043};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4001){//Zr+ 90
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4001,  90,  1.0,    0.0,    0,     89.9043};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4001";
+			sprintf(m.mName, "%s", "gfnew4001");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1834;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 61862;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4001,  90,  1.0,    0.0,    0,     89.9043};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4002){//Zr+2 90
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4002,  90,  1.0,    0.0,    0,     89.9043};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4002";
+			sprintf(m.mName, "%s", "gfnew4002");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2360;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 158488;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4002,  90,  1.0,    0.0,    0,     89.9043};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4100){//Nb 83
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4100,  83,  1.0,    0.0,    0,     82.9064};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4100";
+			sprintf(m.mName, "%s", "gfnew4100");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 117714;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 51094;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4100,  83,  1.0,    0.0,    0,     82.9064};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4101){//Nb+ 83
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4101,  83,  1.0,    0.0,    0,     82.9064};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4101";
+			sprintf(m.mName, "%s", "gfnew4101");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 28653;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 78371;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4101,  83,  1.0,    0.0,    0,     82.9064};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4102){//Nb+2 83
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4102,  83,  1.0,    0.0,    0,     82.9064};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4102";
+			sprintf(m.mName, "%s", "gfnew4102");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4009;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 128012;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4102,  83,  1.0,    0.0,    0,     82.9064};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4200){//Mo 98
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4200,  98,  1.0,    0.0,    0,     97.9054};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4200";
+			sprintf(m.mName, "%s", "gfnew4200");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 13862;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 59237;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4200,  98,  1.0,    0.0,    0,     97.9054};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4201){//Mo+ 98
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4201,  98,  1.0,    0.0,    0,     97.9054};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4201";
+			sprintf(m.mName, "%s", "gfnew4201");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 13272;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 87034;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4201,  98,  1.0,    0.0,    0,     97.9054};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4202){//Mo+2 98
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4202,  98,  1.0,    0.0,    0,     97.9054};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4202";
+			sprintf(m.mName, "%s", "gfnew4202");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 12387;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 163672;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4202,  98,  1.0,    0.0,    0,     97.9054};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4300){//Tc 98
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4300,  98,  1.0,    0.0,    0,     97.9072};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4300";
+			sprintf(m.mName, "%s", "gfnew4300");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 8815;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 52376;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4300,  98,  1.0,    0.0,    0,     97.9072};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4301){//Tc+ 98
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4301,  98,  1.0,    0.0,    0,     97.9072};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4301";
+			sprintf(m.mName, "%s", "gfnew4301");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 119;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 61420;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4301,  98,  1.0,    0.0,    0,     97.9072};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4400){//Ru 104
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4400,  104,  1.0,    0.0,    0,     103.905};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4400";
+			sprintf(m.mName, "%s", "gfnew4400");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 8383;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 53718;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4400,  104,  1.0,    0.0,    0,     103.905};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4401){//Ru+ 104
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4401,  104,  1.0,    0.0,    0,     103.905};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4401";
+			sprintf(m.mName, "%s", "gfnew4401");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 5340;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 90166;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4401,  104,  1.0,    0.0,    0,     103.905};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4402){//Ru+2 104
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4402,  104,  1.0,    0.0,    0,     103.905};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4402";
+			sprintf(m.mName, "%s", "gfnew4402");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 70;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 83998;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4402,  104,  1.0,    0.0,    0,     103.905};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4500){//Rh 103
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4500,  103,  1.0,    0.0,    0,     102.906};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4500";
+			sprintf(m.mName, "%s", "gfnew4500");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2332;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 52066;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4500,  103,  1.0,    0.0,    0,     102.906};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4501){//Rh+ 103
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4501,  103,  1.0,    0.0,    0,     102.906};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4501";
+			sprintf(m.mName, "%s", "gfnew4501");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1527;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 87395;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4501,  103,  1.0,    0.0,    0,     102.906};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4502){//Rh+2 103
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4502,  103,  1.0,    0.0,    0,     102.906};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4502";
+			sprintf(m.mName, "%s", "gfnew4502");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 3969;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 135855;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4502,  103,  1.0,    0.0,    0,     102.906};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4600){//Pd 106
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     105.904};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4600";
+			sprintf(m.mName, "%s", "gfnew4600");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 2996;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 63849;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     105.904};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 4601){//Pd+ 106
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     105.904};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew4601";
+			sprintf(m.mName, "%s", "gfnew4601");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 4558;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 128423;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     105.904};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 5600){//Ba 138
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){5600,  138,  1.0,    0.0,    0,     137.905};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew5600";
+			sprintf(m.mName, "%s", "gfnew5600");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 9218;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 41184;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){5600,  138,  1.0,    0.0,    0,     137.905};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 5601){//Ba+ 138
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){5601,  138,  1.0,    0.0,    0,     137.905};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "gfnew5601";
+			sprintf(m.mName, "%s", "gfnew5601");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 1956;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 75946;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){5601,  138,  1.0,    0.0,    0,     137.905};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+
 }
 
 

@@ -107,7 +107,7 @@ int readFile(Molecule &m, int fi){
 		fwrite(&gammaAir, sizeof(double), 1, OutFile);
 		fwrite(&gammaSelf, sizeof(double), 1, OutFile);
 		fwrite(&n, sizeof(double), 1, OutFile);
-//if(i < 1000) printf("%d %.20g %.20g %.20g %.20g %g\n", id, nu, S, EL, A, mass);
+/*if(i < 10 || i > m.NL[fi] - 10)*/ printf("%d %.20g %.20g %.20g %.20g %g\n", id, nu, S, EL, A, mass);
 	}
 	fclose(dataFile);
 	fclose(OutFile);

@@ -5,6 +5,7 @@ headers = define.h ISO.h resample.h host.h voigt.h
 all: heliosk prepare prepareExomol
 heliosk: $(source) $(headers)
 	nvcc $(ARCH) -o heliosk $(source)
+#	nvcc -ccbin=g++-6 $(ARCH) -o heliosk $(source)
 #	nvcc --ptxas-options=-v $(ARCH) -o heliosk $(source)
 #	nvcc --compiler-options -Wall $(ARCH) -o heliosk $(source)
 

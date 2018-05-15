@@ -131,6 +131,7 @@ __host__ int readPartition(Param &param, int nMolecule, char (*qFilename)[160], 
 			}
 		}
 		fclose(qFile);
+//printf("Q %d %g\n", i, q);
 		part.Q[i] = q;
 	}
 	return 1;
@@ -528,10 +529,13 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 
 		double Q = 0.0;
 		for(int j = 0; j < m.nISO; ++j){
+//if(i < 10) printf("%d %d\n", id, m.ISO[j].id);
 			if(id == m.ISO[j].id){
 				mass = m.ISO[j].m / def_NA;
 				idAFGL = m.ISO[j].AFGL;
-				if(m.npfcol != 0) Q = part.Q[j];
+				if(m.npfcol != 0){
+					Q = part.Q[j];
+				}
 			}
 		}
 
@@ -557,7 +561,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		L.S_h[i] = S;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith, 1.0/nu is missing here and inserted later
                 L.ID_h[i] = i % maxlines;
-///*if(i < 1000) */printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
+//if(i < 10) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
 	}
 
@@ -586,16 +590,21 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 	double c = def_h * def_c / (def_kB * param.T);
 	double A, EL;
 	double S;
+	double GammaN = 0.0; 	//natural broadening parameter
 	for(int i = 0; i < m.NL[fi]; ++i){
 	
 		fread(&L.nu_h[i], sizeof(double), 1, dataFile);		
 		fread(&S, sizeof(double), 1, dataFile);		
 		fread(&EL, sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
-
+		//include the following for Kurucz
+		//if(param.useHITEMP > 2){
+		//	fread(&GammaN, sizeof(double), 1, dataFile);		
+		//}
+//if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
 		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith
 		S *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q * L.ialphaD_h[i];
-		L.vy_h[i] = A / (4.0 * M_PI * def_c);						//alphaL
+		L.vy_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (2.0 * M_PI);						//alphaL
 		if(param.useIndividualX == 0){
 			L.va_h[i] = (float)((param.numin - L.nu_h[i]) * L.ialphaD_h[i]);
 			L.vb_h[i] = (float)(param.dnu * L.ialphaD_h[i]);
@@ -612,7 +621,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		L.ID_h[i] = i % maxlines;
 		L.S_h[i] = S;
 		L.S1_h[i] = 0.0;
-// /*if(i < 1000) */printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q);
+// if(i < 100) printf("%d %g %g %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q, GammaN, L.vy_h[i], exp(-c * EL));
 
 		if(L.nu_h[i] == 0.0){
 			L.S1_h[i] = 0.0;
@@ -642,7 +651,7 @@ __host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, d
 		if(param.cutMode == 1){
 			L.vcut2_h[i] = (float)(param.cut * param.cut * L.vy_h[i] * L.vy_h[i]);
 		}
-//if(i < 100000) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], (float)(L.S_h[i]), L.ialphaD_h[i], L.vy_h[i], (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923)));
+//if(i < 100) printf("%d %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], (float)(L.S_h[i]), L.ialphaD_h[i], L.vy_h[i], (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923)));
 	}
 	return 1;
 }

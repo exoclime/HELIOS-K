@@ -376,6 +376,43 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 	}
 }
 // *************************************************
+//This kernel calls directly the Voigt function
+// It is usefull to test the profile 
+//
+//Author Simon Grimm
+//November 2014
+// *************************************************
+__global__ void Voigt_2d_kernel(const float a, const float b, const float c,  float *K_d, int Nx, int Ny){
+
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if(idx < Nx && idy < Ny){
+		float x = idx * 10.0 / float(Nx);
+		float y = idy * 10.0 / float(Ny);
+		float s1, s2, s3;
+		float ex2 = expf(-x * x);
+
+		//Compute Sigma Series
+		if(x != 0.0f && y != 0.0f) Sigmabf(x, y, s1, s2, s3, a, ex2, idx);
+
+		float xy = x * y;
+		float cos2xy = cosf(2.0f * xy);
+		float sinxy = sinf(xy);
+
+		float t1 = ex2 * erfcxf(y) * cos2xy;
+		float t2 = sinxy * ex2 * sinxy / y;
+		float t3 = y * (-cos2xy * s1 + 0.5f * (s2 + s3));
+		t1 += c * (t2 + t3);
+		
+		if(x == 0.0f) t1 = erfcxf(y);
+		if(y == 0.0f) t1 = ex2;
+
+		K_d[idy * Nx + idx] = t1 * b;
+//printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
+	}
+}
+// *************************************************
 //This kernel initializes K_d with kmin
 //
 //Author Simon Grimm
@@ -797,7 +834,8 @@ __global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, f
 			}
 			float t1 = x * x;
 			if(i + k + ii + Limits.x < NL && t1 < vcut2_s[k]){
-				float xxyy = t1 + y_s[k] * y_s[k];
+				float y = vy_s[k];
+				float xxyy = t1 + y * y;
 				K += S1_s[k] / xxyy;
 			}	
 		}

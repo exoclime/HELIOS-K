@@ -18,6 +18,7 @@
 #define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
 //#define maxlines 50000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
 #define maxlines 8000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+#define maxfiles 500		//maximum number of files per molucule
 
 #define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
 #define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
@@ -35,12 +36,12 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL[122];		//Number of Lines per file, (maximum 122 files per molecule)
+	int NL[maxfiles];		//Number of Lines per file
 	int NLmax;
 	Isotopologue *ISO;
 	char mName[160];	//name of states and trans files
-	char dataFilename[122][160];
-	int fileLimit[123];
+	char dataFilename[maxfiles][160];
+	int fileLimit[maxfiles + 1];
 	int nFiles;
 	int nStates;		//Number of states in EXOMOL linelist
 	int ntcol;		//Number of columns in transition files
