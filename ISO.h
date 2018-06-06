@@ -2378,6 +2378,52 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			//version = 20170330
 		}
 	}
+	if(m.id == 89){//PO
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){891,  3116,  1.0,    0.0,    0,      46.96867625};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "31P-16O__POPS";
+			sprintf(m.mName, "%s", "31P-16O__POPS");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 43148;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 3;
+			m.NL[0] = 2096251;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 12000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){891,  3116,  1.0,    0.0,    0,      46.96867625};
+			//version = 20170910
+
+		}
+	}
        	if(m.id == 300){//Li 7
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
@@ -2400,7 +2446,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0300";
 			sprintf(m.mName, "%s", "gfnew0300");
 			m.defaultL = 0.0;
@@ -2443,7 +2489,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0400";
 			sprintf(m.mName, "%s", "gfnew0400");
 			m.defaultL = 0.0;
@@ -2486,7 +2532,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0401";
 			sprintf(m.mName, "%s", "gfnew0401");
 			m.defaultL = 0.0;
@@ -2529,7 +2575,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0500";
 			sprintf(m.mName, "%s", "gfnew0500");
 			m.defaultL = 0.0;
@@ -2572,7 +2618,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0501";
 			sprintf(m.mName, "%s", "gfnew0501");
 			m.defaultL = 0.0;
@@ -2615,7 +2661,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0502";
 			sprintf(m.mName, "%s", "gfnew0502");
 			m.defaultL = 0.0;
@@ -2658,7 +2704,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0601";
 			sprintf(m.mName, "%s", "gfnew0601");
 			m.defaultL = 0.0;
@@ -2701,7 +2747,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0602";
 			sprintf(m.mName, "%s", "gfnew0602");
 			m.defaultL = 0.0;
@@ -2744,7 +2790,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0700";
 			sprintf(m.mName, "%s", "gfnew0700");
 			m.defaultL = 0.0;
@@ -2787,7 +2833,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0701";
 			sprintf(m.mName, "%s", "gfnew0701");
 			m.defaultL = 0.0;
@@ -2830,7 +2876,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0702";
 			sprintf(m.mName, "%s", "gfnew0702");
 			m.defaultL = 0.0;
@@ -2873,7 +2919,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0800";
 			sprintf(m.mName, "%s", "gfnew0800");
 			m.defaultL = 0.0;
@@ -2916,7 +2962,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0801";
 			sprintf(m.mName, "%s", "gfnew0801");
 			m.defaultL = 0.0;
@@ -2959,7 +3005,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0802";
 			sprintf(m.mName, "%s", "gfnew0802");
 			m.defaultL = 0.0;
@@ -3002,7 +3048,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0900";
 			sprintf(m.mName, "%s", "gfnew0900");
 			m.defaultL = 0.0;
@@ -3045,7 +3091,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0901";
 			sprintf(m.mName, "%s", "gfnew0901");
 			m.defaultL = 0.0;
@@ -3088,7 +3134,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew0902";
 			sprintf(m.mName, "%s", "gfnew0902");
 			m.defaultL = 0.0;
@@ -3131,7 +3177,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1000";
 			sprintf(m.mName, "%s", "gfnew1000");
 			m.defaultL = 0.0;
@@ -3174,7 +3220,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1001";
 			sprintf(m.mName, "%s", "gfnew1001");
 			m.defaultL = 0.0;
@@ -3217,7 +3263,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1002";
 			sprintf(m.mName, "%s", "gfnew1002");
 			m.defaultL = 0.0;
@@ -3260,7 +3306,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1100";
 			sprintf(m.mName, "%s", "gfnew1100");
 			m.defaultL = 0.0;
@@ -3303,7 +3349,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1101";
 			sprintf(m.mName, "%s", "gfnew1101");
 			m.defaultL = 0.0;
@@ -3346,7 +3392,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1102";
 			sprintf(m.mName, "%s", "gfnew1102");
 			m.defaultL = 0.0;
@@ -3389,7 +3435,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1200";
 			sprintf(m.mName, "%s", "gfnew1200");
 			m.defaultL = 0.0;
@@ -3432,7 +3478,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1201";
 			sprintf(m.mName, "%s", "gfnew1201");
 			m.defaultL = 0.0;
@@ -3475,7 +3521,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1202";
 			sprintf(m.mName, "%s", "gfnew1202");
 			m.defaultL = 0.0;
@@ -3518,7 +3564,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1300";
 			sprintf(m.mName, "%s", "gfnew1300");
 			m.defaultL = 0.0;
@@ -3561,7 +3607,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1301";
 			sprintf(m.mName, "%s", "gfnew1301");
 			m.defaultL = 0.0;
@@ -3604,7 +3650,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1302";
 			sprintf(m.mName, "%s", "gfnew1302");
 			m.defaultL = 0.0;
@@ -3647,7 +3693,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
                 if(param.useHITEMP == 2){
                         printf("Error: no EXOMOL data for this molecule\n");
                 }
-                if(param.useHITEMP == 3){
+                if(param.useHITEMP == 30){
                         char name[] = "gfnew1400";
                         sprintf(m.mName, "%s", "gfnew1400");
                         m.defaultL = 0.0;
@@ -3690,7 +3736,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1401";
 			sprintf(m.mName, "%s", "gfnew1401");
 			m.defaultL = 0.0;
@@ -3733,7 +3779,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1402";
 			sprintf(m.mName, "%s", "gfnew1402");
 			m.defaultL = 0.0;
@@ -3776,7 +3822,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1500";
 			sprintf(m.mName, "%s", "gfnew1500");
 			m.defaultL = 0.0;
@@ -3819,7 +3865,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1501";
 			sprintf(m.mName, "%s", "gfnew1501");
 			m.defaultL = 0.0;
@@ -3862,7 +3908,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1502";
 			sprintf(m.mName, "%s", "gfnew1502");
 			m.defaultL = 0.0;
@@ -3905,7 +3951,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1600";
 			sprintf(m.mName, "%s", "gfnew1600");
 			m.defaultL = 0.0;
@@ -3948,7 +3994,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1601";
 			sprintf(m.mName, "%s", "gfnew1601");
 			m.defaultL = 0.0;
@@ -3991,7 +4037,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1602";
 			sprintf(m.mName, "%s", "gfnew1602");
 			m.defaultL = 0.0;
@@ -4034,7 +4080,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1700";
 			sprintf(m.mName, "%s", "gfnew1700");
 			m.defaultL = 0.0;
@@ -4077,7 +4123,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1701";
 			sprintf(m.mName, "%s", "gfnew1701");
 			m.defaultL = 0.0;
@@ -4120,7 +4166,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1702";
 			sprintf(m.mName, "%s", "gfnew1702");
 			m.defaultL = 0.0;
@@ -4163,7 +4209,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1800";
 			sprintf(m.mName, "%s", "gfnew1800");
 			m.defaultL = 0.0;
@@ -4206,7 +4252,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1801";
 			sprintf(m.mName, "%s", "gfnew1801");
 			m.defaultL = 0.0;
@@ -4249,7 +4295,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1802";
 			sprintf(m.mName, "%s", "gfnew1802");
 			m.defaultL = 0.0;
@@ -4292,7 +4338,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1900";
 			sprintf(m.mName, "%s", "gfnew1900");
 			m.defaultL = 0.0;
@@ -4335,7 +4381,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1901";
 			sprintf(m.mName, "%s", "gfnew1901");
 			m.defaultL = 0.0;
@@ -4378,7 +4424,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew1902";
 			sprintf(m.mName, "%s", "gfnew1902");
 			m.defaultL = 0.0;
@@ -4421,7 +4467,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2000";
 			sprintf(m.mName, "%s", "gfnew2000");
 			m.defaultL = 0.0;
@@ -4464,7 +4510,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2001";
 			sprintf(m.mName, "%s", "gfnew2001");
 			m.defaultL = 0.0;
@@ -4507,7 +4553,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2002";
 			sprintf(m.mName, "%s", "gfnew2002");
 			m.defaultL = 0.0;
@@ -4550,7 +4596,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2100";
 			sprintf(m.mName, "%s", "gfnew2100");
 			m.defaultL = 0.0;
@@ -4593,7 +4639,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2101";
 			sprintf(m.mName, "%s", "gfnew2101");
 			m.defaultL = 0.0;
@@ -4636,7 +4682,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2102";
 			sprintf(m.mName, "%s", "gfnew2102");
 			m.defaultL = 0.0;
@@ -4679,7 +4725,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2200";
 			sprintf(m.mName, "%s", "gfnew2200");
 			m.defaultL = 0.0;
@@ -4722,7 +4768,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2201";
 			sprintf(m.mName, "%s", "gfnew2201");
 			m.defaultL = 0.0;
@@ -4765,7 +4811,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2202";
 			sprintf(m.mName, "%s", "gfnew2202");
 			m.defaultL = 0.0;
@@ -4808,7 +4854,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2300";
 			sprintf(m.mName, "%s", "gfnew2300");
 			m.defaultL = 0.0;
@@ -4851,7 +4897,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2301";
 			sprintf(m.mName, "%s", "gfnew2301");
 			m.defaultL = 0.0;
@@ -4894,7 +4940,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2302";
 			sprintf(m.mName, "%s", "gfnew2302");
 			m.defaultL = 0.0;
@@ -4937,7 +4983,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2400";
 			sprintf(m.mName, "%s", "gfnew2400");
 			m.defaultL = 0.0;
@@ -4980,7 +5026,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2401";
 			sprintf(m.mName, "%s", "gfnew2401");
 			m.defaultL = 0.0;
@@ -5023,7 +5069,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2402";
 			sprintf(m.mName, "%s", "gfnew2402");
 			m.defaultL = 0.0;
@@ -5066,7 +5112,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2500";
 			sprintf(m.mName, "%s", "gfnew2500");
 			m.defaultL = 0.0;
@@ -5109,7 +5155,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2501";
 			sprintf(m.mName, "%s", "gfnew2501");
 			m.defaultL = 0.0;
@@ -5152,7 +5198,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2502";
 			sprintf(m.mName, "%s", "gfnew2502");
 			m.defaultL = 0.0;
@@ -5195,7 +5241,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2600";
 			sprintf(m.mName, "%s", "gfnew2600");
 			m.defaultL = 0.0;
@@ -5238,7 +5284,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2601";
 			sprintf(m.mName, "%s", "gfnew2601");
 			m.defaultL = 0.0;
@@ -5281,7 +5327,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2602";
 			sprintf(m.mName, "%s", "gfnew2602");
 			m.defaultL = 0.0;
@@ -5324,7 +5370,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2700";
 			sprintf(m.mName, "%s", "gfnew2700");
 			m.defaultL = 0.0;
@@ -5367,7 +5413,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2701";
 			sprintf(m.mName, "%s", "gfnew2701");
 			m.defaultL = 0.0;
@@ -5410,7 +5456,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2702";
 			sprintf(m.mName, "%s", "gfnew2702");
 			m.defaultL = 0.0;
@@ -5453,7 +5499,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2800";
 			sprintf(m.mName, "%s", "gfnew2800");
 			m.defaultL = 0.0;
@@ -5496,7 +5542,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
                 if(param.useHITEMP == 2){
                         printf("Error: no EXOMOL data for this molecule\n");
                 }
-                if(param.useHITEMP == 3){
+                if(param.useHITEMP == 30){
                         char name[] = "gfnew2801";
                         sprintf(m.mName, "%s", "gfnew2801");
                         m.defaultL = 0.0;
@@ -5539,7 +5585,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2802";
 			sprintf(m.mName, "%s", "gfnew2802");
 			m.defaultL = 0.0;
@@ -5582,7 +5628,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2900";
 			sprintf(m.mName, "%s", "gfnew2900");
 			m.defaultL = 0.0;
@@ -5625,7 +5671,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2901";
 			sprintf(m.mName, "%s", "gfnew2901");
 			m.defaultL = 0.0;
@@ -5668,7 +5714,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew2902";
 			sprintf(m.mName, "%s", "gfnew2902");
 			m.defaultL = 0.0;
@@ -5711,7 +5757,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3000";
 			sprintf(m.mName, "%s", "gfnew3000");
 			m.defaultL = 0.0;
@@ -5754,7 +5800,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3001";
 			sprintf(m.mName, "%s", "gfnew3001");
 			m.defaultL = 0.0;
@@ -5797,7 +5843,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3002";
 			sprintf(m.mName, "%s", "gfnew3002");
 			m.defaultL = 0.0;
@@ -5840,7 +5886,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3800";
 			sprintf(m.mName, "%s", "gfnew3800");
 			m.defaultL = 0.0;
@@ -5883,7 +5929,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3801";
 			sprintf(m.mName, "%s", "gfnew3801");
 			m.defaultL = 0.0;
@@ -5926,7 +5972,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3900";
 			sprintf(m.mName, "%s", "gfnew3900");
 			m.defaultL = 0.0;
@@ -5969,7 +6015,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew3901";
 			sprintf(m.mName, "%s", "gfnew3901");
 			m.defaultL = 0.0;
@@ -6012,7 +6058,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4000";
 			sprintf(m.mName, "%s", "gfnew4000");
 			m.defaultL = 0.0;
@@ -6055,7 +6101,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4001";
 			sprintf(m.mName, "%s", "gfnew4001");
 			m.defaultL = 0.0;
@@ -6098,7 +6144,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4002";
 			sprintf(m.mName, "%s", "gfnew4002");
 			m.defaultL = 0.0;
@@ -6141,7 +6187,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4100";
 			sprintf(m.mName, "%s", "gfnew4100");
 			m.defaultL = 0.0;
@@ -6184,7 +6230,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4101";
 			sprintf(m.mName, "%s", "gfnew4101");
 			m.defaultL = 0.0;
@@ -6227,7 +6273,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4102";
 			sprintf(m.mName, "%s", "gfnew4102");
 			m.defaultL = 0.0;
@@ -6270,7 +6316,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4200";
 			sprintf(m.mName, "%s", "gfnew4200");
 			m.defaultL = 0.0;
@@ -6313,7 +6359,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4201";
 			sprintf(m.mName, "%s", "gfnew4201");
 			m.defaultL = 0.0;
@@ -6356,7 +6402,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4202";
 			sprintf(m.mName, "%s", "gfnew4202");
 			m.defaultL = 0.0;
@@ -6399,7 +6445,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4300";
 			sprintf(m.mName, "%s", "gfnew4300");
 			m.defaultL = 0.0;
@@ -6442,7 +6488,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4301";
 			sprintf(m.mName, "%s", "gfnew4301");
 			m.defaultL = 0.0;
@@ -6485,7 +6531,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4400";
 			sprintf(m.mName, "%s", "gfnew4400");
 			m.defaultL = 0.0;
@@ -6528,7 +6574,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4401";
 			sprintf(m.mName, "%s", "gfnew4401");
 			m.defaultL = 0.0;
@@ -6571,7 +6617,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4402";
 			sprintf(m.mName, "%s", "gfnew4402");
 			m.defaultL = 0.0;
@@ -6614,7 +6660,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4500";
 			sprintf(m.mName, "%s", "gfnew4500");
 			m.defaultL = 0.0;
@@ -6657,7 +6703,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4501";
 			sprintf(m.mName, "%s", "gfnew4501");
 			m.defaultL = 0.0;
@@ -6700,7 +6746,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4502";
 			sprintf(m.mName, "%s", "gfnew4502");
 			m.defaultL = 0.0;
@@ -6743,7 +6789,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4600";
 			sprintf(m.mName, "%s", "gfnew4600");
 			m.defaultL = 0.0;
@@ -6786,7 +6832,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew4601";
 			sprintf(m.mName, "%s", "gfnew4601");
 			m.defaultL = 0.0;
@@ -6829,7 +6875,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew5600";
 			sprintf(m.mName, "%s", "gfnew5600");
 			m.defaultL = 0.0;
@@ -6872,7 +6918,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 			printf("Error: no EXOMOL data for this molecule\n");
 		}
-		if(param.useHITEMP == 3){
+		if(param.useHITEMP == 30){
 			char name[] = "gfnew5601";
 			sprintf(m.mName, "%s", "gfnew5601");
 			m.defaultL = 0.0;

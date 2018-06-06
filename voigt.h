@@ -382,14 +382,47 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 //Author Simon Grimm
 //November 2014
 // *************************************************
-__global__ void Voigt_2d_kernel(const float a, const float b, const float c,  float *K_d, int Nx, int Ny){
+__global__ void Voigt_2d_kernel(const double a, const double b, const double c, double *K_d, int Nx, int Ny, size_t pitch, double xMax, double yMax){
 
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 	int idy = blockIdx.y * blockDim.y + threadIdx.y;
 
 	if(idx < Nx && idy < Ny){
-		float x = idx * 10.0 / float(Nx);
-		float y = idy * 10.0 / float(Ny);
+		double x = idx * xMax / double(Nx - 1);
+		double y = idy * yMax / double(Ny - 1);
+		double s1, s2, s3;
+		double ex2 = expf(-x * x);
+
+		//Compute Sigma Series
+		if(x != 0.0 && y != 0.0) Sigmab(x, y, s1, s2, s3, a, ex2, idx);
+
+		double xy = x * y;
+		double cos2xy = cosf(2.0 * xy);
+		double sinxy = sinf(xy);
+
+		double t1 = ex2 * erfcx(y) * cos2xy;
+		double t2 = sinxy * ex2 * sinxy / y;
+		double t3 = y * (-cos2xy * s1 + 0.5 * (s2 + s3));
+		t1 += c * (t2 + t3);
+		
+		if(x == 0.0) t1 = erfcx(y);
+		if(y == 0.0) t1 = ex2;
+
+		//K_d[idy * Nx + idx] = t1 * b;
+		double *row = (double *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = t1 * b;
+//if(idy == 0) printf("a %d %d %g %g %g\n", idx, idy, x, y, float(idy * Nx + idx));
+//printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
+	}
+}
+__global__ void Voigt_2df_kernel(const float a, const float b, const float c, float *K_d, int Nx, int Ny, size_t pitch, float xMax, float yMax){
+
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if(idx < Nx && idy < Ny){
+		float x = idx * xMax / float(Nx - 1);
+		float y = idy * yMax / float(Ny - 1);
 		float s1, s2, s3;
 		float ex2 = expf(-x * x);
 
@@ -408,10 +441,17 @@ __global__ void Voigt_2d_kernel(const float a, const float b, const float c,  fl
 		if(x == 0.0f) t1 = erfcxf(y);
 		if(y == 0.0f) t1 = ex2;
 
-		K_d[idy * Nx + idx] = t1 * b;
+		//K_d[idy * Nx + idx] = t1 * b;
+		float *row = (float *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = t1 * b;
+    		//row[idx] = float(idy * Nx + idx);
+//if(idy == 0) printf("a %d %d %g %g %g\n", idx, idy, x, y, float(idy * Nx + idx));
 //printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
 	}
 }
+
+
+
 // *************************************************
 //This kernel initializes K_d with kmin
 //
@@ -935,9 +975,9 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 //printf("x %d %d %g %g %g\n", ill, id, x, vb_s[ill], va_s[ill]);
 			float t1 = x * x;
 			float xxyy = t1 + y * y;
+# if PROFILE == 1
 
 			if(t1 < vcut2_s[ill]){	
-
 				if(E <= 0 && xxyy >= 1.0e6f){
 				//1 order Gauss Hermite Quadrature
 					K += S1_s[ill] / xxyy;
@@ -1040,6 +1080,20 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 					K -= Kc;
 				}
 			}
+#endif
+# if PROFILE == 2
+			//Lorentz profile
+			if(E <= 0 && t1 < vcut2_s[ill]){
+				K += S1_s[ill] / xxyy;
+			}
+#endif
+# if PROFILE == 3
+			//Doppler profile
+			if(E <= 0 && t1 < vcut2_s[ill]){
+				K += S1_s[ill] * b * expf(-x * x);
+			}
+#endif
+			
 		}
 		K_d[ii] += K;
 	}

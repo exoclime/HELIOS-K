@@ -14,6 +14,149 @@
 #include "resample.h"
 
 
+/*
+// runs with biliniar interpolation
+// texDescr.filterMode = cudaFilterModeLinear;
+__global__ void Voigt_texture_kernel(cudaTextureObject_t K2dtex, float *K_d, int Nx, int Ny, int Nxtex, int Nytex, size_t pitch){
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+
+	if(idx < Nx && idy < Ny){
+		float x = idx * Nxtex / float(Nx);
+		float y = idy * Nytex / float(Ny);
+		//float x = idx / float(Nx);
+		//float y = idy / float(Ny);
+	
+		float K = tex2D <float> (K2dtex, x + 0.5f , y + 0.5f);
+		float *row = (float *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = K;
+//if(idy == 0) printf("%d %d %f %f %f\n", idx, idy, x * 10.0f, y * 10.0f, K);
+
+	}
+}
+
+// runs with manual biliniar interpolation
+// texDescr.filterMode = cudaFilterModePoint;
+__global__ void Voigt_textureb_kernel(cudaTextureObject_t K2dtex, float *K_d, int Nx, int Ny, int Nxtex, int Nytex, size_t pitch){
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+
+	if(idx < Nx && idy < Ny){
+		float x = idx * Nxtex / float(Nx);
+		float y = idy * Nytex / float(Ny);
+	
+		float K00 = tex2D <float> (K2dtex, x, y);
+		float K10 = tex2D <float> (K2dtex, x + 1.0f, y);
+		float K01 = tex2D <float> (K2dtex, x, y + 1.0f);
+		float K11 = tex2D <float> (K2dtex, x + 1.0f, y + 1.0f);
+
+		float xx = (idx % (Nx / Nxtex)) * Nxtex / float(Nx);	
+		float yy = (idy % (Ny / Nytex)) * Nytex / float(Ny);	
+
+		float K = (1.0f - xx) * ( 1.0f - yy) * K00 + xx * (1.0f - yy) * K10 + (1.0f - xx) * yy * K01 + xx * yy * K11;
+
+		float *row = (float *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = K;
+//if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
+
+	}
+}
+// runs with manual biliniar interpolation
+// texDescr.filterMode = cudaFilterModePoint;
+__global__ void Voigt_b_kernel(float *K2d_d, float *K_d, int Nx, int Ny, int Nxtex, int Nytex, size_t pitch){
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+
+	if(idx < Nx && idy < Ny){
+		int x = floor(idx * Nxtex / float(Nx));
+		int y = floor(idy * Nytex / float(Ny));
+		
+		float *row1 = (float *)(((char *)K_d)+(y*pitch)) + x;
+		float K00 = *row1;
+		float *row2 = (float *)(((char *)K_d)+(y*pitch)) + x + 1;
+		float K10 = *row2;
+		float *row3 = (float *)(((char *)K_d)+((y + 1)*pitch)) + x;
+		float K01 = *row3;
+		float *row4 = (float *)(((char *)K_d)+((y + 1)*pitch)) + x + 1;
+		float K11 = *row4;
+
+		float xx = (idx % (Nx / Nxtex)) * Nxtex / float(Nx);	
+		float yy = (idy % (Ny / Nytex)) * Nytex / float(Ny);	
+
+		float K = (1.0f - xx) * ( 1.0f - yy) * K00 + xx * (1.0f - yy) * K10 + (1.0f - xx) * yy * K01 + xx * yy * K11;
+
+		float *row = (float *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = K;
+//if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
+
+	}
+}
+
+//https://stackoverflow.com/questions/34622717/bicubic-interpolation-in-c
+__device__ float cubic_hermite(float A, float B, float C, float D, float t){
+	float a = -A / 2.0f + (3.0f * B) / 2.0f - (3.0f * C) / 2.0f + D / 2.0f;
+	float b =  A - (5.0f * B) / 2.0f + 2.0f * C - D / 2.0f;
+	float c = -A / 2.0f + C / 2.0f;
+	float d = B;
+	float tt = t * t;
+
+	return a * t* tt + b * tt + c * t + d;
+}
+
+// runs with manual biliniar interpolation
+// texDescr.filterMode = cudaFilterModePoint;
+__global__ void Voigt_bicubic_kernel(cudaTextureObject_t K2dtex, float *K_d, int Nx, int Ny, int Nxtex, int Nytex, size_t pitch){
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+	int idy = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if(idx > 0 && idy > 0 && idx < Nx - 1&& idy < Ny - 1){
+		float x = idx * Nxtex / float(Nx);
+		float y = idy * Nytex / float(Ny);
+	
+		float K00 = tex2D <float> (K2dtex, x - 1.0f, y - 1.0f);
+		float K10 = tex2D <float> (K2dtex, x       , y - 1.0f);
+		float K20 = tex2D <float> (K2dtex, x + 1.0f, y - 1.0f);
+		float K30 = tex2D <float> (K2dtex, x + 2.0f, y - 1.0f);
+
+		float K01 = tex2D <float> (K2dtex, x - 1.0f, y);
+		float K11 = tex2D <float> (K2dtex, x       , y);
+		float K21 = tex2D <float> (K2dtex, x + 1.0f, y);
+		float K31 = tex2D <float> (K2dtex, x + 2.0f, y);
+
+		float K02 = tex2D <float> (K2dtex, x - 1.0f, y + 1.0f);
+		float K12 = tex2D <float> (K2dtex, x       , y + 1.0f);
+		float K22 = tex2D <float> (K2dtex, x + 1.0f, y + 1.0f);
+		float K32 = tex2D <float> (K2dtex, x + 2.0f, y + 1.0f);
+
+		float K03 = tex2D <float> (K2dtex, x - 1.0f, y + 2.0f);
+		float K13 = tex2D <float> (K2dtex, x       , y + 2.0f);
+		float K23 = tex2D <float> (K2dtex, x + 1.0f, y + 2.0f);
+		float K33 = tex2D <float> (K2dtex, x + 2.0f, y + 2.0f);
+
+		float xx = (idx % (Nx / Nxtex)) * Nxtex / float(Nx);	
+		float yy = (idy % (Ny / Nytex)) * Nytex / float(Ny);
+
+
+		float K0 = cubic_hermite(K00, K10, K20, K30, xx);
+		float K1 = cubic_hermite(K01, K11, K21, K31, xx);
+		float K2 = cubic_hermite(K02, K12, K22, K32, xx);
+		float K3 = cubic_hermite(K03, K13, K23, K33, xx);
+
+	
+		float K = cubic_hermite(K0, K1, K2, K3, yy);
+if(idx == 15 && idy == 15) printf("%d %d %g %g %g %g %g %g %g\n", idx, idy, x, y, K00, K10, K20, K30, K0, K);
+
+		float *row = (float *)(((char *)K_d)+(idy*pitch));
+    		row[idx] = K;
+//if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
+
+	}
+}
+*/
+
 int main(int argc, char*argv[]){
 
 
@@ -32,36 +175,126 @@ int main(int argc, char*argv[]){
 
 /*
 {
-int Nx = 1000;
-int Ny = 500;
 
-//https://stackoverflow.com/questions/27964995/read-from-cudabindtexture2d
+double xMax = 10.0;
+double yMax = 10.0;
 
-float a = (float)(M_PI * sqrt(-1.0 / log(TOLF * 0.5)));
-float b = (float)(1.0 / sqrt(M_PI));
-float c = (float)(2.0 * a / M_PI);
+int Nx = 10000;
+int Ny = 10000;
 
-float *K2d_h, *K2d_d;
-K2d_h = (float*)malloc( Nx * Ny * sizeof(float));
+int Nxtex = Nx + 1;
+int Nytex = Ny + 1;
+
+int Nxtexf = Nx / 10 + 1;
+int Nytexf = Ny / 10 + 1;
+
+
+double *K2d_h, *K2d_d;
 size_t pitch;
+//with pitch, the 2d memory is extendend in one dimension to set memory alignment, pitch is the new Nxtex
+K2d_h = (double*)malloc( Nxtex * Nytex * sizeof(double));
+cudaMallocPitch((void **) &K2d_d, &pitch, Nxtex * sizeof(double), Nytex);
+//printf("%d %d %lu\n", Nxtex, Nytex, pitch);
+
+{
+	double a = (double)(M_PI * sqrt(-1.0 / log(TOLF * 0.5)));
+	double b = (double)(1.0 / sqrt(M_PI));
+	double c = (double)(2.0 * a / M_PI);
+	Voigt_2d_kernel <<< dim3((Nxtex + 31) / 32, (Nytex + 31) / 32), dim3(32, 32, 1) >>> (a, b, c, K2d_d, Nxtex, Nytex, pitch, xMax, xMax);
+	cudaMemcpy2D(K2d_h, Nxtex * sizeof(double), K2d_d, pitch, Nxtex * sizeof(double), Nytex, cudaMemcpyDeviceToHost);
+}
+/ *
+for(int i = 0; i < Nxtex - 1; ++i){
+	for(int j = 0; j < Nytex - 1; ++j){
+		double x = i * xMax / double(Nxtex);
+		double y = j * yMax / double(Nytex);
+		if( x < xMax && y < yMax){
+			printf("%g %g %.15g\n", x, y, K2d_h[j * Nxtex + i]);
+		}
+	}
+}
+* /
+
+float *K2df_h, *K2df_d;
+size_t pitchf;
+//with pitchf, the 2d memory is extendend in one dimension to set memory alignment, pitchf is the new Nxtexf
+K2df_h = (float*)malloc( Nxtexf * Nytexf * sizeof(float));
+cudaMallocPitch((void **) &K2df_d, &pitchf, Nxtexf * sizeof(float), Nytexf);
+//printf("%d %d %lu\n", Nxtexf, Nytexf, pitchf);
+
+{
+	float a = (float)(M_PI * sqrt(-1.0f / log(TOLF * 0.5f)));
+	float b = (float)(1.0f / sqrt(M_PI));
+	float c = (float)(2.0f * a / M_PI);
+	Voigt_2df_kernel <<< dim3((Nxtexf + 31) / 32, (Nytexf + 31) / 32), dim3(32, 32, 1) >>> (a, b, c, K2df_d, Nxtexf, Nytexf, pitchf, xMax, xMax);
+	cudaMemcpy2D(K2df_h, Nxtexf * sizeof(float), K2df_d, pitchf, Nxtexf * sizeof(float), Nytexf, cudaMemcpyDeviceToHost);
+}
+/ *
+for(int i = 0; i < Nxtexf - 1; ++i){
+	for(int j = 0; j < Nytexf -1; ++j){
+		float x = i * xMax / float(Nxtexf - 1);
+		float y = j * yMax / float(Nytexf - 1);
+		if( x < xMax && y < yMax){
+			printf("%g %g %.15g\n", x, y, K2df_h[j * Nxtexf + i]);
+		}
+	}
+}
+
+return 0;
+* /
+//https://stackoverflow.com/questions/41749024/edit-cuda-texture-object
+cudaTextureObject_t K2dtex;
+
+cudaResourceDesc resDescr;
+memset(&resDescr, 0, sizeof(cudaResourceDesc));
+resDescr.resType = cudaResourceTypePitch2D;
+resDescr.res.pitch2D.desc = cudaCreateChannelDesc<float>();
+resDescr.res.pitch2D.devPtr = K2df_d;
+resDescr.res.pitch2D.height = Nytexf;
+resDescr.res.pitch2D.pitchInBytes = pitchf;
+resDescr.res.pitch2D.width = Nxtexf;
+
+
+cudaTextureDesc  texDescr;
+memset(&texDescr, 0, sizeof(cudaTextureDesc));
+texDescr.normalizedCoords = 0;
+//texDescr.filterMode = cudaFilterModeLinear;
+texDescr.filterMode = cudaFilterModePoint;
+texDescr.addressMode[0] = cudaAddressModeClamp;
+texDescr.addressMode[1] = cudaAddressModeClamp;
+texDescr.addressMode[2] = cudaAddressModeClamp;
+texDescr.readMode = cudaReadModeElementType;
+
+cudaCreateTextureObject(&K2dtex, &resDescr, &texDescr, NULL);
+
+
+
+float *K_h, *K_d;
+K_h = (float*)malloc( Nx * Ny * sizeof(float));
 //with pitch, the 2d memory is extendend in one dimension to set memory alignment, pitch is the new Nx
-cudaMallocPitch((void **) &K2d_d, &pitch, Nx * sizeof(float), Ny);
-printf("%d %d %d\n", Nx, Ny, pitch);
-
-Voigt_2d_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>>(a, b, c, K2d_d, Nx, Ny);
+cudaMallocPitch((void **) &K_d, &pitch, Nx * sizeof(float), Ny);
 
 
-cudaChannelFormatDesc desc = cudaCreateChannelDesc<float>(); 
-//cudaBindTexture2D(NULL, tex, d_textureTable, desc, 9, 10, pitch) ;
+for(int t = 0; t < 1; ++t){
+	//Voigt_texture_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>> (K2dtex, K_d, Nx, Ny, Nxtexf - 1, Nytexf - 1, pitch);
+	//Voigt_textureb_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>> (K2dtex, K_d, Nx, Ny, Nxtexf -1, Nytexf - 1, pitch);
+	//Voigt_b_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>> (K2d_d, K_d, Nx, Ny, Nxtex - 1, Nytex - 1, pitch);
+	Voigt_bicubic_kernel <<< dim3((Nx + 31) / 32, (Ny + 31) / 32), dim3(32, 32, 1) >>> (K2dtex, K_d, Nx, Ny, Nxtexf - 1, Nytexf - 1, pitch);
+}
 
-cudaMemcpy(K2d_h, K2d_d, Nx * Ny * sizeof(float), cudaMemcpyDeviceToHost);
-//cudaMemcpy2D(K2d_h, pitch, K2d_d, Nx * sizeof(float), Ny , cudaMemcpyDeviceToHost);
+cudaMemcpy2D(K_h, Nx * sizeof(float), K_d, pitch, Nx * sizeof(float), Ny, cudaMemcpyDeviceToHost);
 cudaDeviceSynchronize();
-
 
 for(int i = 0; i < Nx; ++i){
 	for(int j = 0; j < Ny; ++j){
-		printf("%g %g %g\n", i * 10.0 / double(Nx), j * 10.0 / double(Ny), K2d_h[j * Nx + i]);
+		double x = i * xMax / double(Nx);
+		double y = j * yMax / double(Ny);
+		if( x < xMax && y < yMax){
+			double diff = fabs(K2d_h[j * Nxtex + i] - K_h[j * Nx + i]);
+			if(diff > 5.0e-7){
+				printf("%g %g %.15g %.15g %.15g\n", x, y, K2d_h[j * Nxtex + i], K_h[j * Nx + i], diff);
+			}
+		}
 	}
 }
 return 0;

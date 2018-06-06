@@ -598,9 +598,9 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		fread(&EL, sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 		//include the following for Kurucz
-		//if(param.useHITEMP > 2){
-		//	fread(&GammaN, sizeof(double), 1, dataFile);		
-		//}
+		if(param.useHITEMP == 30){
+			fread(&GammaN, sizeof(double), 1, dataFile);		
+		}
 //if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
 		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith
 		S *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q * L.ialphaD_h[i];

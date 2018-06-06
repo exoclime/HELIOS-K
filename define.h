@@ -1,4 +1,4 @@
-#define VERSION 1.61
+#define VERSION 1.62
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K

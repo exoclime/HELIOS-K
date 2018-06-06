@@ -199,6 +199,25 @@ then
   npfcol=3			#columns in partition function file
 fi
 
+if [ $m -eq 89 ]
+then
+  #89 PO
+  M="31P-16O__POPS"
+  P="PO/31P-16O/POPS"
+  s=12000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=3			#columns in partition function file
+fi
+if [ $m -eq 90 ]
+then
+  #90 MgH
+  M="24Mg-1H__Yadin"
+  P="MgH/24Mg-1H/Yadin"
+  s=11000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=3			#columns in partition function file
+fi
+
 
 echo $M
 
