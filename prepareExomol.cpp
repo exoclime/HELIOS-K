@@ -94,11 +94,25 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 			gU = g[state1 - 1];
 		}
 		if(m.ntcol == 4){
-			if(m.id == 86 || m.id == 89){
+			if(m.id == 86 || m.id == 89 || m.id == 92 || m.id == 80){
 				fgets(c1, 13, transFile);
 				fgets(c2, 13, transFile);
 				fgets(c3, 13, transFile);
 				fgets(c4, 21, transFile);
+				fgets(skip, 2, transFile);
+			}
+			else if(m.id == 91 || m.id == 93){
+				fgets(c1, 13, transFile);
+				fgets(c2, 14, transFile);
+				fgets(c3, 12, transFile);
+				fgets(c4, 14, transFile);
+				fgets(skip, 2, transFile);
+			}
+			else if(m.id == 97){
+				fgets(c1, 13, transFile);
+				fgets(c2, 13, transFile);
+				fgets(c3, 13, transFile);
+				fgets(c4, 18, transFile);
 				fgets(skip, 2, transFile);
 			}
 			else{

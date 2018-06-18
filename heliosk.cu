@@ -518,6 +518,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "default n = %g\n", m.defaultn);
 		fprintf(infofile, "RLOW = %d\n", param.RLOW);
 		fprintf(infofile, "NXLOW = %d\n", NXLOW);
+		fprintf(infofile, "profile = %d\n", param.profile);
 		if(param.useOutputEdges == 1){
 			fprintf(infofile, "use output edges: %s\n", param.edges);
 		}
@@ -972,7 +973,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								int nl = min(MaxLimits_h[0] - i, nlmax);
 								//This loop reduces the running time of the kernel to a few seconds
 								//A longer running time of a single kernel can cause a time out
-								Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.Sf_d, L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, x_d, Nx, NL, Limits_d, nl, i, k, param.useIndividualX, param.Nxb, binBoundaries_d, a, b, c);
+								Line_kernel < ntL > <<< (Nk + ntL - 1) / ntL, ntL >>> (L.Sf_d, L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, x_d, Nx, NL, Limits_d, nl, i, k, param.useIndividualX, param.Nxb, binBoundaries_d, a, b, c, param.profile);
 							}
 						}
 					}
@@ -1036,7 +1037,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1068,7 +1069,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nl, -1 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K1_d, il, nstart, Nk, nll, param.useIndividualX, (param.Nxb + 9) / 10, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nl, -1 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K1_d, il, nstart, Nk, nll, param.useIndividualX, (param.Nxb + 9) / 10, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1105,7 +1106,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nlb, 10 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nlb, 10 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1140,7 +1141,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nlb, 11 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nlb, 11 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1168,7 +1169,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nlb, 12 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nlb, 12 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1196,7 +1197,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], nlmax, k, ntL);
 								for(int k = 0; k < nt; k += nthmax){
 									int Nk = min(nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nlb, 13 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+										Line2f_kernel < nlb, 13 > <<< (max(Nk, nll) + nlb - 1) / nlb, nlb >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, Kc_d, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 									}
 									nstart += nthmax;
 								}
@@ -1279,7 +1280,7 @@ if(il % 10000 == 0) printf("B %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							for(int k = 0; k < nt; k += nthmax){
 								int Nk = min(nthmax, nt - k);
 								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nl2, 1 > <<< (max(Nk, nll) + nl2 - 1) / nl2, nl2 >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f);
+									Line2f_kernel < nl2, 1 > <<< (max(Nk, nll) + nl2 - 1) / nl2, nl2 >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
 								}
 								nstart += nthmax;
 							}
@@ -1359,7 +1360,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							for(int k = 0; k < nt; k += nthmax){
 								int Nk = min(nthmax, nt - k);
 								if(Nk > 0 && nll > 0){
-									Line2f_kernel < nl3, 2 > <<< (max(Nk, nll) + nl3 - 1) / nl3, nl3 >>> (L.Sf_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, a, b, c);
+									Line2f_kernel < nl3, 2 > <<< (max(Nk, nll) + nl3 - 1) / nl3, nl3 >>> (L.Sf_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, a, b, c, param.profile);
 								}
 								nstart += nthmax;
 							}

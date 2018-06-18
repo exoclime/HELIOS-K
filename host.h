@@ -141,154 +141,210 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	//Read parameters from param.dat file
 	FILE *paramFile;
 	paramFile = fopen(paramFilename, "r");
-		char skip[160];
-		char skip2[160];
-		//read name
-		fgets(skip, 7, paramFile);
-		fscanf (paramFile, "%s", param.name);
-		fgets(skip2, 3, paramFile);
-		//read T
-		fgets(skip, 4, paramFile);
-		fscanf (paramFile, "%lf", &param.T);
-		fgets(skip2, 3, paramFile);
-		//read P
-		fgets(skip, 4, paramFile);
-		fscanf (paramFile, "%lf", &param.P);
-		fgets(skip2, 3, paramFile);
-		//read PFile
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%s", param.PFilename);
-		fgets(skip2, 3, paramFile);
-		//read HITEMP
-		fgets(skip, 12, paramFile);
-		fscanf (paramFile, "%d", &param.useHITEMP);
-		fgets(skip2, 3, paramFile);
-		//read Molecule
-		fgets(skip, 11, paramFile);
-		fscanf (paramFile, "%d", &param.nMolecule);
-		fgets(skip2, 3, paramFile);
-		//read ciaSystem
-		fgets(skip, 12, paramFile);
-		fscanf (paramFile, "%s", param.ciaSystem);
-		fgets(skip2, 3, paramFile);
-		//read path
-		fgets(skip, 13, paramFile);
-		fscanf (paramFile, "%s", param.path);
-		fgets(skip2, 3, paramFile);
-		if(strcmp(param.path, "numin") == 0){
-			param.path[0] = 0;
-		
-			//fgets(skip, 3, paramFile);
-			fscanf (paramFile, "%lf", &param.numin);
-			fgets(skip2, 3, paramFile);
+
+	param.profile = PROFILE;
+
+	char sp[160];
+
+	for(int j = 0; j < 70; ++j){ //loop around all lines in the param.dat file
+		int c;
+		for(int i = 0; i < 50; ++i){
+			c = fgetc(paramFile);
+			if(c == EOF) break;
+			sp[i] = char(c);
+			if(c == '=' || c == ':'){
+				sp[i + 1] = '\0';
+				break;
+			}
 		}
-		else{
+		if(c == EOF) break;
+		//read name
+		if(strcmp(sp, "name =") == 0){
+			fscanf (paramFile, "%s", param.name);
+			fgets(sp, 3, paramFile);
+		}
+		//read T
+		else if(strcmp(sp, "T =") == 0){
+			fscanf (paramFile, "%lf", &param.T);
+			fgets(sp, 3, paramFile);
+		}
+		//read P
+		else if(strcmp(sp, "P =") == 0){
+			fscanf (paramFile, "%lf", &param.P);
+			fgets(sp, 3, paramFile);
+		}
+		//read PFile
+		else if(strcmp(sp, "PFile =") == 0){
+			fscanf (paramFile, "%s", param.PFilename);
+			fgets(sp, 3, paramFile);
+		}
+		//read HITEMP
+		else if(strcmp(sp, "useHITEMP =") == 0){
+			fscanf (paramFile, "%d", &param.useHITEMP);
+			fgets(sp, 3, paramFile);
+		}
+		//read Molecule
+		else if(strcmp(sp, "Molecule =") == 0){
+			fscanf (paramFile, "%d", &param.nMolecule);
+			fgets(sp, 3, paramFile);
+		}
+		//read ciaSystem
+		else if(strcmp(sp, "ciaSystem =") == 0){
+			fscanf (paramFile, "%s", param.ciaSystem);
+			fgets(sp, 3, paramFile);
+		}
+		//read path
+		else if(strcmp(sp, "pathToData =") == 0){
+			fscanf (paramFile, "%s", param.path);
+			fgets(sp, 3, paramFile);
+	
+			if(strcmp(param.path, "numin") == 0){
+				param.path[0] = 0;
+		
+				//fgets(skip, 3, paramFile);
+				fscanf (paramFile, "%lf", &param.numin);
+				fgets(sp, 3, paramFile);
+			}
+		}
 		//read numin
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%lf", &param.numin);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "numin =") == 0){
+			fscanf (paramFile, "%lf", &param.numin);
+			fgets(sp, 3, paramFile);
 		}
 		//read numax
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%lf", &param.numax);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "numax =") == 0){
+			fscanf (paramFile, "%lf", &param.numax);
+			fgets(sp, 3, paramFile);
+		}
 		//read dnu
-		fgets(skip, 6, paramFile);
-		fscanf (paramFile, "%lf", &param.dnu);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "dnu =") == 0){
+			fscanf (paramFile, "%lf", &param.dnu);
+			fgets(sp, 3, paramFile);
+		}
 		//read Nxb
-		fgets(skip, 14, paramFile);
-		fscanf (paramFile, "%d", &param.Nxb);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "Nnu per bin =") == 0){
+			fscanf (paramFile, "%d", &param.Nxb);
+			fgets(sp, 3, paramFile);
+		}
 		//read cutMode
-		fgets(skip, 10, paramFile);
-		fscanf (paramFile, "%d", &param.cutMode);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "cutMode =") == 0){
+			fscanf (paramFile, "%d", &param.cutMode);
+			fgets(sp, 3, paramFile);
+		}
 		//read cut
-		fgets(skip, 6, paramFile);
-		fscanf (paramFile, "%lf", &param.cut);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "cut =") == 0){
+			fscanf (paramFile, "%lf", &param.cut);
+			fgets(sp, 3, paramFile);
+		}
 		//read doResampling
-		fgets(skip, 15, paramFile);
-		fscanf (paramFile, "%d", &param.doResampling);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "doResampling =") == 0){
+			fscanf (paramFile, "%d", &param.doResampling);
+			fgets(sp, 3, paramFile);
+		}
 		//read nC
-		fgets(skip, 5, paramFile);
-		fscanf (paramFile, "%d", &param.nC);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "nC =") == 0){
+			fscanf (paramFile, "%d", &param.nC);
+			fgets(sp, 3, paramFile);
+			if(param.nC > NmaxSample){
+				printf("nC larger than NmaxSample, reduced to %d\n", NmaxSample);
+				param.nC = NmaxSample;
+			}
+		}
 		//read doTransmission
-		fgets(skip, 17, paramFile);
-		fscanf (paramFile, "%d", &param.doTransmission);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "doTransmission =") == 0){
+			fscanf (paramFile, "%d", &param.doTransmission);
+			fgets(sp, 3, paramFile);
+		}
 		//read nTr
-		fgets(skip, 6, paramFile);
-		fscanf (paramFile, "%d", &param.nTr);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "nTr =") == 0){
+			fscanf (paramFile, "%d", &param.nTr);
+			fgets(sp, 3, paramFile);
+		}
 		//read dTr
-		fgets(skip, 6, paramFile);
-		fscanf (paramFile, "%lf", &param.dTr);
-		fgets(skip2, 3, paramFile);
-		if(param.nC > NmaxSample){
-			printf("nC larger than NmaxSample, reduced to %d\n", NmaxSample);
-			param.nC = NmaxSample;
+		else if(strcmp(sp, "dTr =") == 0){
+			fscanf (paramFile, "%lf", &param.dTr);
+			fgets(sp, 3, paramFile);
 		}
 		//read doStoreFullK
-		fgets(skip, 15, paramFile);
-		fscanf (paramFile, "%d", &param.doStoreFullK);
-		fgets(skip2, 3, paramFile);
-		//read pathK
-		fgets(skip, 10, paramFile);
-		fscanf (paramFile, "%s", param.pathK);
-		fgets(skip2, 3, paramFile);
-		if(strcmp(param.pathK, "doStoreSK") == 0){
-			param.pathK[0] = 0;
-		
-			//fgets(skip, 3, paramFile);
-			fscanf (paramFile, "%d", &param.doStoreK);
-			fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "doStoreFullK =") == 0){
+			fscanf (paramFile, "%d", &param.doStoreFullK);
+			fgets(sp, 3, paramFile);
 		}
-		else{
-		//read doStoreK
-		fgets(skip, 12, paramFile);
-		fscanf (paramFile, "%d", &param.doStoreK);
-		fgets(skip2, 3, paramFile);
+		//read pathK
+		else if(strcmp(sp, "pathToK =") == 0){
+			fscanf (paramFile, "%s", param.pathK);
+			fgets(sp, 3, paramFile);
+		
+			if(strcmp(param.pathK, "doStoreSK") == 0){
+				param.pathK[0] = 0;
+		
+				//fgets(skip, 3, paramFile);
+				fscanf (paramFile, "%d", &param.doStoreK);
+				fgets(sp, 3, paramFile);
+			}
+			else{
+				//read doStoreK
+				if(strcmp(sp, "doStoreSK =") == 0){
+					fscanf (paramFile, "%d", &param.doStoreK);
+					fgets(sp, 3, paramFile);
+				}
+			}
 		}
 		//read nbins
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%d", &param.nbins);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "nbins =") == 0){
+			fscanf (paramFile, "%d", &param.nbins);
+			fgets(sp, 3, paramFile);
+		}
 		//read binsfile
-		fgets(skip, 11, paramFile);
-		fscanf (paramFile, "%s", param.bins);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "binsFile =") == 0){
+			fscanf (paramFile, "%s", param.bins);
+			fgets(sp, 3, paramFile);
+		}
 		//read outputEdges
-		fgets(skip, 18, paramFile);
-		fscanf (paramFile, "%s", param.edges);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "OutputEdgesFile =") == 0){
+			fscanf (paramFile, "%s", param.edges);
+			fgets(sp, 3, paramFile);
+		}
 		//read kmin
-		fgets(skip, 7, paramFile);
-		fscanf (paramFile, "%lf", &param.kmin);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "kmin =") == 0){
+			fscanf (paramFile, "%lf", &param.kmin);
+			fgets(sp, 3, paramFile);
+		}
 		//read qalphaL
-		fgets(skip, 10, paramFile);
-		fscanf (paramFile, "%lf", &param.qalphaL);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "qalphaL =") == 0){
+			fscanf (paramFile, "%lf", &param.qalphaL);
+			fgets(sp, 3, paramFile);
+		}
 		//read doMean
-		fgets(skip, 9, paramFile);
-		fscanf (paramFile, "%d", &param.doMean);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "doMean =") == 0){
+			fscanf (paramFile, "%d", &param.doMean);
+			fgets(sp, 3, paramFile);
+		}
 		//read Units
-		fgets(skip, 8, paramFile);
-		fscanf (paramFile, "%d", &param.units);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "Units =") == 0){
+			fscanf (paramFile, "%d", &param.units);
+			fgets(sp, 3, paramFile);
+		}
 		//read ReplaceFiles
-		fgets(skip, 15, paramFile);
-		fscanf (paramFile, "%d", &param.replaceFiles);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "ReplaceFiles =") == 0){
+			fscanf (paramFile, "%d", &param.replaceFiles);
+			fgets(sp, 3, paramFile);
+		}
 		//read RLOW
-		fgets(skip, 7, paramFile);
-		fscanf (paramFile, "%d", &param.RLOW);
-		fgets(skip2, 3, paramFile);
+		else if(strcmp(sp, "RLOW =") == 0){
+			fscanf (paramFile, "%d", &param.RLOW);
+			fgets(sp, 3, paramFile);
+		}
+		//read profile
+		else if(strcmp(sp, "profile =") == 0){
+			fscanf (paramFile, "%d", &param.profile);
+			fgets(sp, 3, paramFile);
+		}
+		else{
+			printf("Undefined line in param.dat file: line %d\n", j);
+			return 0;
+		}
+	}
 
 	fclose(paramFile);
 
@@ -647,7 +703,12 @@ __host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, d
 	for(int i = 0; i < m.NL[fi]; ++i){
 		L.vy_h[i] += (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923));
 		L.vy_h[i] *= L.ialphaD_h[i]; 
-		L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
+		if(param.profile < 4){
+			L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
+		}
+		else{
+			L.S1_h[i] = L.S_h[i];
+		}
 		if(param.cutMode == 1){
 			L.vcut2_h[i] = (float)(param.cut * param.cut * L.vy_h[i] * L.vy_h[i]);
 		}

@@ -618,7 +618,170 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO[0] = (Isotopologue){11,  161,	1.0,    0.0,    0,     18.010565};
 			//version = 20180501
 		}
+		if(param.useHITEMP == 4){
+			char name[] = "1H2-18O__HotWat78";
+			sprintf(m.mName, "%s", "1H2-18O__HotWat78");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 224311;
+			m.nFiles = 30 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 68977446;
+			m.NL[1] = 61667084;
+			m.NL[2] = 54938040;
+			m.NL[3] = 48775643;
+			m.NL[4] = 43053716;
+			m.NL[5] = 37859120;
+			m.NL[6] = 33138785;
+			m.NL[7] = 28804219;
+			m.NL[8] = 24900275;
+			m.NL[9] = 21382697;
+			m.NL[10] = 18248169;
+			m.NL[11] = 15408898;
+			m.NL[12] = 12923679;
+			m.NL[13] = 10752989;
+			m.NL[14] = 8812203;
+			m.NL[15] = 7156817;
+			m.NL[16] = 5749176;
+			m.NL[17] = 4533589;
+			m.NL[18] = 3515836;
+			m.NL[19] = 2678479;
+			m.NL[20] = 2007491;
+			m.NL[21] = 1450132;
+			m.NL[22] = 1016361;
+			m.NL[23] = 702968;
+			m.NL[24] = 451756;
+			m.NL[25] = 275730;
+			m.NL[26] = 153787;
+			m.NL[27] = 84418;
+			m.NL[28] = 34642;
+			m.NL[29] = 7644;
 
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 1000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){12,  181,  1.0,    0.0,    0,      20.01504 };
+			//version = 20161222
+		}
+		if(param.useHITEMP == 5){
+			char name[] = "1H2-17O__HotWat78";
+			sprintf(m.mName, "%s", "1H2-17O__HotWat78");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 222811;
+			m.nFiles = 30 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 67565787;
+			m.NL[1] = 60468484;
+			m.NL[2] = 53916408;
+			m.NL[3] = 47915089;
+			m.NL[4] = 42329879;
+			m.NL[5] = 37251662;
+			m.NL[6] = 32630613;
+			m.NL[7] = 28385878;
+			m.NL[8] = 24548789;
+			m.NL[9] = 21093830;
+			m.NL[10] = 18011835;
+			m.NL[11] = 15213485;
+			m.NL[12] = 12762724;
+			m.NL[13] = 10623481;
+			m.NL[14] = 8706798;
+			m.NL[15] = 7072237;
+			m.NL[16] = 5682072;
+			m.NL[17] = 4481180;
+			m.NL[18] = 3476748;
+			m.NL[19] = 2647684;
+			m.NL[20] = 1985962;
+			m.NL[21] = 1434963;
+			m.NL[22] = 1005607;
+			m.NL[23] = 695865;
+			m.NL[24] = 447521;
+			m.NL[25] = 273278;
+			m.NL[26] = 152451;
+			m.NL[27] = 83854;
+			m.NL[28] = 34585;
+			m.NL[29] = 7614;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 1000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){13,  171,  1.0,    0.0,    0,      19.014781 };
+			//version = 20161222
+		}
+		if(param.useHITEMP == 6){
+			char name[] = "1H-2H-16O__VTT";
+			sprintf(m.mName, "%s", "1H-2H-16O__VTT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 163491;
+			m.nFiles = 16 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 25194779;
+			m.NL[1] = 24751793;
+			m.NL[2] = 24159557;
+			m.NL[3] = 23561681;
+			m.NL[4] = 45261872;
+			m.NL[5] = 42681174;
+			m.NL[6] = 20428347;
+			m.NL[7] = 39142235;
+			m.NL[8] = 54422645;
+			m.NL[9] = 65000716;
+			m.NL[10] = 56784976;
+			m.NL[11] = 71251023;
+			m.NL[12] = 72326470;
+			m.NL[13] = 98035804;
+			m.NL[14] = 31695022;
+			m.NL[15] = 2752731;
+			m.NLmax = 0;
+
+			m.fileLimit[ 0] = 0;
+			m.fileLimit[ 1] = 250; 
+			m.fileLimit[ 2] = 500;
+			m.fileLimit[ 3] = 750;
+			m.fileLimit[ 4] = 1000;
+			m.fileLimit[ 5] = 1500;
+			m.fileLimit[ 6] = 2000;
+			m.fileLimit[ 7] = 2250;
+			m.fileLimit[ 8] = 2750;
+			m.fileLimit[ 9] = 3500;
+			m.fileLimit[10] = 4500;
+			m.fileLimit[11] = 5500;
+			m.fileLimit[12] = 7000;
+			m.fileLimit[13] = 9000;
+			m.fileLimit[14] = 14000;
+			m.fileLimit[15] = 20000; 
+			m.fileLimit[16] = 26000;
+ 
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){14,  162,  1.0,    0.0,    0,      19.016842};
+			//version = 20160726
+		}
 	}
 	if(m.id == 2){//CO2
 		m.nFiles = 1;		//number of data files
@@ -1417,8 +1580,110 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){111,  4111,  1.0,    0.0,    0,     17.026549};
 		}
-
-	}
+		if(param.useHITEMP == 3){
+			char name[] = "15N-1H3__BYTe-15";
+			sprintf(m.mName, "%s", "15N-1H3__BYTe-15");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 2396730;
+			m.nFiles = 80 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 180183;
+			m.NL[1] = 175333;
+			m.NL[2] = 171318;
+			m.NL[3] = 166209;
+			m.NL[4] = 167384;
+			m.NL[5] = 177894;
+			m.NL[6] = 198312;
+			m.NL[7] = 213288;
+			m.NL[8] = 226383;
+			m.NL[9] = 237749;
+			m.NL[10] = 236597;
+			m.NL[11] = 240576;
+			m.NL[12] = 254248;
+			m.NL[13] = 278630;
+			m.NL[14] = 308720;
+			m.NL[15] = 346489;
+			m.NL[16] = 371618;
+			m.NL[17] = 374136;
+			m.NL[18] = 371247;
+			m.NL[19] = 359618;
+			m.NL[20] = 356732;
+			m.NL[21] = 370681;
+			m.NL[22] = 396482;
+			m.NL[23] = 425997;
+			m.NL[24] = 452770;
+			m.NL[25] = 475069;
+			m.NL[26] = 481346;
+			m.NL[27] = 491255;
+			m.NL[28] = 509551;
+			m.NL[29] = 539742;
+			m.NL[30] = 585726;
+			m.NL[31] = 641537;
+			m.NL[32] = 682154;
+			m.NL[33] = 707647;
+			m.NL[34] = 713229;
+			m.NL[35] = 698222;
+			m.NL[36] = 693187;
+			m.NL[37] = 702662;
+			m.NL[38] = 731539;
+			m.NL[39] = 775831;
+			m.NL[40] = 824159;
+			m.NL[41] = 860685;
+			m.NL[42] = 883766;
+			m.NL[43] = 906477;
+			m.NL[44] = 930480;
+			m.NL[45] = 972803;
+			m.NL[46] = 1035802;
+			m.NL[47] = 1110396;
+			m.NL[48] = 1173644;
+			m.NL[49] = 1225658;
+			m.NL[50] = 1246728;
+			m.NL[51] = 1235739;
+			m.NL[52] = 1230938;
+			m.NL[53] = 1238025;
+			m.NL[54] = 1274297;
+			m.NL[55] = 1335966;
+			m.NL[56] = 1407141;
+			m.NL[57] = 1462968;
+			m.NL[58] = 1508349;
+			m.NL[59] = 1550948;
+			m.NL[60] = 1588189;
+			m.NL[61] = 1652196;
+			m.NL[62] = 1733426;
+			m.NL[63] = 1829235;
+			m.NL[64] = 1920224;
+			m.NL[65] = 1998180;
+			m.NL[66] = 2035880;
+			m.NL[67] = 2034792;
+			m.NL[68] = 2039873;
+			m.NL[69] = 2049051;
+			m.NL[70] = 2090046;
+			m.NL[71] = 2168209;
+			m.NL[72] = 2264703;
+			m.NL[73] = 2350489;
+			m.NL[74] = 2427978;
+			m.NL[75] = 2496594;
+			m.NL[76] = 2553263;
+			m.NL[77] = 2636663;
+			m.NL[78] = 2745438;
+			m.NL[79] = 2870254;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+			for(int i = 0; i < m.nFiles; ++i){
+				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, name, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){112,  5111,  1.0,    0.0,    0,      18.023584};
+			//version = 20160726
+					}
+				}
 	if(m.id == 13){//OH
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 33058;
@@ -1498,6 +1763,28 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
 			m.ISO[0] = (Isotopologue){231,  124,  1.0,    0.0,    0,     27.010899};
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "1H-13C-14N__Larner";
+			sprintf(m.mName, "%s", "1H-13C-14N__Larner");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 168110;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 34179477;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 17596;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){232,  134,  1.0,    0.0,    0,      28.014254};
+			//version = 20160726
 		}
 	}
 	if(m.id == 26){//C2H2
@@ -2151,6 +2438,72 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.ISO[0] = (Isotopologue){831,  2716,  1.0,    0.0,    0,      42.976454};
 			//version = 20160726
 		}
+		if(param.useHITEMP == 3){
+			char name[] = "26Al-16O__ATP";
+			sprintf(m.mName, "%s", "26Al-16O__ATP");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 93350;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 4866540;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 35000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){832,  2616,  1.0,    0.0,    0,      41.981807};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 4){
+			char name[] = "27Al-17O__ATP";
+			sprintf(m.mName, "%s", "27Al-17O__ATP");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 96350;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 5148996;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 35000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){833,  2717,  1.0,    0.0,    0,      43.980671};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 5){
+			char name[] = "27Al-18O__ATP";
+			sprintf(m.mName, "%s", "27Al-18O__ATP");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 98269;
+			m.nFiles = 1 ;
+			m.ntcol = 3;
+			m.npfcol = 2;
+			m.NL[0] = 5365592;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 35000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){834,  2718,  1.0,    0.0,    0,      44.980700};
+			//version = 20160726
+		}
 	}
 	if(m.id == 84){//SiO
 		m.nFiles = 1;		//number of data files
@@ -2194,6 +2547,94 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 			m.ISO[0] = (Isotopologue){841,  2816,  1.0,    0.0,    0,      43.971842};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 3){
+			char name[] = "28Si-17O__EBJT";
+			sprintf(m.mName, "%s", "28Si-17O__EBJT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 25254;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 264859;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 5939;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){842,  2817,  1.0,    0.0,    0,      44.976059};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 4){
+			char name[] = "28Si-18O__EBJT";
+			sprintf(m.mName, "%s", "28Si-18O__EBJT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 26162;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 274623;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 5838;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){843,  2818,  1.0,    0.0,    0,      45.976088};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 5){
+			char name[] = "29Si-16O__EBJT";
+			sprintf(m.mName, "%s", "29Si-16O__EBJT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 24617;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 258028;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 6013;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){844,  2916,  1.0,    0.0,    0,      44.971410};
+			//version = 20160726
+		}
+		if(param.useHITEMP == 6){
+			char name[] = "30Si-16O__EBJT";
+			sprintf(m.mName, "%s", "30Si-16O__EBJT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 24915;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 261218;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 5978;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){845,  3016,  1.0,    0.0,    0,      45.968685};
 			//version = 20160726
 		}
 	}
@@ -2424,14 +2865,194 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 
 		}
 	}
-       	if(m.id == 300){//Li 7
+	if(m.id == 91){//NaH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){911,  231,  1.0,    0.0,    0,      23.997594};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "23Na-1H__Rivlin";
+			sprintf(m.mName, "%s", "23Na-1H__Rivlin");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 3338;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 79898;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 32147;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){911,  231,  1.0,    0.0,    0,      23.997594};
+			//version = 20160804
+		}
+	}
+	if(m.id == 92){//AlH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){921,  271,  1.0,    0.0,    0,      27.98948 };
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "27Al-1H__AlHambra";
+			sprintf(m.mName, "%s", "27Al-1H__AlHambra");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 1551;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 39483;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 28000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){921,  271,  1.0,    0.0,    0,      27.98948 };
+			//version = 20180515
+		}
+	}
+	if(m.id == 93){//CrH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){931,  521,  1.0,    0.0,    0,      52.948333};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "52Cr-1H__Yueqi";
+			sprintf(m.mName, "%s", "52Cr-1H__Yueqi");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 1645;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 13824;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 9000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){931,  521,  1.0,    0.0,    0,      52.948333};
+			//version = 20160726
+		}
+	}
+	if(m.id == 97){//ScH
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//			 id	AFGL	Abundance	Q(296K)		gj	Molar Mass(g)
+		m.ISO[0] = (Isotopologue){971,  451,  1.0,    0.0,    0,      45.963737};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+
+
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			char name[] = "45Sc-1H__LYT";
+			sprintf(m.mName, "%s", "45Sc-1H__LYT");
+			m.defaultL = 0.0700 ;
+			m.defaultn = 0.500 ;
+			m.nStates = 8451;
+			m.nFiles = 1 ;
+			m.ntcol = 4;
+			m.npfcol = 2;
+			m.NL[0] = 1152826;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 16000;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){971,  451,  1.0,    0.0,    0,      45.963737};
+			//version = 20160726
+		}
+	}
+	if(m.id == 300){//Li 7
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     7.016};
+		m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     6.941};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2463,7 +3084,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     7.016};
+			m.ISO[0] = (Isotopologue){300,  7,  1.0,    0.0,    0,     6.941};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2474,7 +3095,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.0122};
+		m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.01218};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2506,7 +3127,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.0122};
+			m.ISO[0] = (Isotopologue){400,  9,  1.0,    0.0,    0,     9.01218};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2517,7 +3138,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.0122};
+		m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.01218};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2549,7 +3170,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.0122};
+			m.ISO[0] = (Isotopologue){401,  9,  1.0,    0.0,    0,     9.01218};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2689,7 +3310,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12};
+		m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12.011};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2721,7 +3342,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12};
+			m.ISO[0] = (Isotopologue){601,  12,  1.0,    0.0,    0,     12.011};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2732,7 +3353,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12};
+		m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12.011};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2764,7 +3385,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12};
+			m.ISO[0] = (Isotopologue){602,  12,  1.0,    0.0,    0,     12.011};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2775,7 +3396,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0031};
+		m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0067};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2807,7 +3428,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0031};
+			m.ISO[0] = (Isotopologue){700,  14,  1.0,    0.0,    0,     14.0067};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2818,7 +3439,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0031};
+		m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0067};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2850,7 +3471,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0031};
+			m.ISO[0] = (Isotopologue){701,  14,  1.0,    0.0,    0,     14.0067};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2861,7 +3482,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0031};
+		m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0067};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2893,7 +3514,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0031};
+			m.ISO[0] = (Isotopologue){702,  14,  1.0,    0.0,    0,     14.0067};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2904,7 +3525,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9949};
+		m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9994};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2936,7 +3557,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9949};
+			m.ISO[0] = (Isotopologue){800,  16,  1.0,    0.0,    0,     15.9994};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2947,7 +3568,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9949};
+		m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9994};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -2979,7 +3600,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9949};
+			m.ISO[0] = (Isotopologue){801,  16,  1.0,    0.0,    0,     15.9994};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -2990,7 +3611,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9949};
+		m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9994};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3022,7 +3643,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9949};
+			m.ISO[0] = (Isotopologue){802,  16,  1.0,    0.0,    0,     15.9994};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3162,7 +3783,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     19.9924};
+		m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     20.1797};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3194,7 +3815,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     19.9924};
+			m.ISO[0] = (Isotopologue){1000,  20,  1.0,    0.0,    0,     20.1797};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3205,7 +3826,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     19.9924};
+		m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     20.1797};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3237,7 +3858,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     19.9924};
+			m.ISO[0] = (Isotopologue){1001,  20,  1.0,    0.0,    0,     20.1797};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3248,7 +3869,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     19.9924};
+		m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     20.1797};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3280,7 +3901,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     19.9924};
+			m.ISO[0] = (Isotopologue){1002,  20,  1.0,    0.0,    0,     20.1797};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3420,7 +4041,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     23.985};
+		m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     24.305};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3452,7 +4073,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     23.985};
+			m.ISO[0] = (Isotopologue){1200,  24,  1.0,    0.0,    0,     24.305};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3463,7 +4084,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     23.985};
+		m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     24.305};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3495,7 +4116,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     23.985};
+			m.ISO[0] = (Isotopologue){1201,  24,  1.0,    0.0,    0,     24.305};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3506,7 +4127,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     23.985};
+		m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     24.305};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3538,7 +4159,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     23.985};
+			m.ISO[0] = (Isotopologue){1202,  24,  1.0,    0.0,    0,     24.305};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3671,49 +4292,49 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			//version =  gfallwn08oct17.dat
 		}
 	}
-        if(m.id == 1400){//Si 28
-                m.nFiles = 1;           //number of data files
-                m.NL[0] = 0;
-                m.NLmax = 0;
-                m.nISO = 1;
-                m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-                //                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-                m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     27.9769};
-                sprintf(qFilename[0], "%s%s", param.path, "q.dat");
-                m.npfcol = 0;
-                m.fileLimit[ 0] = 0;
-                m.fileLimit[ 1] = 0;
-                sprintf(m.dataFilename[0], "%s%s", param.path, ".");
-                if(param.useHITEMP == 0){
-                        printf("Error: no Hitran data for this molecule\n");
-                }
-                if(param.useHITEMP == 1){
-                        printf("Error: no HITEMP data for this molecule\n");
-                }
-                if(param.useHITEMP == 2){
-                        printf("Error: no EXOMOL data for this molecule\n");
-                }
-                if(param.useHITEMP == 30){
-                        char name[] = "gfnew1400";
-                        sprintf(m.mName, "%s", "gfnew1400");
-                        m.defaultL = 0.0;
-                        m.defaultn = 0.0;
-                        m.nFiles = 1;
-                        m.npfcol = 2;
-                        m.NL[0] = 10635;
-                        m.NLmax = 0;
-                        for(int i = 0; i < m.nFiles + 1; ++i){
-                                m.fileLimit[i] = i * 100431;
-                                m.NLmax = max(m.NLmax, m.NL[i]);
-                        }
-                        sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
-                                sprintf(m.dataFilename[0], "%s%s.", param.path, name);
-                        m.nISO = 1;
-                        m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-                        m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     27.9769};
-                        //version =  gfallwn08oct17.dat
-                }
-        }
+	if(m.id == 1400){//Si 28
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     28.0855};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 30){
+			char name[] = "gfnew1400";
+			sprintf(m.mName, "%s", "gfnew1400");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 10635;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 100431;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){1400,  28,  1.0,    0.0,    0,     28.0855};
+			//version =  gfallwn08oct17.dat
+		}
+	}
 	if(m.id == 1401){//Si+ 28
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
@@ -3721,7 +4342,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     27.9769};
+		m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     28.0855};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3753,7 +4374,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     27.9769};
+			m.ISO[0] = (Isotopologue){1401,  28,  1.0,    0.0,    0,     28.0855};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3764,7 +4385,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     27.9769};
+		m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     28.0855};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3796,7 +4417,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     27.9769};
+			m.ISO[0] = (Isotopologue){1402,  28,  1.0,    0.0,    0,     28.0855};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3807,7 +4428,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9737};
+		m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9738};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3839,7 +4460,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9737};
+			m.ISO[0] = (Isotopologue){1500,  31,  1.0,    0.0,    0,     30.9738};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3850,7 +4471,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9737};
+		m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9738};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3882,7 +4503,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9737};
+			m.ISO[0] = (Isotopologue){1501,  31,  1.0,    0.0,    0,     30.9738};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3893,7 +4514,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9737};
+		m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9738};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3925,7 +4546,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9737};
+			m.ISO[0] = (Isotopologue){1502,  31,  1.0,    0.0,    0,     30.9738};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3936,7 +4557,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     31.9721};
+		m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     32.066};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -3968,7 +4589,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     31.9721};
+			m.ISO[0] = (Isotopologue){1600,  32,  1.0,    0.0,    0,     32.066};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -3979,7 +4600,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     31.9721};
+		m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     32.066};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4011,7 +4632,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     31.9721};
+			m.ISO[0] = (Isotopologue){1601,  32,  1.0,    0.0,    0,     32.066};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4022,7 +4643,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     31.9721};
+		m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     32.066};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4054,7 +4675,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     31.9721};
+			m.ISO[0] = (Isotopologue){1602,  32,  1.0,    0.0,    0,     32.066};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4065,7 +4686,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     34.9689};
+		m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     35.4527};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4097,7 +4718,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     34.9689};
+			m.ISO[0] = (Isotopologue){1700,  35,  1.0,    0.0,    0,     35.4527};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4108,7 +4729,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     34.9689};
+		m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     35.4527};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4140,7 +4761,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     34.9689};
+			m.ISO[0] = (Isotopologue){1701,  35,  1.0,    0.0,    0,     35.4527};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4151,7 +4772,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     34.9689};
+		m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     35.4527};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4183,7 +4804,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     34.9689};
+			m.ISO[0] = (Isotopologue){1702,  35,  1.0,    0.0,    0,     35.4527};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4194,7 +4815,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.9624};
+		m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.948};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4226,7 +4847,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.9624};
+			m.ISO[0] = (Isotopologue){1800,  40,  1.0,    0.0,    0,     39.948};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4237,7 +4858,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.9624};
+		m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.948};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4269,7 +4890,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.9624};
+			m.ISO[0] = (Isotopologue){1801,  40,  1.0,    0.0,    0,     39.948};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4280,7 +4901,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.9624};
+		m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.948};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4312,7 +4933,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.9624};
+			m.ISO[0] = (Isotopologue){1802,  40,  1.0,    0.0,    0,     39.948};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4323,7 +4944,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     38.9637};
+		m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     39.0983};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4355,7 +4976,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     38.9637};
+			m.ISO[0] = (Isotopologue){1900,  39,  1.0,    0.0,    0,     39.0983};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4366,7 +4987,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     38.9637};
+		m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     39.0983};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4398,7 +5019,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     38.9637};
+			m.ISO[0] = (Isotopologue){1901,  39,  1.0,    0.0,    0,     39.0983};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4409,7 +5030,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     38.9637};
+		m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     39.0983};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4441,7 +5062,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     38.9637};
+			m.ISO[0] = (Isotopologue){1902,  39,  1.0,    0.0,    0,     39.0983};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4452,7 +5073,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     39.9626};
+		m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     40.078};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4484,7 +5105,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     39.9626};
+			m.ISO[0] = (Isotopologue){2000,  40,  1.0,    0.0,    0,     40.078};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4495,7 +5116,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     39.9626};
+		m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     40.078};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4527,7 +5148,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     39.9626};
+			m.ISO[0] = (Isotopologue){2001,  40,  1.0,    0.0,    0,     40.078};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4538,7 +5159,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     39.9626};
+		m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     40.078};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4570,7 +5191,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     39.9626};
+			m.ISO[0] = (Isotopologue){2002,  40,  1.0,    0.0,    0,     40.078};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4710,7 +5331,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.9479};
+		m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.88};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4742,7 +5363,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.9479};
+			m.ISO[0] = (Isotopologue){2200,  48,  1.0,    0.0,    0,     47.88};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4753,7 +5374,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.9479};
+		m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.88};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4785,7 +5406,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.9479};
+			m.ISO[0] = (Isotopologue){2201,  48,  1.0,    0.0,    0,     47.88};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4796,7 +5417,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.9479};
+		m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.88};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4828,7 +5449,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.9479};
+			m.ISO[0] = (Isotopologue){2202,  48,  1.0,    0.0,    0,     47.88};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4839,7 +5460,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.944};
+		m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.9415};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4871,7 +5492,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.944};
+			m.ISO[0] = (Isotopologue){2300,  51,  1.0,    0.0,    0,     50.9415};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4882,7 +5503,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.944};
+		m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.9415};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4914,7 +5535,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.944};
+			m.ISO[0] = (Isotopologue){2301,  51,  1.0,    0.0,    0,     50.9415};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4925,7 +5546,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.944};
+		m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.9415};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -4957,7 +5578,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.944};
+			m.ISO[0] = (Isotopologue){2302,  51,  1.0,    0.0,    0,     50.9415};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -4968,7 +5589,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9405};
+		m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9961};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5000,7 +5621,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9405};
+			m.ISO[0] = (Isotopologue){2400,  52,  1.0,    0.0,    0,     51.9961};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5011,7 +5632,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9405};
+		m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9961};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5043,7 +5664,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9405};
+			m.ISO[0] = (Isotopologue){2401,  52,  1.0,    0.0,    0,     51.9961};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5054,7 +5675,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9405};
+		m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9961};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5086,7 +5707,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9405};
+			m.ISO[0] = (Isotopologue){2402,  52,  1.0,    0.0,    0,     51.9961};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5226,7 +5847,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.9349};
+		m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.847};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5258,7 +5879,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.9349};
+			m.ISO[0] = (Isotopologue){2600,  56,  1.0,    0.0,    0,     55.847};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5269,7 +5890,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.9349};
+		m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.847};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5301,7 +5922,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.9349};
+			m.ISO[0] = (Isotopologue){2601,  56,  1.0,    0.0,    0,     55.847};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5312,7 +5933,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.9349};
+		m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.847};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5344,7 +5965,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.9349};
+			m.ISO[0] = (Isotopologue){2602,  56,  1.0,    0.0,    0,     55.847};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5477,14 +6098,14 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 2800){//Ni 58
+	if(m.id == 2800){//Ni 59
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2800,  58,  1.0,    0.0,    0,     57.9353};
+		m.ISO[0] = (Isotopologue){2800,  59,  1.0,    0.0,    0,     58.6934};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5516,61 +6137,61 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2800,  58,  1.0,    0.0,    0,     57.9353};
+			m.ISO[0] = (Isotopologue){2800,  59,  1.0,    0.0,    0,     58.6934};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-        if(m.id == 2801){//Ni+ 58
-                m.nFiles = 1;           //number of data files
-                m.NL[0] = 0;
-                m.NLmax = 0;
-                m.nISO = 1;
-                m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-                //                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-                m.ISO[0] = (Isotopologue){2801,  58,  1.0,    0.0,    0,     57.9353};
-                sprintf(qFilename[0], "%s%s", param.path, "q.dat");
-                m.npfcol = 0;
-                m.fileLimit[ 0] = 0;
-                m.fileLimit[ 1] = 0;
-                sprintf(m.dataFilename[0], "%s%s", param.path, ".");
-                if(param.useHITEMP == 0){
-                        printf("Error: no Hitran data for this molecule\n");
-                }
-                if(param.useHITEMP == 1){
-                        printf("Error: no HITEMP data for this molecule\n");
-                }
-                if(param.useHITEMP == 2){
-                        printf("Error: no EXOMOL data for this molecule\n");
-                }
-                if(param.useHITEMP == 30){
-                        char name[] = "gfnew2801";
-                        sprintf(m.mName, "%s", "gfnew2801");
-                        m.defaultL = 0.0;
-                        m.defaultn = 0.0;
-                        m.nFiles = 1;
-                        m.npfcol = 2;
-                        m.NL[0] = 56546;
-                        m.NLmax = 0;
-                        for(int i = 0; i < m.nFiles + 1; ++i){
-                                m.fileLimit[i] = i * 138842;
-                                m.NLmax = max(m.NLmax, m.NL[i]);
-                        }
-                        sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
-                                sprintf(m.dataFilename[0], "%s%s.", param.path, name);
-                        m.nISO = 1;
-                        m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-                        m.ISO[0] = (Isotopologue){2801,  58,  1.0,    0.0,    0,     57.9353};
-                        //version =  gfallwn08oct17.dat
-                }
-        }
-	if(m.id == 2802){//Ni+2 58
+	if(m.id == 2801){//Ni+ 59
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2802,  58,  1.0,    0.0,    0,     57.9353};
+		m.ISO[0] = (Isotopologue){2801,  59,  1.0,    0.0,    0,     58.6934};
+		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
+		m.npfcol = 0;
+		m.fileLimit[ 0] = 0;
+		m.fileLimit[ 1] = 0;
+		sprintf(m.dataFilename[0], "%s%s", param.path, ".");
+		if(param.useHITEMP == 0){
+			printf("Error: no Hitran data for this molecule\n");
+		}
+		if(param.useHITEMP == 1){
+			printf("Error: no HITEMP data for this molecule\n");
+		}
+		if(param.useHITEMP == 2){
+			printf("Error: no EXOMOL data for this molecule\n");
+		}
+		if(param.useHITEMP == 30){
+			char name[] = "gfnew2801";
+			sprintf(m.mName, "%s", "gfnew2801");
+			m.defaultL = 0.0;
+			m.defaultn = 0.0;
+			m.nFiles = 1;
+			m.npfcol = 2;
+			m.NL[0] = 56546;
+			m.NLmax = 0;
+			for(int i = 0; i < m.nFiles + 1; ++i){
+				m.fileLimit[i] = i * 138842;
+				m.NLmax = max(m.NLmax, m.NL[i]);
+			}
+			sprintf(qFilename[0], "%s%s%s", param.path, name, ".pf");
+				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
+			m.nISO = 1;
+			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+			m.ISO[0] = (Isotopologue){2801,  59,  1.0,    0.0,    0,     58.6934};
+			//version =  gfallwn08oct17.dat
+		}
+	}
+	if(m.id == 2802){//Ni+2 59
+		m.nFiles = 1;		//number of data files
+		m.NL[0] = 0;
+		m.NLmax = 0;
+		m.nISO = 1;
+		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
+		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
+		m.ISO[0] = (Isotopologue){2802,  59,  1.0,    0.0,    0,     58.6934};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5602,18 +6223,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2802,  58,  1.0,    0.0,    0,     57.9353};
+			m.ISO[0] = (Isotopologue){2802,  59,  1.0,    0.0,    0,     58.6934};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 2900){//Cu 63
+	if(m.id == 2900){//Cu 64
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2900,  63,  1.0,    0.0,    0,     62.9296};
+		m.ISO[0] = (Isotopologue){2900,  64,  1.0,    0.0,    0,     63.546};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5645,18 +6266,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2900,  63,  1.0,    0.0,    0,     62.9296};
+			m.ISO[0] = (Isotopologue){2900,  64,  1.0,    0.0,    0,     63.546};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 2901){//Cu+ 63
+	if(m.id == 2901){//Cu+ 64
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2901,  63,  1.0,    0.0,    0,     62.9296};
+		m.ISO[0] = (Isotopologue){2901,  64,  1.0,    0.0,    0,     63.546};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5688,18 +6309,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2901,  63,  1.0,    0.0,    0,     62.9296};
+			m.ISO[0] = (Isotopologue){2901,  64,  1.0,    0.0,    0,     63.546};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 2902){//Cu+2 63
+	if(m.id == 2902){//Cu+2 64
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){2902,  63,  1.0,    0.0,    0,     62.9296};
+		m.ISO[0] = (Isotopologue){2902,  64,  1.0,    0.0,    0,     63.546};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5731,18 +6352,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){2902,  63,  1.0,    0.0,    0,     62.9296};
+			m.ISO[0] = (Isotopologue){2902,  64,  1.0,    0.0,    0,     63.546};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 3000){//Zn 64
+	if(m.id == 3000){//Zn 65
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3000,  64,  1.0,    0.0,    0,     63.9291};
+		m.ISO[0] = (Isotopologue){3000,  65,  1.0,    0.0,    0,     65.39};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5774,18 +6395,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3000,  64,  1.0,    0.0,    0,     63.9291};
+			m.ISO[0] = (Isotopologue){3000,  65,  1.0,    0.0,    0,     65.39};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 3001){//Zn+ 64
+	if(m.id == 3001){//Zn+ 65
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3001,  64,  1.0,    0.0,    0,     63.9291};
+		m.ISO[0] = (Isotopologue){3001,  65,  1.0,    0.0,    0,     65.39};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5817,18 +6438,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3001,  64,  1.0,    0.0,    0,     63.9291};
+			m.ISO[0] = (Isotopologue){3001,  65,  1.0,    0.0,    0,     65.39};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 3002){//Zn+2 64
+	if(m.id == 3002){//Zn+2 65
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3002,  64,  1.0,    0.0,    0,     63.9291};
+		m.ISO[0] = (Isotopologue){3002,  65,  1.0,    0.0,    0,     65.39};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5860,7 +6481,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3002,  64,  1.0,    0.0,    0,     63.9291};
+			m.ISO[0] = (Isotopologue){3002,  65,  1.0,    0.0,    0,     65.39};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5871,7 +6492,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.9056};
+		m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.62};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5903,7 +6524,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.9056};
+			m.ISO[0] = (Isotopologue){3800,  88,  1.0,    0.0,    0,     87.62};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5914,7 +6535,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.9056};
+		m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.62};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5946,7 +6567,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.9056};
+			m.ISO[0] = (Isotopologue){3801,  88,  1.0,    0.0,    0,     87.62};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -5957,7 +6578,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9058};
+		m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9059};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -5989,7 +6610,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9058};
+			m.ISO[0] = (Isotopologue){3900,  89,  1.0,    0.0,    0,     88.9059};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -6000,7 +6621,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9058};
+		m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9059};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6032,18 +6653,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9058};
+			m.ISO[0] = (Isotopologue){3901,  89,  1.0,    0.0,    0,     88.9059};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4000){//Zr 90
+	if(m.id == 4000){//Zr 91
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4000,  90,  1.0,    0.0,    0,     89.9043};
+		m.ISO[0] = (Isotopologue){4000,  91,  1.0,    0.0,    0,     91.224};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6075,18 +6696,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4000,  90,  1.0,    0.0,    0,     89.9043};
+			m.ISO[0] = (Isotopologue){4000,  91,  1.0,    0.0,    0,     91.224};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4001){//Zr+ 90
+	if(m.id == 4001){//Zr+ 91
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4001,  90,  1.0,    0.0,    0,     89.9043};
+		m.ISO[0] = (Isotopologue){4001,  91,  1.0,    0.0,    0,     91.224};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6118,18 +6739,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4001,  90,  1.0,    0.0,    0,     89.9043};
+			m.ISO[0] = (Isotopologue){4001,  91,  1.0,    0.0,    0,     91.224};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4002){//Zr+2 90
+	if(m.id == 4002){//Zr+2 91
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4002,  90,  1.0,    0.0,    0,     89.9043};
+		m.ISO[0] = (Isotopologue){4002,  91,  1.0,    0.0,    0,     91.224};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6161,18 +6782,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4002,  90,  1.0,    0.0,    0,     89.9043};
+			m.ISO[0] = (Isotopologue){4002,  91,  1.0,    0.0,    0,     91.224};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4100){//Nb 83
+	if(m.id == 4100){//Nb 93
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4100,  83,  1.0,    0.0,    0,     82.9064};
+		m.ISO[0] = (Isotopologue){4100,  93,  1.0,    0.0,    0,     92.9064};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6204,18 +6825,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4100,  83,  1.0,    0.0,    0,     82.9064};
+			m.ISO[0] = (Isotopologue){4100,  93,  1.0,    0.0,    0,     92.9064};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4101){//Nb+ 83
+	if(m.id == 4101){//Nb+ 93
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4101,  83,  1.0,    0.0,    0,     82.9064};
+		m.ISO[0] = (Isotopologue){4101,  93,  1.0,    0.0,    0,     92.9064};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6247,18 +6868,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4101,  83,  1.0,    0.0,    0,     82.9064};
+			m.ISO[0] = (Isotopologue){4101,  93,  1.0,    0.0,    0,     92.9064};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4102){//Nb+2 83
+	if(m.id == 4102){//Nb+2 93
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4102,  83,  1.0,    0.0,    0,     82.9064};
+		m.ISO[0] = (Isotopologue){4102,  93,  1.0,    0.0,    0,     92.9064};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6290,18 +6911,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4102,  83,  1.0,    0.0,    0,     82.9064};
+			m.ISO[0] = (Isotopologue){4102,  93,  1.0,    0.0,    0,     92.9064};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4200){//Mo 98
+	if(m.id == 4200){//Mo 96
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4200,  98,  1.0,    0.0,    0,     97.9054};
+		m.ISO[0] = (Isotopologue){4200,  96,  1.0,    0.0,    0,     95.94};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6333,18 +6954,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4200,  98,  1.0,    0.0,    0,     97.9054};
+			m.ISO[0] = (Isotopologue){4200,  96,  1.0,    0.0,    0,     95.94};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4201){//Mo+ 98
+	if(m.id == 4201){//Mo+ 96
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4201,  98,  1.0,    0.0,    0,     97.9054};
+		m.ISO[0] = (Isotopologue){4201,  96,  1.0,    0.0,    0,     95.94};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6376,18 +6997,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4201,  98,  1.0,    0.0,    0,     97.9054};
+			m.ISO[0] = (Isotopologue){4201,  96,  1.0,    0.0,    0,     95.94};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4202){//Mo+2 98
+	if(m.id == 4202){//Mo+2 96
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4202,  98,  1.0,    0.0,    0,     97.9054};
+		m.ISO[0] = (Isotopologue){4202,  96,  1.0,    0.0,    0,     95.94};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6419,7 +7040,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4202,  98,  1.0,    0.0,    0,     97.9054};
+			m.ISO[0] = (Isotopologue){4202,  96,  1.0,    0.0,    0,     95.94};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -6509,14 +7130,14 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4400){//Ru 104
+	if(m.id == 4400){//Ru 101
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4400,  104,  1.0,    0.0,    0,     103.905};
+		m.ISO[0] = (Isotopologue){4400,  101,  1.0,    0.0,    0,     101.07};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6548,18 +7169,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4400,  104,  1.0,    0.0,    0,     103.905};
+			m.ISO[0] = (Isotopologue){4400,  101,  1.0,    0.0,    0,     101.07};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4401){//Ru+ 104
+	if(m.id == 4401){//Ru+ 101
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4401,  104,  1.0,    0.0,    0,     103.905};
+		m.ISO[0] = (Isotopologue){4401,  101,  1.0,    0.0,    0,     101.07};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6591,18 +7212,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4401,  104,  1.0,    0.0,    0,     103.905};
+			m.ISO[0] = (Isotopologue){4401,  101,  1.0,    0.0,    0,     101.07};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 4402){//Ru+2 104
+	if(m.id == 4402){//Ru+2 101
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4402,  104,  1.0,    0.0,    0,     103.905};
+		m.ISO[0] = (Isotopologue){4402,  101,  1.0,    0.0,    0,     101.07};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6634,7 +7255,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4402,  104,  1.0,    0.0,    0,     103.905};
+			m.ISO[0] = (Isotopologue){4402,  101,  1.0,    0.0,    0,     101.07};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -6774,7 +7395,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     105.904};
+		m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     106.42};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6806,7 +7427,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     105.904};
+			m.ISO[0] = (Isotopologue){4600,  106,  1.0,    0.0,    0,     106.42};
 			//version =  gfallwn08oct17.dat
 		}
 	}
@@ -6817,7 +7438,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     105.904};
+		m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     106.42};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6849,18 +7470,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     105.904};
+			m.ISO[0] = (Isotopologue){4601,  106,  1.0,    0.0,    0,     106.42};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 5600){//Ba 138
+	if(m.id == 5600){//Ba 137
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){5600,  138,  1.0,    0.0,    0,     137.905};
+		m.ISO[0] = (Isotopologue){5600,  137,  1.0,    0.0,    0,     137.327};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6892,18 +7513,18 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){5600,  138,  1.0,    0.0,    0,     137.905};
+			m.ISO[0] = (Isotopologue){5600,  137,  1.0,    0.0,    0,     137.327};
 			//version =  gfallwn08oct17.dat
 		}
 	}
-	if(m.id == 5601){//Ba+ 138
+	if(m.id == 5601){//Ba+ 137
 		m.nFiles = 1;		//number of data files
 		m.NL[0] = 0;
 		m.NLmax = 0;
 		m.nISO = 1;
 		m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 		//                       id     AFGL    Abundance       Q(296K)         gj      Molar Mass(g)
-		m.ISO[0] = (Isotopologue){5601,  138,  1.0,    0.0,    0,     137.905};
+		m.ISO[0] = (Isotopologue){5601,  137,  1.0,    0.0,    0,     137.327};
 		sprintf(qFilename[0], "%s%s", param.path, "q.dat");
 		m.npfcol = 0;
 		m.fileLimit[ 0] = 0;
@@ -6935,7 +7556,7 @@ void Init(Molecule &m, Param param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[0], "%s%s.", param.path, name);
 			m.nISO = 1;
 			m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
-			m.ISO[0] = (Isotopologue){5601,  138,  1.0,    0.0,    0,     137.905};
+			m.ISO[0] = (Isotopologue){5601,  137,  1.0,    0.0,    0,     137.327};
 			//version =  gfallwn08oct17.dat
 		}
 	}

@@ -26,11 +26,41 @@ then
 fi
 if [ $m -eq 101 ]
 then
-  #the number of transition files is from, correct later
+  #the number of transition files is wrong, correct later
   #1 H2O
   M="1H2-16O__POKAZATEL"
   P="H2O/1H2-16O/POKAZATEL/"
   s=100				#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 102 ]
+then
+  #the number of transition files is wrong, correct later
+  #1 H2O 2
+  M="1H2-18O__HotWat78"
+  P="H2O/1H2-18O/HotWat78"
+  s=1000				#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 103 ]
+then
+  #the number of transition files is wrong, correct later
+  #1 H2O 3
+  M="1H2-17O__HotWat78"
+  P="H2O/1H2-17O/HotWat78"
+  s=1000				#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 104 ]
+then
+  #the number of transition files is wrong, correct later
+  #1 H2O 4
+  M="1H-2H-16O__VTT"
+  P="H2O/1H-2H-16O/VTT"
+  s=1000				#file range
   ntcol=3			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
@@ -86,6 +116,15 @@ then
   ntcol=3			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
+if [ $m -eq 1102 ]
+then
+  #11 NH3
+  M="15N-1H3__BYTe-15"
+  P="NH3/15N-1H3/BYTe-15"
+  s=100				#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
 
 if [ $m -eq 23 ]
 then
@@ -93,6 +132,15 @@ then
   M="1H-12C-14N__Harris"
   P="HCN/1H-12C-14N/Harris"
   s=17586			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 2302 ]
+then
+  #23 HCN 2
+  M="1H-13C-14N__Larner"
+  P="HCN/1H-13C-14N/Larner"
+  s=17596			#file range
   ntcol=4			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
@@ -148,6 +196,33 @@ then
   ntcol=3			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
+if [ $m -eq 8302 ]
+then
+  #83 AlO 2
+  M="26Al-16O__ATP"
+  P="AlO/26Al-16O/ATP"
+  s=35000			#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8303 ]
+then
+  #83 AlO 3
+  M="27Al-17O__ATP"
+  P="AlO/27Al-17O/ATP"
+  s=35000			#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8304 ]
+then
+  #83 AlO 4
+  M="27Al-18O__ATP"
+  P="AlO/27Al-18O/ATP"
+  s=35000			#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
 
 if [ $m -eq 84 ]
 then
@@ -155,6 +230,42 @@ then
   M="28Si-16O__EBJT"
   P="SiO/28Si-16O/EBJT"
   s=6050			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8402 ]
+then
+  #84 SiO 2
+  M="28Si-17O__EBJT"
+  P="SiO/28Si-17O/EBJT"
+  s=5939			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8403 ]
+then
+  #84 SiO 3
+  M="28Si-18O__EBJT"
+  P="SiO/28Si-18O/EBJT"
+  s=5838			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8404 ]
+then
+  #84 SiO 4
+  M="29Si-16O__EBJT"
+  P="SiO/29Si-16O/EBJT"
+  s=6013			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 8405 ]
+then
+  #84 SiO 5
+  M="30Si-16O__EBJT"
+  P="SiO/30Si-16O/EBJT"
+  s=5978			#file range
   ntcol=4			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
@@ -208,6 +319,8 @@ then
   ntcol=4			#columns in transition files
   npfcol=3			#columns in partition function file
 fi
+
+#file not ready
 if [ $m -eq 90 ]
 then
   #90 MgH
@@ -217,6 +330,51 @@ then
   ntcol=4			#columns in transition files
   npfcol=3			#columns in partition function file
 fi
+if [ $m -eq 91 ]
+then
+  #91 NaH
+  M="23Na-1H__Rivlin"
+  P="NaH/23Na-1H/Rivlin"
+  s=32147			#file range
+  ntcol=3			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 92 ]
+then
+  #92 AlH
+  M="27Al-1H__AlHambra"
+  P="AlH/27Al-1H/AlHambra"
+  s=28000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 93 ]
+then
+  #93 CrH
+  M="52Cr-1H__Yueqi"
+  P="CrH/52Cr-1H/Yueqi"
+  s=9000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 95 ]
+then
+  #95 TiH
+  M="48Ti-1H__Yueqi"
+  P="TiH/48Ti-1H/Yueqi/"
+  s=22000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 97 ]
+then
+  #97 ScH
+  M="45Sc-1H__LYT"
+  P="ScH/45Sc-1H/LYT"
+  s=16000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
 
 
 echo $M
@@ -225,6 +383,7 @@ if [ $DownloadFiles -eq 1 ]
 then
 wget http://exomol.com/db/$P/$M.states.bz2
 bzip2 -d $M.states.bz2
+wget http://exomol.com/db/$P/$M.states
 wget http://exomol.com/db/$P/$M.pf
 fi
 wget http://exomol.com/db/$P/$M.def
@@ -238,7 +397,14 @@ version=`grep "Version number with format" $M.def | cut -c-12`
 if [ $m -eq 101 ]
 then
 n=412
-
+fi
+if [ $m -eq 102 ]
+then
+n=30
+fi
+if [ $m -eq 103 ]
+then
+n=30
 fi
 
 echo $mass
@@ -276,6 +442,33 @@ do
     fi
     l[$nu]=`wc -l < $M\_\_${jarray[$nu]}-${jarray[$nu + 1]}.trans | awk '{print $1}'`
 
+  elif [ $m -eq 104 ]
+  then
+    jarray[0]=00000
+    jarray[1]=00250
+    jarray[2]=00500
+    jarray[3]=00750
+    jarray[4]=01000
+    jarray[5]=01500
+    jarray[6]=02000
+    jarray[7]=02250
+    jarray[8]=02750
+    jarray[9]=03500
+    jarray[10]=04500
+    jarray[11]=05500
+    jarray[12]=07000
+    jarray[13]=09000
+    jarray[14]=14000
+    jarray[15]=20000
+    jarray[16]=26000
+
+    if [ $DownloadFiles -eq 1 ]
+    then
+      wget http://www.exomol.com/db/$P/$M\_\_${jarray[$nu]}-${jarray[$nu + 1]}.trans.bz2
+      bzip2 -d $M\_\_${jarray[$nu]}-${jarray[$nu + 1]}.trans.bz2
+    fi
+    l[$nu]=`wc -l < $M\_\_${jarray[$nu]}-${jarray[$nu + 1]}.trans | awk '{print $1}'`
+
   else
     printf -v j "%05d" $((nu*$s))
     printf -v jj "%05d" $(($nu*$s+$s))
@@ -285,6 +478,7 @@ do
       then
         wget http://www.exomol.com/db/$P/$M\_\_$j-$jj.trans.bz2
         bzip2 -d $M\_\_$j-$jj.trans.bz2
+        wget http://www.exomol.com/db/$P/$M\_\_$j-$jj.trans
       fi
       l[$nu]=`wc -l < $M\_\_$j-$jj.trans | awk '{print $1}'`
     else
@@ -292,6 +486,7 @@ do
       then
         wget http://www.exomol.com/db/$P/$M.trans.bz2
         bzip2 -d $M.trans.bz2
+        wget http://www.exomol.com/db/$P/$M.trans
       fi
       l[$nu]=`wc -l < $M.trans | awk '{print $1}'`
     fi
