@@ -282,12 +282,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 				fscanf (paramFile, "%d", &param.doStoreK);
 				fgets(sp, 3, paramFile);
 			}
-			else{
-				//read doStoreK
-				if(strcmp(sp, "doStoreSK =") == 0){
-					fscanf (paramFile, "%d", &param.doStoreK);
-					fgets(sp, 3, paramFile);
-				}
+		}
+		//read doStoreK
+		else if(strcmp(sp, "doStoreSK =") == 0){
+				fscanf (paramFile, "%d", &param.doStoreK);
+				fgets(sp, 3, paramFile);
 			}
 		}
 		//read nbins

@@ -101,7 +101,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 				fgets(c4, 21, transFile);
 				fgets(skip, 2, transFile);
 			}
-			else if(m.id == 91 || m.id == 93){
+			else if(m.id == 91 || m.id == 93 || m.id == 84){
 				fgets(c1, 13, transFile);
 				fgets(c2, 14, transFile);
 				fgets(c3, 12, transFile);
@@ -113,6 +113,13 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 				fgets(c2, 13, transFile);
 				fgets(c3, 13, transFile);
 				fgets(c4, 18, transFile);
+				fgets(skip, 2, transFile);
+			}
+			else if(m.id == 83){
+				fgets(c1, 13, transFile);
+				fgets(c2, 13, transFile);
+				fgets(c3, 13, transFile);
+				fgets(c4, 14, transFile);
 				fgets(skip, 2, transFile);
 			}
 			else{
