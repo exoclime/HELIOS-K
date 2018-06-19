@@ -285,9 +285,8 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 		//read doStoreK
 		else if(strcmp(sp, "doStoreSK =") == 0){
-				fscanf (paramFile, "%d", &param.doStoreK);
-				fgets(sp, 3, paramFile);
-			}
+			fscanf (paramFile, "%d", &param.doStoreK);
+			fgets(sp, 3, paramFile);
 		}
 		//read nbins
 		else if(strcmp(sp, "nbins =") == 0){

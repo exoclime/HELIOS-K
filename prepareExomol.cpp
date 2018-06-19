@@ -115,7 +115,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 				fgets(c4, 18, transFile);
 				fgets(skip, 2, transFile);
 			}
-			else if(m.id == 83){
+			else if(m.id == 83 || m.id == 85){
 				fgets(c1, 13, transFile);
 				fgets(c2, 13, transFile);
 				fgets(c3, 13, transFile);
