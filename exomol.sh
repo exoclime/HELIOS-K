@@ -182,7 +182,7 @@ then
   #82 FeH
   M="56Fe-1H__Yueqi"
   P="FeH/56Fe-1H/Yueqi"
-  s=7476			#file range
+  s=15000			#file range
   ntcol=3			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
@@ -320,12 +320,29 @@ then
   npfcol=3			#columns in partition function file
 fi
 
-#file not ready
 if [ $m -eq 90 ]
 then
   #90 MgH
   M="24Mg-1H__Yadin"
   P="MgH/24Mg-1H/Yadin"
+  s=11000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=3			#columns in partition function file
+fi
+if [ $m -eq 9002 ]
+then
+  #90 MgH 2
+  M="25Mg-1H__Yadin"
+  P="MgH/25Mg-1H/Yadin"
+  s=11000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=3			#columns in partition function file
+fi
+if [ $m -eq 9003 ]
+then
+  #90 MgH 3
+  M="26Mg-1H__Yadin"
+  P="MgH/26Mg-1H/Yadin"
   s=11000			#file range
   ntcol=4			#columns in transition files
   npfcol=3			#columns in partition function file
@@ -336,7 +353,16 @@ then
   M="23Na-1H__Rivlin"
   P="NaH/23Na-1H/Rivlin"
   s=32147			#file range
-  ntcol=3			#columns in transition files
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 9102 ]
+then
+  #91 NaH
+  M="23Na-2H__Rivlin"
+  P="NaH/23Na-2H/Rivlin"
+  s=32147			#file range
+  ntcol=4			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
 if [ $m -eq 92 ]
@@ -348,12 +374,39 @@ then
   ntcol=4			#columns in transition files
   npfcol=2			#columns in partition function file
 fi
+if [ $m -eq 9202 ]
+then
+  #92 AlH 2
+  M="27Al-2H__AlHambra"
+  P="AlH/27Al-2H/AlHambra"
+  s=28000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 9203 ]
+then
+  #92 AlH 3
+  M="26Al-1H__AlHambra"
+  P="AlH/26Al-1H/AlHambra"
+  s=28000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
 if [ $m -eq 93 ]
 then
   #93 CrH
   M="52Cr-1H__Yueqi"
   P="CrH/52Cr-1H/Yueqi"
-  s=9000			#file range
+  s=15000			#file range
+  ntcol=4			#columns in transition files
+  npfcol=2			#columns in partition function file
+fi
+if [ $m -eq 94 ]
+then
+  #93 BeH
+  M="9Be-1H__Yadin"
+  P="BeH/9Be-1H/Yadin"
+  s=17000			#file range
   ntcol=4			#columns in transition files
   npfcol=2			#columns in partition function file
 fi

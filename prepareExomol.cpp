@@ -13,7 +13,7 @@
 //Author: Simon Grimm
 //September 2016
 // *******************************************************************
-int readStates(Molecule &m, int *id, double *E, int *g){
+int readStates(Molecule &m, int *id, double *E, int *g, int useHITEMP){
 
 	FILE *dataFile;
 	char statesFilename[180];
@@ -30,11 +30,19 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	char c4[151];
 
 	for(int i = 0; i < m.nStates; ++i){
-		fgets(c1, 13, dataFile);
-		fgets(c2, 14, dataFile);
-		fgets(c3, 8, dataFile);
-		fgets(c4, 150, dataFile);
-
+		if(m.id == 92 && useHITEMP < 4){
+			fgets(c1, 13, dataFile);
+			fgets(c2, 15, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 150, dataFile);
+		}
+		else{
+			fgets(c1, 13, dataFile);
+			fgets(c2, 14, dataFile);
+			fgets(c3, 8, dataFile);
+			fgets(c4, 150, dataFile);
+		}
+	
 		id[i] = atoi(c1);
 		E[i] = strtod(c2, NULL);
 		g[i] = atoi(c3);
@@ -65,7 +73,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	char c3[13];
 	char c4[19];
 
-	char skip[3];
+	char skip[100];
 	
 	int state0;
 	int state1;
@@ -108,6 +116,13 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 				fgets(c4, 14, transFile);
 				fgets(skip, 2, transFile);
 			}
+			else if(m.id == 90 || m.id == 94){
+				fgets(c1, 13, transFile);
+				fgets(c2, 14, transFile);
+				fgets(c3, 12, transFile);
+				fgets(c4, 14, transFile);
+				fgets(skip, 50, transFile);
+			}
 			else if(m.id == 97){
 				fgets(c1, 13, transFile);
 				fgets(c2, 13, transFile);
@@ -115,7 +130,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 				fgets(c4, 18, transFile);
 				fgets(skip, 2, transFile);
 			}
-			else if(m.id == 83 || m.id == 85){
+			else if(m.id == 83 || m.id == 85 || m.id == 87){
 				fgets(c1, 13, transFile);
 				fgets(c2, 13, transFile);
 				fgets(c3, 13, transFile);
@@ -199,7 +214,7 @@ int main(int argc, char*argv[]){
 	E = (double*)malloc(m.nStates * sizeof(double));
 	g = (int*)malloc(m.nStates * sizeof(int));
 
-	readStates(m, id, E, g);
+	readStates(m, id, E, g, param.useHITEMP);
 
 	int nT = 2000000000;
 	for(int i = 0; i < m.nFiles; ++i){
