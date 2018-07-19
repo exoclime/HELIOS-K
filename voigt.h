@@ -249,44 +249,13 @@ __device__ float voigt_916f(const float x, const float y, const float a, const i
 	return t1;
 }
 
-
-// *************************************************
-//This kernel calculates the integrated line strength, the Lorentz and the Doppler halfwidths
-//
-//Author Simon Grimm
-//November 2014
-// *************************************************
-__global__ void S_kernel(double *nu_d, double *S_d, double *A_d, double *EL_d, double *vy_d, double *ialphaD_d, double *n_d, double *delta_d, int *ID_d, int NL, double T, double P, int kk){
-
-	int idx = threadIdx.x;
-	int id = blockIdx.x * blockDim.x + idx + kk;
-
-	if(id < NL){
-
-		double nu = nu_d[id] + delta_d[id] * P;
-		if(nu == 0.0) nu = 0.0000001;
-		nu_d[id] = nu;
-		double S = S_d[id];				//cm / g
-//printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], m, mass_d[id], Q_d[id]);
-		double EL = EL_d[id];  				//1/cm
-		double alphaL = vy_d[id];
-		
-		S_d[id] = (float)(S * exp(-EL * def_h * def_c / (def_kB * T) + EL * def_h * def_c / (def_kB * def_T0)) * (1.0 - exp(-def_h * nu * def_c / (def_kB * T))) / (1.0 - exp(-def_h * nu * def_c / (def_kB * def_T0)))); 
-		ialphaD_d[id] /= nu;	//inverse Doppler halfwidth
-		alphaL *= P * pow(def_T0 / T, n_d[id]);
-		alphaL += A_d[id] / (4.0 * M_PI * def_c);				//1/cm
-		vy_d[id] = alphaL * ialphaD_d[id];
-		ID_d[id] = id;
-//if(id < 1000) printf("%d %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], vy_d[id]);
-	}
-}
 // *************************************************
 //This kernel calculates the integrated line strength, the Lorentz and the Doppler halfwidths
 //
 //Author Simon Grimm
 //October 2016
 // *************************************************
-__global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, double *vy_d, float *vyf_d, double *ialphaD_d, double *n_d, double *delta_d, double *EL_d, int *ID_d, float *va_d, float *vb_d, float *vcut2_d, double *S1_d, float *S1f_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int useIndividualX, const double T, const double P, const int kk){
+__global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, double *vy_d, float *vyf_d, double *ialphaD_d, double *n_d, double *delta_d, double *EL_d, int *ID_d, float *va_d, float *vb_d, float *vcut2_d, double *S1_d, float *S1f_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int profile, int useIndividualX, const double T, const double P, const int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -324,8 +293,12 @@ __global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 		if(cutMode == 2){
 			vcut2_d[id] = (float)(cut * cut);
 		}
-
-		S1_d[id] = S_d[id] * vy_d[id] / M_PI;
+		if(profile < 4){
+			S1_d[id] = S_d[id] * vy_d[id] / M_PI;
+		}
+		else{
+			S1_d[id] = S_d[id];
+		}
 		if(nu == 0.0){
 			S_d[id] = 0.0;
 			S1_d[id] = 0.0;

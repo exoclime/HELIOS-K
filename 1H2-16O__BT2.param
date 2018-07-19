@@ -1,0 +1,49 @@
+Database = 2
+Molecule number = 1
+Name = 1H2-16O__BT2
+Number of Isotopes = 1
+#Id Abundance      Q(296K)   g     Molar Mass(g)  partition file :
+0 1.0             0.0       0     18.010565      1H2-16O__BT2.pf
+Number of columns in partition File = 3
+Number of line/transition files = 16 
+Number of lines per file :
+17490214
+17022667
+16530697
+16098481
+30866787
+29161189
+13954798
+26727622
+37249656
+44635822
+39325124
+50083781
+52289428
+76679377
+31640191
+6050421
+Line file limits :
+0
+250
+500
+750
+1000
+1500
+2000
+2250
+2750
+3500
+4500
+5500
+7000
+9000
+14000
+20000
+30000
+#ExoMol :
+Number of states = 221097
+Number of columns in transition files = 3
+Default value of Lorentzian half-width for all lines = 0.07
+Default value of temperature exponent for all lines = 0.5
+Version = 20161025

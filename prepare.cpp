@@ -27,8 +27,8 @@ int readFile(Molecule &m, int fi){
 	}
 	//read line list file           
 
-	char c1[4];
-	//char c2[2];
+	char c1[3];
+	char c2[2];
 	char c3[13];
 	char c4[11];
 	char c5[11];
@@ -50,8 +50,10 @@ int readFile(Molecule &m, int fi){
 	char skip[6];
 
 	for(int i = 0; i < m.NL[fi]; ++i){
-		fgets(skip, 1, dataFile);
-		fgets(c1, 4, dataFile);         //Use combined notation for Id (AFGL and molecule + abundance number
+		//fgets(skip, 1, dataFile);
+		//fgets(cid, 4, dataFile);         //Use combined notation for Id (AFGL and molecule + abundance number
+		fgets(c1, 3, dataFile);
+		fgets(c2, 2, dataFile);
 		fgets(c3, 13, dataFile);
 		fgets(c4, 11, dataFile);
 		fgets(c5, 11, dataFile);
@@ -73,6 +75,8 @@ int readFile(Molecule &m, int fi){
 		fgets(skip, 6, dataFile);
 
 		int id = atoi(c1);
+		char cid[4];
+		sprintf(cid, "%2d%s", id, c2); 
 
 		double nu = strtod(c3, NULL);
 		double S = strtod(c4, NULL);
@@ -84,21 +88,29 @@ int readFile(Molecule &m, int fi){
 		double n = strtod(c9, NULL);
 
 		double mass;
-		double Q0;
+		double Q0 = -1000.0;
+
 
 		//Assign the Isotopologue properties
 		for(int j = 0; j < m.nISO; ++j){
-			if(id == m.ISO[j].id){
+//printf("|%s|%s|\n", cid, m.ISO[j].cid);
+			if(strcmp(cid, m.ISO[j].cid) == 0){
+			//if(cid == m.ISO[j].cid){
 				mass = m.ISO[j].m / def_NA;
 				Q0 = m.ISO[j].Q;
 			}
+		}
+		if(Q0 < -800){
+			printf("Error in asigning isotopologue indices\n");
+			return 0;
 		}
 
 		S /= mass;
 
 		S = S * Q0;
 
-		fwrite(&id, sizeof(int), 1, OutFile);
+		//fwrite(&id, sizeof(int), 1, OutFile);
+		fwrite(&cid, 4*sizeof(char), 1, OutFile);
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
@@ -107,7 +119,7 @@ int readFile(Molecule &m, int fi){
 		fwrite(&gammaAir, sizeof(double), 1, OutFile);
 		fwrite(&gammaSelf, sizeof(double), 1, OutFile);
 		fwrite(&n, sizeof(double), 1, OutFile);
-/*if(i < 10 || i > m.NL[fi] - 10)*/ printf("%d %.20g %.20g %.20g %.20g %g\n", id, nu, S, EL, A, mass);
+if(i < 10 || i > m.NL[fi] - 10) printf("%s %.20g %.20g %.20g %.20g %g\n", cid, nu, S, EL, A, mass);
 	}
 	fclose(dataFile);
 	fclose(OutFile);

@@ -1,4 +1,4 @@
-#define VERSION 1.63
+#define VERSION 1.64
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -31,6 +31,7 @@ struct Isotopologue{
 	double Q;
 	int g;
 	double m;		//mass
+	char cid[4];		//id in HITRAN notation as string
 };
 
 struct Molecule{
@@ -49,6 +50,7 @@ struct Molecule{
 	double meanMass;
 	double defaultL;	//default value for Lorentz half width for EXOMOL
 	double defaultn;	//default value for temperature exponent for EXOMOL
+	int version;
 };
 
 struct Partition{

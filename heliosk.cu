@@ -512,7 +512,6 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "qalphaL = %g\n", param.qalphaL);
 		fprintf(infofile, "doMean = %d\n", param.doMean);
 		fprintf(infofile, "Units = %d\n", param.units);
-		fprintf(infofile, "Profile = %d\n", PROFILE);
 		fprintf(infofile, "Replace files = %d\n", param.replaceFiles);
 		fprintf(infofile, "default L = %g\n", m.defaultL);
 		fprintf(infofile, "default n = %g\n", m.defaultn);
@@ -788,7 +787,7 @@ else{
 					if(param.useHITEMP < 2){
 						for(int k = 0; k < NL; k += nthmax){
 							int Nk = min(nthmax, NL);
-							S2_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.Sf_d, L.A_d, L.vy_d, L.vyf_d, L.ialphaD_d, L.n_d, L.delta_d, L.EL_d, L.ID_d, L.va_d, L.vb_d, L.vcut2_d, L.S1_d, L.S1f_d, NL, param.numin, param.dnu, param.cut, param.cutMode, param.useIndividualX, param.T, P_h[iP], k);
+							S2_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.Sf_d, L.A_d, L.vy_d, L.vyf_d, L.ialphaD_d, L.n_d, L.delta_d, L.EL_d, L.ID_d, L.va_d, L.vb_d, L.vcut2_d, L.S1_d, L.S1f_d, NL, param.numin, param.dnu, param.cut, param.cutMode, param.profile, param.useIndividualX, param.T, P_h[iP], k);
 						}	
 			/* // *************
 						//uncoment this only when no Pressure file is given

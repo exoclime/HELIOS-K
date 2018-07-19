@@ -118,7 +118,10 @@ __host__ int readPartition(Param &param, int nMolecule, char (*qFilename)[160], 
 				printf("Error: partition function not valid for given temperature %g %g\n", T0, T);
 				return 0;
 			}
-			if (er <= 0) break;
+			if (er <= 0){
+				printf("Error: partition function can not be read\n");
+				return 0;
+			}
 			if(T0 < T && T1 >= T){
 				double tt = (T - T0) / (T1 - T0);
 				q = (q1 - q0) * tt + q0;
@@ -569,9 +572,10 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 	double mass;
 	int id, idAFGL;
 	double S;
-
+	char cid[4];
 	for(int i = 0; i < m.NL[fi]; ++i){
-		fread(&id, sizeof(int), 1, dataFile);
+		//fread(&id, sizeof(int), 1, dataFile);
+		fread(&cid, 4*sizeof(char), 1, dataFile);
 		fread(&L.nu_h[i], sizeof(double), 1, dataFile);
 		fread(&S, sizeof(double), 1, dataFile);
 		fread(&L.EL_h[i], sizeof(double), 1, dataFile);
@@ -580,11 +584,12 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		fread(&gammaAir, sizeof(double), 1, dataFile);
 		fread(&gammaSelf, sizeof(double), 1, dataFile);
 		fread(&L.n_h[i], sizeof(double), 1, dataFile);
-
 		double Q = 0.0;
 		for(int j = 0; j < m.nISO; ++j){
 //if(i < 10) printf("%d %d\n", id, m.ISO[j].id);
-			if(id == m.ISO[j].id){
+			//if(id == m.ISO[j].id){
+			if(strcmp(cid, m.ISO[j].cid) == 0){
+
 				mass = m.ISO[j].m / def_NA;
 				idAFGL = m.ISO[j].AFGL;
 				if(m.npfcol != 0){

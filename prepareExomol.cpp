@@ -25,7 +25,7 @@ int readStates(Molecule &m, int *id, double *E, int *g, int useHITEMP){
 		return 0;
 	}
 	char c1[14];
-	char c2[15];
+	char c2[16];
 	char c3[9];
 	char c4[151];
 
@@ -37,24 +37,26 @@ int readStates(Molecule &m, int *id, double *E, int *g, int useHITEMP){
 			fgets(c4, 150, dataFile);
 		}
 		else{
-			fgets(c1, 13, dataFile);
-			fgets(c2, 14, dataFile);
-			fgets(c3, 8, dataFile);
+			//fgets(c1, 13, dataFile);
+			//fgets(c2, 14, dataFile);
+			//fgets(c3, 8, dataFile);
+			fscanf(dataFile, "%s", c1);
+			fscanf(dataFile, "%s", c2);
+			fscanf(dataFile, "%s", c3);
 			fgets(c4, 150, dataFile);
 		}
 	
 		id[i] = atoi(c1);
 		E[i] = strtod(c2, NULL);
 		g[i] = atoi(c3);
-if(i < 10 || i > m.nStates - 10) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
-		if(i % 1000000 == 0) printf("read states line %d\n", i);
+if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
 	}
 	printf("states file complete\n");
 	return 1;
 }
 
 
-int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass, int fi){
+int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass, int fi, int useHITEMP){
 	FILE *transFile, *OutFile;
 	char transFilename[160], OutFilename[160];
 
@@ -68,10 +70,10 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 		return 0;
 	}
 
-	char c1[13];
-	char c2[14];
-	char c3[13];
-	char c4[19];
+	char c1[15];
+	char c2[15];
+	char c3[15];
+	char c4[25];
 
 	char skip[100];
 	
@@ -87,70 +89,35 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	for(int i = 0; i < nT + 1; ++i){
 
 		if(m.ntcol == 3){
-			fgets(c1, 13, transFile);
-			fgets(c2, 14, transFile);
-			fgets(c3, 12, transFile);
-			fgets(skip, 2, transFile);
+			//fgets(c1, 13, transFile);
+			//fgets(c2, 14, transFile);
+			//fgets(c3, 12, transFile);
+			//fgets(skip, 2, transFile);
+			fscanf(transFile, "%s", c1);
+			fscanf(transFile, "%s", c2);
+			fscanf(transFile, "%s", c3);
 			
+if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3); 
 
 			state1 = atoi(c1);
 			state0 = atoi(c2);
-			A = strtof(c3, NULL);
+			A = strtod(c3, NULL);
 			
 			EL = E[state0 - 1];
 			nu = E[state1 - 1] - E[state0 - 1];
 			gU = g[state1 - 1];
 		}
 		if(m.ntcol == 4){
-			if(m.id == 86 || m.id == 89 || m.id == 92 || m.id == 80){
-				fgets(c1, 13, transFile);
-				fgets(c2, 13, transFile);
-				fgets(c3, 13, transFile);
-				fgets(c4, 21, transFile);
-				fgets(skip, 2, transFile);
-			}
-			else if(m.id == 91 || m.id == 93 || m.id == 84){
-				fgets(c1, 13, transFile);
-				fgets(c2, 14, transFile);
-				fgets(c3, 12, transFile);
-				fgets(c4, 14, transFile);
-				fgets(skip, 2, transFile);
-			}
-			else if(m.id == 90 || m.id == 94){
-				fgets(c1, 13, transFile);
-				fgets(c2, 14, transFile);
-				fgets(c3, 12, transFile);
-				fgets(c4, 14, transFile);
-				fgets(skip, 50, transFile);
-			}
-			else if(m.id == 97){
-				fgets(c1, 13, transFile);
-				fgets(c2, 13, transFile);
-				fgets(c3, 13, transFile);
-				fgets(c4, 18, transFile);
-				fgets(skip, 2, transFile);
-			}
-			else if(m.id == 83 || m.id == 85 || m.id == 87){
-				fgets(c1, 13, transFile);
-				fgets(c2, 13, transFile);
-				fgets(c3, 13, transFile);
-				fgets(c4, 14, transFile);
-				fgets(skip, 2, transFile);
-			}
-			else{
-				//correct for NO
-				fgets(c1, 13, transFile);
-				fgets(c2, 13, transFile);
-				fgets(c3, 13, transFile);
-				fgets(c4, 17, transFile);
-				fgets(skip, 2, transFile);
-			}
+			fscanf(transFile, "%s", c1);
+			fscanf(transFile, "%s", c2);
+			fscanf(transFile, "%s", c3);
+			fscanf(transFile, "%s", c4);
 
 			state1 = atoi(c1);
 			state0 = atoi(c2);
-			A = strtof(c3, NULL);
-			nu = strtof(c4, NULL);	
-//printf("%s|%s|%s|%s\n", c1, c2, c3, c4); 
+			A = strtod(c3, NULL);
+			nu = strtod(c4, NULL);	
+if(i < 100 || i % 100000 == 0) printf("%s|%s|%s|%s\n", c1, c2, c3, c4); 
 		
 			EL = E[state0 - 1];
 			gU = g[state1 - 1];
@@ -219,7 +186,7 @@ int main(int argc, char*argv[]){
 	int nT = 2000000000;
 	for(int i = 0; i < m.nFiles; ++i){
 		printf("file: %d mass:%g\n", i, mass);
-		readTransitions(m, id, E, g, nT, mass, i);
+		readTransitions(m, id, E, g, nT, mass, i, param.useHITEMP);
 	}
 
 	free(id);
