@@ -1,4 +1,3 @@
-#must install python3-wget 
 
 import sys
 import os
@@ -792,6 +791,94 @@ if(m == 111):
 	#111 SiS
 	M="28Si-32S__UCTY"
 	P="SiS/28Si-32S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.2):
+	#111 SiS 2
+	M="28Si-33S__UCTY"
+	P="SiS/28Si-33S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.3):
+	#111 SiS 3
+	M="28Si-34S__UCTY"
+	P="SiS/28Si-34S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.4):
+	#111 SiS 4
+	M="28Si-36S__UCTY"
+	P="SiS/28Si-36S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.5):
+	#111 SiS 5
+	M="29Si-32S__UCTY"
+	P="SiS/29Si-32S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.6):
+	#111 SiS 6
+	M="29Si-34S__UCTY"
+	P="SiS/29Si-34S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.7):
+	#111 SiS 7
+	M="29Si-36S__UCTY"
+	P="SiS/29Si-36S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.8 ):
+	#111 SiS 8
+	M="30Si-32S__UCTY"
+	P="SiS/30Si-32S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.9):
+	#111 SiS
+	M="30Si-33S__UCTY"
+	P="SiS/30Si-33S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.10):
+	#111 SiS 10
+	M="30Si-34S__UCTY"
+	P="SiS/30Si-34S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.11):
+	#111 SiS 11
+	M="30Si-36S__UCTY"
+	P="SiS/30Si-36S/UCTY"
+	s=4000			#file range
+	ntcol=4
+	npfcol=2
+
+if(m == 111.12):
+	#111 SiS 12
+	M="29Si-33S__UCTY"
+	P="SiS/29Si-33S/UCTY"
 	s=4000			#file range
 	ntcol=4
 	npfcol=2

@@ -9,12 +9,12 @@ from https://developer.nvidia.com/cuda-downloads.
 
 
 # Compilation #
-HELIOS-K can be compiled with the Makefile by typing 'make SM=xx' to the
-terminal, where xx corresponds to the compute capability. For example use 'make SM=20'
-for compute capability of 2.0, or 'make SM=35' for 3.5.
+HELIOS-K can be compiled with the Makefile by typing `make SM=xx` to the
+terminal, where xx corresponds to the compute capability. For example use `make SM=20`
+for compute capability of 2.0, or `make SM=35` for 3.5.
 
 # Starting HELIOS-K #
-HELIOS-K can be startet with
+HELIOS-K can be started with
 
 ```
 ./heliosk
@@ -22,43 +22,88 @@ HELIOS-K can be startet with
 followed by optional arguments, which are listed below.
 
 
-# Supported molecules #
-HELIOS-K supports molecules from the HITRAN, HITEMP and EXOMOL databases.
-HITRAN and HITEMP include all isotopologues. EXOMOL only the main one.
+# Supported databases #
+HELIOS-K supports line lists from the Hitran, HITEMP, ExoMol, Kurucz or VALD database.
+But before the line lists can be used, they have to be pre-processed into binary files.
 
-Currently, the following molecules are supported.
- * Hitran 2012:
-  * 01: H20
-  * 02: CO2
-  * 03: 03
-  * 04: N20
-  * 05: CO
-  * 06: CH4
-  * 11: NH3
-  * 23: HCN
-  * 26: C2H2
-  * 31: H2S
- * Hitemp 2010:
-  * 01: H20
-  * 02: C02
-  * 05: C0
- * ExoMol:
-  * 01: 1H2-16O BT2
-  * 06: 12C-1H4 YT10to10
-  * 11: 14N-1H3 BYTe
-  * 23: 1H-12C-14N Harris
-  * 31: 1H2-32S AYT2
-  * 80: 51V-16O VOMYT
+# Download and pre-process the line lists #
+Before HELIOS-K can be used, the molecular line lists have to be downloaded from the database, and pre-processed into binary files. This saves in generally memory space and allows HELIOS-K to read the line lists in a more efficient way. In addition each molecule needs a `<molecule name>.param` file which contains information about the line list database and other parameters.
 
-# Download and preprocess the line lists #
-Before HELIOS-K can be used, the line lists have to be downloaded from HITRAN, HITEMP or
-EXOMOL. For EXOMOL the exomol.sh script can be used to download all the necessary files.
-It can be run with:
+Scripts are provided download and pre-process some of the databases.
+
+### Example 
+An example for Hitran 2016 H2O is given in the `01_hit16.param` file, which is shown here. An example for HITEMP and ExoMol are given in the repository files `01_HITEMP2010.param` and `1H2-16O__BT2.param`.
 
 ```
-bash exomol.sh <id>
+01_hit16.param
+-------------------------------------------------------------------
+Database = 0
+Molecule number = 1
+Name = hit16
+Number of Isotopes = 7
+#ID Abundance      Q(296K)   g     Molar Mass(g)  partition file :
+11 0.997317        174.58    1     18.010565      q1.txt
+12 0.002000        176.05    1     20.014811      q2.txt
+13 3.718840E-04    1052.14   6     19.01478       q3.txt
+14 3.106930E-04    864.74    6     19.01674       q4.txt
+15 6.230030E-07    875.57    6     21.020985      q5.txt
+16 1.158530E-07    5226.79   36    20.020956      q6.txt
+17 2.419700E-07    1027.80   1     20.022915      q129.txt
+Number of columns in partition File = 2
+Number of line/transition files = 1
+Number of lines per file :
+304225
+Line file limits :
+0
+30000
+#ExoMol :
+Number of states = 0
+Number of columns in transition files = 0
+Default value of Lorentzian half-width for all lines = 0
+Default value of temperature exponent for all lines = 0
+Version = 0
+-------------------------------------------------------------------
+```
+### Description
+ * Database: It must be indicated which database format to use. 0 = Hitran, 1 = HITEMP, 2= ExoMol, 30 = Kurucz atomic database
+ * Molecule number: This is optional and follows an old HELIOS-K version.
+ * Name: name of the line list files.
+ * Number of Isotopologues in the line list files.
+ * For each Isotopologue:
+    * ID: for Hitran and HITEMP the same as the first three digits in the `.par`files e.g. 11 for 1H2-18O, or 2A for 18O-13C-17O. For ExoMol no meaning.
+    * Abundance, only relevant for more than one isotopologue
+    * Reference partition function value. For Exomol no meaning.
+    * Molar Mass in g
+    * Name of partition function file
+ * Number of columns in partition file.
+ * Number of line/transition files.
+ * Line by line, the number of molecular/atomic lines in each line/transition files
+ * Line by line, the wavenumber range of each line/transition files, must have one more entry than the number of line/transition files to cover all lower and upper range limits.
+ * Number of states in ExoMol `.states`files. For other databases no meaning.
+ * Number of columns in ExoMol `.trans`files. For other databases no meaning.
+ * ExoMol default value of Lorentzian half-width. For other databases no meaning.
+ * ExoMol default value of temperature exponent. For other databases no meaning.
+
+
+## ExoMol download and pre-process scripts
+The ExoMol files can be downloaded with the python script `exomol.py` as:
+
+```
+python3 exomol.py <id>
 ``` 
-where <id> is the molecule id. The current version of the script doesn't inclue H20.
+
+where `<id>` is the molecule id, defined from line 21 in the script. For each molecules, one needs the following information:
+
+ * M and P: url of the ExoMol files
+ * s: wavenumber range of `.trans` files. When only a single `.trans` file exists, this is the overall range of the molecule. -1 for irregular file ranges.
+ * ntcol: Number of columns in `.trans`files.
+ * npfcol: Number of columns in partition file.
+
+This script automatically writes the `<molecule name>.param` files for each molecule.
+
+
+
+
 For HITRAN and HITEMP, the .par files need to be downloaded manually.
 
 After downloading, the files need to be preprocessed into .bin files, which are used 
@@ -80,10 +125,10 @@ where <id> is the molecule id.
 
 
 # Input parameters #
-The input parameters can be specified in the 'param.dat' file. The used
+The input parameters can be specified in the `param.dat` file. The used
 parameters are listed here, the order can not be changed.
 
- * name: The name is included in th Output filenames
+ * name: The name is included in the Output filenames
  * T: Temperature in Kelvin
  * P: Pressure in Atmospheres
  * PFile: A '-' ignores this option, otherwise this option specifies a filename which contains multiple values for P
@@ -101,13 +146,13 @@ parameters are listed here, the order can not be changed.
    * 1: cut at multiple values of Lorentz widths
    * 2: cut at multiple values of Doppler widths
  * cut: value where to cut, according to the cutMode, if cut = 0, then no cutting is performed
- * doResampling: When set to one, then all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients are written to the file 'Out_< name >_cbin.dat'.
+ * doResampling: When set to one, then all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients are written to the file `Out_< name >_cbin.dat`.
  *nC: Number of Chebyshev coefficients use for the resampling
- * doTransmission: When set to one, then the transmission function per bin is computed for various numbers of m, and written to the file 'Out_< name >_tr.dat'.
+ * doTransmission: When set to one, then the transmission function per bin is computed for various numbers of m, and written to the file `Out_< name >_tr.dat`.
  * nTr: nummber of points used for the transmission function
  * dTr: spacing of the points used for the transmission function in exp space: m_i = exp((i - nTr/2) * dTr)
- * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file 'Out_< name >.dat'.
- * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file 'Out_< name >_bin.dat'. When set to 2, then the per bin sorted opacity function is written to different bin files 'Out_< name >_bin< bin number >.dat'.
+ * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file `Out_< name >.dat`.
+ * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file `Out_< name >_bin.dat`. When set to 2, then the per bin sorted opacity function is written to different bin files `Out_< name >_bin< bin number >.dat`.
  * nbins: number of bins
  * binsfile: A '-' ignores this option, otherwise this option specifies a filename which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
  * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
@@ -191,7 +236,7 @@ The binsfile must contain line by line the edges of the bins in cm^-1.
   200  
 
 # The output edges option #
-When a 'outputedgesFile' name is given in the pram.dat file, then this file is used to specify the averaged output positions of the Out_<name>_bin.dat files.
+When a 'outputedgesFile' name is given in the pram.dat file, then this file is used to specify the averaged output positions of the `Out_<name>_bin.dat` files.
 The file must contain line by line the positions in y.  
   For example:  
   0.0  
@@ -211,15 +256,15 @@ because multiple reads from the datafiles can be avoided. Too many entries in th
 # Output Files #
 Different Output files are written, depending to the set values in the 'param.dat' file
 
-# Info_< name >.dat #
+# `Info_< name >.dat` #
 Contains the used parameters, and timing information
 
-# Out_< name >.dat #
+# `Out_< name >.dat` #
 It contains nu and K(nu)
 nu are positions of the wavenumber and K is the unsorted opacity function
 When the PFile is used then the files contains also the values of T and P.
 
-# Out_< name >_bin.dat #
+# `Out_< name >_bin.dat` #
 It contains the y and K(y) per bin
 y goes from 0 to 1. K(y) is the per bin sorted opacity function. The bins are separated by two blank lines, starting with 
 the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
@@ -227,9 +272,9 @@ When doResampling is set to one, then this file contains the sorted opacity func
 Chebyshev coefficients
 When the PFile is used then the files contains also the values of T, P and point index.
 When the OutputEdgesFile is used, then the file contains not all points in y, but the averaged values between the intervals given in the OutputEdgesFile. 
-When doStoreSK is set to 2, then the bins are stored in different files with names Out_< name >_bin< bin index>.dat
+When doStoreSK is set to 2, then the bins are stored in different files with names `Out_< name >_bin< bin index>.dat`
  
-# Out_< name >_cbin.dat #
+# `Out_< name >_cbin.dat` #
 It contains the chebyshev coefficients of the per bins resampled sorted logarithm of the opacity functions in the format
 kmin_i ystart_i C0_i C1_i ... C(nC - 1)_i
 where i refers to the bin index, and C are the Chebyshev coefficients
@@ -240,16 +285,16 @@ where yy = (2.0 * y - 1.0 - ystart) / (1.0 - ystart), for y in the range [ystart
 The bins are separated with a blank line, starting with 
 the bin with the lowest wavenumbers and ending with the bin with the highest wavenumbers.
 When the PFile is used then the files contains also the values of T and P.
-When doResampling is set to 2, then the bins are stored in different files with names Out_< name >_cbin< bin index>.dat
+When doResampling is set to 2, then the bins are stored in different files with names `Out_< name >_cbin< bin index>.dat`
 
-# Out_< name >_tr.dat #
+# `Out_< name >_tr.dat` #
 It contains m and T.
 m is the column mass, m_i = exp((i - nTr/2) * dTr)
 T is the Transmission function Int_0^1 exp(-K(y)m) dy
 When the PFile is used then the files contains also the values of T, P and point index.
-When doTransmission is set to 2, then the bins are stored in different files with names Out_< name >_tr< bin index>.dat
+When doTransmission is set to 2, then the bins are stored in different files with names `Out_< name >_tr< bin index>.dat`
 
-# Out_< name >_mean.dat #
+# `Out_< name >_mean.dat` #
 When the argument doMean is set to one, this file contains the Planck and Rosseland means.
 They are computed over the entire range in wavenumbers from numin to numax with spacing dnu.  
 The first line is the Planck mean: kappa_P = Int_0^infty (kappa * B_nu * dnu) / Int_0^infty (B_nu * dnu)  
