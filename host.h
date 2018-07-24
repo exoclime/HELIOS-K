@@ -1,72 +1,6 @@
-// ****************************************
-// This function computes the Chebyshev polynomials as a function of T
-// n must by greater than 1.
-// *****************************************
-__host__ void Chebyshev(double T, double *Cheb, int n){
-	Cheb[0] = 1.0;
-	Cheb[1] = T;
-	for(int i = 2; i < n; ++i){
-		Cheb[i] = 2.0 * T * Cheb[i - 1] - Cheb[i - 2];
-	}
-}
 
 // ****************************************
-// This function reads the file q.dat and computes for each Isotopologue
-// the corresponding Partition function Q(T)
-
-//Author: Simon Grimm
-//November 2014
-// *****************************************
-__host__ int ChebCoeff(Param &param, char *qFilename, Partition &part, double T){
-
-	//Calculate Chebychev polynomial
-	double Cheb[NCheb];
-	Chebyshev(T, Cheb, NCheb);
-
-	//Read Chebychev Coefficients from q file	
-	FILE *qFile;
-	//Check size of q.dat file
-	qFile = fopen(qFilename, "r");
-	if(qFile == NULL){
-		printf("Error: q.dat file not found. Path:%s\n", param.path);
-		return 0;
-	}
-	int j;
-	for(j = 0; j < 1000; ++j){
-		int id;
-		double coeff;
-		int er = fscanf (qFile, "%d", &id);
-		if (er <= 0) break;
-		for(int i = 0; i < NCheb; ++i){
-			fscanf (qFile, "%lf", &coeff);
-		}
-	}
-	fclose(qFile);
-	part.n = j;
-	
-	part.id = (int*)malloc(j * sizeof(int));
-	part.Q = (double*)malloc(j * sizeof(double));
-	
-	qFile = fopen(qFilename, "r");
-	for(j = 0; j < 1000; ++j){
-		int id;
-		double coeff;
-		double Q = 0.0;
-		int er = fscanf (qFile, "%d", &id);
-		if (er <= 0) break;
-		for(int i = 0; i < NCheb; ++i){
-			fscanf (qFile, "%lf", &coeff);
-			Q += coeff * Cheb[i];
-		}
-		part.id[j] = id;
-		part.Q[j] = Q;
-	}
-	fclose(qFile);
-	return 1;
-}
-
-// ****************************************
-// This function reads the partition function file from ExoMol
+// This function reads the partition function file
 // and interpolates Q
 
 //Author: Simon Grimm
@@ -144,8 +78,6 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 	//Read parameters from param.dat file
 	FILE *paramFile;
 	paramFile = fopen(paramFilename, "r");
-
-	param.profile = PROFILE;
 
 	char sp[160];
 
@@ -248,9 +180,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		else if(strcmp(sp, "nC =") == 0){
 			fscanf (paramFile, "%d", &param.nC);
 			fgets(sp, 3, paramFile);
-			if(param.nC > NmaxSample){
-				printf("nC larger than NmaxSample, reduced to %d\n", NmaxSample);
-				param.nC = NmaxSample;
+			if(param.nC > def_NmaxSample){
+				printf("nC larger than def_NmaxSample, reduced to %d\n", def_NmaxSample);
+				param.nC = def_NmaxSample;
 			}
 		}
 		//read doTransmission
@@ -448,6 +380,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 				param.nbins = i - 1;
 				break;
 			}
+			if(i == 1000000 - 1){
+				printf("Error: too many lines in binsfile %s\n", param.bins);
+				return 0;
+			}
 		}		
 		fclose(binsfile);	
 	}
@@ -469,6 +405,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 				param.nedges = i;
 				break;
 			}
+			if(i == 1000000 - 1){
+				printf("Error: too many lines in edgesfile %s\n", param.edges);
+				return 0;
+			}
 		}		
 		fclose(edgesfile);	
 	}
@@ -489,6 +429,10 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			if(er <= 0){
 				param.nP = i;
 				break;
+			}
+			if(i == 1000000 - 1){
+				printf("Error: too many lines in Pfile %s\n", param.PFilename);
+				return 0;
 			}
 		}		
 		fclose(Pfile);	
@@ -570,7 +514,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 	//read line list file		
 	double gammaAir, gammaSelf;
 	double mass;
-	int id, idAFGL;
+	//int id;
 	double S;
 	char cid[4];
 	for(int i = 0; i < m.NL[fi]; ++i){
@@ -585,41 +529,27 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		fread(&gammaSelf, sizeof(double), 1, dataFile);
 		fread(&L.n_h[i], sizeof(double), 1, dataFile);
 		double Q = 0.0;
+		int Qcheck = 0;
 		for(int j = 0; j < m.nISO; ++j){
 //if(i < 10) printf("%d %d\n", id, m.ISO[j].id);
 			//if(id == m.ISO[j].id){
 			if(strcmp(cid, m.ISO[j].cid) == 0){
 
 				mass = m.ISO[j].m / def_NA;
-				idAFGL = m.ISO[j].AFGL;
-				if(m.npfcol != 0){
-					Q = part.Q[j];
-				}
+				Q = part.Q[j];
+				Qcheck = 1;
 			}
 		}
-
-		if(m.npfcol == 0){
-			//use q.dat file
-			int Qcheck = 0;
-			//Assign the Partition function
-			for(int j = 0; j < part.n; ++j){
-				if(idAFGL == part.id[j]){
-					Q = exp(part.Q[j]);
-					Qcheck = 1;
-				}
-			}
-			if(Qcheck == 0){
-				printf("Error: partition function for AFGL %d not found. %d %d\n", idAFGL, i, id);
-				return 0;
-
-			}
+		if(Qcheck == 0){
+			printf("Error: partition function not found.\n");
+			return 0;
 		}
 
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		S /= Q;
 		L.S_h[i] = S;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith, 1.0/nu is missing here and inserted later
-                L.ID_h[i] = i % maxlines;
+                L.ID_h[i] = i % def_maxlines;
 //if(i < 10) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
 	}
@@ -677,7 +607,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		if(param.cutMode == 2){
 			L.vcut2_h[i] = (float)(param.cut * param.cut);
 		}
-		L.ID_h[i] = i % maxlines;
+		L.ID_h[i] = i % def_maxlines;
 		L.S_h[i] = S;
 		L.S1_h[i] = 0.0;
 // if(i < 100) printf("%d %g %g %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q, GammaN, L.vy_h[i], exp(-c * EL));
@@ -853,7 +783,7 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
 
-	int n = min(maxlines, m.NLmax);
+	int n = min(def_maxlines, m.NLmax);
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
@@ -885,7 +815,7 @@ __host__ void Alloc2_Line(Line &L, Molecule &m){
 	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
 	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
 
-	int n = min(maxlines, m.NLmax);
+	int n = min(def_maxlines, m.NLmax);
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));

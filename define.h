@@ -1,4 +1,4 @@
-#define VERSION 1.64
+#define VERSION 1.65
 
 #define def_T0 296.0 		//Temperature in K
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
@@ -9,27 +9,26 @@
 
 #define M_PIf 3.14159265358979323846f
 
-#define TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
-#define TOLF 2.48e-12f		//Tolerance in the Voigt function
-#define NCheb 12		//Number of Chebychev coefficients in the q.dat file
-#define nthmax 32768   		//Maximum number of threads in 2.0 Cards
-#define nlmax 32768		//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
-#define maxbins 1000		//Maximum number of bins
-#define qALPHA_L 0.5		//q value in the Lorentz half width q = Pself / P
-//#define maxlines 50000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
-#define maxlines 8000000	//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
-#define maxfiles 500		//maximum number of files per molucule
+#define def_TOL 1.43e-17		//Tolerance in the Voigt function 3.58e-9 2.48e-12 1.43e-17 3.25e-27 1.69e-33
+#define def_TOLF 2.48e-12f		//Tolerance in the Voigt function
+#define def_nthmax 32768   		//Maximum number of threads in 2.0 Cards
+#define def_nlmax 32768			//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
+//#define maxlines 50000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+#define def_maxlines 8000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+#define def_maxfiles 500		//maximum number of files per molecule
 
-#define PROFILE	1		//1 = Voigt, 2 = Lorentz, 3 = Gauss
-#define NmaxSample 100		//Maximum Number of resample coefficients for K(y)
-#define NXLOW 100000		//Linef versus Line2f
+#define def_NmaxSample 100		//Maximum Number of resample coefficients for K(y)
+#define def_NXLOW 100000		//Linef versus Line2f
+
+//default values of parameters
+#define def_qALPHA_L 0.5	//q value in the Lorentz half width q = Pself / P
+#define def_PROFILE 1		//1 = Voigt, 2 = Lorentz, 3 = Gauss, 4 = cross section
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
-	int AFGL;		//id in AFGL notation
 	double Ab;		//Abundance
-	double Q;
-	int g;
+	double Q;		//partition function reference value
+	int g;			//degeneracy
 	double m;		//mass
 	char cid[4];		//id in HITRAN notation as string
 };
@@ -37,12 +36,12 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL[maxfiles];		//Number of Lines per file
+	int NL[def_maxfiles];		//Number of Lines per file
 	int NLmax;
 	Isotopologue *ISO;
 	char mName[160];	//name of states and trans files
-	char dataFilename[maxfiles][160];
-	int fileLimit[maxfiles + 1];
+	char dataFilename[def_maxfiles][160];
+	int fileLimit[def_maxfiles + 1];
 	int nFiles;
 	int nStates;		//Number of states in EXOMOL linelist
 	int ntcol;		//Number of columns in transition files

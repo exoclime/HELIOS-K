@@ -1,7 +1,7 @@
 
 // *********************************************
 //This function calculates the Series Sigma1. Sigma2 and Sigma3 (Equations 27, 28, and 29) from Alg 916
-//The parameter TOL sets a tolerance where to truncate the series
+//The parameter def_TOL sets a tolerance where to truncate the series
 //It returns the values for sigma1 sigma2 and sigma3
 //
 // This implementation has still problems with loss of accuracy
@@ -70,9 +70,9 @@ __device__ void Sigma(const double x, const double y, double &s1, double &s2, do
 		if(n3n >= 1) s3 += f3n * ean2 * e3ns;
 
 		
-		if(fabs(s1 - sold1) < TOL) stop1 = 1;
-		if(fabs(s2 - sold2) < TOL) stop2 = 1;
-		if(fabs(s3 - sold3) < TOL) stop3 = 1;
+		if(fabs(s1 - sold1) < def_TOL) stop1 = 1;
+		if(fabs(s2 - sold2) < def_TOL) stop2 = 1;
+		if(fabs(s3 - sold3) < def_TOL) stop3 = 1;
 		if(stop1 == 1 && stop2 ==1 && stop3 == 1) break;
 
 		sold1 = s1;
@@ -83,7 +83,7 @@ __device__ void Sigma(const double x, const double y, double &s1, double &s2, do
 }
 // *********************************************
 //This function calculates the Series Sigma1. Sigma2 and Sigma3 (Equations 15, 16, and 17) from Alg 916
-//The parameter TOL sets a tolerance where to truncate the series
+//The parameter def_TOL sets a tolerance where to truncate the series
 //It returns the values for sigma1 sigma2 and sigma3
 
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
@@ -130,9 +130,9 @@ __device__ void Sigmab(double x, const double y, double &s1, double &s2, double 
 		s3 += f3p * exp(-(an3p - x) * (an3p - x));
 		if(n3n >= 1) s3 += f3n * exp(-(an3n - x) * (an3n - x));
 
-		if(fabs(s1 - sold1) < TOL) stop1 = 1;
-		if(fabs(s2 - sold2) < TOL) stop2 = 1;
-		if(fabs(s3 - sold3) < TOL) stop3 = 1;
+		if(fabs(s1 - sold1) < def_TOL) stop1 = 1;
+		if(fabs(s2 - sold2) < def_TOL) stop2 = 1;
+		if(fabs(s3 - sold3) < def_TOL) stop3 = 1;
 		if(stop1 == 1 && stop2 ==1 && stop3 == 1) break;
 
 		sold1 = s1;
@@ -182,9 +182,9 @@ __device__ void Sigmabf(float x, const float y, float &s1, float &s2, float &s3,
 		s3 += f3p * expf(-(an3p - x) * (an3p - x));
 		if(n3n >= 1) s3 += f3n * expf(-(an3n - x) * (an3n - x));
 
-		if(fabs(s1 - sold1) < TOLF) stop1 = 1;
-		if(fabs(s2 - sold2) < TOLF) stop2 = 1;
-		if(fabs(s3 - sold3) < TOLF) stop3 = 1;
+		if(fabs(s1 - sold1) < def_TOLF) stop1 = 1;
+		if(fabs(s2 - sold2) < def_TOLF) stop2 = 1;
+		if(fabs(s3 - sold3) < def_TOLF) stop3 = 1;
 		if(stop1 == 1 && stop2 ==1 && stop3 == 1) break;
 
 		sold1 = s1;
@@ -197,7 +197,7 @@ __device__ void Sigmabf(float x, const float y, float &s1, float &s2, float &s3,
 // *************************************************
 //This function calculates the Voigt profile V(x,y) as equation 13 from Zaghloul & Ali, Algorithm 916
 //it calls the Sigma function
-//The parameter TOL sets a tolerance where to truncate the series
+//The parameter def_TOL sets a tolerance where to truncate the series
 
 //Author Simon Grimm, Adapted from Zaghloul & Ali, Algorithm 916
 //November 2014
@@ -343,7 +343,7 @@ __global__ void Voigt_line_kernel(double a, double dnu, double *K_d, double Nx, 
 	int id = blockIdx.x * blockDim.x + idx;
 
 	if(id < Nx){
-		double aTOL = M_PI * sqrt(-1.0 / log(TOL * 0.5));
+		double aTOL = M_PI * sqrt(-1.0 / log(def_TOL * 0.5));
 		double x = fabs(-xmax + id * 2.0 * xmax / ((double)(Nx)));
 		K_d[id] = voigt_916(x, a, aTOL, id);
 	}

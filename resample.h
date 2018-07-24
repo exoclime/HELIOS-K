@@ -467,7 +467,7 @@ __global__ void lnK_kernel(double *K_d, int NL){
 // ****************************************
 // This kernel computes  exp(f(x)) using the Chebyshev coefficients
 // calculated previosly and stored in b_d.
-// The kernel must be called at least with NmaxSample threads, the number of
+// The kernel must be called at least with def_NmaxSample threads, the number of
 // chebyshev coefficients
 //
 // The result is written again in b_d
@@ -482,10 +482,10 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
-	__shared__ double b_s[NmaxSample];
+	__shared__ double b_s[def_NmaxSample];
 
-	for(int k = 0; k < NmaxSample; k += blockDim.x){
-		if(k + idy < NmaxSample){
+	for(int k = 0; k < def_NmaxSample; k += blockDim.x){
+		if(k + idy < def_NmaxSample){
 			b_s[k + idy] = b_d[k + idy + idx * NL];
 		}
 	}
