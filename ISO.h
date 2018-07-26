@@ -614,7 +614,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		fscanf (pFile, "%lf", &m.ISO[i].m);
 		fscanf (pFile, "%s", sp);
 		sprintf(qFilename[i], "%s%s", param.path, sp);
-printf("%s %g %s\n", m.ISO[i].cid, m.ISO[i].Ab, qFilename[i]);
+//printf("%s %g %s\n", m.ISO[i].cid, m.ISO[i].Ab, qFilename[i]);
 	}
 	fgets(sp, 4, pFile);
 	fgets(sp, 38, pFile);
@@ -636,7 +636,6 @@ printf("%s %g %s\n", m.ISO[i].cid, m.ISO[i].Ab, qFilename[i]);
 	m.NLmax = 0;
 	for(int i = 0; i < m.nFiles; ++i){
 		fscanf (pFile, "%d", &m.NL[i]);
-printf("%d\n", m.NL[i]);
 		m.NLmax = max(m.NLmax, m.NL[i]);
 	}
 	fgets(sp, 4, pFile);
@@ -644,7 +643,7 @@ printf("%d\n", m.NL[i]);
 	fgets(sp, 19, pFile);
 	for(int i = 0; i < m.nFiles + 1; ++i){
 		fscanf (pFile, "%d", &m.fileLimit[i]);
-printf("%d\n", m.fileLimit[i]);
+//printf("%d\n", m.fileLimit[i]);
 	}
 	for(int i = 0; i < m.nFiles; ++i){
 		if(param.useHITEMP == 0){

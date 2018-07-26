@@ -1,6 +1,8 @@
-#define VERSION 1.65
+#define VERSION 1.66
 
-#define def_T0 296.0 		//Temperature in K
+#define def_T0 296.0 		//Reference Temperature in K
+#define def_PObar 0.986923	//Referecne Pressure 1 bar in atm for ExoMol
+#define def_POatm 1.0		//Referecne Pressure 1 atm in atm for Hitran
 #define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
 #define def_h 6.62606957e-27	//Planck costant in erg s
 #define def_c 2.99792458e10 	//Speed of light cm/s
@@ -13,7 +15,7 @@
 #define def_TOLF 2.48e-12f		//Tolerance in the Voigt function
 #define def_nthmax 32768   		//Maximum number of threads in 2.0 Cards
 #define def_nlmax 32768			//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
-//#define maxlines 50000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+//#define def_maxlines 30000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
 #define def_maxlines 8000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
 #define def_maxfiles 500		//maximum number of files per molecule
 
@@ -113,16 +115,16 @@ struct Line{
 	double *nu_h, *nu_d;            //Wavenumber
 	double *S_h, *S_d;        //Intensity
 	float *Sf_d;
-	double *S1_h, *S1_d;     //modified Intensity
+	double *S1_d;     //modified Intensity
 	float *S1f_d;
 	double *A_h, *A_d;              //Einstein A coefficient
 	double *delta_h, *delta_d;      //pressure induced line shift
 	double *EL_h, *EL_d;  		//Energy of lower state
 	double *vy_h, *vy_d; 	//Lorentz Halfwidth / Doppler Halfwidth
 	float *vyf_d;
-	float *va_h, *va_d;	 	//(numin - nu) * ialphaD
-	float *vb_h, *vb_d;	 	//dnu * ialphaD
-	float *vcut2_h, *vcut2_d; 	//(cut * ialphaD)^2
+	float *va_d;	 	//(numin - nu) * ialphaD
+	float *vb_d;	 	//dnu * ialphaD
+	float *vcut2_d; 	//(cut * ialphaD)^2
 	double *ialphaD_h, *ialphaD_d;  //Doppler Halfwidth
 	double *n_h, *n_d;              //temperature dependent exponent
 	double *Q_h, *Q_d;              //partition function

@@ -272,7 +272,7 @@ __global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 		S_d[id] *= exp(-EL * c / T + EL * c / def_T0) * (1.0 - exp(-c * nu / T)) / (1.0 - exp(-c * nu / def_T0)) * ialphaD;
 	
 		ialphaD_d[id] = ialphaD;	//inverse Doppler halfwidth
-		alphaL *= P * pow(def_T0 / T, n_d[id]);
+		alphaL *= (P / def_POatm) * pow(def_T0 / T, n_d[id]);
 		alphaL += (A_d[id] / (4.0 * M_PI * def_c));				//1/cm
 		vy_d[id] = alphaL * ialphaD;
 		ID_d[id] = id;
@@ -317,15 +317,64 @@ __global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 
 	}
 }
-__global__ void Sf_kernel(double *S_d, float *Sf_d, double *vy_d, float *vyf_d, double *S1_d, float *S1f_d, const int NL, const int kk){
+__global__ void Sf_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, double *vy_d, float *vyf_d, double *ialphaD_d, double *n_d,  double *EL_d, double *S1_d, float *S1f_d, float *va_d, float *vb_d, float *vcut2_d, const int NL, const double numin, const double dnu, const double cut, const int cutMode, int profile, int useIndividualX, const double T, const double P, const int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
 
 	if(id < NL){
+
+		double nu = nu_d[id];
+		double ialphaD = ialphaD_d[id] / nu;
+		double EL = EL_d[id];
+	
+		double c = def_h * def_c / (def_kB * T);
+		S_d[id] *= exp(-c * EL) * (1.0 - exp(-c * nu)) * ialphaD;	
+		ialphaD_d[id] = ialphaD;	//inverse Doppler halfwidth
+
+	
+		double alphaL = vy_d[id];
+		alphaL *= (P / def_PObar) * pow(def_T0 / T, n_d[id]);
+		alphaL += A_d[id];				//1/cm
+		vy_d[id] = alphaL * ialphaD;
+
+		if(useIndividualX == 0){
+			va_d[id] = (float)((numin - nu) * ialphaD);
+			vb_d[id] = (float)(dnu * ialphaD);
+		}
+		else{
+			va_d[id] = (float)(-nu * ialphaD);
+			vb_d[id] = (float)(ialphaD);
+		}
+
+		vcut2_d[id] = (float)(cut * cut * ialphaD * ialphaD); //square of modified cut lenght
+		if(cutMode == 1){
+			vcut2_d[id] = (float)(cut * cut * vy_d[id] * vy_d[id]);
+		}
+		if(cutMode == 2){
+			vcut2_d[id] = (float)(cut * cut);
+		}
+		if(profile < 4){
+			S1_d[id] = S_d[id] * vy_d[id] / M_PI;
+		}
+		else{
+			S1_d[id] = S_d[id];
+		}
+
+		if(nu == 0){
+			S_d[id] = 0.0;
+			S1_d[id] = 0.0;
+			ialphaD_d[id] = 0.0;
+			vy_d[id] = 0.0;
+			va_d[id] = 0.0f;
+			vb_d[id] = 0.0f;
+			vcut2_d[id] = 0.0f;
+		}
+
 		vyf_d[id] = (float)(vy_d[id]); 
 		Sf_d[id] = (float)(S_d[id]); 
 		S1f_d[id] = (float)(S1_d[id]);
+
 //if(id > 156000 && id < 158000) printf("S %d %g %f\n", id, S_d[id], Sf_d[id]);
 	}
 }

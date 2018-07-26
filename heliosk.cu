@@ -607,6 +607,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	timeval tt1;			//start time
 	timeval tt2;			//end time
 	long long times, timems;	//elapsed time in seconds and microseconds
+	cudaEvent_t start, stop;
+        cudaEventCreate(&start);
+        cudaEventCreate(&stop);
+	float milliseconds;
 
 	cudaDeviceSynchronize();
 
@@ -705,20 +709,34 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	MaxLimits_h = (int*)malloc(sizeof(int));
 	cudaMalloc((void **) &MaxLimits_d, sizeof(int));
 
-	cudaDeviceSynchronize();
-	error = cudaGetLastError();
-	if(error != 0){
-		printf("Alloc error = %d = %s\n",error, cudaGetErrorString(error));
-		return 0;
-	}
 	if(param.useCia == 1){
 		for(int iP = 0; iP < param.nP; ++iP){
 			readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[iP], m.meanMass);
 			cudaMemcpy(K_d + iP * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
 		}
 	}
-	gettimeofday(&tt1, NULL);
+
+	cudaDeviceSynchronize();
+	error = cudaGetLastError();
+	if(error != 0){
+		printf("Alloc error = %d = %s\n",error, cudaGetErrorString(error));
+		return 0;
+	}
+
 	if(param.nMolecule > 0 && param.doStoreFullK >= 0){
+		double *nuP;
+		double *ialphaDP;
+		double *vyP;
+		nuP = NULL;
+		ialphaDP = NULL;
+		vyP = NULL;
+		if(Nx > def_NXLOW){
+			int n = min(def_maxlines, m.NLmax);
+			nuP = (double*)malloc(n * sizeof(double));
+			ialphaDP = (double*)malloc(n * sizeof(double));
+			vyP = (double*)malloc(n * sizeof(double));
+		}
+
 		//**************************************
 		//Starting the loop around the datafiles
 		//**************************************
@@ -743,79 +761,96 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 		printf("File range %d to %d\n", fi0 + 1, fi1);
 
+		time[0] = 0.0;
+		time[1] = 0.0;
+		time[2] = 0.0;
+
 		for(int fi = fi0; fi < fi1; ++fi){
-			
-			time[1] = 0;
-			time[2] = 0;
+
+
+			FILE *dataFile;
+			char dataFilename[160];
+			sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
+			dataFile  = fopen(dataFilename, "rb");
+
+			if(dataFile == NULL){
+				printf("Error: line list file not found %s\n", dataFilename);
+				return 0;
+			}
 
 			printf("Reading file %d of %d\n", fi + 1, fi1);
-			gettimeofday(&tt1, NULL);
-			
 			printf("Number of lines: %d\n", m.NL[fi]);
 
-			//**************************
-			//Read the Line list	
-			//**************************
-			if(param.useHITEMP < 2){
-				er = readFile(param, m, part, L, param.qalphaL, fi);
-			}
-			else{
-				er = readFileExomol(param, m, part, L, fi);
-			}
-			if(er == 0){
-				return 0;
-			}
-			cudaDeviceSynchronize();
-			error = cudaGetLastError();
-			if(error != 0){
-				printf("Line Read error = %d = %s\n",error, cudaGetErrorString(error));
-				return 0;
-			}
+			for(int iL = 0; iL < m.NL[fi]; iL += def_maxlines){
+				int NL = min(def_maxlines, m.NL[fi] - iL);
+				printf("Reading Line file part %d of %d with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 
-			gettimeofday(&tt2, NULL);
-			times = (tt2.tv_sec - tt1.tv_sec);
-			timems = (tt2.tv_usec - tt1.tv_usec);
-
-			time[0] = times + timems/1000000.0;
-			printf("Time for input:        %g seconds\n", time[0]);
-
-			cudaDeviceSynchronize();
-			gettimeofday(&tt1, NULL);
-
-			double *nuP;
-			double *ialphaDP;
-			double *vyP;
-			nuP = NULL;
-			ialphaDP = NULL;
-			vyP = NULL;
-			if(Nx > def_NXLOW){
-				int n = min(def_maxlines, m.NLmax);
-				nuP = (double*)malloc(n * sizeof(double));
-				ialphaDP = (double*)malloc(n * sizeof(double));
-				vyP = (double*)malloc(n * sizeof(double));
-			}
-
-			//start the loop around the Pressure values. only 1 iteration if no Pressure file is given
-			for(int iP = 0; iP < param.nP; ++iP){
-
-				if(param.useHITEMP >= 2){
-					alphaLExomol(param, m, L, fi, param.T, P_h[iP]);
+				double timeOld = time[0];
+				if(iL == 0) time[0] = 0.0;
+				gettimeofday(&tt1, NULL);
+				//**************************
+				//Read the Line list	
+				//**************************
+				if(param.useHITEMP < 2){
+					er = readFile(param, m, part, L, param.qalphaL, NL, dataFile);
 				}
-				//Copy Line data to the device
+				else{
+					er = readFileExomol(param, m, part, L, NL, dataFile);
+				}
+				if(er == 0){
+					return 0;
+				}
+				gettimeofday(&tt2, NULL);
+				times = (tt2.tv_sec - tt1.tv_sec);
+				timems = (tt2.tv_usec - tt1.tv_usec);
+				time[0] += times + timems/1000000.0;
+				
+				printf("Time for input:        %g seconds\n", time[0]);
 
-				for(int iL = 0; iL < m.NL[fi]; iL += def_maxlines){
+				if(iL > 0 || fi > fi0){
+					//read data before synchronization
+					cudaEventSynchronize(stop);
+					cudaEventElapsedTime(&milliseconds, start, stop);
+
+					time[2] += milliseconds * 0.001;
+					printf("Time for K(x):         %g seconds\n", time[2]);
+		
+					cudaDeviceSynchronize();
+					error = cudaGetLastError();
+					if(error != 0){
+						printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+						return 0;
+					}
+					if(iL == 0){
+						InfoFile = fopen(InfoFilename, "a");
+						fprintf(InfoFile,"File %d of %d\n", fi, fi1);
+						fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi - 1]);
+						fprintf(InfoFile,"Time for input:        %g seconds\n", timeOld);
+						fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
+						fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
+						fclose(InfoFile);
+						time[1] = 0.0;
+						time[2] = 0.0;
+					}
+				}
+
+				cudaEventRecord(start);
+
+				//start the loop around the Pressure values. only 1 iteration if no Pressure file is given
+				for(int iP = 0; iP < param.nP; ++iP){
+
+					//Copy Line data to the device
+
 					if(param.RLOW == 1){
 						cudaMemset(K1_d, 0, Nx1 * sizeof(double));	
 						cudaMemset(Kc_d, 0, Nx * sizeof(double));	
 					}
-					int NL = min(def_maxlines, m.NL[fi] - iL);
-					printf("processing Line file part %d of %d with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 
 					if(param.useHITEMP < 2){
-						Copy_Line(L, m, iL, NL);
+						Copy_Line(L, m, NL);
 					}
 					else{
-						Copy2_Line(L, m, iL, NL);
+						Copy2_Line(L, m, NL);
 					}
 					//************************
 
@@ -851,7 +886,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 					else{
 						for(int k = 0; k < NL; k += def_nthmax){
 							int Nk = min(def_nthmax, NL);
-							Sf_kernel <<< (Nk + 127) / 128, 128 >>> (L.S_d, L.Sf_d, L.vy_d, L.vyf_d, L.S1_d, L.S1f_d, NL, k);
+							Sf_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.Sf_d, L.A_d, L.vy_d, L.vyf_d, L.ialphaD_d, L.n_d, L.EL_d, L.S1_d, L.S1f_d, L.va_d, L.vb_d, L.vcut2_d, NL, param.numin, param.dnu, param.cut, param.cutMode, param.profile, param.useIndividualX, param.T, P_h[iP], k);
 						}
 					}
 					//Sort the data along nu
@@ -979,18 +1014,17 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						}
 					}
 
-					gettimeofday(&tt2, NULL);
-					times = (tt2.tv_sec - tt1.tv_sec);
-					timems = (tt2.tv_usec - tt1.tv_usec);
+					cudaEventRecord(stop);
+					cudaEventSynchronize(stop);
+					cudaEventElapsedTime(&milliseconds, start, stop);
 
-					time[1] += times + timems/1000000.0;
+					time[1] += milliseconds * 0.001;
 
 					if(iP == param.nP - 1){
 						printf("Time for Lines:        %g seconds\n", time[1]);
 					}
-					cudaDeviceSynchronize();
-					gettimeofday(&tt1, NULL);
 
+					cudaEventRecord(start);
 
 					//***********************************
 					//Compute the opacity function K(x)
@@ -1405,36 +1439,57 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 
 					} //end Nx > def_NXLOW
 					//*************************************
-					cudaDeviceSynchronize();
-					error = cudaGetLastError();
-					if(error != 0){
-						printf("K error = %d = %s\n",error, cudaGetErrorString(error));
-						return 0;
+					cudaEventRecord(stop);
+					if(iP < param.nP - 1){
+						//synchronize here only if no more data has to be read from the disk.
+						//otherwise read data before synchronization
+						cudaEventSynchronize(stop);
+						cudaEventElapsedTime(&milliseconds, start, stop);
+
+						time[2] += milliseconds * 0.001;
+						if(iP == param.nP - 1){
+							printf("Time for K(x):         %g seconds\n", time[2]);
+						}
+			
+						cudaDeviceSynchronize();
+						error = cudaGetLastError();
+						if(error != 0){
+							printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+							return 0;
+						}
+						gettimeofday(&tt1, NULL);
 					}
-					gettimeofday(&tt2, NULL);
-					times = (tt2.tv_sec - tt1.tv_sec);
-					timems = (tt2.tv_usec - tt1.tv_usec);
 
-					time[2] += times + timems/1000000.0;
-					if(iP == param.nP - 1){
-						printf("Time for K(x):         %g seconds\n", time[2]);
-					}
-					gettimeofday(&tt1, NULL);
+				} // End of pressure loop
 
-				} // End of maxLines loop
-			} // End of pressure loop
-			free(nuP);
-			free(ialphaDP);
-			free(vyP);
+			} // End of maxLines loop
+		} // End of linefile loop
 
+		cudaEventSynchronize(stop);
+		cudaEventElapsedTime(&milliseconds, start, stop);
+		printf("*** continue2 *** \n");
+
+		time[2] += milliseconds * 0.001;
+		printf("Time for K(x):         %g seconds\n", time[2]);
+
+		cudaDeviceSynchronize();
+		error = cudaGetLastError();
+		if(error != 0){
+			printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+			return 0;
+		}
 			InfoFile = fopen(InfoFilename, "a");
-			fprintf(InfoFile,"File %d of %d\n", fi + 1, fi1);
-			fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi]);
+			fprintf(InfoFile,"File %d of %d\n", fi1, fi1);
+			fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi1 - 1]);
 			fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
 			fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
 			fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
 			fclose(InfoFile);
-		} // End of linefile loop
+		gettimeofday(&tt1, NULL);
+
+		free(nuP);
+		free(ialphaDP);
+		free(vyP);
 	}
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);

@@ -501,23 +501,14 @@ __host__ int readPFile(Param &param, double *P_h){
 //Author Simon Grimm
 //January 2015
 // *******************************************************************
-__host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double qalphaL, int fi){
-	FILE *dataFile;
-	char dataFilename[160];
-	sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
-	dataFile = fopen(dataFilename, "rb");
+__host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double qalphaL, int NL, FILE *dataFile){
 
-	if(dataFile == NULL){
-		printf("Error: line list file not found %s\n", dataFilename);
-		return 0;
-	}
-	//read line list file		
 	double gammaAir, gammaSelf;
 	double mass;
 	//int id;
 	double S;
 	char cid[4];
-	for(int i = 0; i < m.NL[fi]; ++i){
+	for(int i = 0; i < NL; ++i){
 		//fread(&id, sizeof(int), 1, dataFile);
 		fread(&cid, 4*sizeof(char), 1, dataFile);
 		fread(&L.nu_h[i], sizeof(double), 1, dataFile);
@@ -546,15 +537,12 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		}
 
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
-		S /= Q;
-		L.S_h[i] = S;
-		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith, 1.0/nu is missing here and inserted later
+		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
+		L.S_h[i] = S / Q;
                 L.ID_h[i] = i % def_maxlines;
 //if(i < 10) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
 	}
-
-	fclose(dataFile);
 	return 1;
 }
 // ******************************************************************
@@ -562,90 +550,34 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
-__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int fi){
-	FILE *dataFile;
-	char dataFilename[160];
-	sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
-	dataFile  = fopen(dataFilename, "rb");
-
-	if(dataFile == NULL){
-		printf("Error: line list file not found %s\n", dataFilename);
-		return 0;
-	}
-	//read line list file		
+__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int NL, FILE *dataFile){
 
 	double mass = m.ISO[0].m / def_NA;
 	double Q = part.Q[0];
-	double c = def_h * def_c / (def_kB * param.T);
-	double A, EL;
-	double S;
+	double S, A;
 	double GammaN = 0.0; 	//natural broadening parameter
-	for(int i = 0; i < m.NL[fi]; ++i){
+	for(int i = 0; i < NL; ++i){
 	
 		fread(&L.nu_h[i], sizeof(double), 1, dataFile);		
 		fread(&S, sizeof(double), 1, dataFile);		
-		fread(&EL, sizeof(double), 1, dataFile);		
+		fread(&L.EL_h[i], sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 		//include the following for Kurucz
 		if(param.useHITEMP == 30){
 			fread(&GammaN, sizeof(double), 1, dataFile);		
 		}
 //if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
-		L.ialphaD_h[i] = def_c / L.nu_h[i] * sqrt( mass / (2.0 * def_kB * param.T));      //inverse Doppler halfwdith
-		S *= exp(-c * EL) * (1.0 - exp(-c * L.nu_h[i])) / Q * L.ialphaD_h[i];
-		L.vy_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (2.0 * M_PI);						//alphaL
-		if(param.useIndividualX == 0){
-			L.va_h[i] = (float)((param.numin - L.nu_h[i]) * L.ialphaD_h[i]);
-			L.vb_h[i] = (float)(param.dnu * L.ialphaD_h[i]);
-		}
-		else{
-			L.va_h[i] = (float)(-L.nu_h[i] * L.ialphaD_h[i]);
-			L.vb_h[i] = (float)(L.ialphaD_h[i]);
-		}
+		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
+		L.A_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (2.0 * M_PI);
+		L.vy_h[i] = m.defaultL;
+		L.n_h[i] = m.defaultn;
 
-		L.vcut2_h[i] = (float)(param.cut * param.cut * L.ialphaD_h[i] * L.ialphaD_h[i]); //square of modified cut lenght
-		if(param.cutMode == 2){
-			L.vcut2_h[i] = (float)(param.cut * param.cut);
-		}
 		L.ID_h[i] = i % def_maxlines;
-		L.S_h[i] = S;
-		L.S1_h[i] = 0.0;
+		L.S_h[i] = S / Q;
 // if(i < 100) printf("%d %g %g %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q, GammaN, L.vy_h[i], exp(-c * EL));
-
-		if(L.nu_h[i] == 0.0){
-			L.S1_h[i] = 0.0;
-			L.ialphaD_h[i] = 0.0;
-			L.vy_h[i] = 0.0;
-			L.va_h[i] = 0.0f;
-			L.vb_h[i] = 0.0f;
-			L.vcut2_h[i] = 0.0f;
-		}
 
 //if(i < 10000) printf("%d %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i]);		
 		
-	}
-	fclose(dataFile);
-	return 1;
-}
-// ******************************************************************
-//This Function computes the Lorentz halfwidths from the ExoMol default values
-//Author Simon Grimm
-//August 2016
-// *******************************************************************
-__host__ int alphaLExomol(Param param, Molecule &m, Line &L, int fi, double T, double P){
-	for(int i = 0; i < m.NL[fi]; ++i){
-		L.vy_h[i] += (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923));
-		L.vy_h[i] *= L.ialphaD_h[i]; 
-		if(param.profile < 4){
-			L.S1_h[i] = L.S_h[i] * L.vy_h[i] / M_PI;
-		}
-		else{
-			L.S1_h[i] = L.S_h[i];
-		}
-		if(param.cutMode == 1){
-			L.vcut2_h[i] = (float)(param.cut * param.cut * L.vy_h[i] * L.vy_h[i]);
-		}
-//if(i < 100) printf("%d %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], (float)(L.S_h[i]), L.ialphaD_h[i], L.vy_h[i], (m.defaultL * pow(296.0 / T, m.defaultn) * (P / 0.986923)));
 	}
 	return 1;
 }
@@ -768,22 +700,19 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 
 
 __host__ void Alloc_Line(Line &L, Molecule &m){
-	L.nu_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.S_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.S1_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.A_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.delta_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.EL_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.vy_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.va_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.vb_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.vcut2_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.ialphaD_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.n_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
-
 	int n = min(def_maxlines, m.NLmax);
+
+	L.nu_h = (double*)malloc(n * sizeof(double));
+	L.S_h = (double*)malloc(n * sizeof(double));
+	L.A_h = (double*)malloc(n * sizeof(double));
+	L.delta_h = (double*)malloc(n * sizeof(double));
+	L.EL_h = (double*)malloc(n * sizeof(double));
+	L.vy_h = (double*)malloc(n * sizeof(double));
+	L.ialphaD_h = (double*)malloc(n * sizeof(double));
+	L.n_h = (double*)malloc(n * sizeof(double));
+	L.Q_h = (double*)malloc(n * sizeof(double));
+	L.ID_h = (int*)malloc(n * sizeof(int));
+
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
@@ -804,76 +733,70 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
 }
 __host__ void Alloc2_Line(Line &L, Molecule &m){
-	L.nu_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.S_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.S1_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.vy_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.va_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.vb_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.vcut2_h = (float*)malloc(m.NLmax * sizeof(float));
-	L.ialphaD_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.Q_h = (double*)malloc(m.NLmax * sizeof(double));
-	L.ID_h = (int*)malloc(m.NLmax * sizeof(int));
 
 	int n = min(def_maxlines, m.NLmax);
+
+	L.nu_h = (double*)malloc(n * sizeof(double));
+	L.S_h = (double*)malloc(n * sizeof(double));
+	L.A_h = (double*)malloc(n * sizeof(double));
+	L.EL_h = (double*)malloc(n * sizeof(double));
+	L.vy_h = (double*)malloc(n * sizeof(double));
+	L.ialphaD_h = (double*)malloc(n * sizeof(double));
+	L.n_h = (double*)malloc(n * sizeof(double));
+	L.Q_h = (double*)malloc(n * sizeof(double));
+	L.ID_h = (int*)malloc(n * sizeof(int));
 
 	cudaMalloc((void **) &L.nu_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S_d, n * sizeof(double));
 	cudaMalloc((void **) &L.Sf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.S1_d, n * sizeof(double));
 	cudaMalloc((void **) &L.S1f_d, n * sizeof(float));
+	cudaMalloc((void **) &L.A_d, n * sizeof(double));
+	cudaMalloc((void **) &L.EL_d, n * sizeof(double));
 	cudaMalloc((void **) &L.vy_d, n * sizeof(double));
 	cudaMalloc((void **) &L.vyf_d, n * sizeof(float));
 	cudaMalloc((void **) &L.va_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vb_d, n * sizeof(float));
 	cudaMalloc((void **) &L.vcut2_d, n * sizeof(float));
 	cudaMalloc((void **) &L.ialphaD_d, n * sizeof(double));
+	cudaMalloc((void **) &L.n_d, n * sizeof(double));
 	cudaMalloc((void **) &L.Q_d, n * sizeof(double));
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
 }
 
-__host__ void Copy_Line(Line &L, Molecule &m, int iL, int NL){
+__host__ void Copy_Line(Line &L, Molecule &m, int NL){
 
-	cudaMemcpy(L.nu_d, L.nu_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.S_d, L.S_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.S1_d, L.S1_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vy_d, L.vy_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.va_d, L.va_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vb_d, L.vb_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vcut2_d, L.vcut2_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.A_d, L.A_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.delta_d, L.delta_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.EL_d, L.EL_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.ialphaD_d, L.ialphaD_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.n_d, L.n_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.ID_d, L.ID_h + iL, NL * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.nu_d, L.nu_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.S_d, L.S_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vy_d, L.vy_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.A_d, L.A_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.delta_d, L.delta_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.EL_d, L.EL_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.ialphaD_d, L.ialphaD_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.n_d, L.n_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.ID_d, L.ID_h, NL * sizeof(int), cudaMemcpyHostToDevice);
 }
 
-__host__ void Copy2_Line(Line &L, Molecule &m, int iL, int NL){
+__host__ void Copy2_Line(Line &L, Molecule &m, int NL){
 
-	cudaMemcpy(L.nu_d, L.nu_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.S_d, L.S_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.S1_d, L.S1_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vy_d, L.vy_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.va_d, L.va_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vb_d, L.vb_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.vcut2_d, L.vcut2_h + iL, NL * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.ialphaD_d, L.ialphaD_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.Q_d, L.Q_h + iL, NL * sizeof(double), cudaMemcpyHostToDevice);
-	cudaMemcpy(L.ID_d, L.ID_h + iL, NL * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.nu_d, L.nu_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.S_d, L.S_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.vy_d, L.vy_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.A_d, L.A_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.EL_d, L.EL_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.ialphaD_d, L.ialphaD_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.n_d, L.n_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.Q_d, L.Q_h, NL * sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(L.ID_d, L.ID_h, NL * sizeof(int), cudaMemcpyHostToDevice);
 }
 
 __host__ void free_Line(Line &L){
 	free(L.nu_h);
 	free(L.S_h);
-	free(L.S1_h);
 	free(L.A_h);
 	free(L.delta_h);
 	free(L.EL_h);
 	free(L.vy_h);
-	free(L.va_h);
-	free(L.vb_h);
-	free(L.vcut2_h);
 	free(L.ialphaD_h);
 	free(L.n_h);
 	free(L.Q_h);
@@ -900,12 +823,9 @@ __host__ void free_Line(Line &L){
 __host__ void free2_Line(Line &L){
 	free(L.nu_h);
 	free(L.S_h);
-	free(L.S1_h);
 	free(L.vy_h);
-	free(L.va_h);
-	free(L.vb_h);
-	free(L.vcut2_h);
 	free(L.ialphaD_h);
+	free(L.n_h);
 	free(L.Q_h);
 	free(L.ID_h);
 
@@ -914,12 +834,14 @@ __host__ void free2_Line(Line &L){
 	cudaFree(L.Sf_d);
 	cudaFree(L.S1_d);
 	cudaFree(L.S1f_d);
+	cudaFree(L.A_d);
 	cudaFree(L.vy_d);
 	cudaFree(L.vyf_d);
 	cudaFree(L.va_d);
 	cudaFree(L.vb_d);
 	cudaFree(L.vcut2_d);
 	cudaFree(L.ialphaD_d);
+	cudaFree(L.n_d);
 	cudaFree(L.Q_d);
 	cudaFree(L.ID_d);
 }
