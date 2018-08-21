@@ -68,7 +68,7 @@ __host__ int readPartition(Param &param, int nMolecule, char (*qFilename)[160], 
 			}
 		}
 		fclose(qFile);
-//printf("Q %d %g\n", i, q);
+printf("Q %d %g\n", i, q);
 		part.Q[i] = q;
 	}
 	return 1;
@@ -522,7 +522,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		double Q = 0.0;
 		int Qcheck = 0;
 		for(int j = 0; j < m.nISO; ++j){
-//if(i < 10) printf("%d %d\n", id, m.ISO[j].id);
+//if(i < 10) printf("%d |%s|%s|\n", i, m.ISO[j].cid, cid);
 			//if(id == m.ISO[j].id){
 			if(strcmp(cid, m.ISO[j].cid) == 0){
 
@@ -532,7 +532,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 			}
 		}
 		if(Qcheck == 0){
-			printf("Error: partition function not found.\n");
+			printf("Error: partition function not found. %d |%s| \n", i, cid);
 			return 0;
 		}
 

@@ -47,6 +47,27 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		if(param.useHITEMP == 1){
 	        	sprintf(pFileName, "%s%s", param.path, "02_HITEMP2010.param");
 		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "02_12C-16O2__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 4){
+	        	sprintf(pFileName, "%s%s", param.path, "02_13C-16O2__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 5){
+	        	sprintf(pFileName, "%s%s", param.path, "02_16O-12C-18O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 6){
+	        	sprintf(pFileName, "%s%s", param.path, "02_16O-12C-17O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 7){
+	        	sprintf(pFileName, "%s%s", param.path, "02_16O-13C-18O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 8){
+	        	sprintf(pFileName, "%s%s", param.path, "02_16O-13C-17O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 9){
+	        	sprintf(pFileName, "%s%s", param.path, "02_12C-18O2__HITEMP2010.param");
+		}
 	}
 	if(m.id == 3){//O3
 		if(param.useHITEMP == 0){
@@ -60,19 +81,37 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	}
 	if(m.id == 5){//CO
 		if(param.useHITEMP == 0){
-	        	sprintf(pFileName, "%s%s", param.path, "05_hit16.param");
+			sprintf(pFileName, "%s%s", param.path, "05_hit16.param");
 		}
 		if(param.useHITEMP == 1){
-	        	sprintf(pFileName, "%s%s", param.path, "05_HITEMP2010.param");
+			sprintf(pFileName, "%s%s", param.path, "05_HITEMP2010.param");
 		}
 		if(param.useHITEMP == 2){
-	        	sprintf(pFileName, "%s%s", param.path, "12C-16O__Li2015.param");
+			sprintf(pFileName, "%s%s", param.path, "12C-16O__Li2015.param");
 		}
 		if(param.useHITEMP == 3){
-	        	sprintf(pFileName, "%s%s", param.path, "KuruczCO.param");
+			sprintf(pFileName, "%s%s", param.path, "KuruczCO.param");
 		}
 		if(param.useHITEMP == 4){
-	        	sprintf(pFileName, "%s%s", param.path, "KuruczCOax.param");
+			sprintf(pFileName, "%s%s", param.path, "KuruczCOax.param");
+		}
+		if(param.useHITEMP == 5){
+			sprintf(pFileName, "%s%s", param.path, "05_12C-16O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 6){
+			sprintf(pFileName, "%s%s", param.path, "05_13C-16O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 7){
+			sprintf(pFileName, "%s%s", param.path, "05_12C-18O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 8){
+			sprintf(pFileName, "%s%s", param.path, "05_12C-17O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 9){
+			sprintf(pFileName, "%s%s", param.path, "05_13C-18O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 10){
+			sprintf(pFileName, "%s%s", param.path, "05_13C-17O__HITEMP2010.param");
 		}
 	}
 	if(m.id == 6){//CH4
@@ -113,6 +152,15 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		if(param.useHITEMP == 7){
 	        	sprintf(pFileName, "%s%s", param.path, "15N-17O__NOname.param");
 		}
+		if(param.useHITEMP == 8){
+	        	sprintf(pFileName, "%s%s", param.path, "08_14N-16O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 9){
+	        	sprintf(pFileName, "%s%s", param.path, "08_15N-16O__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 10){
+	        	sprintf(pFileName, "%s%s", param.path, "08_14N-18O__HITEMP2010.param");
+		}
 	}
 	if(m.id == 9){//SO2
 		if(param.useHITEMP == 0){
@@ -147,6 +195,15 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 1){
 	        	sprintf(pFileName, "%s%s", param.path, "13_HITEMP2010.param");
+		}
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "13_16O-1H__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "13_18O-1H__HITEMP2010.param");
+		}
+		if(param.useHITEMP == 4){
+	        	sprintf(pFileName, "%s%s", param.path, "13_16O-2H__HITEMP2010.param");
 		}
 	}
 	if(m.id == 15){//HCl
@@ -203,6 +260,32 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 2){
 	        	sprintf(pFileName, "%s%s", param.path, "1H2-32S__AYT2.param");
+		}
+	}
+	if(m.id == 46){//CS
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-32S__JnK.param");
+		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-34S__JnK.param");
+		}
+		if(param.useHITEMP == 4){
+	        	sprintf(pFileName, "%s%s", param.path, "13C-32S__JnK.param");
+		}
+		if(param.useHITEMP == 5){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-33S__JnK.param");
+		}
+		if(param.useHITEMP == 6){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-36S__JnK.param");
+		}
+		if(param.useHITEMP == 7){
+	        	sprintf(pFileName, "%s%s", param.path, "13C-33S__JnK.param");
+		}
+		if(param.useHITEMP == 8){
+	        	sprintf(pFileName, "%s%s", param.path, "13C-34S__JnK.param");
+		}
+		if(param.useHITEMP == 9){
+	        	sprintf(pFileName, "%s%s", param.path, "13C-36S__JnK.param");
 		}
 	}
 	if(m.id == 47){//SO3
@@ -327,6 +410,9 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 	        	sprintf(pFileName, "%s%s", param.path, "1H3_p__MiZATeP.param");
 		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "1H2-2H_p__ST.param");
+		}
 	}
 	if(m.id == 89){//PO
 		if(param.useHITEMP == 2){
@@ -342,6 +428,9 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 4){
 	        	sprintf(pFileName, "%s%s", param.path, "26Mg-1H__Yadin.param");
+		}
+		if(param.useHITEMP == 5){
+	        	sprintf(pFileName, "%s%s", param.path, "24Mg-1H__Yueqi.param");
 		}
 	}
 	if(m.id == 91){//NaH
@@ -385,6 +474,11 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	if(m.id == 95){//TiH
 		if(param.useHITEMP == 2){
 	        	sprintf(pFileName, "%s%s", param.path, "48Ti-1H__Yueqi.param");
+		}
+	}
+	if(m.id == 96){//LiH
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "7Li-1H__CLT.param");
 		}
 	}
 	if(m.id == 97){//ScH
@@ -466,32 +560,6 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 4){
 	        	sprintf(pFileName, "%s%s", param.path, "13C2__8states.param");
-		}
-	}
-	if(m.id == 107){//CS
-		if(param.useHITEMP == 2){
-	        	sprintf(pFileName, "%s%s", param.path, "12C-32S__JnK.param");
-		}
-		if(param.useHITEMP == 3){
-	        	sprintf(pFileName, "%s%s", param.path, "12C-34S__JnK.param");
-		}
-		if(param.useHITEMP == 4){
-	        	sprintf(pFileName, "%s%s", param.path, "13C-32S__JnK.param");
-		}
-		if(param.useHITEMP == 5){
-	        	sprintf(pFileName, "%s%s", param.path, "12C-33S__JnK.param");
-		}
-		if(param.useHITEMP == 6){
-	        	sprintf(pFileName, "%s%s", param.path, "12C-36S__JnK.param");
-		}
-		if(param.useHITEMP == 7){
-	        	sprintf(pFileName, "%s%s", param.path, "13C-33S__JnK.param");
-		}
-		if(param.useHITEMP == 8){
-	        	sprintf(pFileName, "%s%s", param.path, "13C-34S__JnK.param");
-		}
-		if(param.useHITEMP == 9){
-	        	sprintf(pFileName, "%s%s", param.path, "13C-36S__JnK.param");
 		}
 	}
 	if(m.id == 108){//CP

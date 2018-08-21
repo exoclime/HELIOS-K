@@ -20,7 +20,8 @@
 #define def_maxfiles 500		//maximum number of files per molecule
 
 #define def_NmaxSample 100		//Maximum Number of resample coefficients for K(y)
-#define def_NXLOW 100000		//Linef versus Line2f
+//#define def_NXLOW 100000		//Linef versus Line2f
+#define def_NXLOW 100		//Linef versus Line2f
 
 //default values of parameters
 #define def_qALPHA_L 0.5	//q value in the Lorentz half width q = Pself / P

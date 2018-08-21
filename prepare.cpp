@@ -11,13 +11,78 @@
 //Author: Simon Grimm
 //September 2016
 // *******************************************************************
-int readFile(Molecule &m, int fi){
+int readFile(Molecule &m, int fi, int HITEMP, char *iso, int *nLines){
 	FILE *dataFile, *OutFile;
 	char dataFilename[160], OutFilename[160];
 
 	sprintf(dataFilename, "%spar", m.dataFilename[fi]);
 	sprintf(OutFilename, "%sbin", m.dataFilename[fi]);
+
+	if(HITEMP == 1){
+		if(strcmp(iso, " 21") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_12C-16O2__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 22") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_13C-16O2__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 23") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_16O-12C-18O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 24") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_16O-12C-17O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 25") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_16O-13C-18O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 26") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_16O-13C-17O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 27") == 0){
+			sprintf(OutFilename, "02_%05d-%05d_12C-18O2__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+
+		if(strcmp(iso, " 51") == 0){
+			sprintf(OutFilename, "05_12C-16O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 52") == 0){
+			sprintf(OutFilename, "05_13C-16O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 53") == 0){
+			sprintf(OutFilename, "05_12C-18O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 54") == 0){
+			sprintf(OutFilename, "05_12C-17O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 55") == 0){
+			sprintf(OutFilename, "05_13C-18O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 56") == 0){
+			sprintf(OutFilename, "05_13C-17O__HITEMP2010.bin");
+		}
+
+		if(strcmp(iso, " 81") == 0){
+			sprintf(OutFilename, "08_14N-16O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 82") == 0){
+			sprintf(OutFilename, "08_15N-16O__HITEMP2010.bin");
+		}
+		if(strcmp(iso, " 83") == 0){
+			sprintf(OutFilename, "08_14N-18O__HITEMP2010.bin");
+		}
+
+		if(strcmp(iso, "131") == 0){
+			sprintf(OutFilename, "13_16O-1H__HITEMP2010.bin");
+		}
+		if(strcmp(iso, "132") == 0){
+			sprintf(OutFilename, "13_18O-1H__HITEMP2010.bin");
+		}
+		if(strcmp(iso, "133") == 0){
+			sprintf(OutFilename, "13_16O-2H__HITEMP2010.bin");
+		}
+	}
+
 	printf("reading file %s\n", dataFilename);
+	printf("Output file %s\n", OutFilename);
 	dataFile  = fopen(dataFilename, "r");
 	OutFile = fopen(OutFilename, "wb");
 
@@ -48,6 +113,7 @@ int readFile(Molecule &m, int fi){
 	char c19[8];
 
 	char skip[6];
+	int count = 0;	
 
 	for(int i = 0; i < m.NL[fi]; ++i){
 		//fgets(skip, 1, dataFile);
@@ -93,7 +159,7 @@ int readFile(Molecule &m, int fi){
 
 		//Assign the Isotopologue properties
 		for(int j = 0; j < m.nISO; ++j){
-//printf("|%s|%s|\n", cid, m.ISO[j].cid);
+//if(i < 10) printf("%d|%s|%s|\n", id, cid, m.ISO[j].cid);
 			if(strcmp(cid, m.ISO[j].cid) == 0){
 			//if(cid == m.ISO[j].cid){
 				mass = m.ISO[j].m / def_NA;
@@ -109,18 +175,23 @@ int readFile(Molecule &m, int fi){
 
 		S = S * Q0;
 
-		//fwrite(&id, sizeof(int), 1, OutFile);
-		fwrite(&cid, 4*sizeof(char), 1, OutFile);
-		fwrite(&nu, sizeof(double), 1, OutFile);
-		fwrite(&S, sizeof(double), 1, OutFile);
-		fwrite(&EL, sizeof(double), 1, OutFile);
-		fwrite(&A, sizeof(double), 1, OutFile);
-		fwrite(&delta, sizeof(double), 1, OutFile);
-		fwrite(&gammaAir, sizeof(double), 1, OutFile);
-		fwrite(&gammaSelf, sizeof(double), 1, OutFile);
-		fwrite(&n, sizeof(double), 1, OutFile);
-if(i < 10 || i > m.NL[fi] - 10) printf("%s %.20g %.20g %.20g %.20g %g\n", cid, nu, S, EL, A, mass);
+		if(strcmp(iso, cid) == 0 || strcmp(iso, "") == 0){
+			//fwrite(&id, sizeof(int), 1, OutFile);
+			fwrite(&cid, 4*sizeof(char), 1, OutFile);
+			fwrite(&nu, sizeof(double), 1, OutFile);
+			fwrite(&S, sizeof(double), 1, OutFile);
+			fwrite(&EL, sizeof(double), 1, OutFile);
+			fwrite(&A, sizeof(double), 1, OutFile);
+			fwrite(&delta, sizeof(double), 1, OutFile);
+			fwrite(&gammaAir, sizeof(double), 1, OutFile);
+			fwrite(&gammaSelf, sizeof(double), 1, OutFile);
+			fwrite(&n, sizeof(double), 1, OutFile);
+if(i < 10 || i > m.NL[fi] - 10) printf("%s | %s %.20g %.20g %.20g %.20g %g\n", iso, cid, nu, S, EL, A, mass);
+			++count;
+		}
 	}
+	nLines[fi] = count;
+printf("File %d Number of lines %d\n", fi, count);
 	fclose(dataFile);
 	fclose(OutFile);
 
@@ -139,7 +210,8 @@ int main(int argc, char*argv[]){
         m.NL[0] = 0;
         m.id = 5; //1 = H2O, 2 = CO, 5 = CO, 6 = CH4
         m.nISO = 0;
-
+	char iso[4];
+	iso[0] = 0;
 
 	//Read console input arguments
 	for(int i = 1; i < argc; i += 2){
@@ -149,17 +221,27 @@ int main(int argc, char*argv[]){
 		else if(strcmp(argv[i], "-M") == 0){
 			m.id = atoi(argv[i + 1]);
 		}
+		else if(strcmp(argv[i], "-ISO") == 0){
+			sprintf(iso, "%3s", argv[i + 1]);
+		}
 		else{
 			printf("Error: Console arguments not valid!\n");
 			return 0;
 		}
 	}
 
+
+printf("ISO |%s|\n", iso);
+
 	char qFilename[15][160];
 	Init(m, param, qFilename);
 
+	int nLines[m.nFiles];
 	for(int i = 0; i < m.nFiles; ++i){
-		readFile(m, i);
+		readFile(m, i, param.useHITEMP, iso, nLines);
+	}
+	for(int i = 0; i < m.nFiles; ++i){
+		printf("%d\n", nLines[i]);
 	}
 
 	return 0;

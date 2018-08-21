@@ -86,6 +86,8 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, int nT, double mass
 	int gU;
 	double S;
 
+	double numax = 0.0;
+
 	for(int i = 0; i < nT + 1; ++i){
 
 		if(m.ntcol == 3){
@@ -130,8 +132,10 @@ if(i < 100 || i % 100000 == 0) printf("%d %.20g %.20g %.20g %.20g %d %d %d %.20g
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
 		fwrite(&A, sizeof(double), 1, OutFile);
+		numax = fmax(nu, numax);
 		if(feof(transFile)){
 printf("%d %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+printf("\n %g\n", numax);
 			break;
 		}
 

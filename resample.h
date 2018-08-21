@@ -359,29 +359,29 @@ __global__ void leastSquare_kernel(double *V_d, double *C_d, double *D_d, double
 // Author: Simon Grimm
 // February 2016
 // *****************************************
-__global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *Nmin_d, int nbins){
+__global__ void findCut_kernel(double *K_d, int NL, int Nxb, double kmin, int *Nxmin_d, int nbins){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
-	int ib = id / NLb;
+	int ib = id / Nxb;
 
 	if(id < NL - 1 && ib < nbins){
 		double K = K_d[id];
 		double K1 = K_d[id + 1];
 
 		if(K <= kmin && K1 > kmin){
-			int n = id - ib * NLb + 1;
-//printf("cut bin %d %d %d %d %g\n", id, ib, n, NLb, n / ((double)(NLb))) ;
-			Nmin_d[ib] = n;
+			int n = id - ib * Nxb + 1;
+//printf("cut bin %d %d %d %d %g\n", id, ib, n, Nxb, n / ((double)(Nxb - 1))) ;
+			Nxmin_d[ib] = n;
 
 		}
 		//find complete empty bins
-		if(K <= kmin && id % NLb == NLb - 1){
-//printf("empty bin %d\n", ib);
-			Nmin_d[ib] = NLb;
+		if(K <= kmin && id % Nxb == Nxb - 1){
+//printf("empty bin %d %d\n", ib, Nxb);
+			Nxmin_d[ib] = Nxb;
 		}
-		if(K1 <= kmin && id == NL - 3){
-//printf("empty last bin %d %d\n", ib, id);
-			Nmin_d[ib] = NLb;
+		if(K <= kmin && id == NL - 3){
+//printf("empty last bin %d %d %d\n", ib, id, Nxb);
+			Nxmin_d[ib] = Nxb;
 		}
 	}
 
@@ -389,31 +389,46 @@ __global__ void findCut_kernel(double *K_d, int NL, int NLb, double kmin, int *N
 
 // ****************************************
 // This kernel rescales bins starting with kmin to [0:1] starting from 
-// the first entry bigger than kmin, stored in Nmin 
+// the first entry bigger than kmin, stored in Nxmin 
 //
 // Author: Simon Grimm
 // February 2015
 // *****************************************
 template <int nb>
-__global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, double kmin){
+__global__ void rescale_kernel(int *Nxmin_d, double *K_d, double *K2_d, int Nxb, double kmin, int f){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
 
-	double K = K_d[idx * NLb];
-	int Nmin = Nmin_d[idx];
-	if(K <= kmin){
+	int Nxmin = Nxmin_d[idx];
 
-		for(int k = 0; k < NLb; k += nb){
-			if(idy + k < NLb){
-				double ii = Nmin + (1.0 - Nmin / ((double)(NLb - 1))) * (k + idy); //required index position
-				if(ii >= NLb - 1) ii = 0.999999 * (NLb - 1);
-				int il = ii / ((double)(NLb)) * NLb; //left index
-				double Kl = K_d[idx * NLb + il];
-				double Kr = K_d[idx * NLb + il + 1];
-				double Ki = Kl + (Kr - Kl) * (ii - il);
-//if(idx == 3) printf("K %d %d %g %g %g\n", idx * NLb + k + idy, Nmin, Kl, Kr, Ki);
-				K2_d[idx * NLb + k + idy] = Ki;
+	if(Nxmin > 0){
+		for(int k = 0; k < Nxb; k += nb){
+			if(idy + k < Nxb){
+				if(f == 1){
+					double ii = Nxmin + (1.0 - Nxmin / ((double)(Nxb - 1))) * (k + idy); //required index position
+//if(idx == 85) printf("%d %d %d %g\n", idx, Nxmin, k + idy, ii);
+					if(ii >= Nxb - 1) ii = 0.999999 * (Nxb - 1);
+					int il = ii / ((double)(Nxb)) * Nxb; //left index
+					double Kl = K_d[idx * Nxb + il];
+					double Kr = K_d[idx * Nxb + il + 1];
+					double Ki = Kl + (Kr - Kl) * (ii - il);
+					K2_d[idx * Nxb + k + idy] = Ki;
+				}
+				if(f == -1){
+				//inverse transformation
+					double Ki = 0.0;
+					if(k + idy >= Nxmin){
+						double ii = (k + idy - Nxmin) * (Nxb - 1) / ((double)(Nxb - Nxmin - 1));
+						if(ii >= Nxb - 1) ii = 0.999999 * (Nxb - 1);
+						int il = ii / ((double)(Nxb)) * Nxb; //left index
+						double Kl = K_d[idx * Nxb + il];
+						double Kr = K_d[idx * Nxb + il + 1];
+						Ki = Kl + (Kr - Kl) * (ii - il);
+					}
+					K2_d[idx * Nxb + k + idy] = Ki;
+				}
+//if(idx == 3) printf("K %d %d %g %g %g\n", idx * Nxb + k + idy, Nxmin, Kl, Kr, Ki);
 			}
 		}
 	}
@@ -426,18 +441,18 @@ __global__ void rescale_kernel(int *Nmin_d, double *K_d, double *K2_d, int NLb, 
 // February 2015
 // *****************************************
 template <int nb>
-__global__ void copyK2_kernel(double *K_d, double *K2_d, double kmin, int NLb){
+__global__ void copyK2_kernel(int *Nxmin_d, double *K_d, double *K2_d, int Nxb){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
 
-	double K = K_d[idx * NLb];
+	int Nxmin = Nxmin_d[idx];
 
-	if(K <= kmin){
+	if(Nxmin > 0){
 
-		for(int k = 0; k < NLb; k += nb){
-			if(idy + k < NLb){
-				K_d[idx * NLb + k + idy] = K2_d[idx * NLb + k + idy];
+		for(int k = 0; k < Nxb; k += nb){
+			if(idy + k < Nxb){
+				K_d[idx * Nxb + k + idy] = K2_d[idx * Nxb + k + idy];
 			}
 		}
 	}
@@ -500,6 +515,7 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 				double t = d1;
 				d1 = 2.0 * x * d1 - d2 + b_s[i];
 				d2 = t;
+if(idy + k == 0 && idx == 0) printf("expf %d %g\n", i, b_s[i]);
 			} 
 			double f = x * d1 - d2 + 0.5 * b_s[0] + 0.5 * b_s[0];
 			b_d[idy + k + idx * NL] = exp(f);
@@ -523,12 +539,12 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 // January 2015
 // *****************************************
 template <int nb>
-__global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, double dTr, int *Nmin_d, double kmin){
+__global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, double dTr, int *Nxmin_d, double kmin){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
 	__shared__ double a_s[nb];
-	int Nmin = Nmin_d[idx];
+	int Nxmin = Nxmin_d[idx];
 
 	for(int j = 0; j < nTr; ++j){
 		__syncthreads();
@@ -583,7 +599,7 @@ __global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, dou
 		__syncthreads();
 
 		if(idy == 0){
-			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1)) * (NL - Nmin) / ((double)(NL)) + exp(-kmin * m) * Nmin/ ((double)(NL));
+			Tr_d[idx * nTr + j] = a_s[0] / ((double)(NL - 1)) * (NL - Nxmin) / ((double)(NL)) + exp(-kmin * m) * Nxmin/ ((double)(NL));
 	//		printf("%.20g %.20g\n", m, a_s[0] / (double)(NL));
 		}
 	}
