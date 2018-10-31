@@ -233,6 +233,14 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	        	sprintf(pFileName, "%s%s", param.path, "1H-13C-14N__Larner.param");
 		}
 	}
+	if(m.id == 24){//CH3Cl
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-1H3-35Cl__OYT.param");
+		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "12C-1H3-37Cl__OYT.param");
+		}
+	}
 	if(m.id == 25){//H2O2
 		if(param.useHITEMP == 0){
 	        	sprintf(pFileName, "%s%s", param.path, "25_hit16.param");
@@ -260,6 +268,11 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 2){
 	        	sprintf(pFileName, "%s%s", param.path, "1H2-32S__AYT2.param");
+		}
+	}
+	if(m.id == 38){//C2H4
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "12C2-1H4__MaYTY.param");
 		}
 	}
 	if(m.id == 46){//CS
@@ -291,6 +304,9 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	if(m.id == 47){//SO3
 		if(param.useHITEMP == 0){
 	        	sprintf(pFileName, "%s%s", param.path, "47_hit16.param");
+		}
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "32S-16O3__UYT2.param");
 		}
 	}
 	if(m.id == 78){//CH3F
@@ -341,6 +357,24 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.useHITEMP == 8){
 	        	sprintf(pFileName, "%s%s", param.path, "Schwenke1998.param");
+		}
+		if(param.useHITEMP == 9){
+	        	sprintf(pFileName, "%s%s", param.path, "curbestplusdiag_TiO_iota_48_Refined_PGopher.param");
+		}
+		if(param.useHITEMP == 10){
+	        	sprintf(pFileName, "%s%s", param.path, "curbestplusdiag_TiO_iota_48_Refined_PGopher_scaled.param");
+		}
+		if(param.useHITEMP == 11){
+	        	sprintf(pFileName, "%s%s", param.path, "curbestplusdiag_TiO_ELv1.0D_48.param");
+		}
+		if(param.useHITEMP == 12){
+	        	sprintf(pFileName, "%s%s", param.path, "TiO_ELv1.0D_48.param");
+		}
+		if(param.useHITEMP == 13){
+	        	sprintf(pFileName, "%s%s", param.path, "TiO_ELv1.0M_48.param");
+		}
+		if(param.useHITEMP == 14){
+	        	sprintf(pFileName, "%s%s", param.path, "TiO_ELv1.0P_48.param");
 		}
 	}
 	if(m.id == 82){//FeH
@@ -631,10 +665,8 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	}
 
 	//Atoms and ions from Kurucz
-	if(m.id >= 300){
-		if(param.useHITEMP == 30){
-	        	sprintf(pFileName, "%sgfnew%04d.param", param.path, m.id);
-		}
+	if(param.useHITEMP == 30){
+        	sprintf(pFileName, "%sgfnew%04d.param", param.path, m.id);
 	}
 
 

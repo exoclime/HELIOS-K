@@ -776,9 +776,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			}
 
 			printf("Reading file %d of %d\n", fi + 1, fi1);
-			printf("Number of lines: %d\n", m.NL[fi]);
+			printf("Number of lines: %lld\n", m.NL[fi]);
 
-			for(int iL = 0; iL < m.NL[fi]; iL += def_maxlines){
+			for(long long int iL = 0LL; iL < m.NL[fi]; iL += def_maxlines){
 				int NL = min(def_maxlines, m.NL[fi] - iL);
 				printf("Reading Line file part %d of %d with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 
@@ -823,7 +823,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 					if(iL == 0){
 						InfoFile = fopen(InfoFilename, "a");
 						fprintf(InfoFile,"File %d of %d\n", fi, fi1);
-						fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi - 1]);
+						fprintf(InfoFile,"Number of lines: %lld\n", m.NL[fi - 1]);
 						fprintf(InfoFile,"Time for input:        %g seconds\n", timeOld);
 						fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
 						fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
@@ -1479,7 +1479,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 		}
 			InfoFile = fopen(InfoFilename, "a");
 			fprintf(InfoFile,"File %d of %d\n", fi, fi);
-			fprintf(InfoFile,"Number of lines: %d\n", m.NL[fi]);
+			fprintf(InfoFile,"Number of lines: %lld\n", m.NL[fi]);
 			fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
 			fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
 			fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);

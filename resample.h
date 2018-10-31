@@ -417,7 +417,7 @@ __global__ void rescale_kernel(int *Nxmin_d, double *K_d, double *K2_d, int Nxb,
 				}
 				if(f == -1){
 				//inverse transformation
-					double Ki = 0.0;
+					double Ki = kmin;
 					if(k + idy >= Nxmin){
 						double ii = (k + idy - Nxmin) * (Nxb - 1) / ((double)(Nxb - Nxmin - 1));
 						if(ii >= Nxb - 1) ii = 0.999999 * (Nxb - 1);
@@ -515,7 +515,6 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 				double t = d1;
 				d1 = 2.0 * x * d1 - d2 + b_s[i];
 				d2 = t;
-if(idy + k == 0 && idx == 0) printf("expf %d %g\n", i, b_s[i]);
 			} 
 			double f = x * d1 - d2 + 0.5 * b_s[0] + 0.5 * b_s[0];
 			b_d[idy + k + idx * NL] = exp(f);

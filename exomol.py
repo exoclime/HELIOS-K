@@ -14,7 +14,7 @@ import numpy as np
 def main(m):
 
 
-	print("Molecule = %d" % m)
+	print("Molecule = %s" % m)
 
 	PrintISO=1			#when set to 1, then print the code fot the ISO.h file
 	DownloadFiles=2			#0 no download
@@ -38,7 +38,7 @@ def main(m):
 		ntcol=3
 		npfcol=3
 
-	if(m == 1.1):
+	if(m == 1.01):
 		#the number of transition files is wrong, correct later
 		#1 H2O
 		M="1H2-16O__POKAZATEL"
@@ -47,7 +47,7 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
-	if(m == 1.2):
+	if(m == 1.02):
 		#the number of transition files is wrong, correct later
 		#1 H2O 2
 		M="1H2-18O__HotWat78"
@@ -56,7 +56,7 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
-	if(m == 1.3):
+	if(m == 1.03):
 		#the number of transition files is wrong, correct later
 		#1 H2O 3
 		M="1H2-17O__HotWat78"
@@ -65,7 +65,7 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
-	if(m == 1.4):
+	if(m == 1.04):
 		#the number of transition files is wrong, correct later
 		#1 H2O 4
 		M="1H-2H-16O__VTT"
@@ -98,7 +98,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 8.2):
+	if(m == 8.02):
 		#8 NO 2
 		M="15N-16O__NOname"
 		P="NO/15N-16O/NOname"
@@ -106,7 +106,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 8.3):
+	if(m == 8.03):
 		#8 NO 3
 		M="14N-18O__NOname"
 		P="NO/14N-18O/NOname"
@@ -114,7 +114,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 8.4):
+	if(m == 8.04):
 		#8 NO 4
 		M="15N-18O__NOname"
 		P="NO/15N-18O/NOname"
@@ -122,7 +122,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 8.5):
+	if(m == 8.05):
 		#8 NO 5
 		M="14N-17O__NOname"
 		P="NO/14N-17O/NOname"
@@ -130,7 +130,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 8.6):
+	if(m == 8.06):
 		#8 NO 6
 		M="15N-17O__NOname"
 		P="NO/15N-17O/NOname"
@@ -154,7 +154,7 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
-	if(m == 11.2):
+	if(m == 11.02):
 		#11 NH3 2
 		M="15N-1H3__BYTe-15"
 		P="NH3/15N-1H3/BYTe-15"
@@ -194,7 +194,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 23.2):
+	if(m == 23.02):
 		#23 HCN 2
 		M="1H-13C-14N__Larner"
 		P="HCN/1H-13C-14N/Larner"
@@ -206,6 +206,14 @@ def main(m):
 		#24 CH3Cl
 		M="12C-1H3-35Cl__OYT"
 		P="CH3Cl/12C-1H3-35Cl/OYT"
+		s=100
+		ntcol=3
+		npfcol=2
+
+	if(m == 24.02):
+		#24 CH3Cl 2
+		M="12C-1H3-37Cl__OYT"
+		P="CH3Cl/12C-1H3-37Cl/OYT"
 		s=100
 		ntcol=3
 		npfcol=2
@@ -234,6 +242,14 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
+	if(m == 38):
+		#38 C2H4
+		M="12C2-1H4__MaYTY"
+		P="C2H4/12C2-1H4/MaYTY"
+		s=100			#file range
+		ntcol=3
+		npfcol=2
+
 	if(m == 46):
 		#46 CS
 		M="12C-32S__JnK"
@@ -242,7 +258,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.2):
+	if(m == 46.02):
 		#46 CS 2
 		M="12C-34S__JnK"
 		P="CS/12C-34S/JnK"
@@ -250,7 +266,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.3):
+	if(m == 46.03):
 		#46 CS 3
 		M="13C-32S__JnK"
 		P="CS/13C-32S/JnK"
@@ -258,7 +274,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.4):
+	if(m == 46.04):
 		#46 CS 4
 		M="12C-33S__JnK"
 		P="CS/12C-33S/JnK"
@@ -266,7 +282,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.5):
+	if(m == 46.05):
 		#46 CS 5
 		M="12C-36S__JnK"
 		P="CS/12C-36S/JnK"
@@ -274,7 +290,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.6):
+	if(m == 46.06):
 		#46 CS 6
 		M="13C-33S__JnK"
 		P="CS/13C-33S/JnK"
@@ -282,7 +298,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.7):
+	if(m == 46.07):
 		#46 CS 7
 		M="13C-34S__JnK"
 		P="CS/13C-34S/JnK"
@@ -290,12 +306,20 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 46.8):
+	if(m == 46.08):
 		#46 CS 8
 		M="13C-36S__JnK"
 		P="CS/13C-36S/JnK"
 		s=11000			#file range
 		ntcol=4
+		npfcol=2
+
+	if(m == 47):
+		#47 SO3
+		M="32S-16O3__UYT2"
+		P="SO3/32S-16O3/UYT2"
+		s=10
+		ntcol=3
 		npfcol=2
 
 	if(m == 78):
@@ -340,7 +364,7 @@ def main(m):
 		ntcol=3
 		npfcol=2
 
-	if(m == 83.2):
+	if(m == 83.02):
 		#83 AlO 2
 		M="26Al-16O__ATP"
 		P="AlO/26Al-16O/ATP"
@@ -348,7 +372,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 83.3):
+	if(m == 83.03):
 		#83 AlO 3
 		M="27Al-17O__ATP"
 		P="AlO/27Al-17O/ATP"
@@ -356,7 +380,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 83.4):
+	if(m == 83.04):
 		#83 AlO 4
 		M="27Al-18O__ATP"
 		P="AlO/27Al-18O/ATP"
@@ -372,7 +396,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 84.2):
+	if(m == 84.02):
 		#84 SiO 2
 		M="28Si-17O__EBJT"
 		P="SiO/28Si-17O/EBJT"
@@ -380,7 +404,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 84.3):
+	if(m == 84.03):
 		#84 SiO 3
 		M="28Si-18O__EBJT"
 		P="SiO/28Si-18O/EBJT"
@@ -388,7 +412,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 84.4):
+	if(m == 84.04):
 		#84 SiO 4
 		M="29Si-16O__EBJT"
 		P="SiO/29Si-16O/EBJT"
@@ -396,7 +420,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 84.5):
+	if(m == 84.05):
 		#84 SiO 5
 		M="30Si-16O__EBJT"
 		P="SiO/30Si-16O/EBJT"
@@ -420,7 +444,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 86.2):
+	if(m == 86.02):
 		#101 SiH 2
 		M="29Si-1H__SiGHTLY"
 		P="SiH/29Si-1H/SiGHTLY"
@@ -428,7 +452,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 86.3):
+	if(m == 86.03):
 		#101 SiH 3
 		M="30Si-1H__SiGHTLY"
 		P="SiH/30Si-1H/SiGHTLY"
@@ -436,7 +460,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 86.4):
+	if(m == 86.04):
 		#101 SiH 4
 		M="28Si-2H__SiGHTLY"
 		P="SiH/28Si-2H/SiGHTLY"
@@ -460,7 +484,7 @@ def main(m):
 		ntcol=3
 		npfcol=3
 
-	if(m == 88.2):
+	if(m == 88.02):
 		#88 H3+ 2
 		M="1H2-2H_p__ST"
 		P="H3_p/1H2-2H_p/ST"
@@ -484,7 +508,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 90.2):
+	if(m == 90.02):
 		#90 MgH 2
 		M="25Mg-1H__Yadin"
 		P="MgH/25Mg-1H/Yadin"
@@ -492,7 +516,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 90.3):
+	if(m == 90.03):
 		#90 MgH 3
 		M="26Mg-1H__Yadin"
 		P="MgH/26Mg-1H/Yadin"
@@ -500,7 +524,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 90.4):
+	if(m == 90.04):
 		#90 MgH 4
 		M="24Mg-1H__Yueqi"
 		P="MgH/24Mg-1H/Yueqi"
@@ -516,7 +540,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 91.2):
+	if(m == 91.02):
 		#91 NaH
 		M="23Na-2H__Rivlin"
 		P="NaH/23Na-2H/Rivlin"
@@ -532,7 +556,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 92.2):
+	if(m == 92.02):
 		#92 AlH 2
 		M="27Al-2H__AlHambra"
 		P="AlH/27Al-2H/AlHambra"
@@ -540,7 +564,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 92.3):
+	if(m == 92.03):
 		#92 AlH 3
 		M="26Al-1H__AlHambra"
 		P="AlH/26Al-1H/AlHambra"
@@ -564,7 +588,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 94.1):
+	if(m == 94.01):
 		#94 BeH
 		M="9Be-1H__Darby-Lewis"
 		P="BeH/9Be-1H/Darby-Lewis"
@@ -572,7 +596,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 94.2):
+	if(m == 94.02):
 		#94 BeH 2
 		M="9Be-2H__Darby-Lewis"
 		P="BeH/9Be-2H/Darby-Lewis"
@@ -580,7 +604,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 94.3):
+	if(m == 94.03):
 		#94 BeH 3
 		M="9Be-3H__Darby-Lewis"
 		P="BeH/9Be-3H/Darby-Lewis"
@@ -636,7 +660,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 100.2):
+	if(m == 100.02):
 		#100 CH 2
 		M="13C-1H__Yueqi"
 		P="CH/13C-1H/Yueqi"
@@ -652,7 +676,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 101.2):
+	if(m == 101.02):
 		#101 SH 2
 		M="33S-1H__SNaSH"
 		P="SH/33S-1H/SNaSH"
@@ -660,7 +684,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 101.3):
+	if(m == 101.03):
 		#101 SH 3
 		M="34S-1H__SNaSH"
 		P="SH/34S-1H/SNaSH"
@@ -668,7 +692,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 101.4):
+	if(m == 101.04):
 		#101 SH 4
 		M="36S-1H__SNaSH"
 		P="SH/36S-1H/SNaSH"
@@ -676,7 +700,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 101.5):
+	if(m == 101.05):
 		#101 SH 5
 		M="32S-2H__SNaSH"
 		P="SH/32S-2H/SNaSH"
@@ -692,7 +716,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 102.2):
+	if(m == 102.02):
 		#103 PN 2
 		M="31P-15N__YYLT"
 		P="PN/31P-15N/YYLT"
@@ -708,7 +732,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 103.2):
+	if(m == 103.02):
 		#103 KCl 2
 		M="39K-37Cl__Barton"
 		P="KCl/39K-37Cl/Barton"
@@ -716,7 +740,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 103.3):
+	if(m == 103.03):
 		#103 KCl 3
 		M="41K-35Cl__Barton"
 		P="KCl/41K-35Cl/Barton"
@@ -724,7 +748,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 103.4):
+	if(m == 103.04):
 		#103 KCl 4
 		M="41K-37Cl__Barton"
 		P="KCl/41K-37Cl/Barton"
@@ -740,7 +764,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 104.2):
+	if(m == 104.02):
 		#104 NaCl 2
 		M="23Na-37Cl__Barton"
 		P="NaCl/23Na-37Cl/Barton"
@@ -763,7 +787,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 106.2):
+	if(m == 106.02):
 		#106 C2 2
 		M="12C-13C__8states"
 		P="C2/12C-13C/8states"
@@ -771,7 +795,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 106.3):
+	if(m == 106.03):
 		#106 C2 3
 		M="13C2__8states"
 		P="C2/13C2/8states"
@@ -811,7 +835,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.2):
+	if(m == 111.02):
 		#111 SiS 2
 		M="28Si-33S__UCTY"
 		P="SiS/28Si-33S/UCTY"
@@ -819,7 +843,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.3):
+	if(m == 111.03):
 		#111 SiS 3
 		M="28Si-34S__UCTY"
 		P="SiS/28Si-34S/UCTY"
@@ -827,7 +851,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.4):
+	if(m == 111.04):
 		#111 SiS 4
 		M="28Si-36S__UCTY"
 		P="SiS/28Si-36S/UCTY"
@@ -835,7 +859,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.5):
+	if(m == 111.05):
 		#111 SiS 5
 		M="29Si-32S__UCTY"
 		P="SiS/29Si-32S/UCTY"
@@ -843,7 +867,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.6):
+	if(m == 111.06):
 		#111 SiS 6
 		M="29Si-34S__UCTY"
 		P="SiS/29Si-34S/UCTY"
@@ -851,7 +875,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.7):
+	if(m == 111.07):
 		#111 SiS 7
 		M="29Si-36S__UCTY"
 		P="SiS/29Si-36S/UCTY"
@@ -859,7 +883,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.8 ):
+	if(m == 111.08):
 		#111 SiS 8
 		M="30Si-32S__UCTY"
 		P="SiS/30Si-32S/UCTY"
@@ -867,7 +891,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 111.9):
+	if(m == 111.09):
 		#111 SiS
 		M="30Si-33S__UCTY"
 		P="SiS/30Si-33S/UCTY"
@@ -907,7 +931,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 112.2):
+	if(m == 112.02):
 		#112 HeH+ 2
 		M="3He-1H_p__Engel"
 		P="HeH_p/3He-1H_p/Engel"
@@ -915,7 +939,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 112.3):
+	if(m == 112.03):
 		#112 HeH+ 3
 		M="4He-2H_p__Engel"
 		P="HeH_p/4He-2H_p/Engel"
@@ -923,7 +947,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 112.4):
+	if(m == 112.04):
 		#112 HeH+ 4
 		M="3He-2H_p__Engel"
 		P="HeH_p/3He-2H_p/Engel"
@@ -939,7 +963,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 113.2):
+	if(m == 113.02):
 		#113 LiCl 2
 		M="7Li-37Cl__Bernath"
 		P="LiCl/7Li-37Cl/Bernath"
@@ -947,7 +971,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 113.3):
+	if(m == 113.03):
 		#113 LiCl 3
 		M="6Li-35Cl__Bernath"
 		P="LiCl/6Li-35Cl/Bernath"
@@ -955,7 +979,7 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
-	if(m == 113.4):
+	if(m == 113.04):
 		#113 LiCl 4
 		M="6Li-37Cl__Bernath"
 		P="LiCl/6Li-37Cl/Bernath"
@@ -1037,10 +1061,12 @@ def main(m):
 			print(version)
 
 	#correct now wrong number of files
-	if(m == 25):
-		n=60
-	if(m == 80):
-		n=7
+	if(m == 38):
+		n=71
+	if(m == 24.02):
+		n=64
+
+
 	l=np.zeros(n, dtype=int)
 
 	for nu in range(n):

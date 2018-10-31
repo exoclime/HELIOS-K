@@ -15,8 +15,8 @@
 #define def_TOLF 2.48e-12f		//Tolerance in the Voigt function
 #define def_nthmax 32768   		//Maximum number of threads in 2.0 Cards
 #define def_nlmax 32768			//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
-//#define def_maxlines 30000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
-#define def_maxlines 8000000		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+//#define def_maxlines 30000000ll		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines
+#define def_maxlines 8000000ll		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines, must be long long int type
 #define def_maxfiles 500		//maximum number of files per molecule
 
 #define def_NmaxSample 100		//Maximum Number of resample coefficients for K(y)
@@ -39,8 +39,8 @@ struct Isotopologue{
 struct Molecule{
 	int id;			//Molecule number in HITRAN notation
 	int nISO;		//Number of Isotopologues
-	int NL[def_maxfiles];		//Number of Lines per file
-	int NLmax;
+	long long int NL[def_maxfiles];		//Number of Lines per file
+	long long int NLmax;
 	Isotopologue *ISO;
 	char mName[160];	//name of states and trans files
 	char dataFilename[def_maxfiles][160];
