@@ -363,7 +363,7 @@ return 0;
 	}
 
 	FILE *InfoFile;
-	char InfoFilename[160];
+	char InfoFilename[300];
 	sprintf(InfoFilename, "Info_%s.dat", param.name);
 	InfoFile = fopen(InfoFilename, filemode);
 
@@ -548,7 +548,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "def_TOLf = %g\n", def_TOLF);
 		fprintf(infofile, "def_nthmax = %d\n", def_nthmax);
 		fprintf(infofile, "def_nlmax = %d\n", def_nlmax);
-		fprintf(infofile, "def_maxlines = %d\n", def_maxlines);
+		fprintf(infofile, "def_maxlines = %lld\n", def_maxlines);
 		fprintf(infofile, "def_maxfiles = %d\n", def_maxfiles);
 		fprintf(infofile, "def_NmaxSample = %d\n", def_NmaxSample);
 		fprintf(infofile, "def_NXLOW = %d\n", def_NXLOW);
@@ -771,7 +771,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			dataFile  = fopen(dataFilename, "rb");
 
 			if(dataFile == NULL){
-				printf("Error: line list file not found %s\n", dataFilename);
+				printf("Error: line list file not found: %s\n", dataFilename);
 				return 0;
 			}
 
@@ -780,7 +780,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 			for(long long int iL = 0LL; iL < m.NL[fi]; iL += def_maxlines){
 				int NL = min(def_maxlines, m.NL[fi] - iL);
-				printf("Reading Line file part %d of %d with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
+				printf("Reading Line file part %lld of %lld with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 
 				double timeOld = time[0];
 				if(iL == 0) time[0] = 0.0;
@@ -1503,7 +1503,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	//****************************
 	if(param.doStoreFullK == 1){
 		FILE *OutFile;
-		char OutFilename[160];
+		char OutFilename[300];
 		sprintf(OutFilename, "Out_%s.dat", param.name);
 			
 		OutFile = fopen(OutFilename, filemode);
@@ -1525,7 +1525,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	}
 	if(param.doStoreFullK == -1){
 		FILE *OutFile;
-		char OutFilename[160];
+		char OutFilename[500];
 		sprintf(OutFilename, "%sOut_%s.dat", param.pathK, param.name);
 			
 		OutFile = fopen(OutFilename, "r");
@@ -1556,7 +1556,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	if(param.doStoreFullK == 2){
 		//write a binary file in single precision
 		FILE *OutFile;
-		char OutFilename[160];
+		char OutFilename[300];
 		sprintf(OutFilename, "Out_%s.bin", param.name);
 			
 		if(param.replaceFiles == 0){
@@ -1578,7 +1578,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	if(param.doStoreFullK == -2){
 		//read a binary file
 		FILE *OutFile;
-		char OutFilename[160];
+		char OutFilename[500];
 		sprintf(OutFilename, "%sOut_%s.bin", param.pathK, param.name);
 			
 		OutFile = fopen(OutFilename, "rb");
@@ -1630,7 +1630,7 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 		cudaMalloc((void **) &means_d, 4 * sizeof(double));
 
 		FILE *Out4File;
-		char Out4Filename[160];
+		char Out4Filename[300];
 
 		sprintf(Out4Filename, "Out_%s_mean.dat", param.name);
 		Out4File = fopen(Out4Filename, filemode);
@@ -1773,7 +1773,7 @@ printf("\n\n");
 		QR_kernel <512> <<< 1, 512 >>> (V_d, C_d, D_d, param.Nxb, param.nC);
 
 		FILE *Out3File;
-		char Out3Filename[160];
+		char Out3Filename[300];
 		if(param.doResampling == 1){
 			sprintf(Out3Filename, "Out_%s_cbin.dat", param.name);
 			Out3File = fopen(Out3Filename, filemode);
@@ -1883,7 +1883,7 @@ for(int i = 0; i < Nx; ++i){
 	//*****************************
 	if(param.doStoreK > 0){
 		FILE *Out2File;
-		char Out2Filename[160];
+		char Out2Filename[300];
 		if(param.doStoreK == 1){
 			sprintf(Out2Filename, "Out_%s_bin.dat", param.name);
 			Out2File = fopen(Out2Filename, filemode);
@@ -2044,7 +2044,7 @@ for(int i = 0; i < Nx; ++i){
 		cudaMalloc((void **) &Tr_d, param.nbins * param.nTr * sizeof(double));
 
 		FILE *Out3File;
-		char Out3Filename[160];
+		char Out3Filename[300];
 
 		if(param.doTransmission == 1){
 			sprintf(Out3Filename, "Out_%s_tr.dat", param.name);

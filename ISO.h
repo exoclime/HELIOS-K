@@ -15,7 +15,7 @@ using namespace std;
 // ****************************************************
 void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	FILE *pFile;
-	char pFileName[160];
+	char pFileName[400];
 
 	if(m.id == 1){//H2O
 		if(param.useHITEMP == 0){
@@ -669,6 +669,10 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
         	sprintf(pFileName, "%sgfnew%04d.param", param.path, m.id);
 	}
 
+	//Atoms and ions from NIST
+	if(param.useHITEMP == 31){
+        	sprintf(pFileName, "%sNIST%04d.param", param.path, m.id);
+	}
 
 	pFile = fopen(pFileName, "r");
 	if(pFile == NULL){
@@ -735,7 +739,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 
 	m.NLmax = 0;
 	for(int i = 0; i < m.nFiles; ++i){
-		fscanf (pFile, "%d", &m.NL[i]);
+		fscanf (pFile, "%lld", &m.NL[i]);
 		m.NLmax = max(m.NLmax, m.NL[i]);
 	}
 	fgets(sp, 4, pFile);
@@ -766,6 +770,9 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 			}
 		}
 		if(param.useHITEMP == 30){
+			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
+		}
+		if(param.useHITEMP == 31){
 			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 		}
 		
