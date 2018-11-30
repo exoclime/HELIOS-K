@@ -17,6 +17,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	FILE *pFile;
 	char pFileName[400];
 
+	/*
 	if(m.id == 1){//H2O
 		if(param.useHITEMP == 0){
 	        	sprintf(pFileName, "%s%s", param.path, "01_hit16.param");
@@ -38,6 +39,24 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
                 if(param.useHITEMP == 6){
 	        	sprintf(pFileName, "%s%s", param.path, "1H-2H-16O__VTT.param");
+		}
+                if(param.useHITEMP == 7){
+	        	sprintf(pFileName, "%s%s", param.path, "1H2-16O__HITEMP2010.param");
+		}
+                if(param.useHITEMP == 8){
+	        	sprintf(pFileName, "%s%s", param.path, "1H2-18O__HITEMP2010.param");
+		}
+                if(param.useHITEMP == 9){
+	        	sprintf(pFileName, "%s%s", param.path, "1H2-17O__HITEMP2010.param");
+		}
+                if(param.useHITEMP == 10){
+	        	sprintf(pFileName, "%s%s", param.path, "1H-2H-16O__HITEMP2010.param");
+		}
+                if(param.useHITEMP == 11){
+	        	sprintf(pFileName, "%s%s", param.path, "1H-2H-18O__HITEMP2010.param");
+		}
+                if(param.useHITEMP == 12){
+	        	sprintf(pFileName, "%s%s", param.path, "1H-2H-17O__HITEMP2010.param");
 		}
 	}
 	if(m.id == 2){//CO2
@@ -610,6 +629,18 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		if(param.useHITEMP == 2){
 	        	sprintf(pFileName, "%s%s", param.path, "14N-32S__SNaSH.param");
 		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "15N-32S__SNaSH.param");
+		}
+		if(param.useHITEMP == 4){
+	        	sprintf(pFileName, "%s%s", param.path, "14N-33S__SNaSH.param");
+		}
+		if(param.useHITEMP == 5){
+	        	sprintf(pFileName, "%s%s", param.path, "14N-34S__SNaSH.param");
+		}
+		if(param.useHITEMP == 6){
+	        	sprintf(pFileName, "%s%s", param.path, "14N-36S__SNaSH.param");
+		}
 	}
 	if(m.id == 111){//SiS
 		if(param.useHITEMP == 2){
@@ -663,6 +694,14 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	        	sprintf(pFileName, "%s%s", param.path, "3He-2H_p__Engel.param");
 		}
 	}
+	if(m.id == 118){//LiF
+		if(param.useHITEMP == 2){
+	        	sprintf(pFileName, "%s%s", param.path, "7Li-19F__Bernath.param");
+		}
+		if(param.useHITEMP == 3){
+	        	sprintf(pFileName, "%s%s", param.path, "6Li-19F__Bernath.param");
+		}
+	}
 
 	//Atoms and ions from Kurucz
 	if(param.useHITEMP == 30){
@@ -673,6 +712,11 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	if(param.useHITEMP == 31){
         	sprintf(pFileName, "%sNIST%04d.param", param.path, m.id);
 	}
+      	*/
+
+ 	sprintf(pFileName, "%s%s.param", param.path, param.mParamFilename);
+
+
 
 	pFile = fopen(pFileName, "r");
 	if(pFile == NULL){
@@ -683,7 +727,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	if(strcmp(sp, "Database =") != 0){
 		printf("Error in molecule.param file, Database\n");
 	}
-	fscanf (pFile, "%d", &param.useHITEMP);
+	fscanf (pFile, "%d", &param.dataBase);
 	fgets(sp, 4, pFile);
 
 	fgets(sp, 18, pFile);
@@ -692,6 +736,8 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	}
 	fscanf (pFile, "%d", &m.id);
 	fgets(sp, 4, pFile);
+
+	printf("Read Molecule param file: |%s| %d %d\n", param.mParamFilename, param.dataBase, m.id);
 
 	fgets(sp, 7, pFile);
 	if(strcmp(sp, "Name =") != 0){
@@ -750,10 +796,12 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 //printf("%d\n", m.fileLimit[i]);
 	}
 	for(int i = 0; i < m.nFiles; ++i){
-		if(param.useHITEMP == 0){
+		if(param.dataBase == 0){
+			//Hitran
 			sprintf(m.dataFilename[i], "%s%02d_%s.", param.path, m.id, m.mName);
 		}
-		if(param.useHITEMP == 1){
+		if(param.dataBase == 1){
+			//HITEMP
 			if(m.nFiles > 1){
 				sprintf(m.dataFilename[i], "%s%02d_%05d-%05d_%s.", param.path, m.id, m.fileLimit[i], m.fileLimit[i + 1], m.mName);
 			}
@@ -761,7 +809,8 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[i], "%s%02d_%s.", param.path, m.id, m.mName);
 			}
 		}
-		if(param.useHITEMP == 2){
+		if(param.dataBase == 2){
+			//ExoMol
 			if(m.nFiles > 1){
 				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, m.mName, m.fileLimit[i], m.fileLimit[i + 1]);
 			}
@@ -769,10 +818,12 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 			}
 		}
-		if(param.useHITEMP == 30){
+		if(param.dataBase == 30){
+			//Kurucz
 			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 		}
-		if(param.useHITEMP == 31){
+		if(param.dataBase == 31){
+			//NIST
 			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 		}
 		

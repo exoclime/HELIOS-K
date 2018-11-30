@@ -13,7 +13,7 @@
 //Author: Simon Grimm
 //September 2016
 // *******************************************************************
-int readStates(Molecule &m, int *id, double *E, int *g, int HITEMP){
+int readStates(Molecule &m, int *id, double *E, int *g){
 
 	FILE *dataFile;
 	char statesFilename[180];
@@ -48,7 +48,7 @@ if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %.20g %d\n", i
 }
 
 
-int readTransitions(Molecule &m, int *id, double *E, int *g, long long int nT, double mass, int fi, int HITEMP){
+int readTransitions(Molecule &m, int *id, double *E, int *g, long long int nT, double mass, int fi){
 	FILE *transFile, *OutFile;
 	char transFilename[160], OutFilename[160];
 
@@ -159,23 +159,18 @@ int main(int argc, char*argv[]){
 
         Param param;
         param.dev = 0;
-	param.useHITEMP = 2;
 	param.path[0] = 0;
+	param.mParamFilename[0] = 0;
 
 	Molecule m;
         m.NL[0] = 0;
-        m.id = 23; //1 = H2O, 2 = CO, 5 = CO, 6 = CH4
+        m.id = 0;
         m.nISO = 0;
 
 	//Read console input arguments
-	int HITEMP = 0;
 	for(int i = 1; i < argc; i += 2){
 		if(strcmp(argv[i], "-M") == 0){
-			m.id = atoi(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-HITEMP") == 0){
-			param.useHITEMP = atoi(argv[i + 1]);
-			HITEMP = param.useHITEMP;
+			sprintf(param.mParamFilename, "%s", argv[i + 1]);
 		}
 		else{
 			printf("Error: Console arguments not valid!\n");
@@ -195,12 +190,12 @@ int main(int argc, char*argv[]){
 	E = (double*)malloc(m.nStates * sizeof(double));
 	g = (int*)malloc(m.nStates * sizeof(int));
 
-	readStates(m, id, E, g, HITEMP);
+	readStates(m, id, E, g);
 
 	long long int nT = 20000000000LL;
 	for(int i = 0; i < m.nFiles; ++i){
-		printf("id %d, %d, file: %d, mass:%g\n", m.id, HITEMP, i, mass);
-		readTransitions(m, id, E, g, nT, mass, i, HITEMP);
+		printf("id %d, file: %d, mass:%g\n", m.id, i, mass);
+		readTransitions(m, id, E, g, nT, mass, i);
 	}
 
 	free(id);

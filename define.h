@@ -1,4 +1,4 @@
-#define VERSION 1.66
+#define VERSION 1.67
 
 #define def_T0 296.0 		//Reference Temperature in K
 #define def_PObar 0.986923	//Referecne Pressure 1 bar in atm for ExoMol
@@ -76,12 +76,12 @@ struct Param{
 	char PFilename[160];
 	int nP;
 	int usePFile; 
-	int nMolecule;
 	char ciaSystem[160];
 	int useCia;
 	char path[300];
 	char pathK[300];
-	int useHITEMP;
+	char mParamFilename[400];
+	int dataBase;
 	double numin;
 	double numax;
 	double dnu;

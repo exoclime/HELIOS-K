@@ -6,7 +6,7 @@
 //Author: Simon Grimm
 //March 2018
 // *****************************************
-__host__ int readPartition(Param &param, int nMolecule, char (*qFilename)[160], Partition &part, double T,  Molecule &m){
+__host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part, double T,  Molecule &m){
 	part.n = 1;
 	
 	part.id = (int*)malloc(sizeof(int));
@@ -113,14 +113,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			fscanf (paramFile, "%s", param.PFilename);
 			fgets(sp, 3, paramFile);
 		}
-		//read HITEMP
-		else if(strcmp(sp, "useHITEMP =") == 0){
-			fscanf (paramFile, "%d", &param.useHITEMP);
-			fgets(sp, 3, paramFile);
-		}
-		//read Molecule
-		else if(strcmp(sp, "Molecule =") == 0){
-			fscanf (paramFile, "%d", &param.nMolecule);
+		//read Molecule Name
+		else if(strcmp(sp, "Species Name =") == 0){
+			fscanf (paramFile, "%s", param.mParamFilename);
 			fgets(sp, 3, paramFile);
 		}
 		//read ciaSystem
@@ -292,11 +287,8 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		else if(strcmp(argv[i], "-P") == 0){
 			param.P = atof(argv[i + 1]);
 		}
-		else if(strcmp(argv[i], "-HITEMP") == 0){
-			param.useHITEMP = atoi(argv[i + 1]);
-		}
 		else if(strcmp(argv[i], "-M") == 0){
-			param.nMolecule = atoi(argv[i + 1]);
+			sprintf(param.mParamFilename, "%s", argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-path") == 0){
 			sprintf(param.path, "%s", argv[i + 1]);
@@ -563,7 +555,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		fread(&L.EL_h[i], sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 		//include the following for Kurucz
-		if(param.useHITEMP == 30){
+		if(param.dataBase == 30){
 			fread(&GammaN, sizeof(double), 1, dataFile);		
 		}
 //if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
@@ -583,10 +575,15 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 }
 
 
-__host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, int Nx, double T, double P, double meanMass){
+__host__ int readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, int Nx, double T, double P, double meanMass){
 
 	FILE *ciaFile;
 	ciaFile = fopen(cia.dataFilename, "r");
+
+	if(ciaFile == NULL){
+		printf("Error: cia file is not available: %s\n", cia.dataFilename);
+		return 0;
+	}
 
 	char skip[160];
 	char c1[12];
@@ -696,6 +693,7 @@ __host__ void readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, 
 //printf("%g %g %g\n", x_h[i], K_h[i], T);
 
 	}
+	return 1;
 }
 
 

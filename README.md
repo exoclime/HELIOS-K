@@ -1,46 +1,56 @@
 # HELIOS-K #
+HELIOS-K is an opacity calculator, running on GPUs.
 #### Authors: Simon Grimm, Kevin Heng ####
+
+# Updates #
+##version 1.67
+The `Molecule` and `useHITEMP` arguments in the `param.dat` file are not valid anymore. Species must now be set by `Species Name`. The database is written from the `< species >.param` file.
+##version 1.65
+All species must have now a `< species >.param` file, which contains all necessary information about the line list.
 
 # Requirements #
 
-HELIOS-K runs on Nvidia GPUs with compute capability of 2.0 or higher. To be
-able to use the code one has to install the Cuda Toolkit. This can be downloaded
+HELIOS-K runs on Nvidia GPUs with compute capability of 2.0 or higher.
+The code needs the CUDA toolkit to be installed.This can be downloaded
 from https://developer.nvidia.com/cuda-downloads.
 
 
 # Compilation #
-HELIOS-K can be compiled with the Makefile by typing `make SM=xx` to the
+HELIOS-K can be compiled with the provided Makefile by typing `make SM=xx` to the
 terminal, where xx corresponds to the compute capability. For example use
 `make SM=20`
-for compute capability of 2.0, or `make SM=35` for 3.5.
+for compute capability of 2.0, or `make SM=35` for 3.5. A table with all compute capabilities can be found here: https://developer.nvidia.com/cuda-gpus
 
-# Starting HELIOS-K #
+# Using HELIOS-K #
+Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
+
+All necessary parameters for HELIOS-K are set in the file `param.dat`, which is also described later. Some parameters can be set also by console arguments.
+
+
 HELIOS-K can be started with
 
 ```
 ./heliosk
 ```
-followed by optional arguments, which are listed below.
+followed by optional console arguments, which are listed below.
 
 
-# Supported databases #
-HELIOS-K supports line lists from the Hitran, HITEMP, ExoMol, Kurucz or VALD
-database.
-But before the line lists can be used, they have to be pre-processed into binary
-files.
 
 # Download and pre-process the line lists #
-Before HELIOS-K can be used, the molecular line lists have to be downloaded from
-the database, and pre-processed into binary files. This saves in generally
-memory space and allows HELIOS-K to read the line lists in a more efficient way.
-In addition each molecule needs a `<molecule name>.param` file which contains
-information about the line list database and other parameters.
+## Supported databases ##
+HELIOS-K supports line lists from the Hitran, HITEMP, ExoMol, Kurucz, NIST  or VALD
+databases. Before the line lists can be used, they have to be pre-processed into binary
+files. This saves in generally memory space and allows HELIOS-K to read the line lists in a more efficient way.
 
-Scripts are provided download and pre-process some of the databases.
+## The `< species >.param` file
+Each molecular or atomic species, which will be processed by HELIOS-K, needs a
+`< species >.param` file, which contains all necessary information about the line list database and other parameters.
+
+Scripts are provided to download and pre-process some of the databases.
 
 ### Example 
 An example for Hitran 2016 H2O is given in the `01_hit16.param` file, which is
-shown here. An example for HITEMP and ExoMol are given in the repository files `01_HITEMP2010.param` and `1H2-16O__BT2.param`.
+shown here and available in the repository. An example for HITEMP and ExoMol are given in the repository files `01_HITEMP2010.param` and `1H2-16O__BT2.param`.
 
 ```
 01_hit16.param
@@ -73,7 +83,7 @@ Version = 0
 -------------------------------------------------------------------
 ```
 ### Description
- * Database: It must be indicated which database format to use. 0 = Hitran, 1 = HITEMP, 2= ExoMol, 30 = Kurucz atomic database
+ * Database: It must be indicated which database format to use. 0 = Hitran, 1 = HITEMP, 2= ExoMol, 30 = Kurucz atomic database, 31 = NIST atomic database.
  * Molecule number: This is optional and follows an old HELIOS-K version.
  * Name: name of the line list files.
  * Number of isotopologues in the line list files.
@@ -81,7 +91,7 @@ Version = 0
     * ID: for Hitran and HITEMP the same as the first three digits in the `.par`files e.g. 11 for 1H2-18O, or 2A for 18O-13C-17O. For ExoMol no meaning.
     * Abundance, only relevant for more than one isotopologue
     * Reference partition function value. For Exomol no meaning.
-    * Molar Mass in g
+    * Molar mass in g
     * Name of partition function file
  * Number of columns in partition file.
  * Number of line/transition files.
@@ -91,48 +101,56 @@ Version = 0
  * Number of columns in ExoMol `.trans`files. For other databases no meaning.
  * ExoMol default value of Lorentzian half-width. For other databases no meaning.
  * ExoMol default value of temperature exponent. For other databases no meaning.
+ * Version of the line list.
 
 
-## ExoMol download and pre-process scripts
+
+## ExoMol ##
+### Download ###
 The ExoMol files can be downloaded with the python script `exomol.py` as:
 
 ```
 python3 exomol.py <id>
 ``` 
 
-where `<id>` is the molecule id, defined from line 21 in the script. For each molecules, one needs the following information:
+where `<id>` is the molecule id, defined from line 21 in the script. Each molecule needs the following information in the python script:
 
  * M and P: url of the ExoMol files
  * s: wavenumber range of `.trans` files. When only a single `.trans` file exists, this is the overall range of the molecule. -1 for irregular file ranges.
  * ntcol: Number of columns in `.trans`files.
  * npfcol: Number of columns in partition file.
 
-This script automatically writes the `<molecule name>.param` files for each molecule.
+### The `< species >.param` file ###
+This script above automatically writes the `< species >.param` files for each molecule.
 
+### pre-process ###
+The downloaded line list files must be pre-processed into binary files with the following code:
 
+```
+./prepareExomol -M < id >
+```
 
+where < id > is the molecule name, e.g. ./prepareExomol -M 1H2-16O__BT2 .
 
+## Hitran and HITEMP ##
+### Download ###
 For HITRAN and HITEMP, the .par files need to be downloaded manually.
 
-After downloading, the files need to be pre-processed into .bin files, which are used 
-by HELIOS-K.
-This can be done with:
-HITRAN:
+### The `< species >.param` file ###
+The `< species >.param` file must be written manually.
+
+### pre-process ###
+The downloaded line list files must be pre-processed into binary files with the following code:
+
 ```
-./prepare -M <id>
-``` 
-HITEMP:
+./prepare -M < id >
 ```
-./prepare -HITEMP 1 -M <id>
-``` 
-EXOMOL:
-```
-./prepareExomol -M <id>
-``` 
-where <id> is the molecule id.
+
+where < id > is the molecule name, e.g. ./prepare -M 01_hit16 or ./prepare -M 01_HITEMP2010 .
 
 
-# Input parameters #
+
+# HELIOS-K Input parameters #
 The input parameters can be specified in the `param.dat` file. The used
 parameters are listed here, the order can not be changed.
 
@@ -140,8 +158,7 @@ parameters are listed here, the order can not be changed.
  * T: Temperature in Kelvin
  * P: Pressure in Atmospheres
  * PFile: A '-' ignores this option, otherwise this option specifies a filename which contains multiple values for P
- * useHITEMP: 0: the HITRAN, 1: HITEMP, 2: EXOMOL
- * Molecule: Molecule identity according to HITRAN, 1 = H20, 2 = CO2, ...
+ * Species Name: The name of the molecule or atomic param file. e.g. 01_hit16 or 1H2-16O__BT2
  * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are H2-H2, H2-H2_eq, H2_H2_norm, H2-He, H2-He_eq,
   H2-He_norm, H2-CH4_eq, H2-CH4_norm and H2-H.
  * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
@@ -178,8 +195,7 @@ Instead of using the parameter file, some arguments can also be passed as consol
  * \-name `<c>`: name
  * \-T `<double>` : T
  * \-P `<double>` : P
- * \-HITEMP `<int>` : useHITEMP
- * \-M `<int>` : Molecule
+ * \-M `<int>` : Molecule Name
  * \-path `<c>` : pathToData
  * \-pathK `<c>` : pathToK
  * \-numin `<double>` : numin

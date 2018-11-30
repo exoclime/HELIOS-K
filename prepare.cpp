@@ -11,14 +11,34 @@
 //Author: Simon Grimm
 //September 2016
 // *******************************************************************
-int readFile(Molecule &m, int fi, int HITEMP, char *iso, int *nLines){
+int readFile(Molecule &m, int fi, int dataBase, char *iso, int *nLines){
 	FILE *dataFile, *OutFile;
 	char dataFilename[160], OutFilename[160];
 
 	sprintf(dataFilename, "%spar", m.dataFilename[fi]);
 	sprintf(OutFilename, "%sbin", m.dataFilename[fi]);
 
-	if(HITEMP == 1){
+	if(dataBase == 1){
+		if(strcmp(iso, " 11") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H2-16O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 12") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H2-18O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 13") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H2-17O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 14") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H-2H-16O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 15") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H-2H-18O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+		if(strcmp(iso, " 16") == 0){
+			sprintf(OutFilename, "01_%05d-%05d_1H-2H-17O__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
+		}
+
+
 		if(strcmp(iso, " 21") == 0){
 			sprintf(OutFilename, "02_%05d-%05d_12C-16O2__HITEMP2010.bin", m.fileLimit[fi], m.fileLimit[fi + 1]);
 		}
@@ -203,23 +223,21 @@ int main(int argc, char*argv[]){
 
         Param param;
         param.dev = 0;
-	param.useHITEMP = 0;
+	param.dataBase = 0;
 	param.path[0] = 0;
+	param.mParamFilename[0] = 0;
 
 	Molecule m;
         m.NL[0] = 0;
-        m.id = 5; //1 = H2O, 2 = CO, 5 = CO, 6 = CH4
+        m.id = 0;
         m.nISO = 0;
 	char iso[4];
 	iso[0] = 0;
 
 	//Read console input arguments
 	for(int i = 1; i < argc; i += 2){
-		if(strcmp(argv[i], "-HITEMP") == 0){
-			param.useHITEMP = atoi(argv[i + 1]);
-		}
-		else if(strcmp(argv[i], "-M") == 0){
-			m.id = atoi(argv[i + 1]);
+		if(strcmp(argv[i], "-M") == 0){
+			sprintf(param.mParamFilename, "%s", argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-ISO") == 0){
 			sprintf(iso, "%3s", argv[i + 1]);
@@ -238,7 +256,7 @@ printf("ISO |%s|\n", iso);
 
 	int nLines[m.nFiles];
 	for(int i = 0; i < m.nFiles; ++i){
-		readFile(m, i, param.useHITEMP, iso, nLines);
+		readFile(m, i, param.dataBase, iso, nLines);
 	}
 	for(int i = 0; i < m.nFiles; ++i){
 		printf("%d\n", nLines[i]);

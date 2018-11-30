@@ -17,7 +17,7 @@ def main(m):
 	print("Molecule = %s" % m)
 
 	PrintISO=1			#when set to 1, then print the code fot the ISO.h file
-	DownloadFiles=2			#0 no download
+	DownloadFiles=1			#0 no download
 					#1 download all file
 					#2 download only .def files
 
@@ -827,6 +827,39 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
+	if(m == 110.02):
+		#110 NS 2
+		M="15N-32S__SNaSH"
+		P="NS/15N-32S/SNaSH"
+		s=39000			#file range
+		ntcol=4
+		npfcol=2
+
+	if(m == 110.03):
+		#110 NS 3
+		M="14N-33S__SNaSH"
+		P="NS/14N-33S/SNaSH"
+		s=39000			#file range
+		ntcol=4
+		npfcol=2
+
+	if(m == 110.04):
+		#110 NS 3
+		M="14N-34S__SNaSH"
+		P="NS/14N-34S/SNaSH"
+		s=39000			#file range
+		ntcol=4
+		npfcol=2
+
+	if(m == 110.05):
+		#110 NS 4
+		M="14N-36S__SNaSH"
+		P="NS/14N-36S/SNaSH"
+		s=39000			#file range
+		ntcol=4
+		npfcol=2
+
+
 	if(m == 111):
 		#111 SiS
 		M="28Si-32S__UCTY"
@@ -986,6 +1019,36 @@ def main(m):
 		s=6000			#file range
 		ntcol=4
 		npfcol=2
+
+	#if(m == 114):
+		#114 NaF 
+	#if(m == 115):
+		#115 AlCl 
+	#if(m == 116):
+		#116 AlF 
+	#if(m == 117):
+		#117 KF 
+
+	if(m == 118):
+		#118 LiF 
+		M="7Li-19F__Bernath"
+		P="LiF/7Li-19F/Bernath"
+		s=1900			#file range
+		ntcol=4
+		npfcol=2
+
+	if(m == 118.02):
+		#118 LiF 2
+		M="6Li-19F__Bernath"
+		P="LiF/6Li-19F/Bernath"
+		s=1900			#file range
+		ntcol=4
+		npfcol=2
+
+	#if(m == 119):
+		#119 CaF 
+	#if(m == 120):
+		#120 MgF 
 
 	print(M)
 

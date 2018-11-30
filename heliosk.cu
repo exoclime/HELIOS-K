@@ -317,8 +317,8 @@ return 0;
 
 	param.T = 0.0;
 	param.P = 0.0;
-	param.useHITEMP = 0;
-	param.nMolecule = 0;
+	param.mParamFilename[0] = 0;
+	param.dataBase = 0;
 	param.numin = 0.0;
 	param.numax = 0.0;
 	param.dnu = 0.0;
@@ -482,14 +482,15 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 	//Allocate Molecule properties
 	Molecule m;
+	m.id=0;
 	m.NL[0] = 0;
-	m.id = param.nMolecule;	//1 = H2O, 2 = CO, 5 = CO, 6 = CH4
 	m.nISO = 0;
 	m.defaultL = 0.0;
 	m.defaultn = 0.0;
 	//Initialize the Isotopologue properties for ISO.h
-	Init(m, param, qFilename);
-
+	if(param.useCia == 0){
+		Init(m, param, qFilename);
+	}
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;
 		if(i == 0) infofile = InfoFile;
@@ -512,8 +513,8 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		else{
 			fprintf(infofile, "P in file: %s\n", param.PFilename);
 		}
-		fprintf(infofile, "useHITEMP = %d\n", param.useHITEMP);
-		fprintf(infofile, "Molecule = %d\n", param.nMolecule);
+		fprintf(infofile, "dataBase = %d\n", param.dataBase);
+		fprintf(infofile, "Molecule = %d\n", m.id);
 		fprintf(infofile, "cia System = %s\n", param.ciaSystem);
 		fprintf(infofile, "pathToData = %s\n", param.path);
 		fprintf(infofile, "numin = %g\n", param.numin);
@@ -561,12 +562,12 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	
 	//Read partition function
 	Partition part;
-	er = readPartition(param, param.nMolecule, qFilename, part, param.T, m);
+	er = readPartition(param, qFilename, part, param.T, m);
 	if(er == 0){
 		return 0;
 	}
 
-	if(param.useHITEMP == 2 && m.defaultL == 0.0){
+	if(param.dataBase == 2 && m.defaultL == 0.0){
 		printf("Molecule Id is not allowed for ExoMol\n");
 		return 0;
 	}
@@ -586,7 +587,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		if(er == 0) return 0;
 	}
 
-	if(param.useCia == 1 && param.nMolecule != 0){
+	if(param.useCia == 1 && m.id != 0){
 		printf("Error, not allowed to use a cia system with a molecule\n");
 		return 0;
 	}
@@ -594,7 +595,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 	if(param.units == 1){
 		unitScale = 1.0 / def_NA * m.meanMass;
-		if(param.useCia == 1 && param.nMolecule == 0){
+		if(param.useCia == 1 && m.id == 0){
 			unitScale = 1.0 / def_NA * cia.mass1;
 		}
 		param.kmin /= unitScale;
@@ -620,7 +621,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	}
 
 	//Allocate memory for Line properties
-	if(param.useHITEMP < 2){
+	if(param.dataBase < 2){
 		Alloc_Line(L, m);
 	}
 	else{
@@ -707,8 +708,11 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 	if(param.useCia == 1){
 		for(int iP = 0; iP < param.nP; ++iP){
-			readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[iP], m.meanMass);
+			int er = readCiaFile(param, cia, x_h, K_h, Nx, param.T, P_h[iP], m.meanMass);
 			cudaMemcpy(K_d + iP * Nx, K_h, Nx * sizeof(double), cudaMemcpyHostToDevice);
+			if(er == 0){
+				return 0;	
+			}
 		}
 	}
 
@@ -719,7 +723,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		return 0;
 	}
 
-	if(param.nMolecule > 0 && param.doStoreFullK >= 0){
+	if(m.id > 0 && param.doStoreFullK >= 0){
 		double *nuP;
 		double *ialphaDP;
 		double *vyP;
@@ -788,7 +792,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				//**************************
 				//Read the Line list	
 				//**************************
-				if(param.useHITEMP < 2){
+				if(param.dataBase < 2){
 					er = readFile(param, m, part, L, param.qalphaL, NL, dataFile);
 				}
 				else{
@@ -845,7 +849,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						cudaMemset(Kc_d, 0, Nx * sizeof(double));	
 					}
 
-					if(param.useHITEMP < 2){
+					if(param.dataBase < 2){
 						Copy_Line(L, m, NL);
 					}
 					else{
@@ -856,7 +860,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 					//***************************
 					//Compute Line properties
 					//***************************
-					if(param.useHITEMP < 2){
+					if(param.dataBase < 2){
 						for(int k = 0; k < NL; k += def_nthmax){
 							int Nk = min(def_nthmax, NL);
 							if(Nk > 0) S2_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.Sf_d, L.A_d, L.vy_d, L.vyf_d, L.ialphaD_d, L.n_d, L.delta_d, L.EL_d, L.ID_d, L.va_d, L.vb_d, L.vcut2_d, L.S1_d, L.S1f_d, NL, param.numin, param.dnu, param.cut, param.cutMode, param.profile, param.useIndividualX, param.T, P_h[iP], k);
@@ -2119,7 +2123,7 @@ for(int i = 0; i < Nx; ++i){
 	fclose(InfoFile);	
 
 
-	if(param.useHITEMP < 2) free_Line(L);
+	if(param.dataBase < 2) free_Line(L);
 	else free2_Line(L);
 	free(MaxLimits_h);
 	free(K_h);
