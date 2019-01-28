@@ -1,15 +1,16 @@
+# This script downloads and unpacks  the *.states, *.pf, *.trans
+# and *.def files from wwww.exomol.com.
+# And it generates the < species name >.param files
+
+# July 2018
+# Author: Simon Grimm
+
+#run with "python exomol.py id" where id is the number of the molecule
 
 import sys
 import os
 import subprocess
 import numpy as np
-# This script downloads and unpacks  the *.states, *.pf and, *.trans
-# and *.def files from wwww.exomol.com.
-# And it generates the information for the ISO.h file for heliosk.
-# July 2018
-# Author: Simon Grimm
-
-#run with "python exomol.py id" where id is the number of the molecule
 
 def main(m):
 

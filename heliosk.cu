@@ -489,7 +489,8 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	m.defaultn = 0.0;
 	//Initialize the Isotopologue properties for ISO.h
 	if(param.useCia == 0){
-		Init(m, param, qFilename);
+		int er = Init(m, param, qFilename);
+		if(er == 0) return 0;
 	}
 	for(int i = 0; i < 2; ++i){
 		FILE *infofile;

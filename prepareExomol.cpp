@@ -24,23 +24,51 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 		printf("Error: line list file not found %s\n", statesFilename);
 		return 0;
 	}
-	char c1[14];
-	char c2[16];
-	char c3[9];
+	char c1[30];
+	char c2[30];
+	char c2b[30];
+	char c3[30];
 	char c4[151];
+	char skip[151];
 
 	for(int i = 0; i < m.nStates; ++i){
 		//fgets(c1, 13, dataFile);
 		//fgets(c2, 14, dataFile);
 		//fgets(c3, 8, dataFile);
+		
+		
 		fscanf(dataFile, "%s", c1);
 		fscanf(dataFile, "%s", c2);
 		fscanf(dataFile, "%s", c3);
+	
+
+		/*		
+		//Use this for other energy level columns (TIO DUO)
+		fscanf(dataFile, "%s", c1);
+		fscanf(dataFile, "%s", c2b);
+		fscanf(dataFile, "%s", c3);
+
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", skip);
+		fscanf(dataFile, "%s", c2);
+
+		double Eb = strtod(c2b, NULL);
+		*/
+
 		fgets(c4, 250, dataFile);
 	
 		id[i] = atoi(c1);
 		E[i] = strtod(c2, NULL);
 		g[i] = atoi(c3);
+
+//if(Eb != E[i]) printf("EDuo %d %d %.20g %.20g\n", i, id[i], E[i], Eb);
+
 if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
 	}
 	printf("states file complete\n");
@@ -119,7 +147,7 @@ if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3);
 			//use always the energy levels
 			nu = E[state1 - 1] - E[state0 - 1];
 			if(fabs(nu - nu1) > 1.0e-6){
-printf("nu %lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 100) printf("nu %lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
 				nuError = 1;
 			}
 

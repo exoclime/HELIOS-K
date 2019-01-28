@@ -134,6 +134,7 @@ int readFile(Molecule &m, int fi, int dataBase, char *iso, int *nLines){
 
 	char skip[6];
 	int count = 0;	
+	double numax = 0.0;
 
 	for(int i = 0; i < m.NL[fi]; ++i){
 		//fgets(skip, 1, dataFile);
@@ -187,8 +188,10 @@ int readFile(Molecule &m, int fi, int dataBase, char *iso, int *nLines){
 			}
 		}
 		if(Q0 < -800){
-			printf("Error in asigning isotopologue indices\n");
-			return 0;
+			if(iso == 0){
+				printf("Error in assigning isotopologue indices\n");
+				return 0;
+			}
 		}
 
 		S /= mass;
@@ -208,10 +211,11 @@ int readFile(Molecule &m, int fi, int dataBase, char *iso, int *nLines){
 			fwrite(&n, sizeof(double), 1, OutFile);
 if(i < 10 || i > m.NL[fi] - 10) printf("%s | %s %.20g %.20g %.20g %.20g %g\n", iso, cid, nu, S, EL, A, mass);
 			++count;
+			numax = fmax(numax, nu);
 		}
 	}
 	nLines[fi] = count;
-printf("File %d Number of lines %d\n", fi, count);
+printf("File %d Number of lines %d, numax %g\n", fi, count, numax);
 	fclose(dataFile);
 	fclose(OutFile);
 

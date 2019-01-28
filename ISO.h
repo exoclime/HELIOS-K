@@ -13,9 +13,9 @@ using namespace std;
 //Author: Simon Grimm
 //November 2014
 // ****************************************************
-void Init(Molecule &m, Param &param, char (*qFilename)[160]){
+int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	FILE *pFile;
-	char pFileName[400];
+	char pFileName[800];
 
 	/*
 	if(m.id == 1){//H2O
@@ -721,11 +721,13 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	pFile = fopen(pFileName, "r");
 	if(pFile == NULL){
 		printf("Error, no molecule.param file %s\n", pFileName);
+		return 0;
 	}
 	char sp[160];
 	fgets(sp, 11, pFile);
 	if(strcmp(sp, "Database =") != 0){
 		printf("Error in molecule.param file, Database\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &param.dataBase);
 	fgets(sp, 4, pFile);
@@ -733,6 +735,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 18, pFile);
 	if(strcmp(sp, "Molecule number =") != 0){
 		printf("Error in molecule.param file, Molecule number\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.id);
 	fgets(sp, 4, pFile);
@@ -742,12 +745,14 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 7, pFile);
 	if(strcmp(sp, "Name =") != 0){
 		printf("Error in molecule.param file, Name\n");
+		return 0;
 	}
 	fscanf (pFile, "%s", m.mName);
 	fgets(sp, 4, pFile);
 	fgets(sp, 21, pFile);
 	if(strcmp(sp, "Number of Isotopes =") != 0){
 		printf("Error in molecule.param file, Number of Isotopes\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.nISO);
 	fgets(sp, 4, pFile);
@@ -770,6 +775,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 38, pFile);
 	if(strcmp(sp, "Number of columns in partition File =") != 0){
 		printf("Error in molecule.param file, Number of columns in partition File\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.npfcol);
 	fgets(sp, 4, pFile);
@@ -777,6 +783,7 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 34, pFile);
 	if(strcmp(sp, "Number of line/transition files =") != 0){
 		printf("Error in molecule.param file, Number of line/transition files\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.nFiles);
 	fgets(sp, 4, pFile);
@@ -832,41 +839,47 @@ void Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 100, pFile);
 	fgets(sp, 19, pFile);
 	if(strcmp(sp, "Number of states =") != 0){
-		printf("Error in molecule.param file, Number of states\n");
+		printf("Error in species.param file, Number of states\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.nStates);
 	fgets(sp, 4, pFile);
 
 	fgets(sp, 40, pFile);
 	if(strcmp(sp, "Number of columns in transition files =") != 0){
-		printf("Error in molecule.param file, Number of columns in transition files\n");
+		printf("Error in species.param file, Number of columns in transition files\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.ntcol);
 	fgets(sp, 4, pFile);
 
 	fgets(sp, 55, pFile);
 	if(strcmp(sp, "Default value of Lorentzian half-width for all lines =") != 0){
-		printf("Error in molecule.param file, Default value of Lorentzian half-width for all lines\n");
+		printf("Error in species.param file, Default value of Lorentzian half-width for all lines\n");
+		return 0;
 	}
 	fscanf (pFile, "%lf", &m.defaultL);
 	fgets(sp, 4, pFile);
 
 	fgets(sp, 54, pFile);
 	if(strcmp(sp, "Default value of temperature exponent for all lines =") != 0){
-		printf("Error in molecule.param file, Default value of temperature exponent for all lines\n");
+		printf("Error in species.param file, Default value of temperature exponent for all lines\n");
+		return 0;
 	}
 	fscanf (pFile, "%lf", &m.defaultn);
 	fgets(sp, 4, pFile);
 
 	fgets(sp, 10, pFile);
 	if(strcmp(sp, "Version =") != 0){
-		printf("Error in molecule.param file, Version\n");
+		printf("Error in species.param file, Version\n");
+		return 0;
 	}
 	fscanf (pFile, "%d", &m.version);
 	fgets(sp, 4, pFile);
 
 	fclose(pFile);
 
+	return 1;
 }
 
 
