@@ -825,6 +825,15 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 			}
 		}
+		if(param.dataBase == 3){
+			//IAO (CDSD)
+			if(m.nFiles > 1){
+				sprintf(m.dataFilename[i], "%s%s__%05d_%05d.", param.path, m.mName, m.fileLimit[i], m.fileLimit[i + 1]);
+			}
+			else{
+				sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
+			}
+		}
 		if(param.dataBase == 30){
 			//Kurucz
 			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);

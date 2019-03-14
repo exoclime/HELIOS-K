@@ -311,7 +311,7 @@ __global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 		vyf_d[id] = (float)(vy_d[id]); 
 		Sf_d[id] = (float)(S_d[id]); 
 		S1f_d[id] = (float)(S1_d[id]); 
-//if(id < 1000) printf("%d %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL, exp(-c * nu / T));
+//if(id < 1000) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], Sf_d[id], S1f_d[id], ialphaD_d[id], EL, exp(-c * nu / T));
 
 
 
@@ -807,7 +807,6 @@ __global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, f
 		Limits.x = 0;
 		Limits.y = 0;
 	}
-
 	for(int i = 0; i < nl; i += NB){
 		if(i + idx + ii + Limits.x < NL){
 			vy_s[idx] = vy_d[i + idx + ii + Limits.x];
@@ -843,8 +842,9 @@ __global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, f
 				if(i + k + ii + Limits.x < NL && t1 < vcut2_s[k]){
 					float y = vy_s[k];
 					float xxyy = t1 + y * y;
+//printf("K %g %g %g\n", S1_s[k], x, y);
 					if(xxyy < 100.0f){
-	//printf("%d %g\n", id, y);
+//printf("%d %g\n", id, y);
 						float s1, s2, s3;
 						float ex2 = expf(-x * x);
 
@@ -876,7 +876,7 @@ __global__ void Line_kernel(float *S_d, float *S1_d, float *vy_d, float *va_d, f
 					else{
 						//1 order Gauss Hermite Quadrature
 						K += S1_s[k] / xxyy;
-	//if(i + k + ii < 100) printf("%g %g %g\n", S1_s[k], x, y);
+//if(i + k + ii < 100) printf("K %g %g %g\n", S1_s[k], x, y);
 					}
 				}
 			}

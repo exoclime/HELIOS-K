@@ -43,7 +43,7 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	
 
 		/*		
-		//Use this for other energy level columns (TIO DUO)
+		//Use this for other energy level columns (TiO DUO)
 		fscanf(dataFile, "%s", c1);
 		fscanf(dataFile, "%s", c2b);
 		fscanf(dataFile, "%s", c3);
@@ -153,8 +153,6 @@ if(i < 100) printf("nu %lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n
 
 if(i < 100 || i % 100000 == 0) printf("%s|%s|%s|%s\n", c1, c2, c3, c4); 
 		
-			EL = E[state0 - 1];
-			gU = g[state1 - 1];
 		}
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
@@ -165,9 +163,14 @@ if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.2
 		fwrite(&EL, sizeof(double), 1, OutFile);
 		fwrite(&A, sizeof(double), 1, OutFile);
 		numax = fmax(nu, numax);
-		if(feof(transFile)){
+		
+		if(i > nT - 10 || feof(transFile)){
 printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
-printf("\n %g\n", numax);
+
+		}
+
+		if(feof(transFile)){
+printf("\n numax %g\n", numax);
 			break;
 		}
 
@@ -191,9 +194,6 @@ int main(int argc, char*argv[]){
 	param.mParamFilename[0] = 0;
 
 	Molecule m;
-        m.NL[0] = 0;
-        m.id = 0;
-        m.nISO = 0;
 
 	//Read console input arguments
 	for(int i = 1; i < argc; i += 2){
@@ -222,7 +222,7 @@ int main(int argc, char*argv[]){
 
 	long long int nT = 20000000000LL;
 	for(int i = 0; i < m.nFiles; ++i){
-		printf("id %d, file: %d, mass:%g\n", m.id, i, mass);
+		printf("Molecule %s, file: %d, mass:%g\n", param.mParamFilename, i, mass);
 		readTransitions(m, id, E, g, nT, mass, i);
 	}
 

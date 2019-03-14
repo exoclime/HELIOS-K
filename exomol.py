@@ -346,8 +346,15 @@ def main(m):
 		s=5000			#file range
 		ntcol=4
 		npfcol=2
-
+	
+	if(m == 81):
 		#81 TiO
+		M="46Ti-16O__Toto"
+		P="TiO/46Ti-16O/Toto"
+		s=30000			#file range
+		ntcol=4
+		npfcol=2
+
 
 	if(m == 82):
 		#82 FeH
@@ -653,6 +660,8 @@ def main(m):
 		ntcol=4
 		npfcol=2
 
+	'''
+	old files, with a wrong update, don't use it anymore
 	if(m == 100):
 		#100 CH
 		M="12C-1H__Yueqi"
@@ -665,6 +674,22 @@ def main(m):
 		#100 CH 2
 		M="13C-1H__Yueqi"
 		P="CH/13C-1H/Yueqi"
+		s=40000			#file range
+		ntcol=4
+		npfcol=2
+	'''
+	if(m == 100):
+		#100 CH
+		M="12C-1H__Bernath"
+		P="CH/12C-1H/Bernath"
+		s=40000			#file range
+		ntcol=4
+		npfcol=2
+
+	if(m == 100.02):
+		#100 CH 2
+		M="13C-1H__Bernath"
+		P="CH/13C-1H/Bernath"
 		s=40000			#file range
 		ntcol=4
 		npfcol=2
@@ -1237,7 +1262,7 @@ def main(m):
 
 if __name__ == "__main__":
 	if(len(sys.argv) < 2):
-		print("Error, no molecule specified, run python exomol.py <id>")
+		print("Error, no species specified, run python exomol.py <id>")
 		exit()
 
 	m = float(sys.argv[1])

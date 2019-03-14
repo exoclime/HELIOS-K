@@ -3,8 +3,6 @@
 #include <math.h>
 #include <thrust/sort.h>
 #include <thrust/device_ptr.h>
-#include <sys/time.h>
-#include <sys/resource.h>
 
 
 #include "define.h"
@@ -500,6 +498,12 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		fprintf(infofile, "Using device %d\n\n", param.dev);
 		fprintf(infofile, "Runtime Version %d\n", runtimeVersion);
 		fprintf(infofile, "Driver Version %d\n", driverVersion);
+		fprintf(infofile, "GIT Describe: %s\n", GIT_DESCRIBE);
+		fprintf(infofile, "Build Date: %s\n", BUILD_DATE);
+		fprintf(infofile, "Build Path: %s\n", BUILD_PATH);
+		fprintf(infofile, "Build System: %s\n", BUILD_SYSTEM);
+		fprintf(infofile, "Build Compute Capability: SM=%s\n", BUILD_SM);
+
 
 		if(param.Nxb < param.nC && i == 0){
 			printf("Number of points per bin smaller than the number of Chebyshev coefficients: Changed nC to %d\n", param.Nxb);
@@ -514,8 +518,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		else{
 			fprintf(infofile, "P in file: %s\n", param.PFilename);
 		}
+		fprintf(infofile, "Species Name = %s\n", m.mName);
 		fprintf(infofile, "dataBase = %d\n", param.dataBase);
-		fprintf(infofile, "Molecule = %d\n", m.id);
+		fprintf(infofile, "Molecule Number = %d\n", m.id);
 		fprintf(infofile, "cia System = %s\n", param.ciaSystem);
 		fprintf(infofile, "pathToData = %s\n", param.path);
 		fprintf(infofile, "numin = %g\n", param.numin);
@@ -568,11 +573,6 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		return 0;
 	}
 
-	if(param.dataBase == 2 && m.defaultL == 0.0){
-		printf("Molecule Id is not allowed for ExoMol\n");
-		return 0;
-	}
-
 	//compute the mean mass
 	m.meanMass = 0.0;
 	for(int i = 0; i < m.nISO; ++i){
@@ -602,13 +602,20 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		param.kmin /= unitScale;
 	}	
 
-	timeval tt1;			//start time
-	timeval tt2;			//end time
-	long long times, timems;	//elapsed time in seconds and microseconds
+	cudaEvent_t tt1;			//start time
+	cudaEvent_t tt2;			//end time
+	cudaEventCreate(&tt1);
+	cudaEventCreate(&tt2);
+
+
 	cudaEvent_t start, stop;
         cudaEventCreate(&start);
         cudaEventCreate(&stop);
 	float milliseconds;
+
+
+	cudaStream_t timerstream;
+	cudaStreamCreate ( &timerstream) ;
 
 	cudaDeviceSynchronize();
 
@@ -622,7 +629,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	}
 
 	//Allocate memory for Line properties
-	if(param.dataBase < 2){
+	if(param.dataBase < 2 || param.dataBase == 3){
 		Alloc_Line(L, m);
 	}
 	else{
@@ -785,15 +792,15 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 			for(long long int iL = 0LL; iL < m.NL[fi]; iL += def_maxlines){
 				int NL = min(def_maxlines, m.NL[fi] - iL);
-				printf("Reading Line file part %lld of %lld with %d lines\n", (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 
 				double timeOld = time[0];
 				if(iL == 0) time[0] = 0.0;
-				gettimeofday(&tt1, NULL);
+				cudaEventRecord(tt1, timerstream);
+				printf("Reading Line file %d of %d; part %lld of %lld with %d lines\n", fi, fi1, (iL + def_maxlines - 1) / def_maxlines + 1, (m.NL[fi] + def_maxlines - 1) / def_maxlines, NL);
 				//**************************
 				//Read the Line list	
 				//**************************
-				if(param.dataBase < 2){
+				if(param.dataBase < 2 || param.dataBase == 3){
 					er = readFile(param, m, part, L, param.qalphaL, NL, dataFile);
 				}
 				else{
@@ -802,10 +809,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				if(er == 0){
 					return 0;
 				}
-				gettimeofday(&tt2, NULL);
-				times = (tt2.tv_sec - tt1.tv_sec);
-				timems = (tt2.tv_usec - tt1.tv_usec);
-				time[0] += times + timems/1000000.0;
+				cudaEventRecord(tt2, timerstream);
+				cudaEventSynchronize(tt2);
+				cudaEventElapsedTime(&milliseconds, tt1, tt2);
+				time[0] += milliseconds * 0.001;
 				
 				printf("Time for input:        %g seconds\n", time[0]);
 
@@ -850,7 +857,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						cudaMemset(Kc_d, 0, Nx * sizeof(double));	
 					}
 
-					if(param.dataBase < 2){
+					if(param.dataBase < 2 || param.dataBase == 3){
 						Copy_Line(L, m, NL);
 					}
 					else{
@@ -861,7 +868,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 					//***************************
 					//Compute Line properties
 					//***************************
-					if(param.dataBase < 2){
+					if(param.dataBase < 2 || param.dataBase == 3){
 						for(int k = 0; k < NL; k += def_nthmax){
 							int Nk = min(def_nthmax, NL);
 							if(Nk > 0) S2_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.Sf_d, L.A_d, L.vy_d, L.vyf_d, L.ialphaD_d, L.n_d, L.delta_d, L.EL_d, L.ID_d, L.va_d, L.vb_d, L.vcut2_d, L.S1_d, L.S1f_d, NL, param.numin, param.dnu, param.cut, param.cutMode, param.profile, param.useIndividualX, param.T, P_h[iP], k);
@@ -1064,7 +1071,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 											int ii0 = Inu - (int)(cut / param.dnu) - 1;
 											int ii1 = Inu + (int)(cut / param.dnu) + 2;
 
-	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 											ii11 = max(ii11, ii1);
 											ii00 = min(ii00, ii0);
@@ -1107,7 +1114,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nl, NL - il);	
-	if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1128,7 +1135,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 										int Inu = (int)((nuP[il + iil] - param.numin) / (param.dnu * 10));
 										int ii0 = Inu - (int)(cut / (param.dnu * 10)) - 1;
 										int ii1 = Inu + (int)(cut / (param.dnu * 10)) + 2;
-	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
@@ -1139,7 +1146,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nl, NL - il);	
-	if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("Ac %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1176,7 +1183,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nlb, NL - il);	
-	if(il % 10000 == 0) printf("Bcl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("Bcl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1211,7 +1218,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nlb, NL - il);	
-	if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("Bcr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1228,7 +1235,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 										int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
 										int ii0 = (Inu + (int)(cut / param.dnu)) / 10 * 10;
 										int ii1 = ii0 + 12;
-	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
@@ -1239,7 +1246,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nlb, NL - il);	
-	if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("Acr %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1256,7 +1263,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 										int Inu = (int)((nuP[il + iil] - param.numin) / param.dnu);
 										int ii0 = (Inu - (int)(cut / param.dnu)) / 10 * 10;
 										int ii1 = ii0 + 12;
-	//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
+//if(iil % 10000 == 0) printf("%d %.30g %d %d %d\n", il + iil, nuP[il + iil], Inu, ii0, ii1);
 
 										ii11 = max(ii11, ii1);
 										ii00 = min(ii00, ii0);
@@ -1267,7 +1274,7 @@ printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
 								int nt = ii11 - ii00;
 								int nstart = ii00;
 								int nll = min(nlb, NL - il);	
-	if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
+if(il % 10000 == 0) printf("Acl %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
@@ -1460,7 +1467,6 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 							printf("Kb error = %d = %s\n",error, cudaGetErrorString(error));
 							return 0;
 						}
-						gettimeofday(&tt1, NULL);
 					}
 
 				} // End of pressure loop
@@ -1482,19 +1488,21 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 			printf("Kc error = %d = %s\n",error, cudaGetErrorString(error));
 			return 0;
 		}
-			InfoFile = fopen(InfoFilename, "a");
-			fprintf(InfoFile,"File %d of %d\n", fi, fi);
-			fprintf(InfoFile,"Number of lines: %lld\n", m.NL[fi]);
-			fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
-			fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
-			fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
-			fclose(InfoFile);
-		gettimeofday(&tt1, NULL);
+
+		InfoFile = fopen(InfoFilename, "a");
+		fprintf(InfoFile,"File %d of %d\n", fi, fi);
+		fprintf(InfoFile,"Number of lines: %lld\n", m.NL[fi]);
+		fprintf(InfoFile,"Time for input:        %g seconds\n", time[0]);
+		fprintf(InfoFile,"Time for Lines:        %g seconds\n", time[1]);
+		fprintf(InfoFile,"Time for K(x):         %g seconds\n", time[2]);
+		fclose(InfoFile);
+
 
 		free(nuP);
 		free(ialphaDP);
 		free(vyP);
 	}
+
 	cudaFree(Limits_d);
 	cudaFree(MaxLimits_d);
 	free(binBoundaries_h);
@@ -1502,6 +1510,8 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 	cudaFree(binBoundaries_d);	
 	cudaFree(K1_d);
 	cudaFree(Kc_d);
+
+	cudaEventRecord(tt1, 0);
 
 	//***************************
 	//Write the full line profile
@@ -1610,14 +1620,14 @@ if(il % 10000 == 0) printf("C %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 		printf("Write error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[3] += milliseconds * 0.001;
 
-	time[3] = times + timems/1000000.0;
 	printf("Time for write K(x):   %g seconds\n", time[3]);
 
-	gettimeofday(&tt1, NULL);
+	cudaEventRecord(tt1, 0);
 
 	//**************************************
 	//compute the Planck and Rosseland means
@@ -1698,15 +1708,15 @@ printf("\n\n");
 		printf("maen error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[4] += milliseconds * 0.001;
 
-	time[4] = times + timems/1000000.0;
 	printf("Time for mean K(x):    %g seconds\n", time[4]);
 
-	gettimeofday(&tt1, NULL);
 
+        cudaEventRecord(tt1, 0);
 
 
 	//***************************************
@@ -1727,14 +1737,15 @@ printf("\n\n");
 		printf("Sort error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[5] += milliseconds * 0.001;
 
-	time[5] = times + timems/1000000.0;
 	printf("Time for sort K(x):    %g seconds\n", time[5]);
 
-	gettimeofday(&tt1, NULL);
+        cudaEventRecord(tt1, 0);
+
 
 	//*********************************
 	//Prepare Resampling and do QR factorization, the same for all bins
@@ -1874,14 +1885,15 @@ for(int i = 0; i < Nx; ++i){
 		printf("Resampling error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[6] += milliseconds * 0.001;
 
-	time[6] = times + timems/1000000.0;
 	printf("Time for Resampling:   %g seconds\n", time[6]);
 
-	gettimeofday(&tt1, NULL);
+        cudaEventRecord(tt1, 0);
+
 
 	//*****************************
 	//Write K per bin output
@@ -2027,14 +2039,15 @@ for(int i = 0; i < Nx; ++i){
 		printf("Write error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[7] += milliseconds * 0.001;
 
-	time[7] = times + timems/1000000.0;
 	printf("Time for write K(y):   %g seconds\n", time[7]);
 
-	gettimeofday(&tt1, NULL);
+        cudaEventRecord(tt1, 0);
+
 
 	//set correction factor for simpsons rule needed for resampling
 	SimpsonCoefficient();
@@ -2107,14 +2120,15 @@ for(int i = 0; i < Nx; ++i){
 		printf("Transmission error = %d = %s\n",error, cudaGetErrorString(error));
 		return 0;
 	}
-	gettimeofday(&tt2, NULL);
-	times = (tt2.tv_sec - tt1.tv_sec);
-	timems = (tt2.tv_usec - tt1.tv_usec);
+	cudaEventRecord(tt2, 0);
+	cudaEventSynchronize(tt2);
+	cudaEventElapsedTime(&milliseconds, tt1, tt2);
+	time[8] += milliseconds * 0.001;
 
-	time[8] = times + timems/1000000.0;
 	printf("Time for Transmission: %g seconds\n", time[8]);
 
 	InfoFile = fopen(InfoFilename, "a");
+	fprintf(InfoFile,"\n");
 	fprintf(InfoFile,"Time for write K(x):   %g seconds\n", time[3]);
 	fprintf(InfoFile,"Time for mean K(x):    %g seconds\n", time[4]);
 	fprintf(InfoFile,"Time for sort K(x):    %g seconds\n", time[5]);
@@ -2124,8 +2138,12 @@ for(int i = 0; i < Nx; ++i){
 	fclose(InfoFile);	
 
 
-	if(param.dataBase < 2) free_Line(L);
-	else free2_Line(L);
+	if(param.dataBase < 2 || param.dataBase == 3){
+		free_Line(L);
+	}
+	else{
+		free2_Line(L);
+	}
 	free(MaxLimits_h);
 	free(K_h);
 	free(x_h);

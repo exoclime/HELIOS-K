@@ -1,4 +1,32 @@
-#define VERSION 1.67
+#ifndef M_PI
+#define _USE_MATH_DEFINES  //for Windows
+#endif
+
+//Build Data
+
+#ifndef GIT_DESCRIBE
+#define GIT_DESCRIBE "Undefined"
+#endif
+
+#ifndef BUILD_DATE
+#define BUILD_DATE "Undefined"
+#endif
+
+#ifndef BUILD_SYSTEM
+#define BUILD_SYSTEM "Undefined"
+#endif
+
+#ifndef BUILD_PATH
+#define BUILD_PATH "Undefined"
+#endif
+
+#ifndef BUILD_SM
+#define BUILD_SM "Undefined"
+#endif
+
+
+#define VERSION 1.68
+
 
 #define def_T0 296.0 		//Reference Temperature in K
 #define def_PObar 0.986923	//Referecne Pressure 1 bar in atm for ExoMol
