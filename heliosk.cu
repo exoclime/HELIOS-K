@@ -1,3 +1,5 @@
+#include "define.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -5,7 +7,6 @@
 #include <thrust/device_ptr.h>
 
 
-#include "define.h"
 #include "host.h"
 #include "ISO.h"
 #include "voigt.h"
