@@ -258,7 +258,8 @@ printf("ISO |%s|\n", iso);
 	char qFilename[15][160];
 	Init(m, param, qFilename);
 
-	int nLines[m.nFiles];
+	int *nLines;
+	nLines = (int*)malloc(m.nFiles * sizeof(int));
 	for(int i = 0; i < m.nFiles; ++i){
 		readFile(m, i, param.dataBase, iso, nLines);
 	}

@@ -560,7 +560,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		}
 //if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
-		L.A_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (2.0 * M_PI);
+		L.A_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (4.0 * M_PI * def_c);
 		L.vy_h[i] = m.defaultL;
 		L.n_h[i] = m.defaultn;
 
