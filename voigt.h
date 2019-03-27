@@ -231,7 +231,7 @@ __device__ float voigt_916f(const float x, const float y, const float a, const i
 	float ex2 = expf(-x * x);
 
 	//Compute Sigma Series
-	      if(x != 0.0f && y != 0.0f) Sigmabf(x, y, s1, s2, s3, a, ex2, id);
+		if(x != 0.0f && y != 0.0f) Sigmabf(x, y, s1, s2, s3, a, ex2, id);
 
 	float xy = x * y;
 	float a2ipi = 2.0f * a / M_PIf;
@@ -276,7 +276,7 @@ __global__ void S2_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 		alphaL += (A_d[id] / (4.0 * M_PI * def_c));				//1/cm
 		vy_d[id] = alphaL * ialphaD;
 		ID_d[id] = id;
-              
+	
 		if(useIndividualX == 0){
 			va_d[id] = (float)((numin - nu) * ialphaD);
 			vb_d[id] = (float)(dnu * ialphaD);
@@ -432,7 +432,7 @@ __global__ void Voigt_2d_kernel(const double a, const double b, const double c, 
 
 		//K_d[idy * Nx + idx] = t1 * b;
 		double *row = (double *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = t1 * b;
+		row[idx] = t1 * b;
 //if(idy == 0) printf("a %d %d %g %g %g\n", idx, idy, x, y, float(idy * Nx + idx));
 //printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
 	}
@@ -465,8 +465,8 @@ __global__ void Voigt_2df_kernel(const float a, const float b, const float c, fl
 
 		//K_d[idy * Nx + idx] = t1 * b;
 		float *row = (float *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = t1 * b;
-    		//row[idx] = float(idy * Nx + idx);
+		row[idx] = t1 * b;
+		//row[idx] = float(idy * Nx + idx);
 //if(idy == 0) printf("a %d %d %g %g %g\n", idx, idy, x, y, float(idy * Nx + idx));
 //printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
 	}
@@ -614,17 +614,17 @@ __global__ void Copyf_kernel(float *a_d, double *b_d, int NL, int k){
 //*************************************************
 __global__ void Sort_kernel(double *a_d, double *b_d, int *ID_d, int NL, int k){
 
-        int id = blockIdx.x * blockDim.x + threadIdx.x + k;
+	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
 
-        if(id < NL){
+	if(id < NL){
 		b_d[id] = a_d[ID_d[id]];
 	}
 }
 __global__ void Sortf_kernel(double *a_d, float *b_d, int *ID_d, int NL, int k){
 
-        int id = blockIdx.x * blockDim.x + threadIdx.x + k;
+	int id = blockIdx.x * blockDim.x + threadIdx.x + k;
 
-        if(id < NL){
+	if(id < NL){
 		b_d[id] = a_d[ID_d[id]];
 	}
 }

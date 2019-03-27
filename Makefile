@@ -1,11 +1,14 @@
 SM=35
 ARCH = -arch sm_$(SM)
 
-
-GIT_DESCRIBE := "`git describe`"
-BUILD_DATE := "`date`"
-BUILD_SYSTEM := "`uname -a`"
-BUILD_PATH := "`pwd`"
+#Build data
+ifeq ($(OS),Windows_NT)
+else
+	GIT_DESCRIBE := "`git describe`"
+	BUILD_DATE := "`date`"
+	BUILD_SYSTEM := "`uname -a`"
+	BUILD_PATH := "`pwd`"
+endif
 BUILD_DATA = -DGIT_DESCRIBE=\"$(GIT_DESCRIBE)\" -DBUILD_DATE=\"$(BUILD_DATE)\" -DBUILD_SYSTEM=\"$(BUILD_SYSTEM)\" -DBUILD_PATH=\"$(BUILD_PATH)\" -DBUILD_SM=\"$(SM)\"
 
 

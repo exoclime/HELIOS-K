@@ -29,7 +29,7 @@ __global__ void Voigt_texture_kernel(cudaTextureObject_t K2dtex, float *K_d, int
 	
 		float K = tex2D <float> (K2dtex, x + 0.5f , y + 0.5f);
 		float *row = (float *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = K;
+		row[idx] = K;
 //if(idy == 0) printf("%d %d %f %f %f\n", idx, idy, x * 10.0f, y * 10.0f, K);
 
 	}
@@ -57,7 +57,7 @@ __global__ void Voigt_textureb_kernel(cudaTextureObject_t K2dtex, float *K_d, in
 		float K = (1.0f - xx) * ( 1.0f - yy) * K00 + xx * (1.0f - yy) * K10 + (1.0f - xx) * yy * K01 + xx * yy * K11;
 
 		float *row = (float *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = K;
+		row[idx] = K;
 //if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
 
 	}
@@ -88,7 +88,7 @@ __global__ void Voigt_b_kernel(float *K2d_d, float *K_d, int Nx, int Ny, int Nxt
 		float K = (1.0f - xx) * ( 1.0f - yy) * K00 + xx * (1.0f - yy) * K10 + (1.0f - xx) * yy * K01 + xx * yy * K11;
 
 		float *row = (float *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = K;
+		row[idx] = K;
 //if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
 
 	}
@@ -149,7 +149,7 @@ __global__ void Voigt_bicubic_kernel(cudaTextureObject_t K2dtex, float *K_d, int
 if(idx == 15 && idy == 15) printf("%d %d %g %g %g %g %g %g %g\n", idx, idy, x, y, K00, K10, K20, K30, K0, K);
 
 		float *row = (float *)(((char *)K_d)+(idy*pitch));
-    		row[idx] = K;
+		row[idx] = K;
 //if(idy == 0) printf("%d %d %f %f | %f %f | %f %f %f %f %f\n", idx, idy, x * 10.0f / Nx, y * 10.0f / Ny, xx, yy, K00, K10, K01, K11, K);
 
 	}
@@ -383,7 +383,7 @@ return 0;
 			cudaGetDeviceProperties(&devProp, j);
 			fprintf(infofile,"Name:%s, Major:%d, Minor:%d, Max threads per Block:%d, Max x dim:%d\n, #Multiprocessors:%d, Clock Rate:%d, Memory Clock Rate:%d, Global Memory:%lu, Shared memory per block: %lu\n",
 				devProp.name, devProp.major, devProp.minor, devProp.maxThreadsPerBlock, devProp.maxThreadsDim[0],
-				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, devProp.totalGlobalMem, devProp.sharedMemPerBlock);
+				devProp.multiProcessorCount,  devProp.clockRate, devProp.memoryClockRate, (long unsigned int)(devProp.totalGlobalMem), (long unsigned int)(devProp.sharedMemPerBlock));
 
 		}
 	}
@@ -610,8 +610,8 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 
 	cudaEvent_t start, stop;
-        cudaEventCreate(&start);
-        cudaEventCreate(&stop);
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 	float milliseconds;
 
 
@@ -1717,7 +1717,7 @@ printf("\n\n");
 	printf("Time for mean K(x):    %g seconds\n", time[4]);
 
 
-        cudaEventRecord(tt1, 0);
+	cudaEventRecord(tt1, 0);
 
 
 	//***************************************
@@ -1745,7 +1745,7 @@ printf("\n\n");
 
 	printf("Time for sort K(x):    %g seconds\n", time[5]);
 
-        cudaEventRecord(tt1, 0);
+	cudaEventRecord(tt1, 0);
 
 
 	//*********************************
@@ -1893,7 +1893,7 @@ for(int i = 0; i < Nx; ++i){
 
 	printf("Time for Resampling:   %g seconds\n", time[6]);
 
-        cudaEventRecord(tt1, 0);
+	cudaEventRecord(tt1, 0);
 
 
 	//*****************************
@@ -2047,7 +2047,7 @@ for(int i = 0; i < Nx; ++i){
 
 	printf("Time for write K(y):   %g seconds\n", time[7]);
 
-        cudaEventRecord(tt1, 0);
+	cudaEventRecord(tt1, 0);
 
 
 	//set correction factor for simpsons rule needed for resampling

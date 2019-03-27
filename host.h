@@ -531,7 +531,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
 		L.S_h[i] = S / Q;
-                L.ID_h[i] = i % def_maxlines;
+		L.ID_h[i] = i % def_maxlines;
 //if(i < 10) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
 	}

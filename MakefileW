@@ -1,0 +1,20 @@
+SM=35
+ARCH = -arch sm_$(SM)
+
+#Build data
+BUILD_SYSTEM=$(OS)
+
+BUILD_DATA = -DBUILD_SYSTEM=\"$(BUILD_SYSTEM)\" -DBUILD_SM=\"$(SM)\"
+
+
+source = heliosk.cu
+headers = define.h ISO.h resample.h host.h voigt.h
+all: heliosk prepare prepareExomol
+heliosk: $(source) $(headers)
+	nvcc $(ARCH) -o heliosk $(source) $(BUILD_DATA)
+
+prepare: prepare.cpp ISO.h define.h
+	cl prepare.cpp
+prepareExomol: prepareExomol.cpp ISO.h define.h
+	cl prepareExomol.cpp
+

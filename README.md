@@ -22,6 +22,10 @@ terminal, where xx corresponds to the compute capability. For example use
 `make SM=20`
 for compute capability of 2.0, or `make SM=35` for 3.5. A table with all compute capabilities can be found here: https://developer.nvidia.com/cuda-gpus
 
+## On Windows machines ##
+If using Cygwin on Windows, then HELIOS-K can be compiled the same way with `make SM=xx`.
+If using the Windows Command Prompt, type `nmake -f MakefileW SM=xx`. Note, that the Windows c++ compiler `cl` must be installed.
+
 # Using HELIOS-K #
 Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
 

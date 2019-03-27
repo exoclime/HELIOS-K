@@ -611,8 +611,8 @@ __global__ void Integrate_kernel(double *K_d, double *Tr_d, int NL, int nTr, dou
 // Author: Simon Grimm
 // January 2015
 // *****************************************
-__host__ void SimpsonCoefficient(){      
-        //set correction factor for simpsons rule
+__host__ void SimpsonCoefficient(){
+	//set correction factor for simpsons rule
 	double *wS_h;
 	wS_h = (double*)malloc(3 * sizeof(double));
 	wS_h[0] = -5.0/8.0;
