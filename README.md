@@ -24,7 +24,9 @@ for compute capability of 2.0, or `make SM=35` for 3.5. A table with all compute
 
 ## On Windows machines ##
 If using Cygwin on Windows, then HELIOS-K can be compiled the same way with `make SM=xx`.
-If using the Windows Command Prompt, type `nmake -f MakefileW SM=xx`. Note, that the Windows c++ compiler `cl` must be installed.
+If using the Windows Command Prompt, type `nmake -f MakefileW SM=xx`. Note, that the Windows c++ compiler `cl` must be installed, and the compiler path must be loaded in the shell. If this is not the case, it can be loaded similar to:
+`call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\vsvars32.bat"` .
+See also issue #1 for details.  
 
 # Using HELIOS-K #
 Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
