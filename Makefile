@@ -21,8 +21,8 @@ heliosk: $(source) $(headers)
 #	nvcc --ptxas-options=-v $(ARCH) -o heliosk $(source) $(BUILD_DATA)
 #	nvcc --compiler-options -Wall $(ARCH) -o heliosk $(source) $(BUILD_DATA)
 
-prepare: prepare.cpp ISO.h define.h
-	g++ -o prepare prepare.cpp
+hitran: hitran.cpp 
+	g++ -o hitran hitran.cpp
 prepareExomol: prepareExomol.cpp ISO.h define.h
 	g++ -o prepareExomol prepareExomol.cpp
 

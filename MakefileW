@@ -13,8 +13,8 @@ all: heliosk prepare prepareExomol
 heliosk: $(source) $(headers)
 	nvcc $(ARCH) -o heliosk $(source) $(BUILD_DATA)
 
-prepare: prepare.cpp ISO.h define.h
-	cl prepare.cpp
+hitran: hitran.cpp
+	cl hitran.cpp
 prepareExomol: prepareExomol.cpp ISO.h define.h
 	cl prepareExomol.cpp
 
