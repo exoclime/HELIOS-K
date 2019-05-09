@@ -375,6 +375,7 @@ __global__ void Sf_kernel(double *nu_d, double *S_d, float *Sf_d, double *A_d, d
 		Sf_d[id] = (float)(S_d[id]); 
 		S1f_d[id] = (float)(S1_d[id]);
 
+//if( id < 100) printf("S %d %g %f\n", id, S_d[id], Sf_d[id]);
 //if(id > 156000 && id < 158000) printf("S %d %g %f\n", id, S_d[id], Sf_d[id]);
 	}
 }

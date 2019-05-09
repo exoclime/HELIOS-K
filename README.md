@@ -26,7 +26,7 @@ for compute capability of 2.0, or `make SM=35` for 3.5. A table with all compute
 If using Cygwin on Windows, then HELIOS-K can be compiled the same way with `make SM=xx`.
 If using the Windows Command Prompt, type `nmake -f MakefileW SM=xx`. Note, that the Windows c++ compiler `cl` must be installed, and the compiler path must be loaded in the shell. If this is not the case, it can be loaded similar to:
 `call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\vsvars32.bat"` .
-See also issue #1 for details.  
+See also issue #1 for details.
 
 # Using HELIOS-K #
 Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
@@ -44,7 +44,7 @@ followed by optional console arguments, which are listed below.
 
 
 # Download and pre-process the line lists #
-## Supported databases ##
+## Supported line list databases ##
 HELIOS-K supports line lists from the Hitran, HITEMP, ExoMol, Kurucz, NIST  or VALD
 databases. Before the line lists can be used, they have to be pre-processed into binary
 files. This saves in generally memory space and allows HELIOS-K to read the line lists in a more efficient way.
@@ -90,7 +90,7 @@ Version = 0
 -------------------------------------------------------------------
 ```
 ### Description
- * Database: It must be indicated which database format to use. 0 = Hitran, 1 = HITEMP, 2= ExoMol, 30 = Kurucz atomic database, 31 = NIST atomic database.
+ * Database: It must be indicated which database format to use. 0 = Hitran or HITEMP, 2 = ExoMol, 30 = Kurucz atomic database, 31 = NIST atomic database.
  * Molecule number: This is optional and follows an old HELIOS-K version.
  * Name: name of the line list files.
  * Number of isotopologues in the line list files.
@@ -113,48 +113,103 @@ Version = 0
 
 
 ## ExoMol ##
-### Download ###
+
+### Step 1, Species Properties ###
+The HELIOS-K repository provides a file called `Exomol_species.dat`. This file contains all
+available species of the ExoMol database. The file format is:
+
+`Molecule name , Isotopologue name, Full name,  path on exomol.com, range of .trans files, number of .trans files, number of digits in .trans file ranges.`
+
+The full name of the species contains the isotopologue and the line list name. This full name should be used, when specifying a species for the opacity calculation, e.g. `1H2-16O__BT2`.
+
+
+The `Exomol_species.dat` file can be recreated or updated with the python code `exomol2.py`.
+
+### Step 2 Download the files and create `< species >.param` file###
 The ExoMol files can be downloaded with the python script `exomol.py` as:
 
 ```
-python3 exomol.py <id>
+python3 exomol.py -M <id>
 ``` 
 
-where `<id>` is the molecule id, defined from line 21 in the script. Each molecule needs the following information in the python script:
+where `<id>` is the full  species name e.g. `1H2-16O__BT2`. The script needs the file `Exomol_species.dat` to be availalbe.
+If this file needs to be updated, it can be done by running `python3 exomol2.py`.
 
- * M and P: url of the ExoMol files
- * s: wavenumber range of `.trans` files. When only a single `.trans` file exists, this is the overall range of the molecule. -1 for irregular file ranges.
- * ntcol: Number of columns in `.trans`files.
- * npfcol: Number of columns in partition file.
+The `exomol.py` script automatically writes the `< species >.param` files for each molecule.
 
-### The `< species >.param` file ###
-This script above automatically writes the `< species >.param` files for each molecule.
-
-### pre-process ###
+### Step 3 create binary files ###
 The downloaded line list files must be pre-processed into binary files with the following code:
 
 ```
 ./prepareExomol -M < id >
 ```
 
-where < id > is the molecule name, e.g. ./prepareExomol -M 1H2-16O__BT2 .
+where < id > is the full species name, e.g. `1H2-16O__BT2`.
+After this step, the `.trans` and `.states` files from ExoMol can be deleted.
 
-## Hitran and HITEMP ##
-### Download ###
-For HITRAN and HITEMP, the .par files need to be downloaded manually.
+### Step 4 data path ###
+Include the path of the directory, which contains the obtained binary files, the `.pf`file and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
-### The `< species >.param` file ###
-The `< species >.param` file must be written manually.
 
-### pre-process ###
-The downloaded line list files must be pre-processed into binary files with the following code:
+## Hitran ## 
+### Step 1  Species Properties###
+The HELIOS-K repository provides a file called `Hitran_species.dat`. This file contains all
+available species of the Hitran database. The file format is:
 
+`Species ID, Abundance, Molecular Mass, Q(296K), partition function file, Isotopologue Formula`
+The same information can be found at `https://hitran.org/docs/iso-meta/`.
+
+The species ID consitst of a two digits molecule ID and a one digit local isotopologue ID. Note that the local isotogologue ID can sometimes consist of non numerical values. e.g A or B,
+
+For identifying a species, the molecule number and the isotopologue number should be combinded, e.g. `01_1` for 1H2-16O or `01` for all isotopogolues from H20.
+
+
+The `Hitran_species.dat` file can be recreated or updated with the python code `hitran2.py`.
+
+### Step 2 Download the files ###
+The line list files must be downloaded manually from `www.hitran.org`, and note that it is necessary to register on the hitran homepage. To download the files select DataAcess and then Line-by-line. Select the molecule id, select all isotopologues (single isotopologues can be filtered later), leave wavenumber range blank, select `.par`file and store the file on your computer with the name `Molecule-ID_hit16.par`, e.g. 01_hit16.par for H2O.  
+
+
+Download all the necessary partition function files from Documentation/Isotogologues.
+
+
+### Step 3 create `< species >.param` file and binary files ###
+All necessary files can be created with:
 ```
-./prepare -M < id >
+
+./hitran -M < molecule ID > -ISO < isotopologue ID > -in < line list name > 
+```
+The `<molecule ID>` is the two digit molecule number, e.g. `01` for H2O.
+The `<isotopologue ID>` is the hitran internal isotopologue identifier, e.g. `1` for 1H2-16O.
+The `<line list name>` is the name that was given in the download section, e.g. `hit16`.
+
+
+### Step 4 data path ###
+Include the path of the directory, which contains the obtained binary files, the `.txt` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
+
+
+### HITEMP ###
+### Step 1  Species Properties###
+For HITEMP, the same `Hitran_species.dat` is needed as for Hitran. See section Hitran step 1
+
+
+### Step 2 Download the files ###
+The line list files must be downloaded manually from `https://hitran.org/hitemp/`.  The same partition function files are needed as for Hitran, see section Hitran step 2.
+
+
+### Step 3 create `< species >.param` file and binary files ###
+All necessary files can be created with:
 ```
 
-where < id > is the molecule name, e.g. ./prepare -M 01_hit16 or ./prepare -M 01_HITEMP2010 .
+./hitran -M < molecule ID > -ISO < isotopologue ID > -in < line list name > 
+```
+The `<molecule ID>` is the two digit molecule number, e.g. `01` for H2O.
+The `<isotopologue ID>` is the hitran internal isotopologue identifier, e.g. `1` for 1H2-16O.
+The `<line list name>` is the name that was given in the download section, e.g. `HITEMP2010`.
 
+
+### Step 4 data path ###
+Include the path of the directory, which contains the obtained binary files, the `.txt` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
 
 # HELIOS-K Input parameters #

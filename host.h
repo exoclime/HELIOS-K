@@ -513,6 +513,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		fread(&L.n_h[i], sizeof(double), 1, dataFile);
 		double Q = 0.0;
 		int Qcheck = 0;
+//printf("%d |%s|\n", i, cid);
 		for(int j = 0; j < m.nISO; ++j){
 //if(i < 10) printf("%d |%s|%s|\n", i, m.ISO[j].cid, cid);
 			//if(id == m.ISO[j].id){
@@ -524,7 +525,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 			}
 		}
 		if(Qcheck == 0){
-			printf("Error: partition function not found. %d |%s| \n", i, cid);
+			printf("Error: partition function not found. %d |%s|%s| \n", i, cid, m.ISO[0].cid);
 			return 0;
 		}
 

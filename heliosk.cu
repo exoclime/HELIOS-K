@@ -788,7 +788,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				return 0;
 			}
 
-			printf("Reading file %d of %d\n", fi + 1, fi1);
+			printf("Reading file %d of %d: %s\n", fi + 1, fi1, dataFilename);
 			printf("Number of lines: %lld\n", m.NL[fi]);
 
 			for(long long int iL = 0LL; iL < m.NL[fi]; iL += def_maxlines){
@@ -1756,7 +1756,7 @@ printf("\n\n");
 //size_t free_byte;
 //size_t total_byte;
 //cudaMemGetInfo( &free_byte, &total_byte );
-//printf("***MEMRORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
+//printf("***MEMORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
 	int *Nxmin_h, *Nxmin_d;		
 	Nxmin_h = (int*)malloc(param.nbins * sizeof(int));
 	cudaMalloc((void **) &Nxmin_d, param.nbins * sizeof(int));
@@ -1770,7 +1770,7 @@ printf("\n\n");
 		K2_h = (double*)malloc(Nx * sizeof(double));
 		cudaMalloc((void **) &K2_d, Nx * sizeof(double));
 //cudaMemGetInfo( &free_byte, &total_byte );
-//printf("***MEMRORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
+//printf("***MEMORY %g %g %g\n", (double)(free_byte), (double)(total_byte), (double)(total_byte) - (double)(free_byte));
 
 		double *V_d;			//Vandermonde like matrix for least sqaures
 		double *C_d, *D_d;
