@@ -150,8 +150,8 @@ After this step, the `.trans` and `.states` files from ExoMol can be deleted.
 ### Step 4 data path ###
 Include the path of the directory, which contains the obtained binary files, the `.pf`file and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
+## HITRAN ##
 
-## Hitran ## 
 ### Step 1  Species Properties###
 The HELIOS-K repository provides a file called `Hitran_species.dat`. This file contains all
 available species of the Hitran database. The file format is:
@@ -211,6 +211,18 @@ The `<line list name>` is the name that was given in the download section, e.g. 
 ### Step 4 data path ###
 Include the path of the directory, which contains the obtained binary files, the `.txt` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
+
+## Kurucz Database ##
+
+###  Step 1 Download the files and create binary files and <species >.param files ###
+The needed files can be downloaded with the following comand:
+```
+python3 Kurucz2.py -D 1
+```
+This will downlaod the file gfallwn08oct17.dat and all available partition function files up to the second iionization state. If the source file or the range in ionization states should be changed, the the script `Kurucz2.py` must be modified. 
+
+### Step 2 data path ###
+Include the path of the directory, which contains the obtained binary files, the `.pf` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
 # HELIOS-K Input parameters #
 The input parameters can be specified in the `param.dat` file. The used

@@ -156,7 +156,7 @@ def main(M, DownloadFiles, PrintISO):
 			for line in defFile:
 				if not "Maximum wavenumber" in line:
 					continue
-				nuMAx = line.split()[0]
+				nuMax = line.split()[0]
 				print(line) 
 				print(nuMax)
 		with open("%s.def" % M) as defFile:

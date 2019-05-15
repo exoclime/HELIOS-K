@@ -1161,6 +1161,50 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 		K_d[ii] += K;
 	}
 }
+
+//reduces if branches E == 0
+//profile = 1
+//individualX = 0
+template <int NB>
+__global__ void Line3f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il, const int nstart, const int Nk, const int nl){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx;
+	__shared__ float S1_s[NB];
+	__shared__ float vy_s[NB];
+	__shared__ float va_s[NB];
+	__shared__ float vb_s[NB];
+	__shared__ float vcut2_s[NB];
+
+	if(idx < nl){ 
+		S1_s[idx] = S1_d[il + idx];
+		vy_s[idx] = vy_d[il + idx];
+		va_s[idx] = va_d[il + idx];
+		vb_s[idx] = vb_d[il + idx];
+		vcut2_s[idx] = vcut2_d[il + idx];
+
+	}
+	__syncthreads();
+	if(id < Nk){
+		int ii = nstart + id;
+		double K = 0.0;
+		for(int ill = 0; ill < nl; ++ill){
+			float y = vy_s[ill];
+			float x = va_s[ill] + ii * vb_s[ill];
+//printf("x %d %d %g %g %g\n", ill, id, x, vb_s[ill], va_s[ill]);
+			float t1 = x * x;
+			float xxyy = t1 + y * y;
+			if(t1 < vcut2_s[ill]){	
+				if(xxyy >= 1.0e6f){
+				//1 order Gauss Hermite Quadrature
+					K += S1_s[ill] / xxyy;
+				}
+			}
+			
+		}
+		K_d[ii] += K;
+	}
+}
 // *************************************************
 // This kernel initializes the location of nu 
 //

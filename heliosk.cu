@@ -788,7 +788,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				return 0;
 			}
 
-			printf("Reading file %d of %d: %s\n", fi + 1, fi1, dataFilename);
+			printf("Reading file %d of %d: %s\n", fi, fi1, dataFilename);
 			printf("Number of lines: %lld\n", m.NL[fi]);
 
 			for(long long int iL = 0LL; iL < m.NL[fi]; iL += def_maxlines){
@@ -996,13 +996,13 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						}
 						else MaxLimits_h[0] = NL;
 						printf("Maximum number of Line Blocks %d\n", MaxLimits_h[0]);
-						
-	/*					//print Limits
+				/*		
+						//print Limits
 						int2 *Limits_h;
 						Limits_h = (int2*)malloc(nLimits * sizeof(int2));
 						cudaMemcpy(Limits_h, Limits_d, nLimits * sizeof(int2), cudaMemcpyDeviceToHost);
 						FILE *LimitsFile;
-						char LimitsFilename[160];
+						char LimitsFilename[240];
 						sprintf(LimitsFilename, "Limits_%s.dat", param.name);
 						if(fi == 0){
 							LimitsFile = fopen(LimitsFilename, filemode);
@@ -1016,8 +1016,8 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						}
 						fclose(LimitsFile);
 						free(Limits_h);
-	*/	 				
-						//*********************************************
+		 				
+				*/		// *********************************************
 					}
 
 					cudaEventRecord(stop);
@@ -1050,7 +1050,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 							int Nk = min(def_nthmax, Nx - k);
 							for(int i = 0; i < MaxLimits_h[0]; i += def_nlmax){
 if(i % (1000 * def_nlmax) == 0){
-printf("%d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, ntL);
+printf("%d %d %d %d %d\n", MaxLimits_h[0], def_nlmax, k, (Nk + ntL - 1) / ntL, ntL);
 }
 								int nl = min(MaxLimits_h[0] - i, def_nlmax);
 								//This loop reduces the running time of the kernel to a few seconds
@@ -1119,7 +1119,12 @@ if(il % 10000 == 0) printf("A %d %d %d %d %d\n",il, ii00, ii11, nll, nt);
 								for(int k = 0; k < nt; k += def_nthmax){
 									int Nk = min(def_nthmax, nt - k);
 									if(Nk > 0 && nll > 0){
-										Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
+										//if(param.profile == 1 && param.useIndividualX == 0){
+										//	Line3f_kernel < nl > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll);
+										//}
+										//else{
+											Line2f_kernel < nl, 0 > <<< (max(Nk, nll) + nl - 1) / nl, nl >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, K_d + iP * Nx, il, nstart, Nk, nll, param.useIndividualX, param.Nxb, binBoundaries_d, 0.0f, 0.0f, 0.0f, param.profile);
+										//}
 									}
 									nstart += def_nthmax;
 								}

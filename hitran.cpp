@@ -288,7 +288,8 @@ int main(int argc, char *argv[]){
 				double gammaSelf = strtod(c7, NULL);
 				double n = strtod(c9, NULL);
 
-				//printf("**** %d %g %g %g %g %g %g %g %g | %g |%s|%s|\n", i, nu, S, A, delta, EL, gammaAir, gammaSelf, n, nuOld, c2, iso);
+				if(i < 1000) printf("**** %d %g %g %g %g %g %g %g %g | %g |%s|%s|\n", i, nu, S, A, delta, EL, gammaAir, gammaSelf, n, nuOld, c2, iso);
+
 
 				double mass = 0.0;
 				double q0 = -1000.0;
@@ -359,7 +360,7 @@ int main(int argc, char *argv[]){
 					S /= mass;
 					S = S * q0;
 
-					if(i < 10 || i % 100000 == 0) printf("%s | %s %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g\n", iso, cid, nu, S, A, gammaAir, gammaSelf, EL, n, delta, mass, q0);
+					//if(count < 1000 || count % 100000 == 0) printf("%s | %s %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g %.10g\n", iso, cid, nu, S, A, gammaAir, gammaSelf, EL, n, delta, mass, q0);
 	
 					fwrite(&cid, 4*sizeof(char), 1, binFile);
 					fwrite(&nu, sizeof(double), 1, binFile);
