@@ -28,19 +28,6 @@ If using the Windows Command Prompt, type `nmake -f MakefileW SM=xx`. Note, that
 `call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\vsvars32.bat"` .
 See also issue #1 for details.
 
-# Using HELIOS-K #
-Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
-
-All necessary parameters for HELIOS-K are set in the file `param.dat`, which is also described later. Some parameters can be set also by console arguments.
-
-
-HELIOS-K can be started with
-
-```
-./heliosk
-```
-followed by optional console arguments, which are listed below.
-
 
 
 # Download and pre-process the line lists #
@@ -152,7 +139,7 @@ Include the path of the directory, which contains the obtained binary files, the
 
 ## HITRAN ##
 
-### Step 1  Species Properties###
+### Step 1  Species Properties ###
 The HELIOS-K repository provides a file called `Hitran_species.dat`. This file contains all
 available species of the Hitran database. The file format is:
 
@@ -188,8 +175,9 @@ The `<line list name>` is the name that was given in the download section, e.g. 
 Include the path of the directory, which contains the obtained binary files, the `.txt` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
 
 
-### HITEMP ###
-### Step 1  Species Properties###
+## HITEMP ##
+
+### Step 1  Species Properties ###
 For HITEMP, the same `Hitran_species.dat` is needed as for Hitran. See section Hitran step 1
 
 
@@ -223,6 +211,78 @@ This will downlaod the file gfallwn08oct17.dat and all available partition funct
 
 ### Step 2 data path ###
 Include the path of the directory, which contains the obtained binary files, the `.pf` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
+
+
+## NIST Database ##
+
+### Step 1 Download the Energy levels ###
+This step can be done either manually or by using a script. 
+-For manuall download:
+ * visit `https://physics.nist.gov/PhysRefData/ASD/levels_form.html`
+ * enter the species and ionization state, e.g. Z= 3 0
+ * select the Format output to Tab-delimited
+ * select the `g` option 
+ * store the data in a file called `test.dat`
+ * remove all `"` in the file
+ -Automatical download:
+ * type `python3 nist_ELevels.py -Z <z> -I <i> `, 
+ where `<z>`is the atomi number and `<i>`the ionization state
+ * The script will download the data and store it to `test.dat`.
+ * This script will need a geckodriver to be installed .
+ 
+### Step 2 Generate partition functions ###
+
+Run  `python3 nist_partition.py - -Z <z> -I <i> `. This script will
+read the previously produces file `test.dat`.
+
+### Step3 Download atomic masses ###
+ * visit `https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses`
+ * select `All Elements`
+ * select `Linearized ASCII Output`
+ * select `All isotopes`
+ * click `Get Data`and store the data in a file called `masses.txt`
+ 
+### Step 4 Download the line list ### 
+This step can be done either manually or by using a script. 
+-For manuall download:
+ * https://physics.nist.gov/PhysRefData/ASD/lines_form.html
+ * enter the species and ionization state, e.g. Z= 3 0
+ * select `Show Advanced Settings`
+ * select the Format output to csv
+ * Select `Wavenumbers (in cm-1)`
+ * Select `Wavenumbers (all wavelenghts)`
+ * Select `g`
+ * click `Retrieve Data`and store the data in a file called `test.dat`.
+ * remove all  `?, =, [,],( and )`from the file
+ 
+  -Automatical download:
+ * type `python3 nist_Lines.py -Z <z> -I <i> `.
+ * This script will need a geckodriver to be installed .
+
+### Step 5 Create `< species >.param` file and binary files ###
+All necessary files can be created with:
+```
+
+python3 nist_Lines2.py -Z <z> -I <i> 
+```
+
+### Step 6 data path ###
+Include the path of the directory, which contains the obtained binary files, the `.pf` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
+
+# Using HELIOS-K #
+Before HELIOS-K can be used, the molecular or atomic line-lists must be downloaded and pre-processed. HELIOS-K provides some scripts for that, which are described later in in this manual.
+
+All necessary parameters for HELIOS-K are set in the file `param.dat`, which is also described later. Some parameters can be set also by console arguments.
+
+
+HELIOS-K can be started with
+
+```
+./heliosk
+```
+followed by optional console arguments, which are listed below.
+
+
 
 # HELIOS-K Input parameters #
 The input parameters can be specified in the `param.dat` file. The used
