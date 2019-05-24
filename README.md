@@ -31,6 +31,8 @@ See also issue #1 for details.
 
 
 # Download and pre-process the line lists #
+If you work an the University of Bern on the Hulk cluster, then most of the pre-processed files are already available at `scratch/sigrimm/EXOMOL/`.
+
 ## Supported line list databases ##
 HELIOS-K supports line lists from the Hitran, HITEMP, ExoMol, Kurucz, NIST  or VALD
 databases. Before the line lists can be used, they have to be pre-processed into binary
@@ -363,7 +365,6 @@ The code parameters are:
  * def_maxlines:    Maximum number of lines stored on the GPU.
  * def_maxfiles:    Maximum number of files per molecule.
  * def_NmaxSample:	Maximum Number of resample coefficients for K(y)
- * def_NXLOW:       Switch between parallelization schemes
 
 When using a Desktop GPU running an x session, the runtime of a single kernel
 launch can be limited to a few seconds. Choosing smaller values for nlmax and nthmax

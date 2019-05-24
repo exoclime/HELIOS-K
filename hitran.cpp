@@ -152,6 +152,9 @@ int main(int argc, char *argv[]){
 	printf("total number of files in directory %d\n", n);
 
 	int nn = 0;
+	int range0, range1;
+	int len = 0;
+	int slen = 0;
 	//scan and count desired files 
 	for(int j = 0; j < n; ++j){
 		std::string str = std::string(namelist[j]->d_name);
@@ -166,18 +169,27 @@ int main(int argc, char *argv[]){
 		//extract file range from string
 		int ppos = int(str.find(inname));	//position of name in string
 		std::string sbstr;
+		std::string sbstr0;
+		std::string sbstr1;
 		if(ppos > 3){
 			sbstr = str.substr(3, ppos - 4);
+			slen = sbstr.length();
+			sbstr0 = sbstr.substr(0, slen/2);
+			sbstr1 = sbstr.substr(slen/2+1, slen/2);
+			range0 = std::atoi(sbstr0.c_str());
+			range1 = std::atoi(sbstr1.c_str());
 		}
 		else{
 			sbstr = "";
+			sbstr0 = "";
+			sbstr1 = "";
 		}
-		int len = str.length();
+		len = str.length();
 
 		// find inname in string and find molecule in string and find ".par" in file name
 		if(str.find(inname) != std::string::npos && str.rfind(s2, 0) == 0 && str.compare(len - 4, 4,s3) == 0){
 			++nn;
-			printf("----- %d %s %d %d |%s|\n", nn, str.c_str(), ppos, len, sbstr.c_str());
+			printf("----- %d %s %d %d %d |%s| %d %d \n", nn, str.c_str(), ppos, len, slen, sbstr.c_str(), range0, range1);
 		}
 	}
 	printf("number of data files in directory %d\n", nn);
@@ -225,8 +237,15 @@ int main(int argc, char *argv[]){
 		//extract file range from string
 		int ppos = int(str.find(inname));	//position of name in string
 		std::string sbstr;
+		std::string sbstr0;
+		std::string sbstr1;
 		if(ppos > 3){
 			sbstr = str.substr(3, ppos - 4);
+			slen = sbstr.length();
+			sbstr0 = sbstr.substr(0, slen/2);
+			sbstr1 = sbstr.substr(slen/2+1, slen/2);
+			range0 = std::atoi(sbstr0.c_str());
+			range1 = std::atoi(sbstr1.c_str());
 		}
 		else{
 			sbstr = "";
@@ -255,7 +274,13 @@ int main(int argc, char *argv[]){
 			for(int i = 0; i < 100000000; ++i){
 
 				if(fgets(c1, 3, dataFile) == NULL){
-					int nnu = ceil(nu);
+					int nnu;
+					if(slen == 0){
+						nnu = ceil(nu);
+					}
+					else{
+						nnu = range1;
+					}
 					printf("end %d %g %d %d\n", i, nuOld, count, nnu);
 					filesCount[nFiles] = count;
 					filesRange[nFiles] = nnu;
@@ -288,7 +313,7 @@ int main(int argc, char *argv[]){
 				double gammaSelf = strtod(c7, NULL);
 				double n = strtod(c9, NULL);
 
-				if(i < 1000) printf("**** %d %g %g %g %g %g %g %g %g | %g |%s|%s|\n", i, nu, S, A, delta, EL, gammaAir, gammaSelf, n, nuOld, c2, iso);
+				//if(i < 1000) printf("**** %d %g %g %g %g %g %g %g %g | %g |%s|%s|\n", i, nu, S, A, delta, EL, gammaAir, gammaSelf, n, nuOld, c2, iso);
 
 
 				double mass = 0.0;
@@ -314,7 +339,13 @@ int main(int argc, char *argv[]){
 					//printf("**** %d %s %g %g %g %g %g %g %g %g | %g |%s|%s|\n", i, cid, nu, S, A, delta, EL, gammaAir, gammaSelf, n, nuOld, c2, iso);
 					//first entry
 					if(nFiles == 0){
-						int nnu = int(nu);
+						int nnu;
+						if(slen == 0){
+							nnu = int(nu);
+						}
+						else{
+							nnu = range0;
+						}
 						printf("********** %g %g %d %d\n", nu, nuOld, count, nnu);
 						filesCount[nFiles] = count;
 						filesRange[nFiles] = nnu;
