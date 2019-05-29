@@ -888,8 +888,9 @@ __global__ void Line4fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
-
-			for(int i = 0; i < NBx; ++i){
+		}
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 				iii = nstart + idy + ii;
 				x = va + iii * vb;
@@ -920,8 +921,8 @@ __global__ void Line4fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm));
 					}
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 
@@ -973,8 +974,9 @@ __global__ void Line4fAx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
-
-			for(int i = 0; i < NBx; ++i){
+		}
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 
 				x = float((x_s[ii] - nu) * ialphaD);
@@ -1009,8 +1011,8 @@ __global__ void Line4fAx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm));
 					}
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 
@@ -1055,8 +1057,9 @@ __global__ void Line4fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
-
-			for(int i = 0; i < NBx; ++i){
+		}
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 				iii = nstart + idy + ii;
 				x = va + iii * vb;
@@ -1073,8 +1076,8 @@ __global__ void Line4fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 					
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t4;
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 
@@ -1127,8 +1130,9 @@ __global__ void Line4fBx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
-
-			for(int i = 0; i < NBx; ++i){
+		}
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 	
 				x = float((x_s[ii] - nu) * ialphaD);
@@ -1147,8 +1151,8 @@ __global__ void Line4fBx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 					
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t4;
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 
@@ -1192,8 +1196,10 @@ __global__ void Line4fC_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
+		}
 
-			for(int i = 0; i < NBx; ++i){
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 				iii = nstart + idy + ii;
 				x = va + iii * vb;
@@ -1222,8 +1228,8 @@ __global__ void Line4fC_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t1 * b;
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 
@@ -1276,8 +1282,10 @@ __global__ void Line4fCx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
+		}
 
-			for(int i = 0; i < NBx; ++i){
+		for(int i = 0; i < NBx; ++i){
+			if(iL < NL){ 
 				ii = (i + idx) % NBx;
 
 				x = float((x_s[ii] - nu) * ialphaD);
@@ -1307,8 +1315,8 @@ __global__ void Line4fCx_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t1 * b;
 				}
-				__syncthreads();
 			}
+			__syncthreads();
 		}
 	}
 

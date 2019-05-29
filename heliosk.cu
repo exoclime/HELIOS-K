@@ -782,7 +782,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 
 			FILE *dataFile;
-			char dataFilename[160];
+			char dataFilename[180];
 			sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
 			dataFile  = fopen(dataFilename, "rb");
 
@@ -1032,13 +1032,14 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 									nu11 = fmax(nu11, nu1);
 									nu00 = fmin(nu00, nu0);
 
-//if(il == 0) printf("%d %.30g %g %g\n", il + iil, nuP[il + iil], nu11, nu00);
+//if(il == 0) printf("A1 %d %.30g %g %g\n", il + iil, nuP[il + iil], nu00, nu11);
 								}
 							}
 							nu11 = fmin(nu11, param.numax);
 							nu00 = fmax(nu00, param.numin);
 							ii11 = (long long int)((nu11 - param.numin) / param.dnu) + 2;
 							ii00 = (long long int)((nu00 - param.numin) / param.dnu) - 1;
+//if(il == 0) printf("A %d %g %g %lld %lld\n", il, nu00, nu11, ii00, ii11);
 						}
 						else{
 							for(int iil = 0; iil < nl; ++iil){
@@ -1079,6 +1080,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						int nstart = ii00;
 
 						int nnkk = (nt + nk - 1) / nk;
+						if (nnkk < 0) nnkk = 0;
 if(il % 10000 == 0 || il < 10 * nl) printf("AA %d %lld %lld %d | blocks %d threads %d stream %d \n",il, ii00, ii11, nt, nnkk, nntt, vs%16);
 						if(nnkk > 0){
 							if(param.useIndividualX == 0){
@@ -1140,7 +1142,7 @@ if(il % 10000 == 0 || il < 10 * nl) printf("AA %d %lld %lld %d | blocks %d threa
 
 											nu11 = fmax(nu11, nu1);
 											nu00 = fmin(nu00, nu0);
-//printf("%d %g %g\n", il + iil, nu11, nu00);
+//if(il == 0) printf("B1 %d %g %g\n", il + iil, nu00, nu11);
 
 										}
 									}
@@ -1149,6 +1151,7 @@ if(il % 10000 == 0 || il < 10 * nl) printf("AA %d %lld %lld %d | blocks %d threa
 								nu00 = fmax(nu00, param.numin);
 								ii11 = (long long int)((nu11 - param.numin) / param.dnu) + 2;
 								ii00 = (long long int)((nu00 - param.numin) / param.dnu) - 1;
+//if(il == 0) printf("B %d %g %g %lld %lld\n", il, nu00, nu11, ii00, ii11);
 							}
 							else{
 								for(int iil = 0; iil < nl2; ++iil){
@@ -1195,6 +1198,7 @@ if(il % 10000 == 0 || il < 10 * nl) printf("AA %d %lld %lld %d | blocks %d threa
 							int nstart = ii00;
 
 							int nnkk = (nt + nk2 - 1) / nk2;
+							if (nnkk < 0) nnkk = 0;
 if(il % 10000 == 0 || il < 10 * nl2) printf("BB %d %lld %lld %d | blocks %d threads %d stream %d \n",il, ii00, ii11, nt, nnkk, nntt2, vs%16);
 							if(nnkk > 0){
 								if(param.useIndividualX == 0){
@@ -1238,7 +1242,7 @@ if(il % 10000 == 0 || il < 10 * nl2) printf("BB %d %lld %lld %d | blocks %d thre
 
 											nu11 = fmax(nu11, nu1);
 											nu00 = fmin(nu00, nu0);
-//printf("%d %g %g\n", il + iil, nu11, nu00);
+//if(il == 0) printf("%d %g %g\n", il + iil, nu11, nu00);
 										}
 									}
 								}
@@ -1293,7 +1297,8 @@ if(il % 10000 == 0 || il < 10 * nl2) printf("BB %d %lld %lld %d | blocks %d thre
 							int nstart = ii00;
 					
 							int nnkk = (nt + nk3 - 1) / nk3;
-if(il % 10000 == 0 || il < 10 * nl2) printf("CC %d %lld %lld %d | blocks %d threads %d stream %d \n",il, ii00, ii11, nt, nnkk, nntt2, vs%16);
+							if (nnkk < 0) nnkk = 0;
+if(il % 10000 == 0 || il < 10 * nl2) printf("CC %d %lld %lld %d | blocks %d threads %d stream %d \n",il, ii00, ii11, nt, nnkk, nntt3, vs%16);
 
 							if(nnkk > 0){
 								if(param.useIndividualX == 0){
@@ -1307,8 +1312,15 @@ if(il % 10000 == 0 || il < 10 * nl2) printf("CC %d %lld %lld %d | blocks %d thre
 						}
 					} //end profile 1 
 					//Add now all streams together
+printf("Add streams A\n");
+					error = cudaGetLastError();
+					if(error != 0){
+						printf("K error = %d = %s\n",error, cudaGetErrorString(error));
+						return 0;
+					}
 					cudaDeviceSynchronize();
 					AddKStreams_kernel <<< (Nx + 511) / 512, 512 >>>  (K_d + iP * Nx, KS_d, 16, Nx);
+printf("Add streams B\n");
 
 					}
 

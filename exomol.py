@@ -12,7 +12,7 @@ import os
 import subprocess
 import numpy as np
 import argparse
-
+import math
 import exomol2
 
 def main(M, DownloadFiles, PrintISO):
@@ -30,7 +30,7 @@ def main(M, DownloadFiles, PrintISO):
 	ntcol = 0	#columns in transition files
 	npfcol = 0	#columns in partition function file
 
-
+	dL = ""
 	dg = 0		#number of digits in .trans files ranges
 
 	exfile = "Exomol_species.dat"
@@ -169,7 +169,11 @@ def main(M, DownloadFiles, PrintISO):
 
 
 	if(n == 1):
-		s = nuMax
+		s = int(math.ceil(float(nuMax)))
+
+	if(len(dL) == 0):
+		print("Error, <Default value of Lorentzian half-width for all lines> not found")
+		return 0
 
 	#correct now wrong number of files
 	#if(M == "12C-1H3-37Cl__OYT"):
@@ -264,7 +268,7 @@ def main(M, DownloadFiles, PrintISO):
 			return 0
 
 		l[nu]=int(subprocess.check_output(['wc', '-l', "%s" % transFile]).split()[0])
-		print(nu, l[nu])
+		print("nu", nu, l[nu])
 
 		#determine the number of columns in the transition files
 		with open("%s" % transFile) as tFile:
