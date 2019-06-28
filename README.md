@@ -15,6 +15,37 @@ HELIOS-K runs on Nvidia GPUs with compute capability of 2.0 or higher.
 The code needs the CUDA toolkit to be installed.This can be downloaded
 from https://developer.nvidia.com/cuda-downloads.
 
+Besides the main code, HELIOS-K provides various scripts to download and pre-process line list files. These scripts have additional dependencies:
+
+When running on a cluster, these libraries can be installed locally with
+```
+pip3 install --user <package name>
+```
+
+ * exomol.py need the following python3 libraries:
+    * bs4
+    * requests
+    * sys
+    * os
+    * subprocess
+    * numpy
+    * argparse
+ 
+ * Kurucz2.py
+     * numpy
+     * math
+     * struct
+     * os
+     * argparse
+     
+  * nist_ELevels.py
+    * sys
+    * time
+    * pyperclip
+    * subprocess
+    * selenium
+    * argparse
+
 
 # Compilation #
 HELIOS-K can be compiled with the provided Makefile by typing `make SM=xx` to the
@@ -207,9 +238,11 @@ Include the path of the directory, which contains the obtained binary files, the
 ###  Step 1 Download the files and create binary files and <species >.param files ###
 The needed files can be downloaded with the following comand:
 ```
-python3 Kurucz2.py -D 1
+python3 Kurucz2.py -D 1 -Z <z> -I <i>
 ```
-This will downlaod the file gfallwn08oct17.dat and all available partition function files up to the second iionization state. If the source file or the range in ionization states should be changed, the the script `Kurucz2.py` must be modified. 
+where `<z>`is the atomic number and `<i>`the ionization state. z = -1 means to download all atoms, i = -1 means to download Z = 0, 1 and 2.
+
+The script will downlaod the file gfallwn08oct17.dat and all available partition function files. If the source file  should be changed, the the script `Kurucz2.py` must be modified. 
 
 ### Step 2 data path ###
 Include the path of the directory, which contains the obtained binary files, the `.pf` partition function files and the  `.param` file to the HELIOS-K `param.dat` file under `pathToData`.
@@ -219,18 +252,19 @@ Include the path of the directory, which contains the obtained binary files, the
 
 ### Step 1 Download the Energy levels ###
 This step can be done either manually or by using a script. 
--For manuall download:
- * visit `https://physics.nist.gov/PhysRefData/ASD/levels_form.html`
- * enter the species and ionization state, e.g. Z= 3 0
- * select the Format output to Tab-delimited
- * select the `g` option 
- * store the data in a file called `test.dat`
- * remove all `"` in the file
- -Automatical download:
- * type `python3 nist_ELevels.py -Z <z> -I <i> `, 
- where `<z>`is the atomi number and `<i>`the ionization state
- * The script will download the data and store it to `test.dat`.
- * This script will need a geckodriver to be installed .
+
+ * For manuall download:
+    * visit `https://physics.nist.gov/PhysRefData/ASD/levels_form.html`
+    * enter the species and ionization state, e.g. Z= 3 0
+    * select the Format output to Tab-delimited
+    * select the `g` option 
+    * store the data in a file called `test.dat`
+    * remove all `"` in the file
+ * Automatical download:
+    * type `python3 nist_ELevels.py -Z <z> -I <i> `, 
+       where `<z>`is the atomic number and `<i>`the ionization state
+    * The script will download the data and store it to `test.dat`.
+    * This script will need a geckodriver to be installed .
  
 ### Step 2 Generate partition functions ###
 
@@ -246,20 +280,20 @@ read the previously produces file `test.dat`.
  
 ### Step 4 Download the line list ### 
 This step can be done either manually or by using a script. 
--For manuall download:
- * https://physics.nist.gov/PhysRefData/ASD/lines_form.html
- * enter the species and ionization state, e.g. Z= 3 0
- * select `Show Advanced Settings`
- * select the Format output to csv
- * Select `Wavenumbers (in cm-1)`
- * Select `Wavenumbers (all wavelenghts)`
- * Select `g`
- * click `Retrieve Data`and store the data in a file called `test.dat`.
- * remove all  `?, =, [,],( and )`from the file
- 
-  -Automatical download:
- * type `python3 nist_Lines.py -Z <z> -I <i> `.
- * This script will need a geckodriver to be installed .
+
+ * For manuall download:
+    * https://physics.nist.gov/PhysRefData/ASD/lines_form.html
+    * enter the species and ionization state, e.g. Z= 3 0
+    * select `Show Advanced Settings`
+    * select the Format output to csv
+    * Select `Wavenumbers (in cm-1)`
+    * Select `Wavenumbers (all wavelenghts)`
+    * Select `g`
+    * click `Retrieve Data`and store the data in a file called `test.dat`.
+    * remove all  `?, =, [,],( and )`from the file
+ * Automatical download:
+    * type `python3 nist_Lines.py -Z <z> -I <i> `.
+    * This script will need a geckodriver to be installed .
 
 ### Step 5 Create `< species >.param` file and binary files ###
 All necessary files can be created with:

@@ -12,7 +12,7 @@ import argparse
 
 
 #choose if the file contains wavenumber or not
-Wavenumber = 1
+Wavenumber = 1			#1: Wavenumber, 2: vacuum wavelength, 3: air based wavelenght
 
 
 #filename="gfall08oct17.dat"
@@ -148,15 +148,28 @@ elt0=[
 
 
 
-def main(Download):
+def main(Download, Z, I):
 
-	#for i in range(18,19):
-	for i in range(0,100):
+
+	if(Z == -1 and I == -1):
+		# all species in Z and I
+		for i in range(0,100):
+			for j in range(0,3):
+				processLineList(i, j, Download)
+
+	if(Z == -1 and I > -1):
+		# all species in Z
+		for i in range(0,100):
+			processLineList(i, I, Download)
+
+	if(Z > -1 and I == -1):
+		# all species in I
 		for j in range(0,3):
-		#for j in range(0,1):
-	
-			processLineList(i, j, Download)
+			processLineList(Z - 1, j, Download)
 
+	if(Z > -1 and I > -1):
+		processLineList(Z - 1, I, Download)
+	
 
 def processLineList(i, j, Download):
 	# i molecule id 0 to 100
@@ -232,8 +245,11 @@ def processLineList(i, j, Download):
 			if(Wavenumber == 1):
 				wn = float(l[0:11])
 				wl = 1.0E7/wn		#wavelenght in nm
-			else:
-				wlAir = float(l[0:11])
+			if(Wavenumber == 2):
+				wl = float(l[0:11])	#wavelenght in nm
+				wn = 1.0E7/wl
+			if(Wavenumber == 3):
+				wlAir = float(l[0:11])	#wavelenght in nm
 
 
 			loggf = float(l[11:18])
@@ -244,12 +260,12 @@ def processLineList(i, j, Download):
 			EUP = float(l[52:64])
 			JUP = float(l[64:69])
 			LabelU = l[70:80]
-			GammaR = (l[80:86])
+			GammaR = l[80:86]
 			isotope = l[106:109]
-			hyperFineFraction = float(l[109:115])
-			ISOFraction = float(l[118:124])
-			hyperShiftL = (l[124:129])
-			hyperShiftU = (l[129:134])
+			hyperFineFraction = l[109:115]
+			ISOFraction = l[118:124]
+			hyperShiftL = l[124:129]
+			hyperShiftU = l[129:134]
 	
 			if(isotope == "   " or isotope == ""):
 				isotope = "  0"
@@ -259,11 +275,16 @@ def processLineList(i, j, Download):
 				hyperShiftL = "  0"
 			if(hyperShiftU == "     " or hyperShiftU == ""):
 				hyperShiftU = "  0"
+			if(hyperFineFraction == "      " or hyperFineFraction == "" or len(hyperFineFraction) < 2):
+				hyperFineFraction = "  0"
+			if(ISOFraction == "      " or ISOFraction == ""):
+				ISOFraction = "  0"
 			
 			GammaR = float(GammaR)
 			hyperShiftL = float(hyperShiftL)
 			hyperShiftU = float(hyperShiftU)
-
+			hyperFineFraction = float(hyperFineFraction)
+			ISOFraction = float(ISOFraction)
 
 			e = 4.80320425E-10      #electron charge in cgs units [statcoulomb = cm^(3/2) g^(1/2) s^-1]
 			c = 2.99792458E10       #Speed of light cm/s
@@ -300,11 +321,13 @@ def processLineList(i, j, Download):
 			#convert air wavelength to vacuum wavelength
 			#http://www.astro.uu.se/valdwiki/Air-to-vacuum%20conversion
 
-			if(Wavenumber == 0):
+			if(Wavenumber == 3):
 				if(wlAir > 200):
+					wlAir = wlAir * 10  #convert nm to Angstrom
 					s = 10000.0 / wlAir
 					n = 1.0 + 0.00008336624212083 + 0.02408926869968 / (130.1065924522 - s*s) + 0.0001599740894897 / (38.92568793293 - s*s)
 					wl = wlAir * n
+					wl = wl * 0.1  #convert Angstrom to nm
 				else:
 					wl = wlAir
 				wn = 1.0E7/wl		#wavelenght in nm
@@ -313,7 +336,6 @@ def processLineList(i, j, Download):
 			gUP = 2 * JUP + 1
 			gLow = 2 * JLow + 1
 
-			#if(element == " 19.00"):
 			if(element == els):
 				A = 8.0 * math.pi * wn * wn * (10.0**loggf) / gUP * math.pi * e * e / (me * c)
 				gamma = 2.223e13 / (wl * wl)
@@ -439,11 +461,17 @@ if __name__ == '__main__':
 
 	parser.add_argument('-D', '--Download', type=str,
 		help='Download the files', default = 0)
+	parser.add_argument('-Z', '--Z', type=int,
+		help='Z', default = -1)
+	parser.add_argument('-I', '--I', type=int,
+		help='I', default = -1)
 
 	args = parser.parse_args()
 	Download = int(args.Download)
+	Z = args.Z
+	I = args.I
 
-	print("Download: %d" % Download)
+	print("Download: %d,  Z:%d, I: %d" % (Download, Z, I))
 
-	main(Download)
+	main(Download, Z, I)
 

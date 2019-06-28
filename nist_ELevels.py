@@ -3,6 +3,9 @@
 
 
 '''
+from:
+https://python-forum.io/Thread-Getting-error-geckodriver-executable-needs-to-be-in-PATH
+
 Download the proper geckodriver depending upon your operating system and System Architecture from the url here - geckodriver
 
 Now follow the below steps -
