@@ -287,7 +287,7 @@ def main(M, DownloadFiles, PrintISO):
 		print("Database = 2", file = f)
 		print("Molecule number = %d" % 1, file = f)
 		print("Name = %s" % M, file = f)
-		print("Number of Isotopes = 1", file = f)
+		print("Number of Isotopologues = 1", file = f)
 		print("#Id Abundance      Q(296K)   g     Molar Mass(g)  partition file :", file = f)
 		print("0 1.0             0.0       0      %s        %s.pf" % (mass, M), file = f)
 		print("Number of columns in partition File = %s" % npfcol, file = f)

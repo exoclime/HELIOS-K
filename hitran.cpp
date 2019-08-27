@@ -181,8 +181,11 @@ int main(int argc, char *argv[]){
 		}
 		else{
 			sbstr = "";
+			slen = 0;
 			sbstr0 = "";
 			sbstr1 = "";
+			range0 = 0;
+			range1 = 0;
 		}
 		len = str.length();
 
@@ -217,7 +220,7 @@ int main(int argc, char *argv[]){
 		fprintf(paramFile, "Name = %02d_%s_%s\n", M, iso, name);
 
 	}
-	fprintf(paramFile, "Number of Isotopes = %d\n", nISO);
+	fprintf(paramFile, "Number of Isotopologues = %d\n", nISO);
 	fprintf(paramFile, "#ID Abundance      Q(296K)   g     Molar Mass(g)  partition file :\n");
 	for(int i = 0; i < nISO; ++i){
 		fprintf(paramFile, "%s %12.10g %8.6g %5.5g %14.14g %s\n", index[i], abundance[i], Q0[i], g[i], m[i], qfile[i]);
@@ -249,6 +252,11 @@ int main(int argc, char *argv[]){
 		}
 		else{
 			sbstr = "";
+			slen = 0;
+			sbstr0 = "";
+			sbstr1 = "";
+			range0 = 0;
+			range1 = 0;
 		}
 		int len = str.length();
 
@@ -281,7 +289,7 @@ int main(int argc, char *argv[]){
 					else{
 						nnu = range1;
 					}
-					printf("end %d %g %d %d\n", i, nuOld, count, nnu);
+					printf("end %d %g %g %d %d\n", i, nu, nuOld, count, nnu);
 					filesCount[nFiles] = count;
 					filesRange[nFiles] = nnu;
 					++nFiles;

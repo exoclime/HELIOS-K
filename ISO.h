@@ -64,12 +64,18 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	}
 	fscanf (pFile, "%s", m.mName);
 	fgets(sp, 4, pFile);
-	fgets(sp, 21, pFile);
-	if(strcmp(sp, "Number of Isotopes =") != 0){
-		printf("Error in molecule.param file, Number of Isotopes\n");
+	//can be "Number of Isotopes =" or "Number of Isotopes ="
+	//scan until "="
+	fscanf(pFile, "%[^=]s", sp);
+	if(strcmp(sp, "Number of Isotopes ") != 0 && strcmp(sp, "Number of Isotopologues ") != 0){
+		printf("Error in molecule.param file, Number of Isotopes, |%s|\n", sp);
 		return 0;
 	}
+	//scan "="
+	fgets(sp, 2, pFile);
+
 	fscanf (pFile, "%d", &m.nISO);
+	//printf("nISO %d\n", m.nISO);
 	fgets(sp, 4, pFile);
 	m.ISO = (Isotopologue*)malloc(m.nISO * sizeof(Isotopologue));
 

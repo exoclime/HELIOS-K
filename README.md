@@ -85,7 +85,7 @@ shown here and available in the repository. An example for HITEMP and ExoMol are
 Database = 0
 Molecule number = 1
 Name = hit16
-Number of Isotopes = 7
+Number of Isotopologues = 7
 #ID Abundance      Q(296K)   g     Molar Mass(g)  partition file :
 11 0.997317        174.58    1     18.010565      q1.txt
 12 0.002000        176.05    1     20.014811      q2.txt
