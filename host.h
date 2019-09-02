@@ -17,7 +17,6 @@ __host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part
 
 	for(int i = 0; i < m.nISO; ++i){
 
-		//Read Chebychev Coefficients from q file	
 		FILE *qFile;
 		qFile = fopen(qFilename[i], "r");
 		printf("Read partition function: %s\n", qFilename[i]);
@@ -28,7 +27,7 @@ __host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part
 		double T0, T1;
 		double q0, q1, q;
 		double skip;
-		T1 = 0;
+		T1 = -1.0;
 		q1 = 1.0;
 		q = 1.0;
 		int er = 0;
@@ -49,7 +48,11 @@ __host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part
 				return 0;
 			}
 			if(T0 == T1 && T0 < T && j > 0){
-				printf("Error: partition function not valid for given temperature %g %g\n", T0, T);
+				printf("Error: partition function not valid for given temperature. T0: %g, T: %g\n", T0, T);
+				return 0;
+			}
+			if(T1 > T && j == 0){
+				printf("Error: partition function not valid for given temperature. T1: %g, T: %g\n", T1, T);
 				return 0;
 			}
 			if (er <= 0){
@@ -68,7 +71,7 @@ __host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part
 			}
 		}
 		fclose(qFile);
-printf("Q %d %g\n", i, q);
+printf("Q %d T0: %g, T1: %g, q0: %g, q1: %g, q %g\n", i, T0, T1, q0, q1, q);
 		part.Q[i] = q;
 	}
 	return 1;

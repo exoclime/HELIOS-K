@@ -129,6 +129,7 @@ if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3);
 			EL = E[state0 - 1];
 			nu = E[state1 - 1] - E[state0 - 1];
 			gU = g[state1 - 1];
+			nu1 = 0.0;
 		}
 		if(m.ntcol == 4){
 			fscanf(transFile, "%s", c1);
@@ -157,7 +158,7 @@ if(i < 100 || i % 100000 == 0) printf("%s|%s|%s|%s\n", c1, c2, c3, c4);
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
 		if(nu == 0.0) S = 0.0;
-if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
