@@ -6,7 +6,7 @@
 //Author: Simon Grimm
 //March 2018
 // *****************************************
-__host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part, double T,  Molecule &m){
+__host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part, double T, Molecule &m){
 	part.n = 1;
 	
 	part.id = (int*)malloc(sizeof(int));
@@ -116,9 +116,14 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			fscanf (paramFile, "%s", param.PFilename);
 			fgets(sp, 3, paramFile);
 		}
-		//read Molecule Name
+		//read Species Name
 		else if(strcmp(sp, "Species Name =") == 0){
 			fscanf (paramFile, "%s", param.mParamFilename);
+			fgets(sp, 3, paramFile);
+		}
+		//read SpeciesFile
+		else if(strcmp(sp, "SpeciesFile =") == 0){
+			fscanf (paramFile, "%s", param.SpeciesFilename);
 			fgets(sp, 3, paramFile);
 		}
 		//read ciaSystem
@@ -432,6 +437,32 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}		
 		fclose(Pfile);	
 	}
+	if(strcmp(param.SpeciesFilename, "-") != 0){
+		printf("Use Species in file %s\n", param.SpeciesFilename);
+		param.useSpeciesFile = 1;
+		FILE *Speciesfile;
+		Speciesfile = fopen(param.SpeciesFilename, "r");
+		if(Speciesfile == NULL){
+			printf("Error: Species file not found: %s\n", param.SpeciesFilename);
+			return 0;
+		}
+
+		char b[160];
+		double abundance;
+		int er;
+		for(int i = 0; i < 1000000; ++i){
+			er = fscanf(Speciesfile, "%s %lf", b, &abundance);
+			if(er <= 0){
+				param.nSpecies = i;
+				break;
+			}
+			if(i == 1000000 - 1){
+				printf("Error: too many lines in Speciesfile %s\n", param.SpeciesFilename);
+				return 0;
+			}
+		}		
+		fclose(Speciesfile);	
+	}
 	if(strcmp(param.ciaSystem, "-") != 0){
 		param.useCia = 1;
 	}
@@ -491,12 +522,25 @@ __host__ int readPFile(Param &param, double *P_h){
 	return 1;
 }
 
+__host__ int readSpeciesFile(Param &param, char (*SpeciesN_h)[160], double *SpeciesA_h){
+	FILE *Speciesfile;
+	Speciesfile = fopen(param.SpeciesFilename, "r");
+	int er;
+	for(int i = 0; i < param.nSpecies; ++i){
+		er = fscanf(Speciesfile, "%s %lf", SpeciesN_h[i], &SpeciesA_h[i]);
+printf("Species: %s %g\n", SpeciesN_h[i], SpeciesA_h[i]);
+		if(er <= 0) return 0;
+	}
+	fclose(Speciesfile);	
+	return 1;
+}
+
 // ******************************************************************
 //This Function reads the Hitran or Hitemp data files
 //Author Simon Grimm
 //January 2015
 // *******************************************************************
-__host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double qalphaL, int NL, FILE *dataFile){
+__host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double qalphaL, int NL, FILE *dataFile, double Sscale, double meanMass){
 
 	double gammaAir, gammaSelf;
 	double mass;
@@ -515,7 +559,9 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		fread(&gammaSelf, sizeof(double), 1, dataFile);
 		fread(&L.n_h[i], sizeof(double), 1, dataFile);
 		double Q = 0.0;
-		int Qcheck = 0;
+		int Qcheck = 0;	
+		double Sscale1 = Sscale;
+		double Abundance = 1.0;
 //printf("%d |%s|\n", i, cid);
 		for(int j = 0; j < m.nISO; ++j){
 //if(i < 10) printf("%d |%s|%s|\n", i, m.ISO[j].cid, cid);
@@ -523,6 +569,11 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 			if(strcmp(cid, m.ISO[j].cid) == 0){
 
 				mass = m.ISO[j].m / def_NA;
+				Abundance = m.ISO[j].Ab;
+				if(param.units == 0){
+					Abundance *= m.ISO[j].m / meanMass;
+					Sscale1 *= m.ISO[j].m / meanMass;
+				}
 				Q = part.Q[j];
 				Qcheck = 1;
 			}
@@ -534,7 +585,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
-		L.S_h[i] = S / Q;
+		L.S_h[i] = S / Q * Abundance * Sscale1;
 		L.ID_h[i] = i % def_maxlines;
 //if(i < 10) printf("%d %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], L.EL_h[i], 0.0, Q);
 		
@@ -546,9 +597,14 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
-__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int NL, FILE *dataFile){
+__host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, int NL, FILE *dataFile, double Sscale, double meanMass){
 
 	double mass = m.ISO[0].m / def_NA;
+	double Abundance = m.ISO[0].Ab;
+	if(param.units == 0){
+		Abundance *= m.ISO[0].m / meanMass;
+		Sscale *= m.ISO[0].m / meanMass;
+	}
 	double Q = part.Q[0];
 	double S, A;
 	double GammaN = 0.0; 	//natural broadening parameter
@@ -569,7 +625,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		L.n_h[i] = m.defaultn;
 
 		L.ID_h[i] = i % def_maxlines;
-		L.S_h[i] = S / Q;
+		L.S_h[i] = S / Q * Abundance * Sscale;
 // if(i < 100) printf("%d %g %g %g %g %g %g %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i], EL, exp(-c * L.nu_h[i]), Q, GammaN, L.vy_h[i], exp(-c * EL));
 
 //if(i < 10000) printf("%d %g %g %g\n", i, L.nu_h[i], L.S_h[i], L.ialphaD_h[i]);		
@@ -579,7 +635,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 }
 
 
-__host__ int readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, int Nx, double T, double P, double meanMass){
+__host__ int readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, int Nx, double T, double P){
 
 	FILE *ciaFile;
 	ciaFile = fopen(cia.dataFilename, "r");
@@ -687,7 +743,7 @@ __host__ int readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, i
 		}	
 		else{
 			K_h[i] *= rho1; // K in cm^2 / molecule
-			K_h[i] *=def_NA / cia.mass1; //K in cm^2 / g  //should be masss of he in h2he
+			K_h[i] *=def_NA / cia.mass1; //K in cm^2 / g //should be masss of he in h2he
 			K_h[i] += param.kmin;
 		}
 	}

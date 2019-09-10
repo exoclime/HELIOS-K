@@ -480,7 +480,7 @@ __global__ void lnK_kernel(double *K_d, int NL){
 }
 
 // ****************************************
-// This kernel computes  exp(f(x)) using the Chebyshev coefficients
+// This kernel computes exp(f(x)) using the Chebyshev coefficients
 // calculated previosly and stored in b_d.
 // The kernel must be called at least with def_NmaxSample threads, the number of
 // chebyshev coefficients
@@ -625,7 +625,7 @@ __host__ void SimpsonCoefficient(){
 // ****************************************
 // This kernel computes the terms needed for the Planck and Rosseland means. 
 // It computes also the denominators. For the Planck mean it would be
-// int_0^infty (2 h nu^3 / c^2 /(exp(hv/(kBT)) - 1) dnu  = 2 kB^4 T^4 / ( h^3 c^2) pi^4/15
+// int_0^infty (2 h nu^3 / c^2 /(exp(hv/(kBT)) - 1) dnu = 2 kB^4 T^4 / ( h^3 c^2) pi^4/15
 // but here we compute it also numerically to estimate the error.
 //
 // Author: Simon Grimm
@@ -683,7 +683,7 @@ __global__ void IntegrateMean_kernel(double *Pmn_d, double *Rmn_d, double *x_d, 
 		}
 		else{
 			//Trapezoid rule for unequal spaced x
-			if(idy + k  + 1 < NL){
+			if(idy + k + 1 < NL){
 				if(idx == 0) a_s[idy] += 0.5 * ((Pmn_d[idy + k] * K_d[idy + k]) + (Pmn_d[idy + k + 1] * K_d[idy + k + 1])) * (x_d[idy + k + 1] - x_d[idy + k]);
 				if(idx == 1){
 					if(K_d[idy + k] != 0.0 && K_d[idy + k + 1] != 0.0) a_s[idy] += 0.5 * ((Rmn_d[idy + k] / K_d[idy + k]) + (Rmn_d[idy + k + 1] / K_d[idy + k + 1])) * (x_d[idy + k + 1] - x_d[idy + k]);

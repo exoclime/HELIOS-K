@@ -3,6 +3,7 @@ T = 100.0
 P = 1.0
 PFile = -
 Species Name = 01_hit16
+SpeciesFile = -
 ciaSystem = -
 pathToData = data/
 numin = 0.0

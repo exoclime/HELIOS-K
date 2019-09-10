@@ -25,7 +25,7 @@
 #endif
 
 
-#define VERSION 1.71
+#define VERSION 1.72
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -75,7 +75,6 @@ struct Molecule{
 	int nStates;		//Number of states in EXOMOL linelist
 	int ntcol;		//Number of columns in transition files
 	int npfcol;		//number of columns in partition function file
-	double meanMass;
 	double defaultL;	//default value for Lorentz half width for EXOMOL
 	double defaultn;	//default value for temperature exponent for EXOMOL
 	int version;
@@ -107,6 +106,9 @@ struct Param{
 	char path[300];
 	char pathK[300];
 	char mParamFilename[400];
+	char SpeciesFilename[160];
+	int nSpecies;
+	int useSpeciesFile; 
 	int dataBase;
 	double numin;
 	double numax;

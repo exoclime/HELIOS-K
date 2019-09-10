@@ -329,6 +329,7 @@ parameters are listed here, the order can not be changed.
  * P: Pressure in Atmospheres
  * PFile: A '-' ignores this option, otherwise this option specifies a filename which contains multiple values for P
  * Species Name: The name of the molecule or atomic param file. e.g. 01_hit16 or 1H2-16O__BT2
+ * SpeciesFile: A '-' ignores this option, otherwise this option specifies a filename which contains multiple species for gas mixtures
  * ciaSystem: A '-' ignores this option, otherwise a cia system is read here. supported are H2-H2, H2-H2_eq, H2_H2_norm, H2-He, H2-He_eq,
   H2-He_norm, H2-CH4_eq, H2-CH4_norm and H2-H.
  * pathToData: The location where the HITRAN or HITEMP data files are located, e.g. pathToData = ../HITEMP/ , pathToData = /data/HITEMP/ or empty when the files are in the same directory  pathToData = 
@@ -440,6 +441,17 @@ For example:
 10.0
 100.0
 ```
+
+# The Species file option #
+This option must be used to calculate opacities for gas mixtures, containing multiple species.
+The File contains in the two columns the species name, and the number fraction.
+
+For example:
+```
+01_hit16	0.9
+05_hit16	0.1
+```
+This example will produce an opacitiy with 90% H2O and 10% CO.
 
 # Output Files #
 Different Output files are written, depending to the set values in the `param.dat` file
