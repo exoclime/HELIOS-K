@@ -353,7 +353,8 @@ parameters are listed here, the order can not be changed.
  * binsfile: A '-' ignores this option, otherwise this option specifies a filename which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
  * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
  * kmin: minimal value for the opacity function
- * qalphaL: q value in the Lorentz half width q = Pself / P
+ * qalphaL: q value in the Lorentzian half width q = Pself / P
+ * gammaF: scaling factor for the Lorentzian half width gamma factor, gamma = gamma * gammaF
  * doMean: Calculate the Planck and Rosseland opacity means
  * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
  * ReplaceFile: When set to 1, then all output files are overwritten, when set to 0 then the data is appended to the existing files.
@@ -385,6 +386,7 @@ Instead of using the parameter file, some arguments can also be passed as consol
  * \-kmin `<double>` : kmin
  * \-dev `<int>` : Device number (For multiple GPU systems)
  * \-q `<double>` : qalphaL
+ * \-gammaF `<double>` : gammaF
  * \-Mean `<int>` : doMean
 
 where `<c>`is a string, `<double>` a floating point number, and `<int>`an integer.
@@ -432,7 +434,7 @@ For example:
 ```
 
 # The P file option #
-When a `PFile` name is given in the `pram.dat` file, then this file is used to read multiple values for P. This option is useful to speed up the performance, 
+When a `PFile` name is given in the `param.dat` file, then this file is used to read multiple values for P. This option is useful to speed up the performance, 
 because multiple reads from the data files can be avoided. Too many entries in the Pfile can lead to a memory shortage.
 
 For example:

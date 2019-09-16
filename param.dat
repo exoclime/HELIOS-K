@@ -25,6 +25,7 @@ binsFile = -
 OutputEdgesFile = -
 kmin = 0.0
 qalphaL = 1.0
+gammaF = 1.0
 doMean = 0
 Units = 0
 ReplaceFiles = 1

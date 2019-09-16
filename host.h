@@ -251,6 +251,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			fscanf (paramFile, "%lf", &param.qalphaL);
 			fgets(sp, 3, paramFile);
 		}
+		//read gammaF
+		else if(strcmp(sp, "gammaF =") == 0){
+			fscanf (paramFile, "%lf", &param.gammaF);
+			fgets(sp, 3, paramFile);
+		}
 		//read doMean
 		else if(strcmp(sp, "doMean =") == 0){
 			fscanf (paramFile, "%d", &param.doMean);
@@ -348,6 +353,9 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 		}
 		else if(strcmp(argv[i], "-q") == 0){
 			param.qalphaL = atof(argv[i + 1]);
+		}
+		else if(strcmp(argv[i], "-gammaF") == 0){
+			param.gammaF = atof(argv[i + 1]);
 		}
 		else if(strcmp(argv[i], "-dev") == 0){
 			param.dev = atoi(argv[i + 1]);
@@ -537,6 +545,7 @@ printf("Species: %s %g\n", SpeciesN_h[i], SpeciesA_h[i]);
 
 // ******************************************************************
 //This Function reads the Hitran or Hitemp data files
+//The gammaF factor scales the gamma term in the Lorentzian half width
 //Author Simon Grimm
 //January 2015
 // *******************************************************************
@@ -584,6 +593,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 		}
 
 		L.vy_h[i] = (1.0 - qalphaL) * gammaAir + qalphaL * gammaSelf;
+		L.vy_h[i] *= param.gammaF;
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
 		L.S_h[i] = S / Q * Abundance * Sscale1;
 		L.ID_h[i] = i % def_maxlines;
@@ -594,6 +604,7 @@ __host__ int readFile(Param param, Molecule &m, Partition &part, Line &L, double
 }
 // ******************************************************************
 //This Function reads the prepared Exomol files (use prepareExomol.cpp)
+//The gammaF factor scales the gamma term in the Lorentzian half width
 //Author Simon Grimm
 //August 2016
 // *******************************************************************
@@ -622,6 +633,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		L.ialphaD_h[i] = def_c * sqrt( mass / (2.0 * def_kB * param.T));
 		L.A_h[i] = A / (4.0 * M_PI * def_c) + GammaN / (4.0 * M_PI * def_c);
 		L.vy_h[i] = m.defaultL;
+		L.vy_h[i] *= param.gammaF;
 		L.n_h[i] = m.defaultn;
 
 		L.ID_h[i] = i % def_maxlines;

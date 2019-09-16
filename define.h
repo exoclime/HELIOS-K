@@ -51,7 +51,9 @@
 
 //default values of parameters
 #define def_qALPHA_L 0.5	//q value in the Lorentz half width q = Pself / P
+#define def_gammaF 1.0		//scaling factor for Lorentzian halfwidth
 #define def_PROFILE 1		//1 = Voigt, 2 = Lorentz, 3 = Gauss, 4 = cross section
+
 
 struct Isotopologue{
 	int id;			//id in HITRAN notation
@@ -138,6 +140,7 @@ struct Param{
 	int replaceFiles;
 	int RLOW;
 	int profile;
+	double gammaF;
 };
 
 struct Line{

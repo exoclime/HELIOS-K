@@ -336,6 +336,7 @@ return 0;
 	param.nbins = 0;
 	param.kmin = 0.0;
 	param.qalphaL = def_qALPHA_L;
+	param.gammaF = def_gammaF;
 	param.doMean = 0;
 	param.units = 0;	
 	param.replaceFiles = 0;
@@ -547,6 +548,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		}
 		fprintf(infofile, "kmin = %g\n", param.kmin);
 		fprintf(infofile, "qalphaL = %g\n", param.qalphaL);
+		fprintf(infofile, "gammaF = %g\n", param.gammaF);
 		fprintf(infofile, "doMean = %d\n", param.doMean);
 		fprintf(infofile, "Units = %d\n", param.units);
 		fprintf(infofile, "Replace files = %d\n", param.replaceFiles);
