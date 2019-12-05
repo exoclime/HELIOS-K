@@ -1,5 +1,15 @@
 #https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19700011342.pdf
 
+'''
+This script generates the HELIOS-K binary files and <species>.param files 
+for NIST line lists
+
+Date: November 2019
+Author: Simon Grimm
+
+'''
+
+
 
 import sys
 import numpy as np
@@ -10,14 +20,14 @@ import pandas
 import argparse
 
 
-def Lines2(Z, I):
+def Lines2(Z, I, printA):
 
-	datafile = "test.dat"
+	datafile = ("NIST_Lines%02d%02d.dat" % (Z, I))
 
 	def_c = 2.99792458e10
 	def_NA =  6.0221412927e23
 
-	masses = np.zeros(100)
+	masses = np.zeros(120)
 
 	with open("masses.txt") as mf:
 		lines = mf.readlines()
@@ -54,7 +64,10 @@ def Lines2(Z, I):
 				w7 = w6.replace(')', '')
 				w8 = w7.split(",")	
 				#print(w1, w2, w4, z, w5, w8, w8[0])
-				masses[z] = float(w8[0])
+				try:
+					masses[z] = float(w8[0])
+				except:
+					masses[z] = 0.0
 
 
 	#for i in range(len(masses)):
@@ -81,6 +94,9 @@ def Lines2(Z, I):
 	nl = 0
 	numax = 0
 
+	if(printA == 1):
+		Afile = open("NIST_A%02d%02d.dat" % (Z, I), "w")
+
 	for i in range(len(A)):
 
 		a = A[i].replace('"', '')
@@ -102,7 +118,8 @@ def Lines2(Z, I):
 		ELowf = float(e)
 		wnf = float(w)
 
-		#print(i, wnf, Af, ELowf, gUPf, Z, masses[Z])
+		if(printA == 1):
+			print(i, wnf, Af, ELowf, gUPf, Z, masses[Z], file = Afile)
 
 		S = gUPf * Af /(8.0 * math.pi * def_c * wnf * wnf * masses[Z] / def_NA);
 
@@ -157,11 +174,14 @@ if __name__ == "__main__":
 		help='Z', default = 1)
 	parser.add_argument('-I', '--I', type=int,
 		help='I', default = 0)
+	parser.add_argument('-printA', '--printA', type=int,
+		help='print A to file', default = 0)
 	
 	args = parser.parse_args()
 
 	Z = args.Z
 	I = args.I
+	printA = args.printA
 
-	Lines2(Z,I)
+	Lines2(Z,I, printA)
 

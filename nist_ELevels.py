@@ -1,5 +1,14 @@
 #https://towardsdatascience.com/controlling-the-web-with-python-6fceb22c5f08
+'''
+This scripts downloads the energy levels from the NIST database.
+it uses geckodriver to navigate the NIST website. See the comments below for using
+geckodriver.
+The script stores the Energy levels in a file NIST_Elevles<Z>>I>.dat
 
+Date: November 2019
+Author: Simon Grimm
+
+'''
 
 
 '''
@@ -61,6 +70,13 @@ def nist(Z, I):
 	submit.click()
 
 
+	url = driver.current_url
+	print(url)
+
+	while(url == 'https://www.doi2bib.org/'):
+		time.sleep(1.0)
+		url = driver.current_url
+		print(url)
 
 
 	lenS = 0
@@ -83,7 +99,7 @@ def nist(Z, I):
 
 
 	s1 = s.replace('"', '')
-	with open("test.dat", "w") as f:
+	with open("NIST_ELevels%02d%02d.dat" % (Z, I), "w") as f:
 	    f.write(s1)
 
 if __name__ == "__main__":

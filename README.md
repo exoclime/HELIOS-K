@@ -263,13 +263,13 @@ This step can be done either manually or by using a script.
  * Automatical download:
     * type `python3 nist_ELevels.py -Z <z> -I <i> `, 
        where `<z>`is the atomic number and `<i>`the ionization state
-    * The script will download the data and store it to `test.dat`.
-    * This script will need a geckodriver to be installed .
+    * The script will download the data and store it in a file `NIST_ELevels<Z><I>.dat`.
+    * This script will need geckodriver to be installed.
  
 ### Step 2 Generate partition functions ###
 
-Run  `python3 nist_partition.py - -Z <z> -I <i> `. This script will
-read the previously produces file `test.dat`.
+Run  `python3 nist_partition.py -Z <z> -I <i> `. This script will
+read the previously produces file `NIST_ELevels<Z><I>.dat`, and writes a '*.pf' file.
 
 ### Step3 Download atomic masses ###
  * visit `https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses`
@@ -293,6 +293,7 @@ This step can be done either manually or by using a script.
     * remove all  `?, =, [,],( and )`from the file
  * Automatical download:
     * type `python3 nist_Lines.py -Z <z> -I <i> `.
+    * The script will download the data and store it in a file `NIST_Lines<Z><I>.dat`.
     * This script will need a geckodriver to be installed .
 
 ### Step 5 Create `< species >.param` file and binary files ###
@@ -358,7 +359,6 @@ parameters are listed here, the order can not be changed.
  * doMean: Calculate the Planck and Rosseland opacity means
  * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
  * ReplaceFile: When set to 1, then all output files are overwritten, when set to 0 then the data is appended to the existing files.
- * RLOW: When this is set to 1, then the line wings are computed with a 10 times coarser resolution.
  * profile: 1 = Voigt, 2 = Lorentz, 3 = Gauss, 4 = cross section
 
 # Console Arguments #

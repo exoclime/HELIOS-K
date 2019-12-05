@@ -228,12 +228,19 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 	#correct now wrong number of files
 	#if(M == "12C-1H3-37Cl__OYT"):
 	#	n=64
+	if(M == "31P2-1H2__Cis"):
+		n=6
+	if(M == "31P2-1H2__Trans"):
+		n=6
 
 	if(n != nn):
 		print("Error, number of .trans files do not agree %d %d" % (n, nn))
 		return 0
 
 	l=np.zeros(n, dtype=int)
+	jarray=np.zeros(n+1, dtype=int)
+	for nu in range(n + 1):
+		jarray[nu] = nu * s
 
 	transFile = ''
 
@@ -309,13 +316,15 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 					if(er != 0):
 						print("Error in download .trans file")
 						exit()
-					else:
-						com = "bzip2 -d %s.bz2" % (transFile4)
-						er=os.system(com)
+
 					if(dg == 4):
-						com = "mv %s %s" % (transFile4, transFile)
+						com = "mv %s.bz2 %s.bz2" % (transFile4, transFile)
 						er=os.system(com)
 					
+					com = "bzip2 -d %s.bz2" % (transFile)
+					er=os.system(com)
+
+
 					if(getTimeStamp == 1):
 						#first check if file exists
 						com = "wget -S --spider %s" % url
@@ -416,7 +425,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 			print("%d" % l[nu], file = f)
 		print("Line file limits :", file = f)
 		for nu in range(n + 1):
-			print("%d" % (nu * s), file = f)
+			print("%d" % (jarray[nu]), file = f)
 		print("#ExoMol :", file = f)
 		print("Number of states = %d" % lStates, file = f)	
 		print("Number of columns in transition files = %s" % ntcol, file = f)

@@ -1,4 +1,14 @@
 #https://towardsdatascience.com/controlling-the-web-with-python-6fceb22c5f08
+'''
+This scripts downloads the line lists from the NIST database.
+it uses geckodriver to navigate the NIST website. See the comments below for using
+geckodriver.
+
+Date: November 2019
+Author: Simon Grimm
+
+'''
+
 
 
 
@@ -63,6 +73,15 @@ def Lines(Z, I):
 	submit = driver.find_element_by_name("submit")
 	submit.click()
 
+
+	url = driver.current_url
+	print(url)
+
+	while(url == 'https://www.doi2bib.org/'):
+		time.sleep(1.0)
+		url = driver.current_url
+		print(url)
+
 	lenS = 0
 	lenSOld = 0
 	for t in range(10):
@@ -87,7 +106,7 @@ def Lines(Z, I):
 	s4 = s3.replace(']', '')
 	s5 = s4.replace('(', '')
 	s6 = s5.replace(')', '')
-	with open("test.dat", "w") as f:
+	with open("NIST_Lines%02d%02d.dat" % (Z, I), "w") as f:
 	    f.write(s6)
 
 
