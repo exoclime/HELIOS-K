@@ -148,30 +148,30 @@ elt0=[
 
 
 
-def main(Download, Z, I):
+def main(Download, Z, I, printA):
 
 
 	if(Z == -1 and I == -1):
 		# all species in Z and I
 		for i in range(0,100):
 			for j in range(0,3):
-				processLineList(i, j, Download)
+				processLineList(i, j, Download, printA)
 
 	if(Z == -1 and I > -1):
 		# all species in Z
 		for i in range(0,100):
-			processLineList(i, I, Download)
+			processLineList(i, I, Download, printA)
 
 	if(Z > -1 and I == -1):
 		# all species in I
 		for j in range(0,3):
-			processLineList(Z - 1, j, Download)
+			processLineList(Z - 1, j, Download, printA)
 
 	if(Z > -1 and I > -1):
-		processLineList(Z - 1, I, Download)
+		processLineList(Z - 1, I, Download, printA)
 	
 
-def processLineList(i, j, Download):
+def processLineList(i, j, Download, printA):
 	# i molecule id 0 to 100
 	# j ion id 0 to 3
 
@@ -233,8 +233,14 @@ def processLineList(i, j, Download):
 	ELowOld =  -1.0
 	EUPOld = -1.0
 
+
+	if(printA == 1):
+		Afile = open("gfall_A%02d%02d.dat" % (Z, I), "w")
+
 	with open(filename) as f:
 		line = f.readlines()
+
+
 
 
 		for ii in range(len(line)):
@@ -394,7 +400,9 @@ def processLineList(i, j, Download):
 				S = math.pi * e * e * 10.0**loggf * NA / (c * c * me * mass) * 10.0**hyperFineFraction * 10.0**ISOFraction
 
 				A = 8.0 * math.pi * wn * wn * 10.0**loggf / gUP * math.pi * e * e / (me * c)
-				
+			
+				if(printA == 1):
+					print(i, wn, A, ELow, gUP, Z, mass, file = Afile)	
 				#print(wn, 1.0E7/wn, loggf, ELow, EUP, JLow, JUP, GammaR, isotope, element, mass, 10.0**GammaR, A, 10.0**hyperFineFraction, 10.0**ISOFraction)
 
 
@@ -465,13 +473,17 @@ if __name__ == '__main__':
 		help='Z', default = -1)
 	parser.add_argument('-I', '--I', type=int,
 		help='I', default = -1)
+	parser.add_argument('-printA', '--printA', type=int,
+		help='print A to file', default = 0)
+
 
 	args = parser.parse_args()
 	Download = int(args.Download)
 	Z = args.Z
 	I = args.I
+	printA = args.printA
 
 	print("Download: %d,  Z:%d, I: %d" % (Download, Z, I))
 
-	main(Download, Z, I)
+	main(Download, Z, I, printA)
 
