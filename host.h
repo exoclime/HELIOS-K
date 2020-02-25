@@ -626,7 +626,7 @@ __host__ int readFileExomol(Param param, Molecule &m, Partition &part, Line &L, 
 		fread(&L.EL_h[i], sizeof(double), 1, dataFile);		
 		fread(&A, sizeof(double), 1, dataFile);		
 		//include the following for Kurucz
-		if(param.dataBase == 30){
+		if(param.dataBase == 30 || param.dataBase == 31){
 			fread(&GammaN, sizeof(double), 1, dataFile);		
 		}
 //if(i < 100) printf("%d %g %g %g %g\n", i, L.nu_h[i], S, EL, A);
