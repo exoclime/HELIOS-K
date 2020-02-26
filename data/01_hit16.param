@@ -1,22 +1,22 @@
 Database = 0
 Molecule number = 1
-Name = hit16
-Number of Isotopes = 7
+Name = 01_hit16
+Number of Isotopologues = 7
 #ID Abundance      Q(296K)   g     Molar Mass(g)  partition file :
-11 0.997317        174.58    1     18.010565      q1.txt
-12 0.002000        176.05    1     20.014811      q2.txt
-13 3.718840E-04    1052.14   6     19.01478       q3.txt
-14 3.106930E-04    864.74    6     19.01674       q4.txt
-15 6.230030E-07    875.57    6     21.020985      q5.txt
-16 1.158530E-07    5226.79   36    20.020956      q6.txt
-17 2.419700E-07    1027.80   1     20.022915      q129.txt
+ 11     0.997317   174.58     1      18.010565 q1.txt
+ 12        0.002   176.05     1   20.014810999 q2.txt
+ 13  0.000371884  1052.14     6       19.01478 q3.txt
+ 14  0.000310693   864.74     6       19.01674 q4.txt
+ 15  6.23003e-07   875.57     6      21.020985 q5.txt
+ 16  1.15853e-07  5226.79    36   20.020955999 q6.txt
+ 17   2.4197e-08   1027.8     1      20.022915 q129.txt
 Number of columns in partition File = 2
-Number of line/transition files = 1 
+Number of line/transition files = 1
 Number of lines per file :
 304225
 Line file limits :
 0
-30000
+25711
 #ExoMol :
 Number of states = 0
 Number of columns in transition files = 0
