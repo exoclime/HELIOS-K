@@ -7,4 +7,4 @@ This is the documentation for HELIOS-K.
 Reference/API
 =============
 
-.. automodapi:: heliosk
+.. automodapi:: helios_k
