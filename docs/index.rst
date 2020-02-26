@@ -9,8 +9,8 @@ Setup
 .. toctree::
   :maxdepth: 1
 
-  heliosk/compilation.rst
-  heliosk/param.rst
+  helios_k/compilation.rst
+  helios_k/param.rst
 
 Databases
 ~~~~~~~~~
@@ -18,11 +18,11 @@ Databases
 .. toctree::
   :maxdepth: 1
 
-  heliosk/exomol.rst
-  heliosk/hitran.rst
-  heliosk/hitemp.rst
-  heliosk/kurucz.rst
-  heliosk/nist.rst
+  helios_k/exomol.rst
+  helios_k/hitran.rst
+  helios_k/hitemp.rst
+  helios_k/kurucz.rst
+  helios_k/nist.rst
 
 Running HELIOS-K
 ~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ Running HELIOS-K
 .. toctree::
   :maxdepth: 1
 
-  heliosk/heliosk.rst
+  helios_k/heliosk.rst
 
 Citations
 ~~~~~~~~~
