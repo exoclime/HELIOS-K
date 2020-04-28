@@ -10,7 +10,7 @@
 
 from bs4 import BeautifulSoup
 import requests
-
+import sys
 
 #this function extracts the ranges of the .trans files
 #it returns the ranges, or -1 when the ranges are not equal
@@ -69,11 +69,14 @@ def main():
 	page = requests.get(url).text
 	soup = BeautifulSoup(page, "html.parser")
 
-	List = soup.find_all('a', attrs={"class" : "list-group-item link-list-group-item"})
+	List = soup.find_all('a', attrs={"class" : "list-group-item link-list-group-item molecule_link"})
 
 	efile = open("Exomol_species.dat", "w", buffering=1)
 	exfile = open("Exomol_xsec_species.dat", "w", buffering=1)
 
+	if(len(List) == 0):
+		print("Error, no molecules found, maybe the Exomol homepage has changed")
+		sys.exit(100)
 
 	#Molecule
 	for i in range(len(List)):
@@ -97,7 +100,7 @@ def main():
 			page2 = requests.get(url2).text
 			soup2 = BeautifulSoup(page2, "html.parser")
 
-			List2 = soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item"})
+			List2 = soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item "})
 
 			#Line list
 			for k in range(len(List2)):

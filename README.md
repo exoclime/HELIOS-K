@@ -152,8 +152,8 @@ The ExoMol files can be downloaded with the python script `exomol.py` as:
 python3 exomol.py -M <id>
 ``` 
 
-where `<id>` is the full  species name e.g. `1H2-16O__BT2`. The script needs the file `Exomol_species.dat` to be availalbe.
-If this file needs to be updated, it can be done by running `python3 exomol2.py`.
+where `<id>` is the full  species name e.g. `1H2-16O__BT2`. The script needs the file `Exomol_species.dat` to be available.
+If the `Exomol_species.dat` file needs to be updated, it can be recreated by running `python3 exomol2.py`.
 
 The `exomol.py` script automatically writes the `< species >.param` files for each molecule.
 
@@ -255,14 +255,15 @@ This step can be done either manually or by using a script.
 
  * For manuall download:
     * visit `https://physics.nist.gov/PhysRefData/ASD/levels_form.html`
-    * enter the species and ionization state, e.g. Z= 3 0
+    * enter the species and ionization state, e.g. `Z= 3 0`
     * select the Format output to Tab-delimited
-    * select the `g` option 
-    * store the data in a file called `test.dat`
+    * select the `g` option
+    * click on `Retrieve Data`
+    * store the data in a file called `NIST_ELevels<Z><I>.dat`
     * remove all `"` in the file
  * Automatical download:
     * type `python3 nist_ELevels.py -Z <z> -I <i> `, 
-       where `<z>`is the atomic number and `<i>`the ionization state
+       where `<z>`is the atomic number and `<i>`the ionization state, e.g. -Z 3 -I 0
     * The script will download the data and store it in a file `NIST_ELevels<Z><I>.dat`.
     * This script will need geckodriver to be installed.
  
@@ -283,13 +284,13 @@ This step can be done either manually or by using a script.
 
  * For manuall download:
     * https://physics.nist.gov/PhysRefData/ASD/lines_form.html
-    * enter the species and ionization state, e.g. Z= 3 0
+    * enter the species and ionization state in the `Spectrum field`, e.g. `Z= 3 0`
     * select `Show Advanced Settings`
     * select the Format output to csv
-    * Select `Wavenumbers (in cm-1)`
+    * Select `Wavenumbers (in cm-1)` (keep `Observed`, `Ritz` and `Uncertainties`selected)
     * Select `Wavenumbers (all wavelenghts)`
     * Select `g`
-    * click `Retrieve Data`and store the data in a file called `test.dat`.
+    * click `Retrieve Data`and store the data in a file called `NIST_Lines<Z><I>.dat`.
     * remove all  `?, =, [,],( and )`from the file
  * Automatical download:
     * type `python3 nist_Lines.py -Z <z> -I <i> `.
@@ -349,7 +350,7 @@ parameters are listed here, the order can not be changed.
  * nTr: nummber of points used for the transmission function
  * dTr: spacing of the points used for the transmission function in exp space: m_i = exp((i - nTr/2) * dTr)
  * doStoreFullK: When set to one, then the full unsorted opacity function is written to the file `Out_<name>.dat`.
- * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file `Out_<name>_bin.dat`. When set to 2, then the per bin sorted opacity function is written to different bin files `Out_<name>_bin< bin number >.dat`.
+ * doStoreSK: When set to 1, then the per bin sorted opacity function is written to the file `Out_<name>_bin.dat`. When set to 2, then the per bin sorted opacity function is written to a different bin files `Out_<name>_bin< bin number >.dat`.
  * nbins: number of bins
  * binsfile: A '-' ignores this option, otherwise this option specifies a filename which contains the edges of the bins, which can be irregular. This option overrides the numin, numax and nbins arguments.
  * OutputEdgesFile: A '-' ignores this option, otherwise this option specifies a file name which contains the edges of the output locations in y for each bin.
@@ -360,6 +361,7 @@ parameters are listed here, the order can not be changed.
  * Units: The units of the opacities. 0: cm^2 / g, 1: cm^2 / molecule
  * ReplaceFile: When set to 1, then all output files are overwritten, when set to 0 then the data is appended to the existing files.
  * profile: 1 = Voigt, 2 = Lorentz, 3 = Gauss, 4 = cross section
+ * doTuning: 1 = use self tuning routines to specify the kernels with best parameters.
 
 # Console Arguments #
 Instead of using the parameter file, some arguments can also be passed as console arguments. The console arguments have the highest priority and are overwriting the arguments of the `param.dat` file. The options are:
@@ -388,7 +390,7 @@ Instead of using the parameter file, some arguments can also be passed as consol
  * \-q `<double>` : qalphaL
  * \-gammaF `<double>` : gammaF
  * \-Mean `<int>` : doMean
-
+ * \-tuning `<int>` : doTuning
 where `<c>`is a string, `<double>` a floating point number, and `<int>`an integer.
 
 # Code parameters #
