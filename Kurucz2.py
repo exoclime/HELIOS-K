@@ -6,6 +6,11 @@ import argparse
 
 # This script downloads the Kurucz gfnew files and produces the binary and *.param files for HELIOS-K
 
+# Download 0: no download from the Kurucz database 
+# Download 1: download full datafile and partition files
+# Download 2: download only partition files
+
+
 # Date: May 2019
 # Author: Simon Grimm
 
@@ -204,6 +209,7 @@ def processLineList(i, j, Download, printA):
 			print(com)
 			os.system(com)
 
+	if(Download >= 1):
 		#download partition function
 
 		exists = os.path.isfile("partfn%.4d.dat" % el[0])

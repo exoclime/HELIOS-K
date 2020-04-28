@@ -1,0 +1,23 @@
+TestH001	Nist 2600
+TestH001	Nist 2600 	units 1
+TestH003	Hit16 01
+TestH004	Hit16 01	cutMode 1
+TestH005	Hit16 01	cutMode 2
+TestH006	Hit16 01	cut 0
+TestH007	Nist 2600	cutMode 1
+TestH008	Hit16 01	profile 2
+TestH009	Hit16 01	profile 3
+TestH010	Hit16 01	profile 4
+TestH011	Hit16 01	Nnu per bin 300000
+TestH012	Hit16 01	Nnu per bin 100	bins.dat file
+TestH013	Hit16 01	3 bins storeSK 1
+TestH014	Hit16 01	3 bins storeSK 2
+TestH015	Hit16 01	3 bins storeSK 1 Resampling 1
+TestH016	gfnew2600
+TestH017	BT2
+
+TestNIST001	nist_ELevels.py nist_partition.py nist_Lines.py nist_Lines2.py
+TestKurucz001	Kurucu2.py
+TestExomol001	exomol2.py 	get Exomol_species.dat file and compare BT2 entry with old file
+TestExomol002	exomol.py, prepareExomol
+TestHitran001   hitran	

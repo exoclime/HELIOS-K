@@ -24,7 +24,7 @@ def main(t0, t1, out):
 		d = k0[i] - k1[i]
 
 		if(d > 1.0e-10):
-			print(nu0[i], d, k0[i], k1[i])
+			print('%.20g %.20g %.20g %.20g' % (nu0[i], d, k0[i], k1[i]))
 			check = 0
 			
 		if(out == 1):
