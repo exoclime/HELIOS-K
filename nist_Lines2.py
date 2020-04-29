@@ -11,7 +11,6 @@ Author: Simon Grimm
 
 
 
-import sys
 import numpy as np
 import struct
 import math

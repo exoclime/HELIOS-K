@@ -11,7 +11,6 @@ Author: Simon Grimm
 
 
 import numpy as np
-import sys
 import argparse
 
 def gTot():
