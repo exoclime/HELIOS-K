@@ -419,11 +419,12 @@ __global__ void rescale_kernel(int *Nxmin_d, double *K_d, double *K2_d, int Nxb,
 				//inverse transformation
 					double Ki = kmin;
 					if(k + idy >= Nxmin){
-						double ii = (k + idy - Nxmin) * (Nxb - 1) / ((double)(Nxb - Nxmin - 1));
+						double ii = (k + idy - Nxmin) / ((double)(Nxb - Nxmin - 1)) * (Nxb - 1);
 						if(ii >= Nxb - 1) ii = 0.999999 * (Nxb - 1);
 						int il = ii / ((double)(Nxb)) * Nxb; //left index
 						double Kl = K_d[idx * Nxb + il];
 						double Kr = K_d[idx * Nxb + il + 1];
+//if((idy + k) % 100 == 0) printf("%d %g %d %d %g\n", idy + k, ii, k + idy - Nxmin, Nxb - 1, (k + idy - Nxmin) / ((double)(Nxb - Nxmin - 1)) * (Nxb - 1));
 						Ki = Kl + (Kr - Kl) * (ii - il);
 					}
 					K2_d[idx * Nxb + k + idy] = Ki;
@@ -647,10 +648,16 @@ __global__ void Mean_kernel(double *x_d, double *Pmn_d, double *Rmn_d, double T,
 		double e1 = e - 1.0;
 
 		double B = t1 / e1;
-		double dB_dT = t1 * t2 * e / (T * e1 * e1);
+		//double dB_dT = t1 * t2 * e / (T * e1 * e1);
+		//for low T, e and e1 are inf, therefore dB_dt = -nan
+		// e/ (T e1 e1) = e / (T (e-1)(e-1)) = e / (T (e^2 -2e + 1))
+		// = 1.0 / (T (e - 2 + 1/e))
+		double dB_dT = t1 * t2 / (T * (e - 2.0 + 1.0/e));
+
 
 		Pmn_d[id] = B;
 		Rmn_d[id] = dB_dT;
+//printf("%d %g %g | %g %g %g\n", id, Pmn_d[id], Rmn_d[id], t1, t2, e);
 
 		if(nu == 0.0){
 			Pmn_d[id] = 0.0;
