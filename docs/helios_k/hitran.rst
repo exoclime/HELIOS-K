@@ -3,8 +3,8 @@ HITRAN
 
 .. _HITRAN_step_1:
 
-Step 1 Species Properties
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 1, Species Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The HELIOS-K repository provides a file called ``Hitran_species.dat``.
 This file contains all available species of the Hitran database. The
@@ -25,15 +25,17 @@ isotopogolues from H20.
 The ``Hitran_species.dat`` file can be recreated or updated with the
 python code ``hitran2.py``.
 
-Step 2 Download the files
-~~~~~~~~~~~~~~~~~~~~~~~~~
+.. _HITRAN_step_2:
+
+Step 2, Download the files
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The line list files must be downloaded manually from `www.hitran.org``,
 and note that it is necessary to register on the hitran homepage. To
-download the files select DataAcess and then Line-by-line. Select the
+download the files, select DataAcess and then Line-by-line. Select the
 molecule id, select all isotopologues (single isotopologues can be
 filtered later), leave wavenumber range blank, select ``.par``\ file and
-store the file on your computer with the name ``Molecule-ID_hit16.par``,
+store the file on your computer under the name ``Molecule-ID_hit16.par``,
 e.g. 01_hit16.par for H2O.
 
 Download all the necessary partition function files from
@@ -41,13 +43,12 @@ Documentation/Isotogologues.
 
 .. _step-3-create-<-species->.param-file-and-binary-files:
 
-Step 3 create ``< species >.param`` file and binary files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3, create ``<species_name>.param`` file and the binary files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All necessary files can be created with:
 
 ::
-
 
    ./hitran -M < molecule ID > -ISO < isotopologue ID > -in < line list name >
 
@@ -58,9 +59,9 @@ that was given in the download section, e.g. ``hit16``.
 
 .. _step-4-data-path-1:
 
-Step 4 data path
-~~~~~~~~~~~~~~~~
+Step 4, data path
+~~~~~~~~~~~~~~~~~
 
 Include the path of the directory, which contains the obtained binary
-files, the ``.txt`` partition function files and the ``.param`` file to
+files, the ``*.txt`` partition function files and the ``*.param`` file to
 the HELIOS-K ``param.dat`` file under ``pathToData``.

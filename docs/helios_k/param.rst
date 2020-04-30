@@ -1,19 +1,40 @@
-The ``.param`` file
--------------------
+Download and pre-process the line lists
+=======================================
+
+If you have access to the hulk cluster at the University of Bern, then most of
+the pre-processed files are already available at
+``scratch/sigrimm/EXOMOL/``.
+This files can then directly be used for the opacity calculation.
+
+
+Supported line list databases
+-----------------------------
+
+HELIOS-K supports line lists from the HITRAN, HITEMP, ExoMol, Kurucz,
+NIST or VALD databases. Before the line lists can be used, they have to
+be pre-processed into binary files. This saves in generally memory space
+and allows HELIOS-K to read the line lists in a more efficient way.
+
+The next section explains the structure of these files and shows how to generate them.
+
+
+
+The ``<species_name>.param`` file
+=================================
 
 Each molecular or atomic species, which will be processed by HELIOS-K,
-needs a ``< species >.param`` file, which contains all necessary
+needs a ``<species_name>.param`` file, which contains all necessary
 information about the line list database and other parameters.
+This files can be generated automatically by the tools in HELIOS-K. However, when using a different database, they must be created manually.
 
-Scripts are provided to download and pre-process some of the databases.
 
 Example
-+++++++
+-------
 
-An example for Hitran 2016 H2O is given in the ``01_hit16.param`` file,
+An example for HITRAN 2016 H2O is given in the ``data/01_hit16.param`` file,
 which is shown here and available in the repository. An example for
-HITEMP and ExoMol are given in the repository files
-``01_HITEMP2010.param`` and ``1H2-16O__BT2.param``.
+HITEMP and ExoMol are also given in the repository files
+``data/01_HITEMP2010.param`` and ``data/1H2-16O__BT2.param``.
 
 ::
 
@@ -47,11 +68,15 @@ HITEMP and ExoMol are given in the repository files
    -------------------------------------------------------------------
 
 Arguments
-+++++++++
+---------
 
--  Database: It must be indicated which database format to use. 0 =
-   Hitran or HITEMP, 2 = ExoMol, 30 = Kurucz atomic database, 31 = NIST
-   atomic database.
+-  Database: Indicate which database format to use.
+
+  -  0 = Hitran or HITEMP
+  -  2 = ExoMol
+  - 30 = Kurucz atomic database
+  - 31 = NIST  atomic database
+
 -  Molecule number: This is optional and follows an old HELIOS-K
    version.
 -  Name: name of the line list files.
@@ -59,23 +84,23 @@ Arguments
 -  For each isotopologue:
 
    -  ID: for Hitran and HITEMP the same as the first three digits in
-      the ``.par`` files e.g. 11 for 1H2-18O, or 2A for 18O-13C-17O.
+      the ``*.par`` files e.g. 11 for 1H2-18O, or 2A for 18O-13C-17O.
       For ExoMol no meaning.
-   -  Abundance, only relevant for more than one isotopologue
-   -  Reference partition function value. For Exomol no meaning.
-   -  Molar mass in g
-   -  Name of partition function file
+   -  Abundance, only relevant for more than one isotopologue.
+   -  Reference partition function value. For ExoMol no meaning.
+   -  Molar mass in g.
+   -  Name of the partition function file.
 
--  Number of columns in partition file.
+-  Number of columns in the partition function file.
 -  Number of line/transition files.
 -  Line by line, the number of molecular/atomic lines in each
-   line/transition files
--  Line by line, the wavenumber range of each line/transition files,
-   must have one more entry than the number of line/transition files to
+   line/transition file.
+-  Line by line, the wavenumber range of each line/transition file,
+   must have one entry more than the number of line/transition files to
    cover all lower and upper range limits.
--  Number of states in ExoMol ``.states``\ files. For other databases no
+-  Number of states in ExoMol ``*.states``\ files. For other databases no
    meaning.
--  Number of columns in ExoMol ``.trans``\ files. For other databases no
+-  Number of columns in ExoMol ``*.trans``\ files. For other databases no
    meaning.
 -  ExoMol default value of Lorentzian half-width. For other databases no
    meaning.
