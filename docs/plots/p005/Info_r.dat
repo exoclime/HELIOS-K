@@ -1,0 +1,72 @@
+Name:GeForce GTX 980, Major:5, Minor:2, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:16, Clock Rate:1215500, Memory Clock Rate:3505000, Global Memory:4230807552, Shared memory per block: 49152
+
+Version: 2
+Using device 0
+
+Runtime Version 10000
+Driver Version 10010
+GIT Describe: v1.0-106-g0a02741
+Build Date: Fr 1. Mai 16:06:36 CEST 2020
+Build Path: /home/sigrimm/kCalc
+Build System: Linux mashu 4.15.0-96-generic #97-Ubuntu SMP Wed Apr 1 03:25:46 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+Build Compute Capability: SM=52
+
+name = r
+T = 500
+P = 1
+cia System = -
+pathToData = ../../../data/
+numin = 25000
+numax = 30000
+dnu = 10
+Nnu per bin = 500
+Number of points: 500
+cutMode = 0
+cut = 25
+doResampling = 1
+nC = 20
+doTransmission = 0
+nTr = 1000
+dTr =  0.05
+doStoreFullK = 0
+pathToK = 
+dostoreK = 1
+nbins = 1
+kmin = 1e-07
+qalphaL = 1
+gammaF = 1
+doMean = 0
+Units = 0
+Replace files = 1
+profile = 1
+doTuning = 1
+def_TOL = 1.43e-17
+def_TOLf = 2.48e-12
+def_nthmax = 1048576
+def_nlmax = 32768
+def_maxlines = 1000000
+def_maxfiles = 500
+def_NmaxSample = 100
+
+Species Name = 01_hit16
+dataBase = 0
+Molecule Number = 1
+default L = 0
+default n = 0
+
+File 0 of 1
+Number of lines: 304225
+Time for input:        0.0783212 seconds
+Time for Lines:        0.00574032 seconds
+Time for K(x):         0.00290733 seconds
+
+Time for input total:	 0 seconds
+Time for Lines total:  0 seconds
+Time for K(x) total: 	 0 seconds
+Time for write K(x):   0.000523264 seconds
+Time for mean K(x):    2.0032e-05 seconds
+Time for sort K(x):    0.000138528 seconds
+Time for Resampling:   0.000967648 seconds
+Time for write K(y):   0.000322176 seconds
+Time for Transmission: 1.9616e-05 seconds

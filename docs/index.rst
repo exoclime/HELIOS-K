@@ -48,7 +48,9 @@ OPTIONS
 .. toctree::
   :maxdepth: 1
 
-  helios_k/details.rst
+  helios_k/bins.rst
+  helios_k/resampling.rst
+  helios_k/options.rst
 
 
 Output Files

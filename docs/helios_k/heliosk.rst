@@ -57,8 +57,10 @@ used parameters are listed here, the order can not be changed.
    if cut = 0, then no cutting is performed.
 -  doResampling:
  
-   - 1: all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients are written to the file ``Out_<name>_cbin.dat``.
    - 0: no resampling is done.
+   - 1: all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients from all bins are written to the file ``Out_<name>_cbin.dat``.
+   - 2: all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients from each bin are written to a sepparate file ``Out_<name>_cbin<bin_number>.dat``.
+
 
 -  nC: Number of Chebyshev coefficients use for the resampling.
 -  doTransmission:
@@ -83,7 +85,7 @@ used parameters are listed here, the order can not be changed.
 -  doStoreSK:
    - 0: the resampled opacity function is not written to a file.
    - 1: all bins from the resampled opacity function are written to the same file ``Out_<name>_bin.dat``.
-   - 2: all bins from the resampled opacity function are written to a sepparate file   with names ``Out_<name>_bin< bin number >.dat``.
+   - 2: all bins from the resampled opacity function are written to a sepparate file   with names ``Out_<name>_bin<bin_number>.dat``.
 
 -  nbins: number of bins
 -  binsfile: A '-' ignores this option, otherwise this option specifies
