@@ -1,15 +1,18 @@
 HELIOS-K
 ========
 
-| HELIOS-K is an opacity calculator running on GPUs, by Simon Grimm & Kevin Heng.
-| Developed at the University of Bern.
 
-Introduction
-~~~~~~~~~~~~
+| HELIOS-K calculates opacity functions for planetary atmopheres by using opacity
+  line lists from different databases. Before the opacity functions can be calculated,
+  the line lists need to be downloaded and preprocessed into binary files that can be 
+  read from HELIOS-K. 
+| HELIOS-K provides tools to automatically download and preprocess files from the
+  ExoMol, HITRAN, HITEMP, NIST and Kurucz databases. 
+| HELIOS-K is running on GPUs and require a Nvidia GPU with compute capability of 3.0 or higher.
 
-| HELIOS-K calculates opacity functions for planetary atmopheres by using opacity line lists from different databases. Before the opacity functions can be calculated, the line lists need to be downloaded and preprocessed into binary files that can be read from HELIOS-K. 
-| HELIOS-K provides tools to automatically download and preprocess files from the ExoMol, HITRAN, HITEMP, NIST and Kurucz databases. 
-| HELIOS-K is running on GPUs and require a Nvidia GPU with compute capability of 2.0 or higher.
+
+| Developed by Simon Grimm & Kevin Heng.
+| University of Bern.
 
 Setup
 ~~~~~
@@ -51,6 +54,8 @@ OPTIONS
   helios_k/bins.rst
   helios_k/resampling.rst
   helios_k/options.rst
+  helios_k/transmission.rst
+  helios_k/mean.rst
 
 
 Output Files

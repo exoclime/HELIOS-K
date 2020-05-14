@@ -818,11 +818,11 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.iiLimitsC1_d, (n + def_nlC - 1)/ def_nlC * sizeof(long long int));
 
 	//mapped memory
-	cudaHostAlloc((void **) &L.iiLimitsAT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsALT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsART_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsBT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsCT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsAT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsALT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsART_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsBT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsCT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
 
 	cudaHostGetDevicePointer((void **)&L.iiLimitsAT_d, (void *)L.iiLimitsAT_m, 0);
 	cudaHostGetDevicePointer((void **)&L.iiLimitsALT_d, (void *)L.iiLimitsALT_m, 0);
@@ -891,11 +891,11 @@ __host__ void Alloc2_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.iiLimitsC1_d, (n + def_nlC - 1)/ def_nlC * sizeof(long long int));
 
 	//mapped memory
-	cudaHostAlloc((void **) &L.iiLimitsAT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsALT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsART_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsBT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
-	cudaHostAlloc((void **) &L.iiLimitsCT_m, 2 * sizeof(long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsAT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsALT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsART_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsBT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
+	cudaHostAlloc((void **) &L.iiLimitsCT_m, 2 * sizeof(unsigned long long int), cudaHostAllocDefault);
 
 	cudaHostGetDevicePointer((void **)&L.iiLimitsAT_d, (void *)L.iiLimitsAT_m, 0);
 	cudaHostGetDevicePointer((void **)&L.iiLimitsALT_d, (void *)L.iiLimitsALT_m, 0);

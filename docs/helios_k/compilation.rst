@@ -1,9 +1,12 @@
 Requirements
 ============
 
-| The opacity calculation from HELIOS-K is running on GPUs and require a Nvidia GPU with compute capability of 2.0 or higher. It and can run on Nvidia Tesla, GeForce and Quadro GPUs.
-| The code needs the CUDA toolkit to be installed. This can be downloaded from https://developer.nvidia.com/cuda-downloads.
-| Helper code for downloading the files and preprocessing are written in C++ and Python3. They require the following libraries:
+| The opacity calculation from HELIOS-K is running on GPUs and require a Nvidia GPUi
+ with compute capability of 3.0 or higher. It can run on Nvidia Tesla, GeForce and Quadro GPUs.
+| The code needs the CUDA toolkit to be installed. This can be downloaded from
+ https://developer.nvidia.com/cuda-downloads.
+| Helper code for downloading the files and preprocessing are written in C++ and Python3.
+ They require the following libraries:
 
 - exomol.py and exomol2.py
 
@@ -49,7 +52,7 @@ Requirements
  - argparse
  
 
-Note, when using a computing clusteri, all these libraries can be installed locally in the home directory  with: 
+Note, when using a computing cluster, all these libraries can be installed locally in the home directory  with: 
 
 ::
 

@@ -1658,7 +1658,7 @@ __global__ void iiLimitsCheck(long long int *iiLimitsA0_d,  long long int *iiLim
 }
 
 
-__global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long long int *iiLimits0_d, long long int *iiLimits1_d, long long int *iiLimitsT_d, double *binBoundaries_d, const int NLimits, const double numin, const double dnu, const int Nx, const int useIndividualX, const int nbins, const int Nxb, const int EE){
+__global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long long int *iiLimits0_d, long long int *iiLimits1_d, unsigned long long int *iiLimitsT_d, double *binBoundaries_d, const int NLimits, const double numin, const double dnu, const int Nx, const int useIndividualX, const int nbins, const int Nxb, const int EE){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx;
@@ -1703,8 +1703,12 @@ __global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long l
 		iiLimits0_d[id] = ii00;
 		iiLimits1_d[id] = ii11;
 
-		atomicMin(&iiLimitsT_d[0], ii00);
-		atomicMax(&iiLimitsT_d[1], ii11);
+		unsigned long long int ii00u = (unsigned long long int)(ii00);
+		unsigned long long int ii11u = (unsigned long long int)(ii11);
+
+
+		atomicMin(&iiLimitsT_d[0], ii00u);
+		atomicMax(&iiLimitsT_d[1], ii11u);
 
 //if(id < 10) printf("iilimitsK %d %d %g %g %lld %lld | %lld %lld\n", EE, id, nu00, nu11, ii00, ii11, iiLimitsT_d[0], iiLimitsT_d[1]);
 	}

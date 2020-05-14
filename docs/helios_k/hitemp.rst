@@ -43,3 +43,4 @@ Step 4, data path
 Include the path of the directory, which contains the obtained binary
 files, the ``*.txt`` partition function files and the ``*.param`` file to
 the HELIOS-K ``param.dat`` file under ``pathToData``.
+

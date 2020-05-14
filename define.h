@@ -194,10 +194,10 @@ struct Line{
 	long long int *iiLimitsC0_h, *iiLimitsC0_d;	//limits for Line blocks, min
 	long long int *iiLimitsC1_h, *iiLimitsC1_d;	//limits for Line blocks, max
 
-	long long int *iiLimitsAT_m, *iiLimitsAT_d;	//limits for all blocks, mapped memory
-	long long int *iiLimitsALT_m, *iiLimitsALT_d;	//limits for all blocks, mapped memory
-	long long int *iiLimitsART_m, *iiLimitsART_d;	//limits for all blocks, mapped memory
-	long long int *iiLimitsBT_m, *iiLimitsBT_d;	//limits for all blocks, mapped memory
-	long long int *iiLimitsCT_m, *iiLimitsCT_d;	//limits for all blocks, mapped memory
+	unsigned long long int *iiLimitsAT_m, *iiLimitsAT_d;	//limits for all blocks, mapped memory
+	unsigned long long int *iiLimitsALT_m, *iiLimitsALT_d;	//limits for all blocks, mapped memory
+	unsigned long long int *iiLimitsART_m, *iiLimitsART_d;	//limits for all blocks, mapped memory
+	unsigned long long int *iiLimitsBT_m, *iiLimitsBT_d;	//limits for all blocks, mapped memory
+	unsigned long long int *iiLimitsCT_m, *iiLimitsCT_d;	//limits for all blocks, mapped memory
 
 };

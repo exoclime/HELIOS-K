@@ -11,7 +11,7 @@ from small to large, and mapped to a new parameter y, rangin from 0 to 1.
 When the opcity function has empty parts inside or is not ranging to the full
 bin width, then the sorted opacity function is zero (or kmin, if used) on the
 lower part.
-| relevant parameters for this example:
+| Relevant parameters for this example:
 
  - doResampling = 0
  - doStoreFullK = 1
@@ -30,7 +30,7 @@ lower part.
 
 
 Using a binsfile
-================
+----------------
 
 When a ``binsFile`` name is given in the ``param.dat`` file, then this
 file is used to generate the boundaries of the bins. The bins do not have
@@ -52,7 +52,7 @@ An example of a ``binsFile`` is given below, and the result is shown in :numref:
    25000
    30000
 
-| relevant parameters for this example:
+| Relevant parameters for this example:
 
  - doResampling = 0
  - doStoreFullK = 1
@@ -69,7 +69,7 @@ An example of a ``binsFile`` is given below, and the result is shown in :numref:
 
 
 The output edges option
-=======================
+-----------------------
 
 Instead of writing the -per bin sorted- opacity function with the full resolution in
 wavenumbers, it is possible to print only averaged positions within the bins. 
@@ -84,6 +84,7 @@ An example of a ``outputedgesFile`` is given below, and the result is shown in
 the averaged points can appear to have too high values. 
 
 ::
+
    edges.dat
    ---------
    0.0
@@ -92,7 +93,7 @@ the averaged points can appear to have too high values.
    0.78
    1.0
 
-| relevant parameters for this example:
+| Relevant parameters for this example:
 
  - doResampling = 0
  - doStoreFullK = 1

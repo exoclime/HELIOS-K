@@ -1121,16 +1121,16 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						int nlLimitsB = (NL + def_nlB - 1)/ def_nlB;
 						int nlLimitsC = (NL + def_nlC - 1)/ def_nlC;
 
-						L.iiLimitsAT_m[0] = Nx + 1;
-						L.iiLimitsAT_m[1] = -1;
-						L.iiLimitsALT_m[0] = Nx + 1;
-						L.iiLimitsALT_m[1] = -1;
-						L.iiLimitsART_m[0] = Nx + 1;
-						L.iiLimitsART_m[1] = -1;
-						L.iiLimitsBT_m[0] = Nx + 1;
-						L.iiLimitsBT_m[1] = -1;
-						L.iiLimitsCT_m[0] = Nx + 1;
-						L.iiLimitsCT_m[1] = -1;
+						L.iiLimitsAT_m[0] = Nx;
+						L.iiLimitsAT_m[1] = 0ull;
+						L.iiLimitsALT_m[0] = Nx;
+						L.iiLimitsALT_m[1] = 0ull;
+						L.iiLimitsART_m[0] = Nx;
+						L.iiLimitsART_m[1] = 0ull;
+						L.iiLimitsBT_m[0] = Nx;
+						L.iiLimitsBT_m[1] = 0ull;
+						L.iiLimitsCT_m[0] = Nx;
+						L.iiLimitsCT_m[1] = 0ull;
 
 						//A
 						nuLimits_kernel<<< nlLimitsA, min(def_nlA, 1024), 0, nuLimitsStream[0] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsA0_d, L.nuLimitsA1_d, param.numin, param.numax, def_nlA, NL, param.profile, 10);
@@ -1162,23 +1162,23 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						cudaEventSynchronize(iiLimitsEvent);
 
 
-						int nTA = L.iiLimitsAT_m[1] - L.iiLimitsAT_m[0];
-						int nTAL = L.iiLimitsALT_m[1] - L.iiLimitsALT_m[0];
-						int nTAR = L.iiLimitsART_m[1] - L.iiLimitsART_m[0];
-						int nTB = L.iiLimitsBT_m[1] - L.iiLimitsBT_m[0];
-						int nTC = L.iiLimitsCT_m[1] - L.iiLimitsCT_m[0];
+						unsigned long long int nTA = L.iiLimitsAT_m[1] - L.iiLimitsAT_m[0];
+						unsigned long long int nTAL = L.iiLimitsALT_m[1] - L.iiLimitsALT_m[0];
+						unsigned long long int nTAR = L.iiLimitsART_m[1] - L.iiLimitsART_m[0];
+						unsigned long long int nTB = L.iiLimitsBT_m[1] - L.iiLimitsBT_m[0];
+						unsigned long long int nTC = L.iiLimitsCT_m[1] - L.iiLimitsCT_m[0];
 
-						if(L.iiLimitsAT_m[1] < 0) nTA = 0;
-						if(L.iiLimitsALT_m[1] < 0) nTAL = 0;
-						if(L.iiLimitsART_m[1] < 0) nTAR = 0;
-						if(L.iiLimitsBT_m[1] < 0) nTB = 0;
-						if(L.iiLimitsCT_m[1] < 0) nTC = 0;
+						if(ntA < 0) ntA = 0ll;
+						if(ntAL < 0) ntAL = 0ll;
+						if(ntAR < 0) ntAR = 0ll;
+						if(ntB < 0) ntB = 0ll;
+						if(ntC < 0) ntC = 0ll;
 						
-						printf("A Limits %lld %lld | %d\n", L.iiLimitsAT_m[0], L.iiLimitsAT_m[1], nTA);
-						printf("AL Limits %lld %lld | %d\n", L.iiLimitsALT_m[0], L.iiLimitsALT_m[1], nTAL);
-						printf("AR Limits %lld %lld | %d\n", L.iiLimitsART_m[0], L.iiLimitsART_m[1], nTAR);
-						printf("B Limits %lld %lld | %d\n", L.iiLimitsBT_m[0], L.iiLimitsBT_m[1], nTB);
-						printf("C Limits %lld %lld | %d\n", L.iiLimitsCT_m[0], L.iiLimitsCT_m[1], nTC);
+						printf("A Limits %lld %lld | %lld\n", L.iiLimitsAT_m[0], L.iiLimitsAT_m[1], nTA);
+						printf("AL Limits %lld %lld | %lld\n", L.iiLimitsALT_m[0], L.iiLimitsALT_m[1], nTAL);
+						printf("AR Limits %lld %lld | %lld\n", L.iiLimitsART_m[0], L.iiLimitsART_m[1], nTAR);
+						printf("B Limits %lld %lld | %lld\n", L.iiLimitsBT_m[0], L.iiLimitsBT_m[1], nTB);
+						printf("C Limits %lld %lld | %lld\n", L.iiLimitsCT_m[0], L.iiLimitsCT_m[1], nTC);
 
 
 

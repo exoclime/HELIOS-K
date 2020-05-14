@@ -14,7 +14,7 @@ files.
 An example of a resampled bin is shown in :numref:`figresample`.
 
 
-| relevant parameters for this example:
+| Relevant parameters for this example:
 
  - doResampling = 1
  - nC = 20

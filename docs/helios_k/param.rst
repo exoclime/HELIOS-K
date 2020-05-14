@@ -20,12 +20,13 @@ The next section explains the structure of these files and shows how to generate
 
 
 The ``<species_name>.param`` file
-=================================
+---------------------------------
 
 Each molecular or atomic species, which will be processed by HELIOS-K,
 needs a ``<species_name>.param`` file, which contains all necessary
 information about the line list database and other parameters.
-This files can be generated automatically by the tools in HELIOS-K. However, when using a different database, they must be created manually.
+This files can be generated automatically by the tools in HELIOS-K. However, when using
+a different database, they must be created manually.
 
 
 Example

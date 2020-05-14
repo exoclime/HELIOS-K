@@ -1,20 +1,20 @@
 Output Files
 ============
 
-Different Output files are written, depending to the values in the
+Different Output files are written, depending on the values in the
 ``param.dat`` file
 
 .. _info_<name>.dat:
 
 ``Info_<name>.dat``
-===================
+-------------------
 
 Contains all used parameters, and timing information
 
 .. _out_<name>.dat:
 
 ``Out_<name>.dat``
-==================
+------------------
 
 It contains nu and K(nu), where nu are the wavenumbers and K(nu) is the
 full opacity function. When the ``PFile`` option is used, then the files
@@ -23,7 +23,7 @@ contain also the values of T and P.
 .. _out_<name>_bin.dat:
 
 ``Out_<name>_bin.dat``
-======================
+----------------------
 
 It contains the values of y and K(y) per bin. y goes from 0 to 1. K(y)
 is the per bin sorted opacity function. The bins are separated by two
@@ -45,7 +45,7 @@ files with names ``Out_<name>_bin< bin index>.dat`` .
 .. _out_<name>_cbin.dat:
 
 ``Out_<name>_cbin.dat``
-=======================
+-----------------------
 
 It contains the Chebyshev coefficients of the per bins sorted natural
 logarithm of the opacity functions in the format
@@ -103,7 +103,7 @@ sorted opacity function from the Chebyshev coefficients:
 .. _out_<name>_tr.dat:
 
 ``Out_<name>_tr.dat``
-=====================
+---------------------
 
 It contains m and T. m is the column mass, m_i = exp((i - nTr/2) \* dTr)
 T is the Transmission function Int_0^1 exp(-K(y)m) dy When the PFile is
@@ -114,7 +114,7 @@ files with names ``Out_<name>_tr< bin index>.dat``
 .. _out_<name>_mean.dat:
 
 ``Out_<name>_mean.dat``
-=======================
+-----------------------
 
 | When the argument doMean is set to one, this file contains the Planck
   and Rosseland means. They are computed over the entire range in

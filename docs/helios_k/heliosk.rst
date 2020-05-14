@@ -19,7 +19,7 @@ followed by optional console arguments, which are listed later.
 
 
 HELIOS-K Input parameters
-=========================
+-------------------------
 
 The input parameters can be specified in the ``param.dat`` file. The
 used parameters are listed here, the order can not be changed.
@@ -58,14 +58,22 @@ used parameters are listed here, the order can not be changed.
 -  doResampling:
  
    - 0: no resampling is done.
-   - 1: all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients from all bins are written to the file ``Out_<name>_cbin.dat``.
-   - 2: all the sorted opacity functions per bin are resampled with a Chebyshev polynomial, and the coefficients from each bin are written to a sepparate file ``Out_<name>_cbin<bin_number>.dat``.
+   - 1: all the sorted opacity functions per bin are resampled with a Chebyshev
+     polynomial, and the coefficients from all bins are written to the file ``Out_<name>_cbin.dat``.
+   - 2: all the sorted opacity functions per bin are resampled with a Chebyshev
+
+ polynomial, and the coefficients from each bin are written to a sepparate file
+ ``Out_<name>_cbin<bin_number>.dat``.
 
 
 -  nC: Number of Chebyshev coefficients use for the resampling.
--  doTransmission:
-   - 1: the transmission function per bin is computed for various numbers of m, and written to the file ``Out_<name>_tr.dat``.
+-  doTransmission: Compute the transmission function tau for a set of column masses m.
+
    - 0: no transmission function is calculated.
+   - 1: the transmission function per bin is calculated,
+     and all bins are written to the file ``Out_<name>_tr.dat``.
+   - 2: the transmission function per bin is calculated,
+     and each bin is written to a sepparate file ``Out_<name>_tr<bin_number>.dat``.
 
 -  nTr: nummber of points used for the transmission function.
 -  dTr: spacing of the points used for the transmission function in exp
@@ -83,9 +91,12 @@ used parameters are listed here, the order can not be changed.
 - pathToK: path and filename to read in an opacity function. When left blank, then no file is read in.
 
 -  doStoreSK:
+
    - 0: the resampled opacity function is not written to a file.
-   - 1: all bins from the resampled opacity function are written to the same file ``Out_<name>_bin.dat``.
-   - 2: all bins from the resampled opacity function are written to a sepparate file   with names ``Out_<name>_bin<bin_number>.dat``.
+   - 1: all bins from the resampled opacity function are written to the same
+     file ``Out_<name>_bin.dat``.
+   - 2: all bins from the resampled opacity function are written to a sepparate
+     file   with names ``Out_<name>_bin<bin_number>.dat``.
 
 -  nbins: number of bins
 -  binsfile: A '-' ignores this option, otherwise this option specifies
@@ -128,7 +139,7 @@ used parameters are listed here, the order can not be changed.
 
 
 Console Arguments
-=================
+-----------------
 
 Instead of using the parameter file, some arguments can also be set
 by console arguments. The console arguments have the highest priority
@@ -166,10 +177,10 @@ where ``<c>``\ is a string, ``<double>`` a floating point number, and
 
 
 Code parameters
-===============
+---------------
 
 The file define.h contains the physical parameters and some code
-parameters. After changing some entry, the code needs to be recompiled.
+parameters. After changing some entry here, the code needs to be recompiled.
 The code parameters are:
 
 -  def_TOL: Tolerance parameter in the Voigt function. See Algorithm 916
