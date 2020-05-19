@@ -26,7 +26,7 @@
 #endif
 
 
-#define VERSION 2.0
+#define VERSION 2.01
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -44,7 +44,7 @@
 #define def_TOLF 2.48e-12f		//Tolerance in the Voigt function
 #define def_nthmax 1048576   		//Maximum number of threads for line and sort kernels
 #define def_nlmax 32768			//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
-#define def_maxlines 1000000ll		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines, must be long long int type
+#define def_maxlines 1048576ll		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines, must be long long int type
 #define def_maxfiles 500		//maximum number of files per molecule
 #define def_doTuning 1			//use the self-tuning routines
 
@@ -194,10 +194,10 @@ struct Line{
 	long long int *iiLimitsC0_h, *iiLimitsC0_d;	//limits for Line blocks, min
 	long long int *iiLimitsC1_h, *iiLimitsC1_d;	//limits for Line blocks, max
 
-	unsigned long long int *iiLimitsAT_m, *iiLimitsAT_d;	//limits for all blocks, mapped memory
-	unsigned long long int *iiLimitsALT_m, *iiLimitsALT_d;	//limits for all blocks, mapped memory
-	unsigned long long int *iiLimitsART_m, *iiLimitsART_d;	//limits for all blocks, mapped memory
-	unsigned long long int *iiLimitsBT_m, *iiLimitsBT_d;	//limits for all blocks, mapped memory
-	unsigned long long int *iiLimitsCT_m, *iiLimitsCT_d;	//limits for all blocks, mapped memory
+	long long int *iiLimitsAT_m, *iiLimitsAT_d;	//limits for all blocks, mapped memory
+	long long int *iiLimitsALT_m, *iiLimitsALT_d;	//limits for all blocks, mapped memory
+	long long int *iiLimitsART_m, *iiLimitsART_d;	//limits for all blocks, mapped memory
+	long long int *iiLimitsBT_m, *iiLimitsBT_d;	//limits for all blocks, mapped memory
+	long long int *iiLimitsCT_m, *iiLimitsCT_d;	//limits for all blocks, mapped memory
 
 };

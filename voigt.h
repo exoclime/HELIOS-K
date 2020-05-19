@@ -1658,7 +1658,7 @@ __global__ void iiLimitsCheck(long long int *iiLimitsA0_d,  long long int *iiLim
 }
 
 
-__global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long long int *iiLimits0_d, long long int *iiLimits1_d, unsigned long long int *iiLimitsT_d, double *binBoundaries_d, const int NLimits, const double numin, const double dnu, const int Nx, const int useIndividualX, const int nbins, const int Nxb, const int EE){
+__global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long long int *iiLimits0_d, long long int *iiLimits1_d, double *binBoundaries_d, const int NLimits, const double numin, const double dnu, const int Nx, const int useIndividualX, const int nbins, const int Nxb, const int EE){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx;
@@ -1703,17 +1703,96 @@ __global__ void iiLimits_kernel(double *nuLimits0_d, double* nuLimits1_d, long l
 		iiLimits0_d[id] = ii00;
 		iiLimits1_d[id] = ii11;
 
-		unsigned long long int ii00u = (unsigned long long int)(ii00);
-		unsigned long long int ii11u = (unsigned long long int)(ii11);
-
-
-		atomicMin(&iiLimitsT_d[0], ii00u);
-		atomicMax(&iiLimitsT_d[1], ii11u);
-
-//if(id < 10) printf("iilimitsK %d %d %g %g %lld %lld | %lld %lld\n", EE, id, nu00, nu11, ii00, ii11, iiLimitsT_d[0], iiLimitsT_d[1]);
+//if(id == 683) printf("iilimitsK %d %d %g %g %lld %lld\n", EE, id, nu00, nu11, ii00, ii11);
 	}
 
 }
+
+// ********************************************************
+// This kernel finds the minimum and maxmun of the iiLimits
+// and stores them in iiLimitsT
+// it uses a parallel reduction sum with only 1 thread block
+
+//Author: Simon Grimm
+//Date: May 2020
+// ********************************************************
+template <int nb>
+__global__ void iiLimitsMax_kernel(long long int *iiLimits0_d, long long int *iiLimits1_d, long long int *iiLimitsT_d, const int Nx, const int nl){
+
+
+	int idy = threadIdx.x;
+
+	__shared__ long long int ii00_s[nb];
+	__shared__ long long int ii11_s[nb];
+
+	ii11_s[idy] = 0LL;
+	ii00_s[idy] = (long long int)(Nx);
+
+	__syncthreads();
+
+	for(int k = 0; k < nl; k += nb){
+		if(idy + k < nl){
+			ii00_s[idy] = min(ii00_s[idy], iiLimits0_d[idy + k]);
+			ii11_s[idy] = max(ii11_s[idy], iiLimits1_d[idy + k]);
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 512){
+		if(idy < 256){
+			ii00_s[idy] = min(ii00_s[idy], ii00_s[idy + 256]);
+			ii11_s[idy] = max(ii11_s[idy], ii11_s[idy + 256]);
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 256){
+		if(idy < 128){
+			ii00_s[idy] = min(ii00_s[idy], ii00_s[idy + 128]);
+			ii11_s[idy] = max(ii11_s[idy], ii11_s[idy + 128]);
+		}
+	}
+	__syncthreads();
+
+	if(nb >= 128){
+		if(idy < 64){
+			ii00_s[idy] = min(ii00_s[idy], ii00_s[idy + 64]);
+			ii11_s[idy] = max(ii11_s[idy], ii11_s[idy + 64]);
+		}
+	}
+	__syncthreads();
+	if(idy < 32){
+		volatile long long int *ii00 = ii00_s;
+		volatile long long int *ii11 = ii11_s;
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 32]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 32]);
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 16]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 16]);
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 8]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 8]);
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 4]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 4]);
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 2]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 2]);
+
+		ii00[idy] = min(ii00[idy], ii00[idy + 1]);
+		ii11[idy] = max(ii11[idy], ii11[idy + 1]);
+	}
+	__syncthreads();
+
+	if(idy == 0){
+		iiLimitsT_d[0] = ii00_s[0];
+		iiLimitsT_d[1] = ii11_s[0];
+	}
+
+}
+
+
 
 //This kernel finds the minimal and maximal index in wavenumbers for each block of lines
 //EE 10: A

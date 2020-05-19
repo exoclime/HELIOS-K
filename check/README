@@ -15,6 +15,7 @@ TestH014	Hit16 01	3 bins storeSK 2
 TestH015	Hit16 01	3 bins storeSK 1 Resampling 1
 TestH016	gfnew2600
 TestH017	BT2
+TestH018	BT2		cutMode 1
 
 TestNIST001	nist_ELevels.py nist_partition.py nist_Lines.py nist_Lines2.py
 TestKurucz001	Kurucu2.py

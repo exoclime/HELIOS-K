@@ -20,7 +20,7 @@ f= open(checkfile,"w")
 '''
 ############################################################
 #compare Heliok with older Version
-for i in range(1,18):
+for i in range(1,19):
 #for i in range(10,16):
 	os.chdir('TestH%03d' % i)
 	print('TestH%03d' % i, file = f)

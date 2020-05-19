@@ -1117,41 +1117,39 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						//Compute the opacity function K(x)
 						//************************************
 
-						int nlLimitsA = (NL + def_nlA - 1)/ def_nlA;
-						int nlLimitsB = (NL + def_nlB - 1)/ def_nlB;
-						int nlLimitsC = (NL + def_nlC - 1)/ def_nlC;
+						int nlLimitsA = (NL + def_nlA - 1) / def_nlA;
+						int nlLimitsB = (NL + def_nlB - 1) / def_nlB;
+						int nlLimitsC = (NL + def_nlC - 1) / def_nlC;
 
-						L.iiLimitsAT_m[0] = Nx;
-						L.iiLimitsAT_m[1] = 0ull;
-						L.iiLimitsALT_m[0] = Nx;
-						L.iiLimitsALT_m[1] = 0ull;
-						L.iiLimitsART_m[0] = Nx;
-						L.iiLimitsART_m[1] = 0ull;
-						L.iiLimitsBT_m[0] = Nx;
-						L.iiLimitsBT_m[1] = 0ull;
-						L.iiLimitsCT_m[0] = Nx;
-						L.iiLimitsCT_m[1] = 0ull;
 
 						//A
 						nuLimits_kernel<<< nlLimitsA, min(def_nlA, 1024), 0, nuLimitsStream[0] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsA0_d, L.nuLimitsA1_d, param.numin, param.numax, def_nlA, NL, param.profile, 10);
-						iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[0] >>> (L.nuLimitsA0_d, L.nuLimitsA1_d, L.iiLimitsA0_d, L.iiLimitsA1_d, L.iiLimitsAT_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 10);
+						iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[0] >>> (L.nuLimitsA0_d, L.nuLimitsA1_d, L.iiLimitsA0_d, L.iiLimitsA1_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 10);
+
+						iiLimitsMax_kernel< 512 > <<< 1, 512 >>> (L.iiLimitsA0_d, L.iiLimitsA1_d, L.iiLimitsAT_d, Nx, nlLimitsA);
 
 						if(param.profile == 1){	//only for voigt profiles
 							//AL
 							nuLimits_kernel<<< nlLimitsA, min(def_nlA, 1024), 0, nuLimitsStream[1] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsAL0_d, L.nuLimitsAL1_d, param.numin, param.numax, def_nlA, NL, param.profile, 11);
-							iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[1] >>> (L.nuLimitsAL0_d, L.nuLimitsAL1_d, L.iiLimitsAL0_d, L.iiLimitsAL1_d, L.iiLimitsALT_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 11);
+							iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[1] >>> (L.nuLimitsAL0_d, L.nuLimitsAL1_d, L.iiLimitsAL0_d, L.iiLimitsAL1_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 11);
+
+							iiLimitsMax_kernel< 512 > <<< 1, 512 >>> (L.iiLimitsAL0_d, L.iiLimitsAL1_d, L.iiLimitsALT_d, Nx, nlLimitsA);
 
 							//AR
 							nuLimits_kernel<<< nlLimitsA, min(def_nlA, 1024), 0, nuLimitsStream[2] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsAR0_d, L.nuLimitsAR1_d, param.numin, param.numax, def_nlA, NL, param.profile, 12);
-							iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[2] >>> (L.nuLimitsAR0_d, L.nuLimitsAR1_d, L.iiLimitsAR0_d, L.iiLimitsAR1_d, L.iiLimitsART_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 12);
+							iiLimits_kernel <<< (nlLimitsA + 127) / 128, 128, 0, nuLimitsStream[2] >>> (L.nuLimitsAR0_d, L.nuLimitsAR1_d, L.iiLimitsAR0_d, L.iiLimitsAR1_d, binBoundaries_d, nlLimitsA, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 12);
 
+							iiLimitsMax_kernel< 512 > <<< 1, 512 >>> (L.iiLimitsAR0_d, L.iiLimitsAR1_d, L.iiLimitsART_d, Nx, nlLimitsA);
 							//B
 							nuLimits_kernel<<< nlLimitsB, min(def_nlB, 1024), 0, nuLimitsStream[3] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsB0_d, L.nuLimitsB1_d, param.numin, param.numax, def_nlB, NL, param.profile, 20);
-							iiLimits_kernel <<< (nlLimitsB + 127) / 128, 128, 0, nuLimitsStream[3] >>> (L.nuLimitsB0_d, L.nuLimitsB1_d, L.iiLimitsB0_d, L.iiLimitsB1_d, L.iiLimitsBT_d, binBoundaries_d, nlLimitsB, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 20);
+							iiLimits_kernel <<< (nlLimitsB + 127) / 128, 128, 0, nuLimitsStream[3] >>> (L.nuLimitsB0_d, L.nuLimitsB1_d, L.iiLimitsB0_d, L.iiLimitsB1_d, binBoundaries_d, nlLimitsB, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 20);
 
+							iiLimitsMax_kernel< 512 > <<< 1, 512 >>> (L.iiLimitsB0_d, L.iiLimitsB1_d, L.iiLimitsBT_d, Nx, nlLimitsB);
 							//C
 							nuLimits_kernel<<< nlLimitsC, min(def_nlC, 1024), 0, nuLimitsStream[4] >>> (L.nu_d, L.ialphaD_d, L.vy_d, L.vcut2_d, L.nuLimitsC0_d, L.nuLimitsC1_d, param.numin, param.numax, def_nlC, NL, param.profile, 30);
-							iiLimits_kernel <<< (nlLimitsC + 127) / 128, 128, 0, nuLimitsStream[4] >>> (L.nuLimitsC0_d, L.nuLimitsC1_d, L.iiLimitsC0_d, L.iiLimitsC1_d, L.iiLimitsCT_d, binBoundaries_d, nlLimitsC, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 30);
+							iiLimits_kernel <<< (nlLimitsC + 127) / 128, 128, 0, nuLimitsStream[4] >>> (L.nuLimitsC0_d, L.nuLimitsC1_d, L.iiLimitsC0_d, L.iiLimitsC1_d, binBoundaries_d, nlLimitsC, param.numin, param.dnu, Nx, param.useIndividualX, param.nbins, param.Nxb, 30);
+
+							iiLimitsMax_kernel< 512 > <<< 1, 512 >>> (L.iiLimitsC0_d, L.iiLimitsC1_d, L.iiLimitsCT_d, Nx, nlLimitsC);
 						}	
 
 
@@ -1162,11 +1160,11 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						cudaEventSynchronize(iiLimitsEvent);
 
 
-						unsigned long long int nTA = L.iiLimitsAT_m[1] - L.iiLimitsAT_m[0];
-						unsigned long long int nTAL = L.iiLimitsALT_m[1] - L.iiLimitsALT_m[0];
-						unsigned long long int nTAR = L.iiLimitsART_m[1] - L.iiLimitsART_m[0];
-						unsigned long long int nTB = L.iiLimitsBT_m[1] - L.iiLimitsBT_m[0];
-						unsigned long long int nTC = L.iiLimitsCT_m[1] - L.iiLimitsCT_m[0];
+						long long int nTA = L.iiLimitsAT_m[1] - L.iiLimitsAT_m[0];
+						long long int nTAL = L.iiLimitsALT_m[1] - L.iiLimitsALT_m[0];
+						long long int nTAR = L.iiLimitsART_m[1] - L.iiLimitsART_m[0];
+						long long int nTB = L.iiLimitsBT_m[1] - L.iiLimitsBT_m[0];
+						long long int nTC = L.iiLimitsCT_m[1] - L.iiLimitsCT_m[0];
 
 						if(ntA < 0) ntA = 0ll;
 						if(ntAL < 0) ntAL = 0ll;
@@ -1179,7 +1177,6 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						printf("AR Limits %lld %lld | %lld\n", L.iiLimitsART_m[0], L.iiLimitsART_m[1], nTAR);
 						printf("B Limits %lld %lld | %lld\n", L.iiLimitsBT_m[0], L.iiLimitsBT_m[1], nTB);
 						printf("C Limits %lld %lld | %lld\n", L.iiLimitsCT_m[0], L.iiLimitsCT_m[1], nTC);
-
 
 
 						if(nTA > 0){
@@ -1204,6 +1201,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 							cudaMemcpyAsync(L.iiLimitsC0_h, L.iiLimitsC0_d, nlLimitsC * sizeof(long long int), cudaMemcpyDeviceToHost, nuLimitsStream[4]);
 							cudaMemcpyAsync(L.iiLimitsC1_h, L.iiLimitsC1_d, nlLimitsC * sizeof(long long int), cudaMemcpyDeviceToHost, nuLimitsStream[4]);
 						}
+
 
 
 						double timeOld = time[0];
