@@ -197,7 +197,9 @@ os.chdir('TestKurucz001')
 print('TestKurucz001', file = f)
 os.system('pwd')
 
-er = os.system('python3 ../../Kurucz2.py -D 1 -Z 26 -I 0')
+er = os.system('python3 ../../Kurucz3.py -D 1 -Z 26 -I 0')
+er = os.system('python3 ../../KuruczHyper.py -D 1 -Z 26 -I 0')
+er = os.system('python3 ../../Kurucz4.py -D 1 -Z 26 -I 0')
 
 er = filecmp.cmp('gfnew2600.param', '../../data/gfnew2600.param')
 print("error", er)

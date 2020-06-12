@@ -68,6 +68,14 @@ Output Files
 
   helios_k/output.rst
 
+Atomic Opacities plots
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. toctree::
+  :maxdepth: 1
+
+  helios_k/atoms.rst
+
 Citations
 ~~~~~~~~~
 

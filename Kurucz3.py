@@ -4,14 +4,16 @@ import struct
 import os
 import argparse
 
-# This script downloads the Kurucz gfnew files and produces the binary and *.param files for HELIOS-K
+# This script downloads the Kurucz gfnew files and calculates the line intensities
+# It writes data files to prepare the HELIOS-K binary files
+
 
 # Download 0: no download from the Kurucz database 
 # Download 1: download full datafile and partition files
 # Download 2: download only partition files
 
 
-# Date: May 2019
+# Date: June 2020
 # Author: Simon Grimm
 
 
@@ -20,12 +22,18 @@ import argparse
 Wavenumber = 1			#1: Wavenumber, 2: vacuum wavelength, 3: air based wavelenght
 
 
+FilterHyperfine = 0
+#1 filter out hyperfine splittin
+#0 use linelist as it is
+
 #filename="gfall08oct17.dat"
 #filename="gfallvac08oct17.dat"
 
 filename="gfallwn08oct17.dat"
 #filename="gf2600.all"
+
 #filename="hyper1900.all"
+#Wavenumber = 3			#1: Wavenumber, 2: vacuum wavelength, 3: air based wavelenght
 
 
 
@@ -192,10 +200,8 @@ def processLineList(i, j, Download, printA):
 
 	name ="gfnew%.4d" % el[0]
 	#name ="hyper%.4d" % el[0]
-	NISTname ="NIST%.4d" % el[0]
 
-	outname = "%s.bin" % name
-	pfname = "%s.pf" % name
+	outname = "%s.dat" % name
 	mass = el[2]
 	
 	print(el[0], els, el[1], outname, mass)
@@ -226,9 +232,7 @@ def processLineList(i, j, Download, printA):
 			os.system(com)
 	
 
-	output_file = open(outname,"wb")
-	pf_filename = "partfn%.4d.dat" % el[0]
-
+	output_file = open(outname,"w")
 
 	numax = 0.0
 	nl = 0	
@@ -360,27 +364,23 @@ def processLineList(i, j, Download, printA):
 					HF = 10.0**hyperFineFraction
 				else:
 					HF += 10.0**hyperFineFraction
-
+						
 					
-				'''	
 				# use this block to filer out hyperfine splits
 				###################################
-				hyperFineFraction = 0.0
-				ISOFraction = 0.0
-				wn += 0.001 * hyperShiftL
-				wn -= 0.001 * hyperShiftU
-				hyperShiftU = 0.0
-				hyperShiftL = 0.0
-				if(sameLabel == 1):
-					continue
+				if(FilterHyperfine == 1):
+					hyperFineFraction = 0.0
+					ISOFraction = 0.0
+					wn += 0.001 * hyperShiftL
+					wn -= 0.001 * hyperShiftU
+					hyperShiftU = 0.0
+					hyperShiftL = 0.0
+					if(sameLabel == 1):
+						continue
 				##################################
-				'''
+				
 
-				#print(element, wn, isotope, GammaR, 10.0**GammaR, A, gamma)
-				#print(element, wn, isotope,  ELow, EUP, gLow, gUP, 10.0**loggf, 10.0**hyperFineFraction, 10.0**ISOFraction, LabelL, LabelU, hyperShiftL, hyperShiftU, sameLabel, HF)
-
-				#if(HF > 1.001):
-				#	print("***", element, wn, isotope, HF)
+				#print("-", element, wn, A, GammaR, isotope,  ELow, EUP, gLow, gUP, 10.0**loggf, 10.0**hyperFineFraction, 10.0**ISOFraction, LabelL, LabelU, hyperShiftL, hyperShiftU, sameLabel, HF)
 
 
 				LabelLOld = LabelL
@@ -391,14 +391,14 @@ def processLineList(i, j, Download, printA):
 				ELowOld = ELow
 
 				
-			#this must be done after the Hyperfine fraction filtering. (Old value comparison)
-			ELow += 0.001 * hyperShiftL
-			EUP  += 0.001 * hyperShiftU
+				#this must be done after the Hyperfine fraction filtering. (Old value comparison)
+				ELow += 0.001 * hyperShiftL
+				EUP  += 0.001 * hyperShiftU
 
+				#print("+", element, wn, A, GammaR, isotope,  ELow, EUP, gLow, gUP, 10.0**loggf, 10.0**hyperFineFraction, 10.0**ISOFraction, LabelL, LabelU, hyperShiftL, hyperShiftU, sameLabel, HF)
 
-			isotope = int(isotope)
+				isotope = int(isotope)
 		
-			if(element == els):
 				nl = nl + 1
 
 				numax = max(numax, wn)
@@ -411,63 +411,16 @@ def processLineList(i, j, Download, printA):
 					print(i, wn, A, ELow, gUP, Z, mass, file = Afile)	
 				#print(wn, 1.0E7/wn, loggf, ELow, EUP, JLow, JUP, GammaR, isotope, element, mass, 10.0**GammaR, A, 10.0**hyperFineFraction, 10.0**ISOFraction)
 
-
-				s = struct.pack('d', wn)
-				output_file.write(s)
-				s = struct.pack('d', S)
-				output_file.write(s)
-				s = struct.pack('d', ELow)
-				output_file.write(s)
-				s = struct.pack('d', 0.0)
-				output_file.write(s)
-				s = struct.pack('d', (10**GammaR))
-				output_file.write(s)
+				#ELowOld and EUPold are needed for the natural broadening coefficient calculations.
+				#The natural broadening is done over all states, not considering hyper fine splittings
+				print(wn, S, A, ELow, EUP, ELowOld, EUPOld, gLow, gUP, 10**GammaR, isotope, 10.0**hyperFineFraction, 10.0**ISOFraction, sameLabel, file = output_file)
 
 	print(" Lines:",nl, end='')
 
 	output_file.close()
+	if(printA == 1):
+		Afile.close()
 
-	pfile = 0
-	if(os.path.isfile(pf_filename)):
-		#print(" ", pf_filename)
-		pf_file = open(pfname,"w")
-		T, Q =  np.loadtxt(pf_filename, unpack=True, usecols = (2,3), skiprows=3)
-		for ii in range(len(T)):
-			pf_file.write("%g %g\n" % (T[ii], Q[ii]))
-		pf_file.close()
-		pfile = 1
-
-	else:
-		print(" ------- NIST")
-
-	printCode = 1
-	if(nl > 0 and printCode == 1):
-		f = open("%s.param" % name,'w')
-
-		print("Database = 30", file = f)
-		print("Molecule number = %d" % el[0], file = f)
-		print("Name = %s" % name, file = f)
-		print("Number of Isotopes = 1", file = f)
-		print("#Id Abundance      Q(296K)   g     Molar Mass(g)  partition file :", file = f)
-		if(pfile == 1):
-			print("0 1.0             0.0       0      %s        %s.pf" % (mass, name), file = f)
-		else:
-			print("0 1.0             0.0       0      %s        %s.pf" % (mass, NISTname), file = f)
-		print("Number of columns in partition File = 2", file = f)
-		print("Number of line/transition files = 1", file = f)
-		print("Number of lines per file :", file = f)
-		print("%d" % nl, file = f)
-		print("Line file limits :", file = f)
-		print("0", file = f)
-		print("%d" % (int(numax)+1), file = f)
-		print("#ExoMol :", file = f)
-		print("Number of states = 0", file = f)
-		print("Number of columns in transition files = 0", file = f)
-		print("Default value of Lorentzian half-width for all lines = 0.0", file = f)
-		print("Default value of temperature exponent for all lines = 0.0", file = f)
-		print("Version = %s" % filename, file = f)
-
-		f.close()
 
 if __name__ == '__main__':
 
@@ -489,7 +442,7 @@ if __name__ == '__main__':
 	I = args.I
 	printA = args.printA
 
-	print("Download: %d,  Z:%d, I: %d" % (Download, Z, I))
+	print("Download: %d,  Z:%d, I: %d, printA: %d" % (Download, Z, I, printA))
 
 	main(Download, Z, I, printA)
 
