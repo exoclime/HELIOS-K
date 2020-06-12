@@ -17,9 +17,11 @@ import math
 import csv
 import pandas
 import argparse
+import re
 
 
 def Lines2(Z, I, printA):
+
 
 	datafile = ("NIST_Lines%02d%02d.dat" % (Z, I))
 
@@ -78,11 +80,23 @@ def Lines2(Z, I, printA):
 		A = data['Akis^-1']
 		gUP = data['g_k']
 		ELow = data['Eicm-1']
+		term_i = data['term_i']
+		term_k = data['term_k']
+		conf_i = data['conf_i']
+		conf_k = data['conf_k']
+		J_i = data['J_i']
+		J_k = data['J_k']
 	except:
 		A =[]
 		wn=[]
 		gUP=[]
 		ELow=[]
+		term_i =[]
+		term_k =[]
+		conf_i =[]
+		conf_k =[]
+		J_i =[]
+		J_k =[]
 
 	name = "NIST%.2d%.2d" % (Z, I)
 	outname = "%s.bin" % name
@@ -95,6 +109,35 @@ def Lines2(Z, I, printA):
 
 	if(printA == 1):
 		Afile = open("NIST_A%02d%02d.dat" % (Z, I), "w")
+
+
+	if(Z == 1):
+		AA = np.zeros((100, 100))
+		gg = np.zeros((100, 100))
+		for i in range(len(A)):
+
+			a = A[i].replace('"', '')
+			a = a.replace('a', '')
+			a = a.replace('b', '')
+			if(a == ""):
+				continue
+			#remove all alphabetic characters from configurations to get the integer level numbers
+			confi = re.sub('[a-z]', '', conf_i[i])
+			confk = re.sub('[a-z]', '', conf_k[i])
+			confi = int(confi.replace('"', ''))
+			confk = int(confk.replace('"', ''))
+
+			if(confi >= 100 or confk >= 100):
+				print("Error, energy level > 100, out of bounds")
+
+			#print(a, conf_i[i], conf_k[i], confi, confk)
+			if(term_i[i] != '""' and term_k[i] != '""'):
+				AA[confi][confk] += float(gUP[i]) * float(a)
+				gg[confi][confk] += float(gUP[i])
+				#print("-", a, gUP[i], AA[confi][confk], gg[confi][confk])
+
+
+
 
 	for i in range(len(A)):
 
@@ -111,14 +154,55 @@ def Lines2(Z, I, printA):
 		w = wn[i].replace('"', '')
 		if(w == ""):
 			continue
-		#print(a)
+
+
+
 		Af = float(a)
 		gUPf = float(gUP[i])
 		ELowf = float(e)
 		wnf = float(w)
 
+		if(Z == 1):
+			#remove all alphabetic characters from configurations to get the integer level numbers
+			confi = re.sub('[a-z]', '', conf_i[i])
+			confk = re.sub('[a-z]', '', conf_k[i])
+			confi = int(confi.replace('"', ''))
+			confk = int(confk.replace('"', ''))
+			if(term_i[i] == '""' or term_k[i] == '""'):
+				#print("+", confi, confk, Af, gUP[i], AA[confi][confk] / gUP[i], gg[confi][confk])
+				if(gg[confi][confk] > 0.0):
+					continue
+		#print(conf_i[i], term_i[i], J_i[i], "|", conf_k[i], term_k[i], J_k[i], "|", wnf, Af, gUP[i])
+
+
+		#natural broadening coeffiecient
+		# search for same states 1
+		GammaRad = 0.0
+		for j in range(len(A)):
+			aj = A[j].replace('"', '')
+			aj = aj.replace('a', '')
+			aj = aj.replace('b', '')
+			if(aj == ""):
+				continue
+			ej = ELow[j].replace('"', '')
+			ej = ej.replace('+x', '')
+			ej = ej.replace('&dagger;', '')
+			if(ej == ""):
+				continue
+
+			if(conf_k[i] == conf_k[j] and term_k[i] == term_k[j] and J_k[i] == J_k[j]):
+				#print("-", conf_i[j], term_i[j], J_i[j], "|", conf_k[j], term_k[j], J_k[j], aj)
+				GammaRad += float(aj)
+
+			if(conf_i[i] == conf_k[j] and term_i[i] == term_k[j] and J_i[i] == J_k[j]):
+				#print("+", conf_i[j], term_i[j], J_i[j], "|", conf_k[j], term_k[j], J_k[j], aj)
+				GammaRad += float(aj)
+
+		#print(GammaRad, Af, wnf)
+
 		if(printA == 1):
 			print(i, wnf, Af, ELowf, gUPf, Z, masses[Z], file = Afile)
+
 
 		S = gUPf * Af /(8.0 * math.pi * def_c * wnf * wnf * masses[Z] / def_NA);
 
@@ -130,8 +214,11 @@ def Lines2(Z, I, printA):
 		output_file.write(s)
 		s = struct.pack('d', 0.0)
 		output_file.write(s)
-		s = struct.pack('d', 0.0)
+		s = struct.pack('d', GammaRad)
 		output_file.write(s)
+
+
+		#print(wnf, S, ELowf, Af, 0.0)
 
 		nl += 1
 		numax = max(numax, wnf)

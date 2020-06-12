@@ -1298,7 +1298,7 @@ __global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d
 					if(y == 0.0f) t1 = ex2;
 
 					K_s[(i + idx) % (NBy * NBx)] += S * t1 * b;
-//if(iii <= 24985 && iii >= 24970) printf("xC %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", iL, iii, x, S, y, vb, va, t1, K_s[(i + idx) % (NBy * NBx)]);
+//if(iii <= 26253 && iii >= 26253) printf("xC %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", iL, iii, x, S, y, vb, va, t1, K_s[(i + idx) % (NBy * NBx)]);
 				}
 			}
 			__syncthreads();

@@ -18,13 +18,12 @@ This step can be done either manually or by using a script.
 
 -  Automatical download:
 
-   -  type ``python3 nist_ELevels.py -Z <z> -I <i>``, where ``<z>``\ is
+   -  type ``python3 nist_ELevels2.py -Z <z> -I <i>``, where ``<z>``\ is
       the atomic number and ``<i>``\ the ionization state , e.g. -Z 3 -I 0
    -  The script will download the data and store it in a file called ``NIST_ELevels<Z><I>.dat``.
-   -  This script will need geckodriver to be installed.
 
-Step 2, Generate partition functions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 2, Generate the partition functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run ``python3 nist_partition.py - -Z <z> -I <i>``. This script will read
 the previously produces file ``NIST_ELevels<Z><I>.dat``, and writes a ``*.pf`` file.
@@ -53,7 +52,7 @@ This step can be done either manually or by using a script.
    -  select ``Show Advanced Settings``
    -  select the Format output to csv
    -  Select ``Wavenumbers (in cm-1)`` (keep ``Observed``, ``Ritz`` and ``Uncertainties`` selected)
-   -  Select ``Wavenumbers (all wavelenghts)``
+   -  Select ``Vacuum (all wavelengths)``
    -  Select ``g``
    -  click ``Retrieve Data``\ and store the data in a file called
       ``NIST_Lines<Z><I>.dat``.
@@ -61,9 +60,8 @@ This step can be done either manually or by using a script.
 
 -  Automatical download:
 
-   -  type ``python3 nist_Lines.py -Z <z> -I <i>``.
+   -  type ``python3 nist_Lines3.py -Z <z> -I <i>``.
    -  The script will download the data and store it in a file called ``NIST_Lines<Z><I>.dat``.
-   -  This script will need geckodriver to be installed .
 
 .. _step-5-create-<-species->.param-file-and-binary-files:
 
@@ -75,6 +73,8 @@ All necessary files can be created with:
 ::
 
    python3 nist_Lines2.py -Z <z> -I <i>
+
+This step includes the calculation of the natural broadening coefficients. This can take o moment to complete.
 
 Step 6, data path
 ~~~~~~~~~~~~~~~~~

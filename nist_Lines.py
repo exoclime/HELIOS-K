@@ -20,7 +20,7 @@ Extract the geckodriver file from the downloaded zip file. Now depending upon yo
 
 For Linux system :
 
-Open terminal and login as root user. copy/move the extracted geckodriver to bin direcctory.
+Open terminal and login as root user. copy/move the extracted geckodriver to bin directory.
 In my case I moved the file to /usr/bin directory. Because the driver finds geckodriver binary in '/usr/bin' path and the problem is solved now.
 
 To move the file inside bin directory use command like -

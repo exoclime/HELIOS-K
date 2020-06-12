@@ -154,7 +154,7 @@ os.chdir('TestNIST001')
 print('TestNIST001', file = f)
 os.system('pwd')
 
-er = os.system('python3 ../../nist_ELevels.py -Z 26 -I 0')
+er = os.system('python3 ../../nist_ELevels2.py -Z 26 -I 0')
 er = os.system('python3 ../../nist_partition.py -Z 26 -I 0')
 
 er = filecmp.cmp('NIST2600.pf', '../../data/NIST2600.pf')
@@ -163,7 +163,7 @@ print("error", er, file = f)
 if(er == False):
 	success = 0
 
-er = os.system('python3 ../../nist_Lines.py -Z 26 -I 0')
+er = os.system('python3 ../../nist_Lines3.py -Z 26 -I 0')
 er = os.system('python3 ../../nist_Lines2.py -Z 26 -I 0')
 er = filecmp.cmp('NIST2600.param', '../../data/NIST2600.param')
 print("error", er)

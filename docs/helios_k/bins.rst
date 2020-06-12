@@ -11,6 +11,8 @@ from small to large, and mapped to a new parameter y, rangin from 0 to 1.
 When the opcity function has empty parts inside or is not ranging to the full
 bin width, then the sorted opacity function is zero (or kmin, if used) on the
 lower part.
+
+
 | Relevant parameters for this example:
 
  - doResampling = 0

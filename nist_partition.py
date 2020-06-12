@@ -31,7 +31,7 @@ def partition(z, I):
 	file = ("NIST_ELevels%02d%02d.dat" % (z, I))
 
 
-	outfile = f = open('NIST%02d%02d.pf' % (z, I),'w')
+	outfile = open('NIST%02d%02d.pf' % (z, I),'w')
 
 	Conf, Term, J, g, E = np.loadtxt(file, dtype='str', skiprows=1, usecols=(0, 1, 2, 3,4), delimiter='\t',unpack=True)
 	print('NIST%02d%02d.pf' % (z, I), len(Term))

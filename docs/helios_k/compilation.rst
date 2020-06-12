@@ -10,46 +10,45 @@ Requirements
 
 - exomol.py and exomol2.py
 
- - bs4
- - requests
- - sys
- - os
- - subprocess
- - numpy
- - argparse
- - math
+  - bs4
+  - requests
+  - sys
+  - os
+  - subprocess
+  - numpy
+  - argparse
+  - math
 
 - Kurucz2.py
 
- - numpy
- - math
- - struct
- - os
- - argparse
+  - numpy
+  - math
+  - struct
+  - os
+  - argparse
 
-- nist_ELevels.py and nist_Lines.py
+- nist_ELevels2.py and nist_Lines3.py
 
- - sys
- - time
- - pyperclip
- - subprocess
- - selenium
- - argparse
+  - sys
+  - argparse
+  - csv
+  - requests
 
 - nist_partition.py
 
- - numpy
- - sys
- - argparse
+  - numpy
+  - sys
+  - argparse
 
 - nist_Lines2.py
 
- - numpy
- - struct
- - math
- - csh
- - pandas
- - argparse
+  - numpy
+  - struct
+  - math
+  - csh
+  - pandas
+  - argparse
+  - re
  
 
 Note, when using a computing cluster, all these libraries can be installed locally in the home directory  with: 

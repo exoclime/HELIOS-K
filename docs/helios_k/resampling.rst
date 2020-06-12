@@ -39,7 +39,8 @@ Chebyshev polynomial to resample over these sharp edge would introduce oscillati
 into the resampled opacity functions. In order to avoid these oscillations, we resample
 only the part of the sorted opacity function, which is not 0 or kmin. That leads
 to better results, but when reconstructing the polynomial from the Chebyshev
-coefficients, then the empty parts must be added again. 
+coefficients, then the empty parts must be added again. How this can be done is 
+shown next.
 
 
 .. figure:: ../plots/p005/plot001.png  

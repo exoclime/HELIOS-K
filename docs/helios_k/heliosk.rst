@@ -129,8 +129,8 @@ used parameters are listed here, the order can not be changed.
 
    - 1: Voigt
    - 2: Lorentzian
-   - 3: Gaussia
-   - 4: cross section
+   - 3: Gaussian
+   - 4: Integrated Binned Gaussian
 
 -  doTuning:
 
