@@ -159,6 +159,10 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 			//NIST
 			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 		}
+		if(param.dataBase == 32){
+			//VALD
+			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
+		}
 		
 	}
 	fgets(sp, 4, pFile);

@@ -392,7 +392,55 @@ __global__ void L_kernelExomol(double *readBuffer_d, double *nu_d, double *S_d, 
 // if(id < 100) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL_d[id], Q, 0.0, vy_d[id]);
 	}
 }
+
+
 __global__ void L_kernelKurucz(double *readBuffer_d, double *nu_d, double *S_d, double *EL_d, double *ialphaD_d, double* A_d, double *vy_d, double *n_d, const double defaultL, const double defaultn, const double gammaF, const double mass, const double T, const double Q, const double Abundance, const double Sscale, const int NL, const int kk){
+	int id =  blockIdx.x * blockDim.x + threadIdx.x + kk;
+
+	if(id < NL){
+
+		nu_d[id] = readBuffer_d[id * 5 + 0];
+		double S = readBuffer_d[id * 5 + 1];
+		EL_d[id] = readBuffer_d[id * 5 + 2];
+		double A = readBuffer_d[id * 5 + 3];
+		double GammaN = readBuffer_d[id * 5 + 4];
+
+//if(id < 10) printf("%d %g %g %g %g %g\n", id, nu_d[id], S, EL_d[id], A, GammaN);
+
+		ialphaD_d[id] = def_c * sqrt( mass / (2.0 * def_kB * T));
+		A_d[id] = (A + GammaN) / (4.0 * M_PI * def_c);
+		vy_d[id] = defaultL * gammaF;
+		n_d[id] = defaultn;
+		S_d[id] = S * Abundance * Sscale / Q;
+
+// if(id < 100) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL_d[id], Q, 0.0, vy_d[id]);
+	}
+}
+
+__global__ void L_kernelNIST(double *readBuffer_d, double *nu_d, double *S_d, double *EL_d, double *ialphaD_d, double* A_d, double *vy_d, double *n_d, const double defaultL, const double defaultn, const double gammaF, const double mass, const double T, const double Q, const double Abundance, const double Sscale, const int NL, const int kk){
+	int id =  blockIdx.x * blockDim.x + threadIdx.x + kk;
+
+	if(id < NL){
+
+		nu_d[id] = readBuffer_d[id * 5 + 0];
+		double S = readBuffer_d[id * 5 + 1];
+		EL_d[id] = readBuffer_d[id * 5 + 2];
+		double A = readBuffer_d[id * 5 + 3];
+		double GammaN = readBuffer_d[id * 5 + 4];
+
+//if(id < 10) printf("%d %g %g %g %g %g\n", id, nu_d[id], S, EL_d[id], A, GammaN);
+
+		ialphaD_d[id] = def_c * sqrt( mass / (2.0 * def_kB * T));
+		A_d[id] = (A + GammaN) / (4.0 * M_PI * def_c);
+		vy_d[id] = defaultL * gammaF;
+		n_d[id] = defaultn;
+		S_d[id] = S * Abundance * Sscale / Q;
+
+// if(id < 100) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL_d[id], Q, 0.0, vy_d[id]);
+	}
+}
+
+__global__ void L_kernelVALD(double *readBuffer_d, double *nu_d, double *S_d, double *EL_d, double *ialphaD_d, double* A_d, double *vy_d, double *n_d, const double defaultL, const double defaultn, const double gammaF, const double mass, const double T, const double Q, const double Abundance, const double Sscale, const int NL, const int kk){
 	int id =  blockIdx.x * blockDim.x + threadIdx.x + kk;
 
 	if(id < NL){

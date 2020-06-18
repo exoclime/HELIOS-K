@@ -49,7 +49,28 @@ Requirements
   - pandas
   - argparse
   - re
- 
+
+- vald_request.py
+
+  - selenium
+  - argparse
+
+- vald_download.py
+
+  - numpy
+  - math
+  - struct
+  - os
+  - argparse 
+
+- vald.py
+
+  - numpy
+  - math
+  - struct
+  - os
+  - argparse
+
 
 Note, when using a computing cluster, all these libraries can be installed locally in the home directory  with: 
 

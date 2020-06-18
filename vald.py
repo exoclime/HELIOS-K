@@ -4,14 +4,12 @@ import struct
 import os
 import argparse
 
-# This script produces the binary and *.param files for HELIOS-K
-# It also calculates the natural broadening coefficients
+# This script downloads the Kurucz gfnew files and calculates the line intensities
+# It writes data files to prepare the HELIOS-K binary files
 
 
 # Date: June 2020
 # Author: Simon Grimm
-
-filename="gfallwn08oct17.dat"
 
 
 elt0=[
@@ -139,129 +137,179 @@ elt0=[
 
 
 def main(Z, I, printA):
-
-	if(Z == -1 and I == -1):
-		# all species in Z and I
-		for i in range(0,100):
-			for j in range(0,3):
-				processLineList(i, j, printA)
-
-	if(Z == -1 and I > -1):
-		# all species in Z
-		for i in range(0,100):
-			processLineList(i, I, printA)
-
-	if(Z > -1 and I == -1):
-		# all species in I
-		for j in range(0,3):
-			processLineList(Z - 1, j, printA)
-
-	if(Z > -1 and I > -1):
-		processLineList(Z - 1, I, printA)
-	
-
-def processLineList(i, j, printA):
 	# i molecule id 0 to 100
 	# j ion id 0 to 3
 
-	name ="gfnew%02d%02d" % (i + 1, j)
-	NISTname ="NIST%02d%02d" % (i + 1, j)
-	if(printA == 1):
-		Afile = open("gfnew_A%02d%02d.dat" % (i + 1, j), "w")
+	el=elt0[Z - 1]
 
-	inname = "gfnewCorr%02d%02d.dat" % (i + 1, j)
-	outname = "gfnew%02d%02d.bin" % (i + 1, j)
-	pfname = "gfnew%02d%02d.pf" % (i + 1, j)
-	el=elt0[i]
+	if(I == 0):
+		el[1] = el[1] + " 1"
+	if(I == 1):
+		el[1] = el[1] + " 2"
+	if(I == 2):
+		el[1] = el[1] + " 3"
+
+	els= "% 6.2f" % (el[0] / 100.0)
+
+	name ="vald%02d%02d" % (Z, I)
+	NISTname ="NIST%02d%02d" % (Z, I)
+	inname = "VALD%02d%02d.dat" % (Z, I)
+	outname = "%s.bin" % name
 	mass = el[2]
-	
 
-	output_file = open(outname,"wb")
-	pf_filename = "partfn%.4d.dat" % el[0]
-
-
-
+	exists = os.path.isfile(inname)
 	numax = 0.0
+	nl = 0	
 
-	filesize = os.path.getsize(inname)
-	if(filesize != 0):
-		wn, S, A, ELow, EUP, ELowAverage, EUPAverage, gLow, gUP, GammaR, isotope, hyperFineFraction, ISOFraction, sameLabel = np.loadtxt(inname, unpack=True)
-	else:
-		exit()
+	if(exists != 0):
+		
+		print(el[0], els, el[1], inname, outname, mass)
 
-	for i in range(len(wn)):
-		GammaRad = 0.0
-		numax = max(numax, wn[i])
-		#print(" ", ELowAverage[i], EUPAverage[i], gLow[i], gUP[i], isotope[i], hyperFineFraction[i], ISOFraction[i])
 
-		for j in range(len(wn)):
-			if(EUPAverage[i] == EUPAverage[j] and gUP[i] == gUP[j]):
-			#if(EUPAverage[i] == EUPAverage[j]):
-				#print("-", ELowAverage[j], EUPAverage[j], gLow[j], gUP[j], A[j], isotope[j], hyperFineFraction[j], ISOFraction[j])
-				GammaRad += A[j] * hyperFineFraction[j] * ISOFraction[j]
+		output_file = open(outname,"wb")
 
-		for j in range(len(wn)):
-			if(ELowAverage[i] == EUPAverage[j] and gLow[i] == gUP[j]):
-			#if(ELowAverage[i] == EUPAverage[j]):
-				#print("+", ELowAverage[j], EUPAverage[j], gLow[j], gUP[j], A[j], isotope[j], hyperFineFraction[j], ISOFraction[j])
-				GammaRad += A[j] * hyperFineFraction[j] * ISOFraction[j]
 
-		#print(A[i], GammaRad, GammaR[i], wn[i])	
+
 		if(printA == 1):
-			print(i, wn[i], A[i], ELow[i], ELowAverage[i], gUP[i], GammaRad, GammaR[i], Z, mass, file = Afile)	
-		if(i % 10000 == 0):
-			print("reached line %d from %d" % (i, len(wn)))
+			Afile = open("vald_A%02d%02d.dat" % (Z, I), "w")
+	
+		wn_a = []
+		S_a = []
+		ELow_a = []
+		gLow_a = []
+		EUp_a = []
+		gUp_a = []
+		GammaRad_a = []
+		A_a = []
 
-		G = GammaR[i]
-		if(G == 1.0):
-			G = GammaRad
 
-		s = struct.pack('d', wn[i])
-		output_file.write(s)
-		s = struct.pack('d', S[i])
-		output_file.write(s)
-		s = struct.pack('d', ELow[i])
-		output_file.write(s)
-		s = struct.pack('d', 0.0)
-		output_file.write(s)
-		s = struct.pack('d', G)
-		output_file.write(s)
+		with open(inname) as f:
+			line = f.readlines()
 
-	output_file.close()
 
-	if(printA == 1):
-		Afile.close()
+			for ii in range(len(line)):
+			#for ii in range(50):
+				l = line[ii]
 
-	pfile = 0
-	if(os.path.isfile(pf_filename)):
-		#print(" ", pf_filename)
-		pf_file = open(pfname,"w")
-		T, Q =  np.loadtxt(pf_filename, unpack=True, usecols = (2,3), skiprows=3)
-		for ii in range(len(T)):
-			pf_file.write("%g %g\n" % (T[ii], Q[ii]))
-		pf_file.close()
-		pfile = 1
+				l1 = l.find(el[1])
+				if(l1 != 1):
+					continue
 
-	else:
-		print("  No partition function file, use NIST")
+				l2 = l.split(",");
 
-	printCode = 1
-	if(len(wn) > 0 and printCode == 1):
+				#print(l2)
+
+				wn = float(l2[1])
+				loggf = float(l2[2])
+				ELow = float(l2[3])
+				JLow = float(l2[4])
+				EUp = float(l2[5])
+				JUp = float(l2[6])
+				GammaRad = float(l2[10])
+			
+				wl = 1.0E7/wn		#wavelenght in nm
+
+				e = 4.80320425E-10      #electron charge in cgs units [statcoulomb = cm^(3/2) g^(1/2) s^-1]
+				c = 2.99792458E10       #Speed of light cm/s
+				me = 9.1093835611E-28   #mass of electron in g
+				NA = 6.0221412927e23	#Avogadro Constant  1/mol
+
+
+				gUp = 2 * JUp + 1
+				gLow = 2 * JLow + 1
+				
+				A = 8.0 * math.pi * wn * wn * (10.0**loggf) / gUp * math.pi * e * e / (me * c)
+
+			
+				S = math.pi * e * e * 10.0**loggf * NA / (c * c * me * mass)
+
+
+				wn_a.append(wn)
+				S_a.append(S)
+				ELow_a.append(ELow)
+				gLow_a.append(gLow)
+				EUp_a.append(EUp)
+				gUp_a.append(gUp)
+				GammaRad_a.append(GammaRad)
+				A_a.append(A)
+
+				nl = nl + 1
+
+				numax = max(numax, wn)
+
+		for i in range(len(wn_a)):
+		
+			wn = wn_a[i]
+			S = S_a[i]
+			ELow = ELow_a[i]
+			EUp = EUp_a[i]
+			gLow = gLow_a[i]
+			gUp = gUp_a[i]
+			GammaRad = GammaRad_a[i]
+			A = A_a[i]
+
+	
+			#Compute GammaRad
+			GammaR = 0.0
+			#print(" ", wn, EUp_a[i], gUp_a[i], "|", ELow_a[i], gLow_a[i], A_a[i])
+			for j in range(len(wn_a)):
+
+				if(EUp_a[i] == EUp_a[j] and gUp_a[i] == gUp_a[j] and ELow_a[j] < EUp_a[i]):
+					#print("-", EUp_a[j], gUp_a[j], "|", ELow_a[j], gLow_a[j], A_a[j])
+					GammaR += A_a[j]
+
+			for j in range(len(wn_a)):
+				if(ELow_a[i] == EUp_a[j] and gLow_a[i] == gUp_a[j] and ELow_a[j] < ELow_a[i]):
+					#print("+", EUp_a[j], gUp_a[j], "|", ELow_a[j], gLow_a[j], A_a[j])
+					GammaR += A_a[j]
+			#print(GammaR, 10**GammaRad)		
+
+			if(printA == 1):
+				print(ii, wn, S, A, ELow, EUp, gLow, gUp, GammaR, 10**GammaRad, file = Afile)
+			#print(ii, wn, S, A, ELow, EUp, gLow, gUp, 10**GammaRad)
+
+			if(i % 10000 == 0):
+				print("reached line %d from %d" % (i, len(wn_a)))
+
+			G = 10**GammaRad
+			if(G == 1.0):
+				G = GammaR
+
+
+			s = struct.pack('d', wn)
+			output_file.write(s)
+			s = struct.pack('d', S)
+			output_file.write(s)
+			s = struct.pack('d', ELow)
+			output_file.write(s)
+			s = struct.pack('d', 0.0)
+			output_file.write(s)
+			s = struct.pack('d', G)
+			output_file.write(s)
+
+
+
+		print("                                                     Lines: ",nl)
+
+		output_file.close()
+		if(printA == 1):
+			Afile.close()
+
+
+
+	if(nl > 0):
 		f = open("%s.param" % name,'w')
 
-		print("Database = 30", file = f)
+		print("Database = 32", file = f)
 		print("Molecule number = %d" % el[0], file = f)
 		print("Name = %s" % name, file = f)
 		print("Number of Isotopes = 1", file = f)
 		print("#Id Abundance      Q(296K)   g     Molar Mass(g)  partition file :", file = f)
-		if(pfile == 1):
-			print("0 1.0             0.0       0      %s        %s.pf" % (mass, name), file = f)
-		else:
-			print("0 1.0             0.0       0      %s        %s.pf" % (mass, NISTname), file = f)
+		print("0 1.0             0.0       0      %s        %s.pf" % (mass, NISTname), file = f)
 		print("Number of columns in partition File = 2", file = f)
 		print("Number of line/transition files = 1", file = f)
 		print("Number of lines per file :", file = f)
-		print("%d" % len(wn), file = f)
+		print("%d" % nl, file = f)
 		print("Line file limits :", file = f)
 		print("0", file = f)
 		print("%d" % (int(numax)+1), file = f)
@@ -270,9 +318,12 @@ def processLineList(i, j, printA):
 		print("Number of columns in transition files = 0", file = f)
 		print("Default value of Lorentzian half-width for all lines = 0.0", file = f)
 		print("Default value of temperature exponent for all lines = 0.0", file = f)
-		print("Version = %s" % filename, file = f)
+		print("Version = 0",file = f)
 
 		f.close()
+
+
+
 
 if __name__ == '__main__':
 

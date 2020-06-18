@@ -354,7 +354,6 @@ def processLineList(i, j, Download, printA):
 
 			if(element == els):
 				A = 8.0 * math.pi * wn * wn * (10.0**loggf) / gUP * math.pi * e * e / (me * c)
-				gamma = 2.223e13 / (wl * wl)
 
 				sameLabel = 0
 				if(LabelL == LabelLOld and LabelU == LabelUOld and gUP == gUPOld and gLow == gLowOld and ELow == ELowOld and EUP == EUPOld):
