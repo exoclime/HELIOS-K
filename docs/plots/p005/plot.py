@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 #matplotlib.use('PS')
 matplotlib.use('agg')
@@ -16,9 +18,9 @@ pl.rcParams.update(params)
 
 pl.figure(figsize=(8, 6))
 
-
-filenameb0 = 'Out_i_bin.dat'
-filenameb1 = 'Out_r_bin.dat'
+dirname = os.path.dirname(__file__)
+filenameb0 = os.path.join(dirname, 'Out_i_bin.dat')
+filenameb1 = os.path.join(dirname, 'Out_r_bin.dat')
 
 fig, ax1=pl.subplots()
 

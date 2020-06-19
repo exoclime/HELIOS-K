@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 #matplotlib.use('PS')
 matplotlib.use('agg')
@@ -14,13 +16,13 @@ pl.rcParams.update(params)
 
 pl.figure(figsize=(8, 6))
 
-
-filename = 'Out_i.dat'
-filenameb0 = 'Out_i_bin0000.dat'
-filenameb1 = 'Out_i_bin0001.dat'
-filenameb2 = 'Out_i_bin0002.dat'
-filenameb3 = 'Out_i_bin0003.dat'
-filenameb4 = 'Out_i_bin0004.dat'
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'Out_i.dat')
+filenameb0 = os.path.join(dirname, 'Out_i_bin0000.dat')
+filenameb1 = os.path.join(dirname, 'Out_i_bin0001.dat')
+filenameb2 = os.path.join(dirname, 'Out_i_bin0002.dat')
+filenameb3 = os.path.join(dirname, 'Out_i_bin0003.dat')
+filenameb4 = os.path.join(dirname, 'Out_i_bin0004.dat')
 
 ax1=pl.subplot(111)
 

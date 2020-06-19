@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 #matplotlib.use('PS')
 matplotlib.use('agg')
@@ -14,11 +16,12 @@ pl.rcParams.update(params)
 
 pl.figure(figsize=(8, 6))
 
+dirname = os.path.dirname(__file__)
 
-filename1 = 'Out_p1.dat'
-filename2 = 'Out_p2.dat'
-filename3 = 'Out_p3.dat'
-filename4 = 'Out_p4.dat'
+filename1 = os.path.join(dirname, 'Out_p1.dat')
+filename2 = os.path.join(dirname, 'Out_p2.dat')
+filename3 = os.path.join(dirname, 'Out_p3.dat')
+filename4 = os.path.join(dirname, 'Out_p4.dat')
 
 ax1=pl.subplot(111)
 
