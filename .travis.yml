@@ -51,7 +51,7 @@ env:
         
         # List other runtime dependencies for the package that are available as
         # pip packages here.
-        - PIP_DEPENDENCIES=''
+        - PIP_DEPENDENCIES='pytest-astropy'
 
         # Conda packages for affiliated packages are hosted in channel
         # "astropy" while builds for astropy LTS with recent numpy versions
@@ -125,11 +125,6 @@ matrix:
           env: PYTHON_VERSION=3.6 NUMPY_VERSION=1.14
         - os: linux
           env: NUMPY_VERSION=1.15
-
-        # Do a PEP8 test with flake8
-        - os: linux
-          stage: Initial tests
-          env: MAIN_CMD='flake8 heliosk --count --show-source --statistics $FLAKE8_OPT' SETUP_CMD=''
 
     allow_failures:
         # Do a PEP8 test with flake8
