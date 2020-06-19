@@ -18,7 +18,7 @@ pl.rcParams.update(params)
 
 pl.figure(figsize=(8, 6))
 
-dirname = os.path.dirname(__file__)
+dirname = os.path.abspath(os.path.dirname(__file__))
 filenameb0 = os.path.join(dirname, 'Out_i_bin.dat')
 filenameb1 = os.path.join(dirname, 'Out_r_bin.dat')
 
