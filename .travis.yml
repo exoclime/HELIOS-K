@@ -16,9 +16,6 @@ addons:
         packages:
             - graphviz
 
-
-stage: Comprehensive tests
-
 stages:
    # Do the style check and a single test job, don't proceed if it fails
    - name: Initial tests
