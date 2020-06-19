@@ -1,3 +1,5 @@
+import os
+
 import matplotlib
 #matplotlib.use('PS')
 matplotlib.use('agg')
@@ -14,9 +16,9 @@ pl.rcParams.update(params)
 
 pl.figure(figsize=(8, 6))
 
-
-filename = 'Out_i.dat'
-filenamem = 'Out_i_mean.dat'
+dirname = os.path.abspath(os.path.dirname(__file__))
+filename = os.path.join(dirname, 'Out_i.dat')
+filenamem = os.path.join(dirname, 'Out_i_mean.dat')
 
 ax1=pl.subplot(111)
 
