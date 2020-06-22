@@ -1,4 +1,3 @@
-
 // *********************************************
 //This function calculates the Series Sigma1. Sigma2 and Sigma3 (Equations 27, 28, and 29) from Alg 916
 //The parameter def_TOL sets a tolerance where to truncate the series

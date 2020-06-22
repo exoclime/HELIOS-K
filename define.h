@@ -3,6 +3,10 @@
 #define _USE_MATH_DEFINES  //for Windows
 #endif
 
+#ifndef DEFINE_H
+#define DEFINE_H
+
+
 //Build Data
 
 #ifndef GIT_DESCRIBE
@@ -26,7 +30,7 @@
 #endif
 
 
-#define VERSION 2.01
+#define VERSION 2.02
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -201,3 +205,4 @@ struct Line{
 	long long int *iiLimitsCT_m, *iiLimitsCT_d;	//limits for all blocks, mapped memory
 
 };
+#endif

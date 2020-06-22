@@ -74,8 +74,8 @@ Atomic Opacities plots
 
 .. toctree::
   :maxdepth: 1
-
   helios_k/atoms.rst
+
 
 Citations
 ~~~~~~~~~

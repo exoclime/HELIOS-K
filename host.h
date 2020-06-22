@@ -540,7 +540,7 @@ __host__ int readPFile(Param &param, double *P_h){
 	return 1;
 }
 
-__host__ int readSpeciesFile(Param &param, char (*SpeciesN_h)[160], double *SpeciesA_h){
+__host__ int readSpeciesFile(Param &param, char **SpeciesN_h, double *SpeciesA_h){
 	FILE *Speciesfile;
 	Speciesfile = fopen(param.SpeciesFilename, "r");
 	int er;

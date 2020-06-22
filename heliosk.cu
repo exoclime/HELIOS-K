@@ -1,3 +1,4 @@
+#include "define.h" //must be on top for Windows compilation
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,7 +6,6 @@
 #include <thrust/sort.h>
 #include <thrust/device_ptr.h>
 
-#include "define.h"
 
 #include "host.h"
 #include "ISO.h"
@@ -482,8 +482,12 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 	}
 	//Allocate Species array 
 	double *SpeciesA_h;	//abundance
-	SpeciesA_h = (double*)malloc((param.nSpecies) * sizeof(double));
-	char SpeciesN_h[param.nSpecies][160];
+	char **SpeciesN_h;
+	SpeciesA_h = (double*)malloc(param.nSpecies * sizeof(double));
+	SpeciesN_h = (char**)malloc(param.nSpecies * sizeof(char*));
+	for(int i = 0; i < param.nSpecies; ++i){
+		SpeciesN_h[i] = (char*)malloc(160 * sizeof(char));
+	}
 	if(param.useSpeciesFile == 1){
 		er = readSpeciesFile(param, SpeciesN_h, SpeciesA_h);
 		if(er == 0) return 0;
