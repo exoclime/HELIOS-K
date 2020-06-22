@@ -176,8 +176,8 @@ int main(int argc, char *argv[]){
 			slen = sbstr.length();
 			sbstr0 = sbstr.substr(0, slen/2);
 			sbstr1 = sbstr.substr(slen/2+1, slen/2);
-			range0 = std::atoi(sbstr0.c_str());
-			range1 = std::atoi(sbstr1.c_str());
+			range0 = atoi(sbstr0.c_str());
+			range1 = atoi(sbstr1.c_str());
 		}
 		else{
 			sbstr = "";
@@ -247,8 +247,8 @@ int main(int argc, char *argv[]){
 			slen = sbstr.length();
 			sbstr0 = sbstr.substr(0, slen/2);
 			sbstr1 = sbstr.substr(slen/2+1, slen/2);
-			range0 = std::atoi(sbstr0.c_str());
-			range1 = std::atoi(sbstr1.c_str());
+			range0 = atoi(sbstr0.c_str());
+			range1 = atoi(sbstr1.c_str());
 		}
 		else{
 			sbstr = "";
