@@ -884,9 +884,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 		if(m.id > 0 && param.doStoreFullK >= 0){
 
-			//**************************************
-			//Starting the loop around the datafiles
-			//**************************************
+			// **************************************
+			// Starting the loop around the datafiles
+			// **************************************
 			int fi0 = m.nFiles;
 			int fi1 = 0;
 
@@ -948,10 +948,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 				long long lPart;
 
 	
-				//read the first block of files outside the loop
-				//the remaining reads are called at the end of the loop
-				//to allow overlapping execution		
-				//**************************read0
+				// read the first block of files outside the loop
+				// the remaining reads are called at the end of the loop
+				// to allow overlapping execution
+				// **************************read0
 				
 				if(fi == fi0){
 					sprintf(dataFilename, "%sbin", m.dataFilename[fi]);
@@ -972,7 +972,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 					cudaEventRecord(ReadStart);
 					printf("Reading Line file %d of %d; part %lld of %lld with %d lines\n", fi, fi1 - 1, lPart, (m.NL[fi] + def_maxlines - 1) / def_maxlines - 1, NL);
 					// **************************
-					//Read the Line list	
+					// Read the Line list	
 					// **************************
 					if(param.dataBase < 2 || param.dataBase == 3){
 						//0 1 3
@@ -1026,9 +1026,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 							for(int k = 0; k < NL; k += def_nthmax / 4){
 								int Nk = min(def_nthmax / 4, NL - k);
 								if(Nk > 0){
-									//***************************
-									//Compute Line properties 1
-									//***************************
+									// ***************************
+									// Compute Line properties 1
+									// ***************************
 									if(param.dataBase == 2){
 										L_kernelExomol  <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (readBuffer_d, L.nu_d, L.S_d, L.EL_d, L.ialphaD_d, L.A_d, L.vy_d, L.n_d, m.defaultL, m.defaultn, param.gammaF, mass, param.T, Q, Abundance, Sscale, NL, k);
 									}
@@ -1041,20 +1041,20 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 									if(param.dataBase == 32){
 										L_kernelVALD  <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (readBuffer_d, L.nu_d, L.S_d, L.EL_d, L.ialphaD_d, L.A_d, L.vy_d, L.n_d, m.defaultL, m.defaultn, param.gammaF, mass, param.T, Q, Abundance, Sscale, NL, k);
 									}
-									//***************************
-									//Compute Line properties 2
-									//***************************
+									// ***************************
+									// Compute Line properties 2
+									// ***************************
 									Sf_kernel <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (L.nu_d, L.S_d, L.A_d, L.vy_d, L.ialphaD_d, L.n_d, L.EL_d, L.ID_d, NL, c1, T1, P_h[iP], k);
 								}
 								++vs;
 							}
 						}
 						cudaDeviceSynchronize();
-						//************************
+						// ************************
 
-						//***************************
-						//Compute Line properties
-						//***************************
+						// ***************************
+						// Compute Line properties
+						// ***************************
 						if(param.dataBase < 2 || param.dataBase == 3){
 							// 0 1 3
 							for(int k = 0; k < NL; k += def_nthmax){
@@ -1110,7 +1110,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						for(int k = 0; k < NL; k += def_nthmax){
 							if(Nk > 0) Sort_kernel <<< (Nk + 127) / 128, 128 >>> (L.Sort_d, L.ialphaD_d, L.ID_d, NL, k);
 						}
-						//********************************
+						// ********************************
 
 						for(int k = 0; k < NL; k += def_nthmax){
 							int Nk = min(def_nthmax, NL - k);
@@ -1132,9 +1132,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 						cudaEventRecord(KStart);
 
-						//************************************
-						//Compute the opacity function K(x)
-						//************************************
+						// ************************************
+						// Compute the opacity function K(x)
+						// ************************************
 
 						int nlLimitsA = (NL + def_nlA - 1) / def_nlA;
 						int nlLimitsB = (NL + def_nlB - 1) / def_nlB;
@@ -1695,7 +1695,7 @@ printf("Add streams A\n");
 printf("Add streams B\n");
 
 
-						//*************************************
+						// *************************************
 						//synchronize here only if no more data has to be read from the disk.
 						//otherwise read data before synchronization
 						cudaEventSynchronize(KStop);
@@ -1763,9 +1763,9 @@ printf("Add streams B\n");
 		cudaStreamDestroy(nuLimitsStream[i]);
 	}
 
-	//****************************
-	//Write the full line profile
-	//****************************
+	// ****************************
+	// Write the full line profile
+	// ****************************
 	if(param.doStoreFullK == 1){
 		FILE *OutFile;
 		char OutFilename[300];
@@ -1862,7 +1862,7 @@ printf("Add streams B\n");
 		}
 		fclose(OutFile);
 	}
-	//*******************************
+	// *******************************
 
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
@@ -1879,9 +1879,9 @@ printf("Add streams B\n");
 
 	cudaEventRecord(tt1, 0);
 
-	//**************************************
-	//compute the Planck and Rosseland means
-	//**************************************
+	// **************************************
+	// compute the Planck and Rosseland means
+	// **************************************
 	if(param.doMean > 0){
 		
 		double *Pmn_d;
@@ -1969,9 +1969,9 @@ printf("\n\n");
 	cudaEventRecord(tt1, 0);
 
 
-	//***************************************
-	//Do the sorting of K for all bins
-	//***************************************
+	// ***************************************
+	// Do the sorting of K for all bins
+	// ***************************************
 	thrust::device_ptr<double> K_dt = thrust::device_pointer_cast(K_d);
 	thrust::device_ptr<int> binKey_dt = thrust::device_pointer_cast(binKey_d);
 	for(int iP = 0; iP < param.nP; ++iP){
@@ -1979,7 +1979,7 @@ printf("\n\n");
 		thrust::stable_sort_by_key(binKey_dt, binKey_dt + Nx, K_dt + iP * Nx);
 	}
 	cudaFree(binKey_d);
-	//****************************************
+	// ****************************************
 
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
@@ -1997,10 +1997,10 @@ printf("\n\n");
 	cudaEventRecord(tt1, 0);
 
 
-	//*********************************
-	//Prepare Resampling and do QR factorization, the same for all bins
+	// *********************************
+	// Prepare Resampling and do QR factorization, the same for all bins
 	// this doesn't work with individual bins
-	//*********************************
+	// *********************************
 
 //size_t free_byte;
 //size_t total_byte;
@@ -2128,7 +2128,7 @@ for(int i = 0; i < Nx; ++i){
 		cudaFree(K2_d);
 		free(K2_h);
 	}
-	//**********************************
+	// **********************************
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
 	if(error != 0){
@@ -2145,9 +2145,9 @@ for(int i = 0; i < Nx; ++i){
 	cudaEventRecord(tt1, 0);
 
 
-	//*****************************
-	//Write K per bin output
-	//*****************************
+	// *****************************
+	// Write K per bin output
+	// *****************************
 	if(param.doStoreK > 0){
 		FILE *Out2File;
 		char Out2Filename[300];
@@ -2282,7 +2282,7 @@ for(int i = 0; i < Nx; ++i){
 		}//end of P loop
 		fclose(Out2File);
 	}
-	//******************************
+	// ******************************
 	cudaDeviceSynchronize();
 	error = cudaGetLastError();
 	if(error != 0){
@@ -2302,9 +2302,9 @@ for(int i = 0; i < Nx; ++i){
 	//set correction factor for simpsons rule needed for resampling
 	SimpsonCoefficient();
 
-	//*********************************
-	//Calculate the Transmission function
-	//*********************************
+	// *********************************
+	// Calculate the Transmission function
+	// *********************************
 	if(param.doTransmission > 0 ){
 
 		double *Tr_h, *Tr_d;

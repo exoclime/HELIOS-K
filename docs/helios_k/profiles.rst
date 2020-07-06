@@ -78,7 +78,7 @@ In :numref:`figprofile` is shown an example with four different line profiles.
 
  
 
-.. figure:: ../plots/p009/plot001.png  
+.. figure:: ../../plots/p009/plot001.png  
    :name: figprofile
 
    Example with four different line profiles 

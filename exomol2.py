@@ -101,6 +101,7 @@ def main():
 			soup2 = BeautifulSoup(page2, "html.parser")
 
 			List2 = soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item "})
+			List2 += soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item recommended"})
 
 			#Line list
 			for k in range(len(List2)):

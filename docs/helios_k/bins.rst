@@ -22,7 +22,7 @@ lower part.
 
  
 
-.. figure:: ../plots/p001/plot001.png  
+.. figure:: ../../plots/p001/plot001.png  
    :name: figbin
 
    The opacity function is divided into fife bins. Inside each bin, the opacity
@@ -61,7 +61,7 @@ An example of a ``binsFile`` is given below, and the result is shown in :numref:
  - doStoreSK = 2
  - binsFile = bins.dat
 
-.. figure:: ../plots/p002/plot001.png  
+.. figure:: ../../plots/p002/plot001.png  
    :name: figbinfile
 
    The opacity function is divided into fife bins, according to the entries of the binsfile. 
@@ -103,7 +103,7 @@ the averaged points can appear to have too high values.
  - nbins = 5
  - OutputEdgesFile = edges.dat
 
-.. figure:: ../plots/p003/plot001.png  
+.. figure:: ../../plots/p003/plot001.png  
    :name: figbinedges
 
    The opacity function is divided into fife bins. Inside each bin, the opacity

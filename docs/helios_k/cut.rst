@@ -18,7 +18,7 @@ In :numref:`figcut` is shown an example with three different cutting lenghts.
 
  
 
-.. figure:: ../plots/p008/plot001.png  
+.. figure:: ../../plots/p008/plot001.png  
    :name: figcut
 
    Three cutting lengths of the line wings. An infinity cuttoff lengths can be set by `cut = 0`.

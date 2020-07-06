@@ -22,7 +22,7 @@ An example of a resampled bin is shown in :numref:`figresample`.
  - nbins = 1
 
 
-.. figure:: ../plots/p004/plot001.png  
+.. figure:: ../../plots/p004/plot001.png  
    :name: figresample
 
    The per bin sorted opacity function is resampled with a 
@@ -43,7 +43,7 @@ coefficients, then the empty parts must be added again. How this can be done is
 shown next.
 
 
-.. figure:: ../plots/p005/plot001.png  
+.. figure:: ../../plots/p005/plot001.png  
    :name: figresample2
 
    Resampling a bin with an empty part. To avoid oscillations in the resampled

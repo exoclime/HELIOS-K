@@ -33,7 +33,7 @@ An example of the transmission function for fife bins is shown in :numref:`figtr
  - dTr = 0.05
 
 
-.. figure:: ../plots/p006/plot001.png  
+.. figure:: ../../plots/p006/plot001.png  
    :name: figtransmission
 
    Transmission function 

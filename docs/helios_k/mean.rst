@@ -65,7 +65,7 @@ An example of the Planck and Rosseland means is shown in :numref:`figmean`.
  - doMean = 1
 
 
-.. figure:: ../plots/p007/plot001.png  
+.. figure:: ../../plots/p007/plot001.png  
    :name: figmean
 
    Planck and Rosseland means

@@ -394,12 +394,27 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 			l[nu]=int(subprocess.check_output(['wc', '-l', "%s" % transFile]).split()[0])
 			print("nu", nu, l[nu])
 
+
 			#determine the number of columns in the transition files
 			with open("%s" % transFile) as tFile:
 				line = tFile.readline()
 				ntcol = len(line.split())
 				print("number of columns in trans file", ntcol)
 
+			#check the maximum wavenumber. Its sometimes wrong in the def files
+			if(n == 1 and ntcol == 4):
+				nnuMax = 0.0
+				with open(transFile) as infile:
+					il = 0
+					for line in infile:
+						#print(line)
+						#print("x", line.split()[3])
+						nnuMax = max(nnuMax, float(line.split()[ntcol - 1]))
+						if(il % 10000 == 0):
+							print("nuMax", il, nnuMax)
+						il += 1
+				print("nuMax: %d %d\n", nuMax, nnuMax)
+				jarray[1] = int(math.ceil(float(nnuMax)))
 
 	print("download finished")
 
