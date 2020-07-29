@@ -54,6 +54,7 @@ OPTIONS
 
   helios_k/profiles.rst
   helios_k/cut.rst
+  helios_k/plinth.rst
   helios_k/bins.rst
   helios_k/resampling.rst
   helios_k/options.rst

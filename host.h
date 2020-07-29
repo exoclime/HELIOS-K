@@ -288,6 +288,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			fscanf (paramFile, "%d", &param.doTuning);
 			fgets(sp, 3, paramFile);
 		}
+		//read removePlinth
+		else if(strcmp(sp, "removePlinth =") == 0){
+			fscanf (paramFile, "%d", &param.removePlinth);
+			fgets(sp, 3, paramFile);
+		}
 		else{
 			printf("Undefined line in param.dat file: line %d\n", j);
 			return 0;
@@ -753,7 +758,7 @@ __host__ int readCiaFile(Param param, ciaSystem cia, double *x_h, double *K_h, i
 }
 
 
-__host__ void Alloc_Line(Line &L, Molecule &m){
+__host__ void Alloc_Line(Line &L, Molecule &m, Param param){
 	int n = min(def_maxlines, m.NLmax);
 
 	L.nu_h = (double*)malloc(n * sizeof(double));
@@ -795,6 +800,13 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.Sort_d, n * sizeof(double));
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
 
+	if(param.removePlinth == 1){
+		cudaMalloc((void **) &L.plinth_d, n * sizeof(double));
+	}
+	else{
+		L.plinth_d = NULL;
+	}
+
 	cudaMalloc((void **) &L.nuLimitsA0_d, (n + def_nlA - 1)/ def_nlA * sizeof(double));
 	cudaMalloc((void **) &L.nuLimitsA1_d, (n + def_nlA - 1)/ def_nlA * sizeof(double));
 	cudaMalloc((void **) &L.nuLimitsAL0_d, (n + def_nlA - 1)/ def_nlA * sizeof(double));
@@ -831,7 +843,7 @@ __host__ void Alloc_Line(Line &L, Molecule &m){
 	cudaHostGetDevicePointer((void **)&L.iiLimitsCT_d, (void *)L.iiLimitsCT_m, 0);
 
 }
-__host__ void Alloc2_Line(Line &L, Molecule &m){
+__host__ void Alloc2_Line(Line &L, Molecule &m, Param param){
 
 	int n = min(def_maxlines, m.NLmax);
 
@@ -867,6 +879,13 @@ __host__ void Alloc2_Line(Line &L, Molecule &m){
 	cudaMalloc((void **) &L.n_d, n * sizeof(double));
 	cudaMalloc((void **) &L.Sort_d, n * sizeof(double));
 	cudaMalloc((void **) &L.ID_d, n * sizeof(int));
+
+	if(param.removePlinth == 1){
+		cudaMalloc((void **) &L.plinth_d, n * sizeof(double));
+	}
+	else{
+		L.plinth_d = NULL;
+	}
 
 	cudaMalloc((void **) &L.nuLimitsA0_d, (n + def_nlA - 1)/ def_nlA * sizeof(double));
 	cudaMalloc((void **) &L.nuLimitsA1_d, (n + def_nlA - 1)/ def_nlA * sizeof(double));
@@ -917,7 +936,7 @@ __host__ void Copy_Line(Line &L, Molecule &m, int NL){
 	cudaMemcpy(L.n_d, L.n_h, NL * sizeof(double), cudaMemcpyHostToDevice);
 }
 
-__host__ void free_Line(Line &L){
+__host__ void free_Line(Line &L, Param param){
 	free(L.nu_h);
 	free(L.S_h);
 	free(L.A_h);
@@ -967,6 +986,11 @@ __host__ void free_Line(Line &L){
 	cudaFree(L.nuLimitsC0_d);
 	cudaFree(L.nuLimitsC1_d);
 
+	if(param.removePlinth == 1){
+		cudaFree(L.plinth_d);
+	}
+
+
 	cudaFree(L.iiLimitsA0_d);
 	cudaFree(L.iiLimitsA1_d);
 	cudaFree(L.iiLimitsAL0_d);
@@ -985,7 +1009,7 @@ __host__ void free_Line(Line &L){
 	cudaFreeHost(L.iiLimitsCT_m);
 
 }
-__host__ void free2_Line(Line &L){
+__host__ void free2_Line(Line &L, Param param){
 	cudaFreeHost(L.nu_h);
 	cudaFreeHost(L.S_h);
 	cudaFreeHost(L.A_h);
@@ -1027,6 +1051,10 @@ __host__ void free2_Line(Line &L){
 	cudaFree(L.nuLimitsB1_d);
 	cudaFree(L.nuLimitsC0_d);
 	cudaFree(L.nuLimitsC1_d);
+
+	if(param.removePlinth == 1){
+		cudaFree(L.plinth_d);
+	}
 
 	cudaFree(L.iiLimitsA0_d);
 	cudaFree(L.iiLimitsA1_d);

@@ -228,10 +228,6 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 	#correct now wrong number of files
 	#if(M == "12C-1H3-37Cl__OYT"):
 	#	n=64
-	if(M == "31P2-1H2__Cis"):
-		n=6
-	if(M == "31P2-1H2__Trans"):
-		n=6
 
 	if(n != nn):
 		print("Error, number of .trans files do not agree %d %d" % (n, nn))

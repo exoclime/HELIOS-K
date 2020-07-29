@@ -126,7 +126,7 @@ the HELIOS-K ``param.dat`` file under ``pathToData``.
 References
 ~~~~~~~~~~
 
-Vald provides reference files for each species. We rename these ``*.bib``
+Vald provides reference files for each species. We rename these ``*.bib`` files
 the same way as the data files. When using data from VALD, all these references
 must be cited in publications.
 

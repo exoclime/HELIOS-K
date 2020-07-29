@@ -352,6 +352,7 @@ return 0;
 	param.replaceFiles = 0;
 	param.profile = def_PROFILE;
 	param.doTuning = def_doTuning;
+	param.removePlinth = def_removePlinth;
 	
 	er = read_parameters(param, paramFilename, argc, argv);
 	if(er == 0){
@@ -398,6 +399,10 @@ return 0;
 	}
 	if(param.Nxb != 0){
 		param.useIndividualX = 1;
+	}
+	if(param.removePlinth == 1 && param.profile == 4){
+		printf("Error, remove plinth is not supported for profile 4\n");
+		return 0;
 	}
 
 	//If the bin file is used, store the boundaries of the bins
@@ -857,11 +862,11 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		//Allocate memory for Line properties
 		if(param.dataBase < 2 || param.dataBase == 3){
 			// 0 1 3
-			Alloc_Line(L, m);
+			Alloc_Line(L, m, param);
 		}
 		else{
 			// 2 30 31 32
-			Alloc2_Line(L, m);
+			Alloc2_Line(L, m, param);
 		}
 
 		if(param.useCia == 1){
@@ -1114,7 +1119,16 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 						for(int k = 0; k < NL; k += def_nthmax){
 							int Nk = min(def_nthmax, NL - k);
-							if(Nk > 0) S3_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.S1_d, L.vy_d, L.ialphaD_d, L.Sf_d, L.S1f_d, L.vyf_d, L.vcut2_d, L.va_d, L.vb_d, param.cut, param.cutMode, param.profile, param.numin, param.dnu, param.useIndividualX, NL, k);
+							if(Nk > 0){
+								S3_kernel <<< (Nk + 127) / 128, 128 >>> (L.nu_d, L.S_d, L.S1_d, L.vy_d, L.ialphaD_d, L.Sf_d, L.S1f_d, L.vyf_d, L.vcut2_d, L.va_d, L.vb_d, param.cut, param.cutMode, param.profile, param.numin, param.dnu, param.useIndividualX, NL, k);
+								if(param.removePlinth == 1 && param.cut != 0.0){
+									float a = (float)(M_PI * sqrt(-1.0 / log(def_TOLF * 0.5)));
+									float b = (float)(1.0 / sqrt(M_PI));
+									float c = (float)(2.0 * a / M_PI);
+									Plinth_kernel <<< (Nk + 127) / 128, 128 >>> (L.S1f_d, L.Sf_d, L.vyf_d, L.vcut2_d, L.plinth_d, NL, a, b, c, param.profile);
+									//printPlinth_kernel <<< (Nk + 127) / 128, 128 >>> (L.plinth_d, L.nu_d, NL);
+								}
+							}
 						}
 
 						cudaEventRecord(LineStop);
@@ -1731,10 +1745,10 @@ printf("Add streams B\n");
 		}
 
 		if(param.dataBase < 2 || param.dataBase == 3){
-			free_Line(L);
+			free_Line(L, param);
 		}
 		else{
-			free2_Line(L);
+			free2_Line(L, param);
 		}
 
 	} //end species loop

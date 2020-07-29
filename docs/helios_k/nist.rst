@@ -82,3 +82,29 @@ Step 6, data path
 Include the path of the directory, which contains the obtained binary
 files, the ``*.pf`` partition function files and the ``*.param`` file to
 the HELIOS-K ``param.dat`` file under ``pathToData``.
+
+
+
+References
+~~~~~~~~~~
+
+NIST gives an example how to cite their work:
+
+::
+
+	Example of how to reference these results:
+	Kramida, A., Ralchenko, Yu., Reader, J., and NIST ASD Team (2019).
+	NIST Atomic Spectra Database (ver. 5.7.1), [Online]. Available: https://physics.nist.gov/asd [2020, July 22].
+	National Institute of Standards and Technology, Gaithersburg, MD. DOI: https://doi.org/10.18434/T4W30F
+
+
+	@Misc{NIST_ASD,
+	author = {A.~Kramida and {Yu.~Ralchenko} and
+	J.~Reader and {and NIST ASD Team}},
+	HOWPUBLISHED = {{NIST Atomic Spectra Database
+	(ver. 5.7.1), [Online]. Available:
+	{\tt{https://physics.nist.gov/asd}} [2020, July 22].
+	National Institute of Standards and Technology,
+	Gaithersburg, MD.}},
+	year = {2019},
+	}

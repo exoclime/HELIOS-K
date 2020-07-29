@@ -30,7 +30,7 @@
 #endif
 
 
-#define VERSION 2.02
+#define VERSION 2.03
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -50,7 +50,6 @@
 #define def_nlmax 32768			//Maximum number of lines per kernel launch, to prevent from time out on Desktop machines
 #define def_maxlines 1048576ll		//maximum number of lines stored on the GPU, Should not be less than maximum in HITEMP lines, must be long long int type
 #define def_maxfiles 500		//maximum number of files per molecule
-#define def_doTuning 1			//use the self-tuning routines
 
 #define def_NmaxSample 100		//Maximum Number of resample coefficients for K(y)
 
@@ -68,6 +67,8 @@
 #define def_qALPHA_L 0.5	//q value in the Lorentz half width q = Pself / P
 #define def_gammaF 1.0		//scaling factor for Lorentzian halfwidth
 #define def_PROFILE 1		//1 = Voigt, 2 = Lorentz, 3 = Gauss, 4 = cross section
+#define def_doTuning 1		//use the self-tuning routines
+#define def_removePlinth 0	//use to remove the plinth from cutted line wings
 
 
 struct Isotopologue{
@@ -156,6 +157,7 @@ struct Param{
 	int profile;
 	double gammaF;
 	int doTuning;
+	int removePlinth;
 };
 
 struct Line{
@@ -173,6 +175,7 @@ struct Line{
 	float *vb_d;			//dnu * ialphaD
 	float *vcut2_d;			//(cut * ialphaD)^2
 	double *ialphaD_h, *ialphaD_d;	//Doppler Halfwidth
+	double *plinth_d;
 	double *n_h, *n_d;		//temperature dependent exponent
 	double *Sort_d;			//helper array used to sort the other arrays
 	int *ID_d;			//line id used for sorting
