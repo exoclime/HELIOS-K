@@ -936,11 +936,102 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 	}
 }
 
+// *************************************************
+//This kernel computes the plinth of truncated lines
+//
+// Author Simon Grimm
+// July 2020
+// *************************************************
+// Individual X = 0
+__global__ void Plinth_kernel(float *S1_d, float *S_d, float *vy_d, float *vcut2_d, double *plinth_d, const int NL, const float a, const float b, const float c, const int profile){
+
+	int il = threadIdx.x + blockDim.x * blockIdx.x;
+
+	double K = 0.0;
+
+	float t1, xxyy;
+	float y, vcut2;
+
+
+	if(il < NL){
+		y = vy_d[il];
+		vcut2 = vcut2_d[il];
+
+		t1 = vcut2;
+		//t1 = x * x = vcut2
+		xxyy = t1 + y * y;
+
+		if(profile == 1){
+			if(xxyy >= 1.0e6f){
+				//1 order Gauss Hermite Quadrature
+				float S1 = S1_d[il];
+				K = S1 / xxyy;
+			}
+			if(xxyy < 1.0e6f && xxyy >= 100.0f){
+				//2nd order Gauss Hermite Quadrature
+				float S1 = S1_d[il];
+				t1 *= 6.0f;
+				float t2 = xxyy + 1.5f;
+				float t3 = M_PIf * t2;
+
+				float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
+
+				K = S1 * t4;
+			}
+			if(xxyy < 100.0f){
+				float S = S_d[il];
+
+				float x = sqrtf(t1);
+				float s1, s2, s3;
+				float ex2 = expf(-x * x);
+
+				//Compute Sigma Series
+				if(x != 0.0 && y != 0.0) Sigmabf(x, y, s1, s2, s3, a, ex2, 0);
+
+				float xy = x * y;
+				float cos2xy = cosf(2.0f * xy);
+				float sinxy = sinf(xy);
+
+				float t1 = ex2 * erfcxf(y) * cos2xy;
+				float t2 = sinxy * ex2 * sinxy / y;
+				float t3 = y * (-cos2xy * s1 + 0.5f * (s2 + s3));
+				t1 += c * (t2 + t3);
+
+				if(x == 0.0f) t1 = erfcxf(y);
+				if(y == 0.0f) t1 = ex2;
+
+				K = S * t1 * b;
+	//if(iii <= 26253 && iii >= 26253) printf("xC %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", iL, iii, x, S, y, vb, va, t1, K_s[(i + idx) % (NBy * NBx)]);
+			}
+		}
+		else if(profile == 2){
+			//Lorentz profile
+			float S1 = S1_d[il];
+			K = S1 / xxyy;
+		}
+		else if(profile == 3){
+			//Doppler profile
+			float S1 = S1_d[il];
+			K = S1 * b * expf(-t1);
+		}
+		plinth_d[il] = K;
+	}
+}
+
+// Individual X = 0
+__global__ void printPlinth_kernel(double *plinth_d, double *nu_d, const int NL){
+
+	int il = threadIdx.x + blockDim.x * blockIdx.x;
+
+	if(il < NL){
+		if(nu_d[il] > 20300 && nu_d[il] < 20400) printf("%d %g %g\n", il, nu_d[il], plinth_d[il]);
+	}
+}
 
 // Case A
 // Individual X = 0
 template <const int profile>
-__global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsA0_d, const int Nk, const int NL, const int NBx, const int NBy, const int fK, const int LR){
+__global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsA0_d, const int Nk, const int NL, const int NBx, const int NBy, const int fK, const int LR, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -961,6 +1052,7 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 	int ii, iii;
 	float x, t1, xxyy;
 	float S1, y, va, vb, vcut2;
+	double plinth;
 
 	for(int iil = 0; iil < def_nlA; iil += blockDim.x){
 			
@@ -971,6 +1063,10 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 		for(int i = 0; i < NBx; ++i){
 			if(iL < NL){ 
@@ -985,6 +1081,9 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 						if(LR == 10 || (LR == 11 && x <= 0.0 ) || (LR == 12 && x > 0.0  )){
 //if(iii == 24982) printf("xA %d   %d %d %.20g %.20g %.20g %.20g %.20g\n", LR, iL, iii, x, S1, y, vb, va);
 							K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+							if(removePlinth == 1){
+								K_s[(i + idx) % (NBy * NBx)] -= plinth;
+							}
 //if(iii <= 24985 && iii >= 24970) printf("xA %d   %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", LR, iL, iii, x, S1, y, vb, va, 1.0 / xxyy, K_s[(i + idx) % (NBy * NBx)]);
 						}
 					}
@@ -992,11 +1091,17 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 				if(profile == 2){  //Lorentz
 					if(t1 < vcut2){	
 						K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 				if(profile == 3){  //Doppler
 					if(t1 < vcut2){	
 						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI);
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 				if(profile == 4){  //crossection as in Hill et all 2012
@@ -1005,6 +1110,9 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 						float xm = x - 0.5f * vb;
 						float dd = 1.0f / vb;
 						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm));
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 			}
@@ -1029,7 +1137,7 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 // Case A
 // Individual X = 1
 template <const int profile>
-__global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsA0_d, const int Nk, const int NL, const int NBx, const int NBy, double *x_d, const int fK, const int LR){
+__global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsA0_d, const int Nk, const int NL, const int NBx, const int NBy, double *x_d, const int fK, const int LR, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -1059,6 +1167,7 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 	int ii;
 	float x, t1, xxyy;
 	float S1, y, vcut2;
+	double plinth;
 	double nu, ialphaD;
 
 	for(int iil = 0; iil < def_nlA; iil += blockDim.x){
@@ -1070,6 +1179,10 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 		for(int i = 0; i < NBx; ++i){
 			if(iL < NL){ 
@@ -1083,17 +1196,26 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 						if(LR == 10 || (LR == 11 && x <= 0.0 ) || (LR == 12 && x > 0.0  )){
 //printf("x %d   %d %g %g %g %g %g %g\n", LR, iL, x_s[ii], x, S1, y, nu, ialphaD);
 							K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+							if(removePlinth == 1){
+								K_s[(i + idx) % (NBy * NBx)] -= plinth;
+							}
 						}
 					}
 				}
 				if(profile == 2){  //Lorentz
 					if(t1 < vcut2){	
 						K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 				if(profile == 3){  //Doppler
 					if(t1 < vcut2){	
 						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI);
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 				if(profile == 4){  //crossection as in Hill et all 2012
@@ -1106,6 +1228,9 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 						float xm = x - 0.5f * dnu * ialphaD;
 						float dd = 1.0f / (ialphaD * dnu);
 						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm));
+						if(removePlinth == 1){
+							K_s[(i + idx) % (NBy * NBx)] -= plinth;
+						}
 					}
 				}
 			}
@@ -1130,7 +1255,7 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 
 // Case B
 // Individual X = 0
-__global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsB0_d, const int Nk, const int NL, const int NBx, const int NBy, const int fK){
+__global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsB0_d, const int Nk, const int NL, const int NBx, const int NBy, const int fK, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -1151,6 +1276,7 @@ __global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 	int ii, iii;
 	float x, t1, xxyy;
 	float S1, y, va, vb, vcut2;
+	double plinth;
 
 	for(int iil = 0; iil < def_nlB; iil += blockDim.x){
 			
@@ -1161,6 +1287,10 @@ __global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 		for(int i = 0; i < NBx; ++i){
 			if(iL < NL){ 
@@ -1179,6 +1309,9 @@ __global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 					float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
 					
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t4;
+					if(removePlinth == 1){
+						K_s[(i + idx) % (NBy * NBx)] -= plinth;
+					}
 //if(iii <= 24985 && iii >= 24970) printf("xB %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", iL, iii, x, S1, y, vb, va, t4, K_s[(i + idx) % (NBy * NBx)]);
 				}
 			}
@@ -1203,7 +1336,7 @@ __global__ void Line6fB_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 }
 // Case B
 // Individual X = 1
-__global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsB0_d, const int Nk, const int NL, const int NBx, const int NBy, double *x_d, const int fK){
+__global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsB0_d, const int Nk, const int NL, const int NBx, const int NBy, double *x_d, const int fK, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -1233,6 +1366,7 @@ __global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 	float x, t1, xxyy;
 	float S1, y, vcut2;
 	double nu, ialphaD;
+	double plinth;
 
 	for(int iil = 0; iil < def_nlB; iil += blockDim.x){
 			
@@ -1243,6 +1377,10 @@ __global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 		for(int i = 0; i < NBx; ++i){
 			if(iL < NL){ 
@@ -1260,6 +1398,9 @@ __global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 					float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
 					
 					K_s[(i + idx) % (NBy * NBx)] += S1 * t4;
+					if(removePlinth == 1){
+						K_s[(i + idx) % (NBy * NBx)] -= plinth;
+					}
 				}
 			}
 			__syncthreads();
@@ -1283,7 +1424,7 @@ __global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 
 // Case C
 // Individual X = 0
-__global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsC0_d, const int Nk, const int NL, const int NBx, const int NBy, const float a, const float b, const float c, const int fK){
+__global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsC0_d, const int Nk, const int NL, const int NBx, const int NBy, const float a, const float b, const float c, const int fK, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -1303,6 +1444,7 @@ __global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d
 	int ii, iii;
 	float x, t1, xxyy;
 	float S, y, va, vb, vcut2;
+	double plinth;
 
 	__syncthreads();
 
@@ -1315,6 +1457,10 @@ __global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d
 			va = va_d[iL];
 			vb = vb_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 
 		for(int i = 0; i < NBx; ++i){
@@ -1345,6 +1491,9 @@ __global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d
 					if(y == 0.0f) t1 = ex2;
 
 					K_s[(i + idx) % (NBy * NBx)] += S * t1 * b;
+					if(removePlinth == 1){
+						K_s[(i + idx) % (NBy * NBx)] -= plinth;
+					}
 //if(iii <= 26253 && iii >= 26253) printf("xC %d %d %.20g %.20g %.20g %.20g %.20g %.30g %.30g\n", iL, iii, x, S, y, vb, va, t1, K_s[(i + idx) % (NBy * NBx)]);
 				}
 			}
@@ -1369,7 +1518,7 @@ __global__ void Line6fC_kernel(float *S_d, float *vy_d, float *va_d, float *vb_d
 
 // Case C
 // Individual X = 1
-__global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *K_d, const int il1, long long int *iiLimitsC0_d, const int Nk, const int NL, const int NBx, const int NBy, const float a, const float b, const float c, double *x_d, const int fK){
+__global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *ialphaD_d, float *vcut2_d, double *plinth_d, double *K_d, const int il1, long long int *iiLimitsC0_d, const int Nk, const int NL, const int NBx, const int NBy, const float a, const float b, const float c, double *x_d, const int fK, const int removePlinth){
 
 	int idx = threadIdx.x;
 	int idy = blockIdx.x * NBx;
@@ -1398,6 +1547,7 @@ __global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *i
 	float x, t1, xxyy;
 	float S, y, vcut2;
 	double nu, ialphaD;
+	double plinth;
 
 	__syncthreads();
 
@@ -1410,6 +1560,10 @@ __global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *i
 			nu = nu_d[iL];
 			ialphaD = ialphaD_d[iL];
 			vcut2 = vcut2_d[iL];
+			if(removePlinth == 1){
+				plinth = plinth_d[iL];
+			}
+			else plinth = 0.0;
 		}
 
 		for(int i = 0; i < NBx; ++i){
@@ -1440,6 +1594,9 @@ __global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *i
 					if(y == 0.0f) t1 = ex2;
 
 					K_s[(i + idx) % (NBy * NBx)] += S * t1 * b;
+					if(removePlinth == 1){
+						K_s[(i + idx) % (NBy * NBx)] -= plinth;
+					}
 				}
 			}
 			__syncthreads();
@@ -1503,104 +1660,104 @@ if(LR == 12 && (il % 10000 == 0 || il < 5 * def_nlA)) printf("AAR  %d %lld %lld 
 		if(param.profile == 1){
 			if(LR == 10){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 11){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 12){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 1 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 		}
 		if(param.profile == 2){
 			if(LR == 10){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 11){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 12){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 2 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 		}
 		if(param.profile == 3){
 			if(LR == 10){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 11){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 12){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 3 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 		}
 		if(param.profile == 4){
 			if(LR == 10){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsA0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 11){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAL0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 			if(LR == 12){
 				if(param.useIndividualX == 0){
-					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR);
+					Line6fA_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, fK, LR, param.removePlinth);
 				}
 				else{
-					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR);
+					Line6fAX_kernel < 4 > <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsAR0_d, Nx, NL, nk, nntt / nk, x_d, fK, LR, param.removePlinth);
 				}
 			}
 		}
@@ -1635,10 +1792,10 @@ if(il % 10000 == 0 || il < 5 * def_nlB) printf("BB  %d %lld %lld %d | blocks %d 
 
 
 		if(param.useIndividualX == 0){
-			Line6fB_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsB0_d, Nx, NL, nk, nntt / nk, fK);
+			Line6fB_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsB0_d, Nx, NL, nk, nntt / nk, fK, param.removePlinth);
 		}
 		else{
-			Line6fBX_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsB0_d, Nx, NL, nk, nntt / nk, x_d, fK);
+			Line6fBX_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.S1f_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsB0_d, Nx, NL, nk, nntt / nk, x_d, fK, param.removePlinth);
 		}
 	}
 	return nt1; 
@@ -1671,10 +1828,10 @@ if(il % 10000 == 0 || il < 5 * def_nlC) printf("CC  %d %lld %lld %d | blocks %d 
 
 
 		if(param.useIndividualX == 0){
-			Line6fC_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.Sf_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, KS_d, il1, L.iiLimitsC0_d, Nx, NL, nk, nntt / nk, a, b, c, fK);
+			Line6fC_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , nntt * sizeof(double), Stream >>> (L.Sf_d, L.vyf_d, L.va_d, L.vb_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsC0_d, Nx, NL, nk, nntt / nk, a, b, c, fK, param.removePlinth);
 		}
 		else{
-			Line6fCX_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.Sf_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, KS_d, il1, L.iiLimitsC0_d, Nx, NL, nk, nntt / nk, a, b, c, x_d, fK);
+			Line6fCX_kernel <<< dim3(nnkk, def_KSn, 1), dim3(nntt, 1, 1) , (nntt + nk) * sizeof(double), Stream >>> (L.Sf_d, L.vyf_d, L.nu_d, L.ialphaD_d, L.vcut2_d, L.plinth_d, KS_d, il1, L.iiLimitsC0_d, Nx, NL, nk, nntt / nk, a, b, c, x_d, fK, param.removePlinth);
 		}
 	}
 	return nt1; 
