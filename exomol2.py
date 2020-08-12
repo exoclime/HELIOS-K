@@ -42,11 +42,16 @@ def transitionRanges(url):
 	if(len(transList) > 1):
 		#check range of files
 		for x in transList:
-			x0 = float(x.split('-')[0])
-			x1 = float(x.split('-')[1])
-			dg = len(x.split('-')[0])
-			#print(x1-x0)
-			rangesList.append(x1-x0)
+			#print(x)
+			try:
+				x0 = float(x.split('-')[0])
+				x1 = float(x.split('-')[1])
+				dg = len(x.split('-')[0])
+				#print(x1-x0)
+				rangesList.append(x1-x0)
+			except:
+				print("error", url, x)
+				return(0, 0, 0)
 
 		s = rangesList[0]
 		for r in rangesList:
@@ -99,8 +104,10 @@ def main():
 			url2 = url1 + el1 + "/"
 			page2 = requests.get(url2).text
 			soup2 = BeautifulSoup(page2, "html.parser")
+			#print(soup2)
 
 			List2 = soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item "})
+			List2 += soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item"})
 			List2 += soup2.find_all('a', attrs={"class" : "list-group-item link-list-group-item recommended"})
 
 			#Line list

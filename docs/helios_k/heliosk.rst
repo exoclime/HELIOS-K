@@ -132,6 +132,15 @@ used parameters are listed here, the order can not be changed.
    - 3: Gaussian
    - 4: Integrated Binned Gaussian
 
+-  subLorentzianfile: A '-' ignores this option, otherwise this option
+   specifies a file name which contains the chi factor parameters for
+   sub-Lorentzian CO2 profiles.
+
+-  removePlinth:
+
+  - 0:  nothing is done here
+  - 1:  the plinth (base) is removed from cutted line profiles 
+
 -  doTuning:
 
    - 0: nothing is done here

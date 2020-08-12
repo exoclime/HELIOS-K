@@ -293,6 +293,11 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			fscanf (paramFile, "%d", &param.removePlinth);
 			fgets(sp, 3, paramFile);
 		}
+		//read subLorentzianFile
+		else if(strcmp(sp, "subLorentzianfile =") == 0){
+			fscanf (paramFile, "%s", param.subLorentzianFilename);
+			fgets(sp, 3, paramFile);
+		}
 		else{
 			printf("Undefined line in param.dat file: line %d\n", j);
 			return 0;
@@ -485,6 +490,37 @@ __host__ int read_parameters(Param &param, char *paramFilename, int argc, char*a
 			}
 		}		
 		fclose(Speciesfile);	
+	}
+	if(strcmp(param.subLorentzianFilename, "-") != 0){
+		printf("Use sub-Lorentzian file %s\n", param.subLorentzianFilename);
+		param.useSubLorentzian = 1;
+		FILE *sLfile;
+		sLfile = fopen(param.subLorentzianFilename, "r");
+		if(sLfile == NULL){
+			printf("Error: sub-Lorentzian file not found: %s\n", param.subLorentzianFilename);
+			return 0;
+		}
+
+		char b[160];
+		int er;
+		//Read Perrin and Hartmann 1989 coefficients
+		er = fscanf(sLfile, "%s %f", b, &sLchi_h[0]);	//sigma1
+		er = fscanf(sLfile, "%s %f", b, &sLchi_h[1]);	//sigma2
+		er = fscanf(sLfile, "%s %f", b, &sLchi_h[2]);	//sigma3
+
+		er = fscanf(sLfile, "%s %s %s %s", b, b, b, b);	//B alpha beta epsilon
+		er = fscanf(sLfile, "%s %f %f %f", b, &sLchi_h[3], &sLchi_h[4], &sLchi_h[5]);	//B1
+		er = fscanf(sLfile, "%s %f %f %f", b, &sLchi_h[6], &sLchi_h[7], &sLchi_h[8]);	//B2
+		er = fscanf(sLfile, "%s %f %f %f", b, &sLchi_h[9], &sLchi_h[10], &sLchi_h[11]);	//B3
+		//read range
+		er = fscanf(sLfile, "%s %s %s", b, b, b);	//range
+		er = fscanf(sLfile, "%f %f", &sLchi_h[12], &sLchi_h[13]);	//B3
+
+		if(er <= 0){
+			printf("Error in sub-Lorentzian file read %s\n", param.subLorentzianFilename);
+			return 0;
+		}
+		fclose(sLfile);
 	}
 	if(strcmp(param.ciaSystem, "-") != 0){
 		param.useCia = 1;

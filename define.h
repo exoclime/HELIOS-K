@@ -30,7 +30,7 @@
 #endif
 
 
-#define VERSION 2.03
+#define VERSION 2.04
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -158,7 +158,12 @@ struct Param{
 	double gammaF;
 	int doTuning;
 	int removePlinth;
+	char subLorentzianFilename[160];
+	int useSubLorentzian;
 };
+
+//Sub-Lorentzian coefficients
+float sLchi_h[17];
 
 struct Line{
 	double *nu_h, *nu_d;		//Wavenumber

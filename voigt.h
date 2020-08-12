@@ -1,3 +1,77 @@
+//constants for sub-Lorentzian chi
+__constant__ float  sLchi_c[17];
+__constant__ int useSubLorentzian_c[1];
+
+// *********************************************
+// This function calculates the B factors for the
+// Perrin and Hartmann 1989 sub-Lorentzian chi factors
+//
+//Author Simon Grimm
+//August 2020
+// **********************************************
+__host__ void subLorentzianB(double T){
+
+	float alpha1   = sLchi_h[3];
+	float beta1    = sLchi_h[4];
+	float epsilon1 = sLchi_h[5];
+
+	float alpha2   = sLchi_h[6];
+	float beta2    = sLchi_h[7];
+	float epsilon2 = sLchi_h[8];
+
+	float alpha3   = sLchi_h[9];
+	float beta3    = sLchi_h[10];
+	float epsilon3 = sLchi_h[11];
+
+	float B1 = alpha1 + beta1 * exp(-epsilon1 * T);
+	float B2 = alpha2 + beta2 * exp(-epsilon2 * T);
+	float B3 = alpha3 + beta3 * exp(-epsilon3 * T);
+
+	sLchi_h[14] = B1;
+	sLchi_h[15] = B2;
+	sLchi_h[16] = B3;
+
+	cudaMemcpyToSymbol(sLchi_c, sLchi_h, 17 * sizeof(float), 0, cudaMemcpyHostToDevice);
+}
+__host__ void subLorentzianConstantCopy(int useSubLorentzian){
+	cudaMemcpyToSymbol(useSubLorentzian_c, &useSubLorentzian, sizeof(int), 0, cudaMemcpyHostToDevice);
+}
+
+// *********************************************
+// This function calculates the chi factors for the
+// Perrin and Hartmann 1989 sub-Lorentzian correction
+//
+//Author Simon Grimm
+//August 2020
+// **********************************************
+__device__ float sLChi(float Dnu){
+	float chi;
+
+	float sigma1 = sLchi_c[0];
+	float sigma2 = sLchi_c[1];
+	float sigma3 = sLchi_c[2];
+
+	float B1 = sLchi_c[14];
+	float B2 = sLchi_c[15];
+	float B3 = sLchi_c[16];
+
+	if(Dnu < sigma1){
+		chi = 1.0f;
+	}
+	else if(Dnu < sigma2){
+		chi = exp(-B1 * (Dnu - sigma1));
+	}
+	else if(Dnu < sigma3){
+		chi = exp(-B1 * (sigma2 - sigma1) - B2 * (Dnu - sigma2));
+	}
+	else{
+		chi = exp(-B1 * (sigma2 - sigma1) - B2 * (sigma3 - sigma2) - B3 * (Dnu - sigma3));
+	}
+
+	return chi;
+}
+
+
 // *********************************************
 //This function calculates the Series Sigma1. Sigma2 and Sigma3 (Equations 27, 28, and 29) from Alg 916
 //The parameter def_TOL sets a tolerance where to truncate the series
@@ -942,7 +1016,6 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 // Author Simon Grimm
 // July 2020
 // *************************************************
-// Individual X = 0
 __global__ void Plinth_kernel(float *S1_d, float *S_d, float *vy_d, float *vcut2_d, double *plinth_d, const int NL, const float a, const float b, const float c, const int profile){
 
 	int il = threadIdx.x + blockDim.x * blockIdx.x;
@@ -1018,7 +1091,6 @@ __global__ void Plinth_kernel(float *S1_d, float *S_d, float *vy_d, float *vcut2
 	}
 }
 
-// Individual X = 0
 __global__ void printPlinth_kernel(double *plinth_d, double *nu_d, const int NL){
 
 	int il = threadIdx.x + blockDim.x * blockIdx.x;
@@ -1195,7 +1267,18 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 						//1 order Gauss Hermite Quadrature
 						if(LR == 10 || (LR == 11 && x <= 0.0 ) || (LR == 12 && x > 0.0  )){
 //printf("x %d   %d %g %g %g %g %g %g\n", LR, iL, x_s[ii], x, S1, y, nu, ialphaD);
-							K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+
+							float chinu = 1.0f;
+							if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+								float Dnu = fabsf(float(x_s[ii] - nu));
+								float chi = sLChi(Dnu);
+								chinu = chi * x_s[ii] / nu;
+//if(nu > 2330.0035 && nu < 2330.0036)
+//printf("chiA %.12g %.12g %.12g %.12g %.12g\n", x_s[ii], nu, Dnu, chi, x_s[ii] / nu);
+							}
+
+							K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy * chinu;
+
 							if(removePlinth == 1){
 								K_s[(i + idx) % (NBy * NBx)] -= plinth;
 							}
@@ -1204,7 +1287,15 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 				}
 				if(profile == 2){  //Lorentz
 					if(t1 < vcut2){	
-						K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy;
+						float chinu = 1.0f;
+						if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+							float Dnu = fabsf(float(x_s[ii] - nu));
+							float chi = sLChi(Dnu);
+							chinu = chi * x_s[ii] / nu;
+						}
+
+						K_s[(i + idx) % (NBy * NBx)] += S1 / xxyy * chinu;
+
 						if(removePlinth == 1){
 							K_s[(i + idx) % (NBy * NBx)] -= plinth;
 						}
@@ -1212,7 +1303,14 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 				}
 				if(profile == 3){  //Doppler
 					if(t1 < vcut2){	
-						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI);
+						float chinu = 1.0f;
+						if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+							float Dnu = fabsf(float(x_s[ii] - nu));
+							float chi = sLChi(Dnu);
+							chinu = chi * x_s[ii] / nu;
+						}
+
+						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI) * chinu;
 						if(removePlinth == 1){
 							K_s[(i + idx) % (NBy * NBx)] -= plinth;
 						}
@@ -1227,7 +1325,15 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 						float xp = x + 0.5f * dnu * ialphaD;
 						float xm = x - 0.5f * dnu * ialphaD;
 						float dd = 1.0f / (ialphaD * dnu);
-						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm));
+
+						float chinu = 1.0f;
+						if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+							float Dnu = fabsf(float(x_s[ii] - nu));
+							float chi = sLChi(Dnu);
+							chinu = chi * x_s[ii] / nu;
+						}
+
+						K_s[(i + idx) % (NBy * NBx)] += S1 * dd * 0.5f * (erff(xp) - erff(xm)) * chinu;
 						if(removePlinth == 1){
 							K_s[(i + idx) % (NBy * NBx)] -= plinth;
 						}
@@ -1396,8 +1502,18 @@ __global__ void Line6fBX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 					float t3 = M_PIf * t2;
 
 					float t4 = (t3 * (2.0f * t2 + xxyy) - 2.0f * t1) / (3.0f * xxyy * (t3 * t2 - t1));
-					
-					K_s[(i + idx) % (NBy * NBx)] += S1 * t4;
+
+					float chinu = 1.0f;
+					if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+						float Dnu = fabsf(float(x_s[ii] - nu));
+						float chi = sLChi(Dnu);
+						chinu = chi * x_s[ii] / nu;
+
+//if(nu > 2330.0035 && nu < 2330.0036)
+//printf("chiB %.12g %.12g %.12g %.12g %.12g\n", x_s[ii], nu, Dnu, chi, x_s[ii] / nu);
+					}
+
+					K_s[(i + idx) % (NBy * NBx)] += S1 * t4 * chinu;
 					if(removePlinth == 1){
 						K_s[(i + idx) % (NBy * NBx)] -= plinth;
 					}
@@ -1593,7 +1709,16 @@ __global__ void Line6fCX_kernel(float *S_d, float *vy_d, double *nu_d, double *i
 					if(x == 0.0f) t1 = erfcxf(y);
 					if(y == 0.0f) t1 = ex2;
 
-					K_s[(i + idx) % (NBy * NBx)] += S * t1 * b;
+					float chinu = 1.0f;
+					if(useSubLorentzian_c[0] == 1 && x_s[ii] > sLchi_c[12] && x_s[ii] < sLchi_c[13]){
+						float Dnu = fabsf(float(x_s[ii] - nu));
+						float chi = sLChi(Dnu);
+						chinu = chi * x_s[ii] / nu;
+//if(nu > 2330.0035 && nu < 2330.0036)
+//printf("chiC %.12g %.12g %.12g %.12g %.12g\n", x_s[ii], nu, Dnu, chi, x_s[ii] / nu);
+					}
+
+					K_s[(i + idx) % (NBy * NBx)] += S * t1 * b * chinu;
 					if(removePlinth == 1){
 						K_s[(i + idx) % (NBy * NBx)] -= plinth;
 					}

@@ -53,6 +53,7 @@ OPTIONS
   :maxdepth: 1
 
   helios_k/profiles.rst
+  helios_k/subLorentzian.rst
   helios_k/cut.rst
   helios_k/plinth.rst
   helios_k/bins.rst

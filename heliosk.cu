@@ -325,6 +325,7 @@ return 0;
 	param.pathK[0] = 0;
 	param.nSpecies = 1;
 	param.useSpeciesFile = 0;
+	param.useSubLorentzian = 0;
 
 	param.T = 0.0;
 	param.P = 0.0;
@@ -405,6 +406,8 @@ return 0;
 		return 0;
 	}
 
+	subLorentzianConstantCopy(param.useSubLorentzian);
+
 	//If the bin file is used, store the boundaries of the bins
 	double *binBoundaries_h, *binBoundaries_d;
 	binBoundaries_h = (double*)malloc((param.nbins + 1) * sizeof(double));
@@ -465,6 +468,11 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			return 0;
 		}
 	}
+	if(param.useSubLorentzian == 1){
+		subLorentzianB(param.T);
+		param.useIndividualX = 1;
+		//this is needed because of the nu/nu0 factor
+	}
 
 
 	//If the output edges file is used store the edges
@@ -497,6 +505,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		er = readSpeciesFile(param, SpeciesN_h, SpeciesA_h);
 		if(er == 0) return 0;
 	}
+
 
 	double time[9];
 	double timeT[3];
@@ -541,6 +550,9 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		if(param.useSpeciesFile > 0){
 			fprintf(infofile, "Species in file: %s\n", param.SpeciesFilename);
 			fprintf(infofile, "Number of Species: %d\n", param.nSpecies);
+		}
+		if(param.useSubLorentzian > 0){
+			fprintf(infofile, "sub-Lorentzian file: %s\n", param.SpeciesFilename);
 		}
 		fprintf(infofile, "cia System = %s\n", param.ciaSystem);
 		fprintf(infofile, "pathToData = %s\n", param.path);
