@@ -552,7 +552,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			fprintf(infofile, "Number of Species: %d\n", param.nSpecies);
 		}
 		if(param.useSubLorentzian > 0){
-			fprintf(infofile, "sub-Lorentzian file: %s\n", param.SpeciesFilename);
+			fprintf(infofile, "sub-Lorentzian file: %s\n", param.subLorentzianFilename);
 		}
 		fprintf(infofile, "cia System = %s\n", param.ciaSystem);
 		fprintf(infofile, "pathToData = %s\n", param.path);
