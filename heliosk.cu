@@ -312,6 +312,7 @@ return 0;
 	sprintf(param.edges, "%s", "-");
 	sprintf(param.bins, "%s", "-");
 	sprintf(param.ciaSystem, "%s", "-");
+	sprintf(param.subLorentzianFilename, "%s", "-");
 
 	param.dev = 0;
 	param.useIndividualBins = 0;
