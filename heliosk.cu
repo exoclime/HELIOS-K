@@ -836,7 +836,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 
 		double *readBuffer_h, *readBuffer_d;
 		int readBufferSize = 8192;
-		int readBufferN;
+		int readBufferN = 0;
 		int readBufferCount = 0;
 		int rbvs = 0;
   	
@@ -858,7 +858,22 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		}
 
 		cudaHostAlloc((void **) &readBuffer_h, def_rBs * readBufferSize * readBufferN * sizeof(double), cudaHostAllocDefault);
+
+		cudaDeviceSynchronize();
+		error = cudaGetLastError();
+		if(error != 0){
+			printf("Buffer host alloc error = %d = %s\n",error, cudaGetErrorString(error));
+			return 0;
+		}
+
 		cudaMalloc((void **) &readBuffer_d, def_maxlines * readBufferN * sizeof(double));
+
+		cudaDeviceSynchronize();
+		error = cudaGetLastError();
+		if(error != 0){
+			printf("Buffer device alloc  error = %d = %s\n",error, cudaGetErrorString(error));
+			return 0;
+		}
 
 //printf("Allocate read Buffer %d %d %d %lld | %d %lld\n", def_rBs, readBufferSize, readBufferN, m.NLmax,  def_rBs * readBufferSize * readBufferN, m.NLmax * readBufferN);
 
