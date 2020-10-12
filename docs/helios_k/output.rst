@@ -20,6 +20,31 @@ It contains nu and K(nu), where nu are the wavenumbers and K(nu) is the
 full opacity function. When the ``PFile`` option is used, then the files
 contain also the values of T and P.
 
+| This files are written by using the option:
+
+ - doStoreFullK = 1
+
+.. _out_<name>.bin:
+
+``Out_<name>.bin``
+------------------
+Binary output file, it contains K(nu), where nu are the wavenumbers and K(nu) is the
+full opacity function. The wavenumbers are not contained in the output files, and
+have to be calculated manually by using the wavenumber resolution, and file line index.
+The opacities are stored in a single precision floating point binary format.
+
+| This files are written by using the option:
+
+ - doStoreFullK = 2
+
+
+``Convert Out_<name>.dat to Out_<name>.bin files``
+--------------------------------------------------
+Output files in the text format ``*.dat`` can be converted into binary ``*.bin`` files
+with the script ``DATtoBIN.py`` in the ``/tools`` directory.
+
+Use for example ``python3 DATtoBIN.py -n Out_i`` to convert the file ``Out_i.dat`` to ``Out_i.bin``.
+
 .. _out_<name>_bin.dat:
 
 ``Out_<name>_bin.dat``

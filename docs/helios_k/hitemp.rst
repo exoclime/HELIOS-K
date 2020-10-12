@@ -46,7 +46,7 @@ the HELIOS-K ``param.dat`` file under ``pathToData``.
 
 
 References
-~~~~~~~~
+~~~~~~~~~~
 
 HITEMP gives an example how to cite their work:
 
