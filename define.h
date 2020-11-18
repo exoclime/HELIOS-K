@@ -36,7 +36,7 @@
 #define def_T0 296.0 		//Reference Temperature in K
 #define def_PObar 0.986923	//Referecne Pressure 1 bar in atm for ExoMol
 #define def_POatm 1.0		//Referecne Pressure 1 atm in atm for Hitran
-#define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K
+#define def_kB 1.3806489e-16 	//Boltzmann constant in erg/K = cm^2 g / (s^2 K)
 #define def_h 6.62606957e-27	//Planck costant in erg s
 #define def_c 2.99792458e10 	//Speed of light cm/s
 #define def_NA 6.0221412927e23	//Avogadro Constant  1/mol

@@ -568,8 +568,9 @@ __global__ void Voigt_2d_kernel(const double a, const double b, const double c, 
 	int idy = blockIdx.y * blockDim.y + threadIdx.y;
 
 	if(idx < Nx && idy < Ny){
-		double x = idx * xMax / double(Nx - 1);
-		double y = idy * yMax / double(Ny - 1);
+		//x and y arrays from 0.1 to 2000
+		double x = exp(-2.3 + idx * xMax / double(Nx - 1));
+		double y = exp(-2.3 + idy * yMax / double(Ny - 1));
 		double s1, s2, s3;
 		double ex2 = expf(-x * x);
 
@@ -589,10 +590,25 @@ __global__ void Voigt_2d_kernel(const double a, const double b, const double c, 
 		if(y == 0.0) t1 = ex2;
 
 		//K_d[idy * Nx + idx] = t1 * b;
+
+		double xxyy = x * x + y * y;
 		double *row = (double *)(((char *)K_d)+(idy*pitch));
-		row[idx] = t1 * b;
-//if(idy == 0) printf("a %d %d %g %g %g\n", idx, idy, x, y, float(idy * Nx + idx));
-//printf("%g %g %g %g %g %g\n", x, y, s1, s2, s3, K_d[idy * Nx + idx]);
+		if(xxyy < 100.0){
+			row[idx] = t1 * b;
+		}
+		else if(xxyy < 1.0e6){
+			//Region B
+			double t1 = x * x * 6.0;
+			double t2 = xxyy + 1.5;
+			double t3 = M_PI * t2; 
+			double t4 = (t3 * (2.0 * t2 + xxyy) - 2.0 * t1) / (3.0 * xxyy * (t3 * t2 - t1));
+			row[idx] = y * t4 / M_PI;
+
+		}
+		else{
+			//Region A
+			row[idx] = y / (M_PI * xxyy);
+		}
 	}
 }
 __global__ void Voigt_2df_kernel(const float a, const float b, const float c, float *K_d, int Nx, int Ny, size_t pitch, float xMax, float yMax){

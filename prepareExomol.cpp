@@ -210,8 +210,8 @@ int main(int argc, char*argv[]){
 	char qFilename[15][160];
 	Init(m, param, qFilename);
 
-	double mass = m.ISO[0].m;	//Molar Mass (g)
-	mass /= def_NA;
+	double mass = m.ISO[0].m;	//Molar Mass (g/mol)
+	mass /= def_NA;			//mass in g
 	int *id, *g;
 	double *E;
 	

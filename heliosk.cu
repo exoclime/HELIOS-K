@@ -179,8 +179,8 @@ int main(int argc, char*argv[]){
 double xMax = 10.0;
 double yMax = 10.0;
 
-int Nx = 10000;
-int Ny = 10000;
+int Nx = 1000;
+int Ny = 1000;
 
 int Nxtex = Nx + 1;
 int Nytex = Ny + 1;
@@ -200,20 +200,25 @@ cudaMallocPitch((void **) &K2d_d, &pitch, Nxtex * sizeof(double), Nytex);
 	double a = (double)(M_PI * sqrt(-1.0 / log(def_TOLF * 0.5)));
 	double b = (double)(1.0 / sqrt(M_PI));
 	double c = (double)(2.0 * a / M_PI);
+
 	Voigt_2d_kernel <<< dim3((Nxtex + 31) / 32, (Nytex + 31) / 32), dim3(32, 32, 1) >>> (a, b, c, K2d_d, Nxtex, Nytex, pitch, xMax, xMax);
 	cudaMemcpy2D(K2d_h, Nxtex * sizeof(double), K2d_d, pitch, Nxtex * sizeof(double), Nytex, cudaMemcpyDeviceToHost);
 }
-/ *
+// / *
 for(int i = 0; i < Nxtex - 1; ++i){
 	for(int j = 0; j < Nytex - 1; ++j){
-		double x = i * xMax / double(Nxtex);
-		double y = j * yMax / double(Nytex);
-		if( x < xMax && y < yMax){
+		//x and y arrays from 0.1 to 2000
+		double x = exp(-2.3 + i * xMax / double(Nxtex - 1));
+		double y = exp(-2.3 + j * yMax / double(Nytex - 1));
+		//if( x < xMax && y < yMax){
 			printf("%g %g %.15g\n", x, y, K2d_h[j * Nxtex + i]);
-		}
+		//}
 	}
 }
-* /
+// * /
+return 0;
+}
+/ *
 
 float *K2df_h, *K2df_d;
 size_t pitchf;
