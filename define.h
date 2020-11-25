@@ -30,7 +30,7 @@
 #endif
 
 
-#define VERSION 2.05
+#define VERSION 2.06
 
 
 #define def_T0 296.0 		//Reference Temperature in K

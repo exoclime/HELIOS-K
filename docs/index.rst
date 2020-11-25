@@ -7,7 +7,7 @@ HELIOS-K
   the line lists need to be downloaded and preprocessed into binary files that can be 
   read from HELIOS-K. 
 | HELIOS-K provides tools to automatically download and preprocess files from the
-  ExoMol, HITRAN, HITEMP, NIST and Kurucz databases. 
+  ExoMol, HITRAN, HITEMP, NIST, Kurucz and VALD3 databases. 
 | HELIOS-K is running on GPUs and require a Nvidia GPU with compute capability of 3.0 or higher.
 
 
@@ -31,6 +31,7 @@ Databases
 
   helios_k/param.rst
   helios_k/exomol.rst
+  helios_k/exomolSuperlines.rst
   helios_k/hitran.rst
   helios_k/hitemp.rst
   helios_k/kurucz.rst

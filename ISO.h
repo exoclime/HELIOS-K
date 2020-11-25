@@ -142,6 +142,10 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 				sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
 			}
 		}
+		if(param.dataBase == 20){
+			//ExoMol super lines
+			sprintf(m.dataFilename[i], "%s%s.", param.path, m.mName);
+		}
 		if(param.dataBase == 3){
 			//IAO (CDSD)
 			if(m.nFiles > 1){

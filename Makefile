@@ -14,7 +14,7 @@ BUILD_DATA = -DGIT_DESCRIBE=\"$(GIT_DESCRIBE)\" -DBUILD_DATE=\"$(BUILD_DATE)\" -
 
 source = heliosk.cu
 headers = define.h ISO.h resample.h host.h voigt.h
-all: heliosk hitran prepareExomol
+all: heliosk hitran prepareExomol prepareExomolSuper
 heliosk: $(source) $(headers)
 	nvcc $(ARCH) --compiler-options -Wall -o heliosk $(source) $(BUILD_DATA)
 #	nvcc -ccbin=g++-6 $(ARCH) -o heliosk $(source) $(BUILD_DATA)
@@ -25,4 +25,6 @@ hitran: hitran.cpp
 	g++ -o hitran hitran.cpp
 prepareExomol: prepareExomol.cpp ISO.h define.h
 	g++ -o prepareExomol prepareExomol.cpp
+prepareExomolSuper: prepareExomolSuper.cpp ISO.h define.h
+	g++ -o prepareExomolSuper prepareExomolSuper.cpp
 

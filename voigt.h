@@ -362,7 +362,7 @@ __global__ void S2_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, 
 	}
 }
 
-__global__ void Sf_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, double *ialphaD_d, double *n_d,  double *EL_d, int *ID_d, const int NL, const double c, const double T1, const double P, const int kk){
+__global__ void Sf_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, double *ialphaD_d, double *n_d, double *EL_d, int *ID_d, const int NL, const double c, const double T1, const double P, const int kk){
 
 	int idx = threadIdx.x;
 	int id = blockIdx.x * blockDim.x + idx + kk;
@@ -380,6 +380,37 @@ __global__ void Sf_kernel(double *nu_d, double *S_d, double *A_d, double *vy_d, 
 		double alphaL = vy_d[id];
 		alphaL *= (P / def_PObar) * pow(T1, n_d[id]);
 		alphaL += A_d[id];				//1/cm
+		vy_d[id] = alphaL * ialphaD;
+		ID_d[id] = id;
+
+		if(nu == 0){
+			S_d[id] = 0.0;
+			ialphaD_d[id] = 0.0;
+			vy_d[id] = 0.0;
+		}
+//if(id < 10) printf("ialphaD %d %g %g %g\n", id, nu_d[id], ialphaD_d[id], vy_d[id]);
+
+
+//if( id < 100) printf("S %d %g\n", id, S_d[id]);
+//if(id > 156000 && id < 158000) printf("S %d %g\n", id, S_d[id]);
+	}
+}
+
+__global__ void SfSuper_kernel(double *nu_d, double *S_d, double *vy_d, double *ialphaD_d, double *n_d, int *ID_d, const int NL, const double T1, const double P, const int kk){
+
+	int idx = threadIdx.x;
+	int id = blockIdx.x * blockDim.x + idx + kk;
+
+	if(id < NL){
+
+		double nu = nu_d[id];
+		double ialphaD = ialphaD_d[id] / nu;
+
+		S_d[id] *= ialphaD;
+		ialphaD_d[id] = ialphaD;	//inverse Doppler halfwidth
+
+		double alphaL = vy_d[id];
+		alphaL *= (P / def_PObar) * pow(T1, n_d[id]);
 		vy_d[id] = alphaL * ialphaD;
 		ID_d[id] = id;
 
@@ -462,6 +493,25 @@ __global__ void L_kernelExomol(double *readBuffer_d, double *nu_d, double *S_d, 
 		vy_d[id] = defaultL * gammaF;
 		n_d[id] = defaultn;
 		S_d[id] = S * Abundance * Sscale / Q;
+// if(id < 100) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL_d[id], Q, 0.0, vy_d[id]);
+	}
+}
+
+__global__ void L_kernelExomolSuper(double *readBuffer_d, double *nu_d, double *S_d, double *ialphaD_d, double *vy_d, double *n_d, const double defaultL, const double defaultn, const double gammaF, const double mass, const double T, const double Abundance, const double Sscale, const int NL, const int kk){
+
+	int id =  blockIdx.x * blockDim.x + threadIdx.x + kk;
+
+	if(id < NL){
+
+		nu_d[id] = readBuffer_d[id * 2 + 0];
+		double S = readBuffer_d[id * 2 + 1];
+
+//if(id < 10) printf("%d %g %g\n", id, nu_d[id], S);
+
+		ialphaD_d[id] = def_c * sqrt( mass / (2.0 * def_kB * T));
+		vy_d[id] = defaultL * gammaF;
+		n_d[id] = defaultn;
+		S_d[id] = S * Abundance * Sscale;
 // if(id < 100) printf("%d %g %g %g %g %g %g %g\n", id, nu_d[id], S_d[id], ialphaD_d[id], EL_d[id], Q, 0.0, vy_d[id]);
 	}
 }

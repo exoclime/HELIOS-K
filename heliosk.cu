@@ -846,11 +846,15 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		int rbvs = 0;
   	
 		if(param.dataBase == 2){
-			//Exomol
+			//Exomol		nu, S, El, A 
 			readBufferN = 4;
 		}
+		if(param.dataBase == 20){
+			//Exomol super lines	nu, S
+			readBufferN = 2;
+		}
 		if(param.dataBase == 30){
-			//Kurucz
+			//Kurucz		nu, S, El, A, Gamma_nat
 			readBufferN = 5;
 		}
 		if(param.dataBase == 31){
@@ -898,7 +902,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			Alloc_Line(L, m, param);
 		}
 		else{
-			// 2 30 31 32
+			// 2 20 30 31 32
 			Alloc2_Line(L, m, param);
 		}
 
@@ -1017,7 +1021,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						er = readFile(param, m, part, L, param.qalphaL, NL, dataFile, Sscale, meanMass);
 					}
 					else {
-						// 2 30 31 32
+						// 2 20 30 31 32
 						int vs = 0;	
 						for(int i = 0; i < NL; i += readBufferSize){
 							er = readFileExomol(L, NL, dataFile, readBuffer_h, readBuffer_d, readBufferSize, readBufferN, readBufferCount, vs, CStream);
@@ -1070,6 +1074,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 									if(param.dataBase == 2){
 										L_kernelExomol  <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (readBuffer_d, L.nu_d, L.S_d, L.EL_d, L.ialphaD_d, L.A_d, L.vy_d, L.n_d, m.defaultL, m.defaultn, param.gammaF, mass, param.T, Q, Abundance, Sscale, NL, k);
 									}
+									if(param.dataBase == 20){
+										L_kernelExomolSuper  <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (readBuffer_d, L.nu_d, L.S_d, L.ialphaD_d, L.vy_d, L.n_d, m.defaultL, m.defaultn, param.gammaF, mass, param.T, Abundance, Sscale, NL, k);
+
+									}
 									if(param.dataBase == 30){
 										L_kernelKurucz  <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (readBuffer_d, L.nu_d, L.S_d, L.EL_d, L.ialphaD_d, L.A_d, L.vy_d, L.n_d, m.defaultL, m.defaultn, param.gammaF, mass, param.T, Q, Abundance, Sscale, NL, k);
 									}
@@ -1082,7 +1090,14 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 									// ***************************
 									// Compute Line properties 2
 									// ***************************
-									Sf_kernel <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (L.nu_d, L.S_d, L.A_d, L.vy_d, L.ialphaD_d, L.n_d, L.EL_d, L.ID_d, NL, c1, T1, P_h[iP], k);
+									if(param.dataBase != 20){
+										Sf_kernel <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (L.nu_d, L.S_d, L.A_d, L.vy_d, L.ialphaD_d, L.n_d, L.EL_d, L.ID_d, NL, c1, T1, P_h[iP], k);
+									}
+									else{
+										// 2 30 31 32
+										SfSuper_kernel <<< (Nk + 127) / 128, 128, 0, VStream[vs % def_KSn] >>> (L.nu_d, L.S_d, L.vy_d, L.ialphaD_d, L.n_d, L.ID_d, NL, T1, P_h[iP], k);
+									}
+
 								}
 								++vs;
 							}
@@ -1385,8 +1400,8 @@ for(int i = 0; i < nlLimitsC; ++i){
 								// **************************
 								//Read the Line list A
 								// **************************
-								if(param.dataBase == 2 || param.dataBase >= 30){
-									// 2 30 31 32
+								if(param.dataBase == 2 || param.dataBase >= 20){
+									// 2 20 30 31 32
 									for(int i = readBufferCount; i < NL1; i += readBufferSize){
 										//check if the A kernels have finished, otherwise use host to read more data
 										int ev =  cudaEventQuery(AEvent);
@@ -1460,8 +1475,8 @@ for(int i = 0; i < nlLimitsC; ++i){
 									// **************************
 									//Read the Line list AL
 									// **************************
-									if(param.dataBase == 2 || param.dataBase >= 30){
-										//2 30 31 32
+									if(param.dataBase == 2 || param.dataBase >= 20){
+										//2 20 30 31 32
 										for(int i = readBufferCount; i < NL1; i += readBufferSize){
 											//check if the AL kernels have finished, otherwise use host to read more data
 											int ev =  cudaEventQuery(ALEvent);
@@ -1532,8 +1547,8 @@ for(int i = 0; i < nlLimitsC; ++i){
 									// **************************
 									//Read the Line list AR
 									// **************************
-									if(param.dataBase == 2 || param.dataBase >= 30){
-										//2 30 31 32
+									if(param.dataBase == 2 || param.dataBase >= 20){
+										//2 20 30 31 32
 										for(int i = readBufferCount; i < NL1; i += readBufferSize){
 											//check if the AR kernels have finished, otherwise use host to read more data
 											int ev =  cudaEventQuery(AREvent);
@@ -1607,8 +1622,8 @@ for(int i = 0; i < nlLimitsC; ++i){
 									// **************************
 									//Read the Line list B
 									// **************************
-									if(param.dataBase == 2 || param.dataBase >= 30){
-										//2 30 31 32
+									if(param.dataBase == 2 || param.dataBase >= 20){
+										//2 20 30 31 32
 										for(int i = readBufferCount; i < NL1; i += readBufferSize){
 											//check if the B kernels have finished, otherwise use host to read more data
 											int ev =  cudaEventQuery(BEvent);
@@ -1698,8 +1713,8 @@ printf("Add streams A\n");
 							// **************************
 							//Read the Line list end
 							// **************************
-							if(param.dataBase == 2 || param.dataBase >= 30){
-								//2 30 31 32
+							if(param.dataBase == 2 || param.dataBase >= 20){
+								//2 20 30 31 32
 								for(int i = readBufferCount; i < NL1; i += readBufferSize){
 									er = readFileExomol(L, NL1, dataFile, readBuffer_h, readBuffer_d, readBufferSize, readBufferN, readBufferCount, rbvs, CStream);
 									readBufferCount += readBufferSize;
@@ -1711,6 +1726,7 @@ printf("Add streams A\n");
 						if((iL < m.NL[fi] - def_maxlines || fi < fi1 - 1) && iP == param.nP - 1){
 					
 							if(param.dataBase < 2 || param.dataBase == 3){
+								// 0 1 3
 								er = readFile(param, m, part, L, param.qalphaL, NL1, dataFile, Sscale, meanMass);
 								if(er == 0){
 									return 0;
@@ -1778,9 +1794,11 @@ printf("Add streams B\n");
 		}
 
 		if(param.dataBase < 2 || param.dataBase == 3){
+			// 0 1 3
 			free_Line(L, param);
 		}
 		else{
+			// 2 20 30 31 32 
 			free2_Line(L, param);
 		}
 

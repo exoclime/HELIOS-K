@@ -132,7 +132,7 @@ print("error", er1, file = f)
 if(er == False):
 	success = 0
 os.system('../../heliosk -tuning 0 -name 1')
-os.system('../../heliosk -tuning 0 -name 0 -path ../../data/')
+os.system('../../heliosk -tuning 0 -name 0')
 er = os.system('python3 ../../tools/CompareFiles.py -f0 0 -f1 1')
 er1 = os.WEXITSTATUS(er)
 print("error", er1)

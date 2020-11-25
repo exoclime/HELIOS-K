@@ -1,0 +1,2133 @@
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+
+Version: 2.05
+Using device 0
+
+Runtime Version 10000
+Driver Version 11000
+GIT Describe: v1.0-131-gd89b4bf
+Build Date: Mi 25. Nov 10:11:40 CET 2020
+Build Path: /home/sigrimm/kCalc
+Build System: Linux mashu 4.15.0-124-generic #127-Ubuntu SMP Fri Nov 6 10:54:43 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+Build Compute Capability: SM=52
+
+name = all
+T = 1000
+P = 1
+cia System = -
+pathToData = 
+numin = 0
+numax = 43000
+dnu = 0.01
+Nnu per bin = 4300000
+Number of points: 4300000
+cutMode = 0
+cut = 100
+doResampling = 0
+nC = 20
+doTransmission = 0
+nTr = 1000
+dTr =  0.05
+doStoreFullK = 1
+pathToK = 
+dostoreK = 0
+nbins = 1
+kmin = 0
+qalphaL = 1
+gammaF = 1
+doMean = 0
+Units = 0
+Replace files = 1
+profile = 1
+doTuning = 0
+def_TOL = 1.43e-17
+def_TOLf = 2.48e-12
+def_nthmax = 1048576
+def_nlmax = 32768
+def_maxlines = 1048576
+def_maxfiles = 500
+def_NmaxSample = 100
+
+Species Name = 1H2-16O__POKAZATEL
+dataBase = 2
+Molecule Number = 1
+default L = 0.07
+default n = 0.5
+
+File 0 of 412
+Number of lines: 63545284
+Time for input:        31.3848 seconds
+Time for Lines:        0.305099 seconds
+Time for K(x):         31.8691 seconds
+File 1 of 412
+Number of lines: 62953585
+Time for input:        42.5474 seconds
+Time for Lines:        0.296855 seconds
+Time for K(x):         42.3021 seconds
+File 2 of 412
+Number of lines: 62406329
+Time for input:        41.7438 seconds
+Time for Lines:        0.292801 seconds
+Time for K(x):         42.1636 seconds
+File 3 of 412
+Number of lines: 61806710
+Time for input:        41.2536 seconds
+Time for Lines:        0.290567 seconds
+Time for K(x):         41.7009 seconds
+File 4 of 412
+Number of lines: 61211769
+Time for input:        41.5422 seconds
+Time for Lines:        0.287715 seconds
+Time for K(x):         41.2872 seconds
+File 5 of 412
+Number of lines: 60645422
+Time for input:        40.4352 seconds
+Time for Lines:        0.289157 seconds
+Time for K(x):         40.8999 seconds
+File 6 of 412
+Number of lines: 60081707
+Time for input:        40.7594 seconds
+Time for Lines:        0.287303 seconds
+Time for K(x):         40.5234 seconds
+File 7 of 412
+Number of lines: 59527108
+Time for input:        39.6783 seconds
+Time for Lines:        0.283462 seconds
+Time for K(x):         40.1504 seconds
+File 8 of 412
+Number of lines: 58997522
+Time for input:        40.0053 seconds
+Time for Lines:        0.279694 seconds
+Time for K(x):         39.7892 seconds
+File 9 of 412
+Number of lines: 58454032
+Time for input:        38.9451 seconds
+Time for Lines:        0.273006 seconds
+Time for K(x):         39.421 seconds
+File 10 of 412
+Number of lines: 57898326
+Time for input:        39.2876 seconds
+Time for Lines:        0.272884 seconds
+Time for K(x):         39.0512 seconds
+File 11 of 412
+Number of lines: 57354828
+Time for input:        38.2094 seconds
+Time for Lines:        0.271146 seconds
+Time for K(x):         38.6853 seconds
+File 12 of 412
+Number of lines: 56822761
+Time for input:        38.6933 seconds
+Time for Lines:        0.267268 seconds
+Time for K(x):         38.4807 seconds
+File 13 of 412
+Number of lines: 56299929
+Time for input:        37.684 seconds
+Time for Lines:        0.283637 seconds
+Time for K(x):         38.1791 seconds
+File 14 of 412
+Number of lines: 55785749
+Time for input:        38.0559 seconds
+Time for Lines:        0.281106 seconds
+Time for K(x):         37.8477 seconds
+File 15 of 412
+Number of lines: 55257484
+Time for input:        37.0039 seconds
+Time for Lines:        0.284051 seconds
+Time for K(x):         37.4932 seconds
+File 16 of 412
+Number of lines: 54737905
+Time for input:        37.3424 seconds
+Time for Lines:        0.285709 seconds
+Time for K(x):         37.1288 seconds
+File 17 of 412
+Number of lines: 54234508
+Time for input:        36.3098 seconds
+Time for Lines:        0.285493 seconds
+Time for K(x):         36.8138 seconds
+File 18 of 412
+Number of lines: 53719800
+Time for input:        36.6991 seconds
+Time for Lines:        0.281866 seconds
+Time for K(x):         36.4856 seconds
+File 19 of 412
+Number of lines: 53209511
+Time for input:        35.6421 seconds
+Time for Lines:        0.279156 seconds
+Time for K(x):         36.1369 seconds
+File 20 of 412
+Number of lines: 52710632
+Time for input:        36.023 seconds
+Time for Lines:        0.278018 seconds
+Time for K(x):         35.8177 seconds
+File 21 of 412
+Number of lines: 52216798
+Time for input:        34.9799 seconds
+Time for Lines:        0.274758 seconds
+Time for K(x):         35.4857 seconds
+File 22 of 412
+Number of lines: 51728862
+Time for input:        35.3773 seconds
+Time for Lines:        0.281851 seconds
+Time for K(x):         35.1766 seconds
+File 23 of 412
+Number of lines: 51242841
+Time for input:        34.3632 seconds
+Time for Lines:        0.308183 seconds
+Time for K(x):         34.8716 seconds
+File 24 of 412
+Number of lines: 50767793
+Time for input:        34.7438 seconds
+Time for Lines:        0.280771 seconds
+Time for K(x):         34.5504 seconds
+File 25 of 412
+Number of lines: 50283335
+Time for input:        33.7263 seconds
+Time for Lines:        0.283956 seconds
+Time for K(x):         34.2334 seconds
+File 26 of 412
+Number of lines: 49806042
+Time for input:        34.1181 seconds
+Time for Lines:        0.287438 seconds
+Time for K(x):         33.9178 seconds
+File 27 of 412
+Number of lines: 49334764
+Time for input:        33.7968 seconds
+Time for Lines:        0.265828 seconds
+Time for K(x):         33.6028 seconds
+File 28 of 412
+Number of lines: 48870521
+Time for input:        32.8304 seconds
+Time for Lines:        0.272471 seconds
+Time for K(x):         33.299 seconds
+File 29 of 412
+Number of lines: 48408485
+Time for input:        33.1801 seconds
+Time for Lines:        0.24668 seconds
+Time for K(x):         32.9882 seconds
+File 30 of 412
+Number of lines: 47944583
+Time for input:        32.3217 seconds
+Time for Lines:        0.233117 seconds
+Time for K(x):         32.8421 seconds
+File 31 of 412
+Number of lines: 47483363
+Time for input:        32.7758 seconds
+Time for Lines:        0.222764 seconds
+Time for K(x):         32.5804 seconds
+File 32 of 412
+Number of lines: 47032973
+Time for input:        31.7483 seconds
+Time for Lines:        0.222485 seconds
+Time for K(x):         32.2729 seconds
+File 33 of 412
+Number of lines: 46586524
+Time for input:        32.1569 seconds
+Time for Lines:        0.218491 seconds
+Time for K(x):         31.9684 seconds
+File 34 of 412
+Number of lines: 46139607
+Time for input:        31.8676 seconds
+Time for Lines:        0.216019 seconds
+Time for K(x):         31.6814 seconds
+File 35 of 412
+Number of lines: 45686142
+Time for input:        30.934 seconds
+Time for Lines:        0.222185 seconds
+Time for K(x):         31.3733 seconds
+File 36 of 412
+Number of lines: 45247489
+Time for input:        31.2634 seconds
+Time for Lines:        0.212407 seconds
+Time for K(x):         31.0751 seconds
+File 37 of 412
+Number of lines: 44819995
+Time for input:        30.258 seconds
+Time for Lines:        0.209884 seconds
+Time for K(x):         30.7951 seconds
+File 38 of 412
+Number of lines: 44366512
+Time for input:        30.69 seconds
+Time for Lines:        0.210589 seconds
+Time for K(x):         30.4906 seconds
+File 39 of 412
+Number of lines: 43949647
+Time for input:        29.6675 seconds
+Time for Lines:        0.205767 seconds
+Time for K(x):         30.2115 seconds
+File 40 of 412
+Number of lines: 43525354
+Time for input:        30.1241 seconds
+Time for Lines:        0.204651 seconds
+Time for K(x):         29.9432 seconds
+File 41 of 412
+Number of lines: 43092528
+Time for input:        29.8393 seconds
+Time for Lines:        0.201858 seconds
+Time for K(x):         29.653 seconds
+File 42 of 412
+Number of lines: 42680142
+Time for input:        28.8465 seconds
+Time for Lines:        0.200394 seconds
+Time for K(x):         29.3737 seconds
+File 43 of 412
+Number of lines: 42267798
+Time for input:        29.2833 seconds
+Time for Lines:        0.201233 seconds
+Time for K(x):         29.1053 seconds
+File 44 of 412
+Number of lines: 41843019
+Time for input:        28.2801 seconds
+Time for Lines:        0.195913 seconds
+Time for K(x):         28.812 seconds
+File 45 of 412
+Number of lines: 41430274
+Time for input:        28.7089 seconds
+Time for Lines:        0.196771 seconds
+Time for K(x):         28.5318 seconds
+File 46 of 412
+Number of lines: 41035539
+Time for input:        28.4384 seconds
+Time for Lines:        0.195357 seconds
+Time for K(x):         28.2719 seconds
+File 47 of 412
+Number of lines: 40625567
+Time for input:        27.4504 seconds
+Time for Lines:        0.190545 seconds
+Time for K(x):         27.9873 seconds
+File 48 of 412
+Number of lines: 40219144
+Time for input:        27.8882 seconds
+Time for Lines:        0.191954 seconds
+Time for K(x):         27.7119 seconds
+File 49 of 412
+Number of lines: 39832882
+Time for input:        26.9052 seconds
+Time for Lines:        0.186574 seconds
+Time for K(x):         27.4585 seconds
+File 50 of 412
+Number of lines: 39433757
+Time for input:        27.36 seconds
+Time for Lines:        0.185895 seconds
+Time for K(x):         27.1858 seconds
+File 51 of 412
+Number of lines: 39038150
+Time for input:        27.0939 seconds
+Time for Lines:        0.183738 seconds
+Time for K(x):         26.9212 seconds
+File 52 of 412
+Number of lines: 38659097
+Time for input:        26.1163 seconds
+Time for Lines:        0.184179 seconds
+Time for K(x):         26.6705 seconds
+File 53 of 412
+Number of lines: 38276595
+Time for input:        26.5762 seconds
+Time for Lines:        0.181359 seconds
+Time for K(x):         26.4114 seconds
+File 54 of 412
+Number of lines: 37896041
+Time for input:        26.3164 seconds
+Time for Lines:        0.181129 seconds
+Time for K(x):         26.1502 seconds
+File 55 of 412
+Number of lines: 37514544
+Time for input:        25.3489 seconds
+Time for Lines:        0.175881 seconds
+Time for K(x):         25.8987 seconds
+File 56 of 412
+Number of lines: 37127988
+Time for input:        25.8087 seconds
+Time for Lines:        0.174412 seconds
+Time for K(x):         25.6386 seconds
+File 57 of 412
+Number of lines: 36765424
+Time for input:        25.5541 seconds
+Time for Lines:        0.173594 seconds
+Time for K(x):         25.396 seconds
+File 58 of 412
+Number of lines: 36392834
+Time for input:        24.6319 seconds
+Time for Lines:        0.171339 seconds
+Time for K(x):         25.1483 seconds
+File 59 of 412
+Number of lines: 36024995
+Time for input:        25.0625 seconds
+Time for Lines:        0.169374 seconds
+Time for K(x):         24.9002 seconds
+File 60 of 412
+Number of lines: 35663751
+Time for input:        24.8132 seconds
+Time for Lines:        0.169051 seconds
+Time for K(x):         24.6544 seconds
+File 61 of 412
+Number of lines: 35298617
+Time for input:        23.9289 seconds
+Time for Lines:        0.169039 seconds
+Time for K(x):         24.4118 seconds
+File 62 of 412
+Number of lines: 34944150
+Time for input:        24.3276 seconds
+Time for Lines:        0.166275 seconds
+Time for K(x):         24.1709 seconds
+File 63 of 412
+Number of lines: 34593236
+Time for input:        23.365 seconds
+Time for Lines:        0.162222 seconds
+Time for K(x):         23.9307 seconds
+File 64 of 412
+Number of lines: 34240714
+Time for input:        23.8511 seconds
+Time for Lines:        0.163595 seconds
+Time for K(x):         23.6936 seconds
+File 65 of 412
+Number of lines: 33880586
+Time for input:        23.6143 seconds
+Time for Lines:        0.159354 seconds
+Time for K(x):         23.4508 seconds
+File 66 of 412
+Number of lines: 33525576
+Time for input:        22.6451 seconds
+Time for Lines:        0.16309 seconds
+Time for K(x):         23.2094 seconds
+File 67 of 412
+Number of lines: 33194493
+Time for input:        23.1341 seconds
+Time for Lines:        0.15903 seconds
+Time for K(x):         22.9897 seconds
+File 68 of 412
+Number of lines: 32847204
+Time for input:        22.9102 seconds
+Time for Lines:        0.162073 seconds
+Time for K(x):         22.7522 seconds
+File 69 of 412
+Number of lines: 32512662
+Time for input:        22.6701 seconds
+Time for Lines:        0.15659 seconds
+Time for K(x):         22.5232 seconds
+File 70 of 412
+Number of lines: 32174920
+Time for input:        21.8063 seconds
+Time for Lines:        0.162777 seconds
+Time for K(x):         22.2968 seconds
+File 71 of 412
+Number of lines: 31837631
+Time for input:        22.2227 seconds
+Time for Lines:        0.154891 seconds
+Time for K(x):         22.0707 seconds
+File 72 of 412
+Number of lines: 31526218
+Time for input:        21.9923 seconds
+Time for Lines:        0.14781 seconds
+Time for K(x):         21.859 seconds
+File 73 of 412
+Number of lines: 31173580
+Time for input:        21.1015 seconds
+Time for Lines:        0.155505 seconds
+Time for K(x):         21.6233 seconds
+File 74 of 412
+Number of lines: 30848655
+Time for input:        21.5521 seconds
+Time for Lines:        0.15071 seconds
+Time for K(x):         21.4051 seconds
+File 75 of 412
+Number of lines: 30516886
+Time for input:        21.3272 seconds
+Time for Lines:        0.146541 seconds
+Time for K(x):         21.176 seconds
+File 76 of 412
+Number of lines: 30207120
+Time for input:        20.3929 seconds
+Time for Lines:        0.157161 seconds
+Time for K(x):         20.968 seconds
+File 77 of 412
+Number of lines: 29886457
+Time for input:        20.9013 seconds
+Time for Lines:        0.156409 seconds
+Time for K(x):         20.7573 seconds
+File 78 of 412
+Number of lines: 29576533
+Time for input:        20.6809 seconds
+Time for Lines:        0.148415 seconds
+Time for K(x):         20.5398 seconds
+File 79 of 412
+Number of lines: 29256380
+Time for input:        19.7475 seconds
+Time for Lines:        0.143827 seconds
+Time for K(x):         20.3231 seconds
+File 80 of 412
+Number of lines: 28941993
+Time for input:        20.2588 seconds
+Time for Lines:        0.149239 seconds
+Time for K(x):         20.1156 seconds
+File 81 of 412
+Number of lines: 28648968
+Time for input:        20.042 seconds
+Time for Lines:        0.144335 seconds
+Time for K(x):         19.9122 seconds
+File 82 of 412
+Number of lines: 28344141
+Time for input:        19.8458 seconds
+Time for Lines:        0.136278 seconds
+Time for K(x):         19.7036 seconds
+File 83 of 412
+Number of lines: 28034160
+Time for input:        18.9768 seconds
+Time for Lines:        0.143917 seconds
+Time for K(x):         19.4952 seconds
+File 84 of 412
+Number of lines: 27734214
+Time for input:        19.4245 seconds
+Time for Lines:        0.143608 seconds
+Time for K(x):         19.2873 seconds
+File 85 of 412
+Number of lines: 27438885
+Time for input:        19.2232 seconds
+Time for Lines:        0.141544 seconds
+Time for K(x):         19.0883 seconds
+File 86 of 412
+Number of lines: 27144461
+Time for input:        18.3021 seconds
+Time for Lines:        0.142083 seconds
+Time for K(x):         18.8919 seconds
+File 87 of 412
+Number of lines: 26852091
+Time for input:        18.8255 seconds
+Time for Lines:        0.140823 seconds
+Time for K(x):         18.6902 seconds
+File 88 of 412
+Number of lines: 26562807
+Time for input:        18.6271 seconds
+Time for Lines:        0.139123 seconds
+Time for K(x):         18.4938 seconds
+File 89 of 412
+Number of lines: 26268028
+Time for input:        18.4338 seconds
+Time for Lines:        0.137785 seconds
+Time for K(x):         18.2964 seconds
+File 90 of 412
+Number of lines: 25992322
+Time for input:        17.5494 seconds
+Time for Lines:        0.132107 seconds
+Time for K(x):         18.1038 seconds
+File 91 of 412
+Number of lines: 25705538
+Time for input:        18.043 seconds
+Time for Lines:        0.131003 seconds
+Time for K(x):         17.9083 seconds
+File 92 of 412
+Number of lines: 25423068
+Time for input:        17.8539 seconds
+Time for Lines:        0.123234 seconds
+Time for K(x):         17.721 seconds
+File 93 of 412
+Number of lines: 25137620
+Time for input:        16.9285 seconds
+Time for Lines:        0.124771 seconds
+Time for K(x):         17.5223 seconds
+File 94 of 412
+Number of lines: 24867033
+Time for input:        17.4654 seconds
+Time for Lines:        0.128856 seconds
+Time for K(x):         17.3381 seconds
+File 95 of 412
+Number of lines: 24594433
+Time for input:        17.2826 seconds
+Time for Lines:        0.124689 seconds
+Time for K(x):         17.1563 seconds
+File 96 of 412
+Number of lines: 24311872
+Time for input:        17.0924 seconds
+Time for Lines:        0.125905 seconds
+Time for K(x):         16.9569 seconds
+File 97 of 412
+Number of lines: 24044102
+Time for input:        16.1703 seconds
+Time for Lines:        0.12543 seconds
+Time for K(x):         16.7721 seconds
+File 98 of 412
+Number of lines: 23786062
+Time for input:        16.7216 seconds
+Time for Lines:        0.118061 seconds
+Time for K(x):         16.6023 seconds
+File 99 of 412
+Number of lines: 23507410
+Time for input:        16.5424 seconds
+Time for Lines:        0.123372 seconds
+Time for K(x):         16.4093 seconds
+File 100 of 412
+Number of lines: 23263918
+Time for input:        16.352 seconds
+Time for Lines:        0.122432 seconds
+Time for K(x):         16.2402 seconds
+File 101 of 412
+Number of lines: 23000316
+Time for input:        15.4587 seconds
+Time for Lines:        0.12166 seconds
+Time for K(x):         16.0609 seconds
+File 102 of 412
+Number of lines: 22735511
+Time for input:        16.0076 seconds
+Time for Lines:        0.117965 seconds
+Time for K(x):         15.8813 seconds
+File 103 of 412
+Number of lines: 22477652
+Time for input:        15.826 seconds
+Time for Lines:        0.11758 seconds
+Time for K(x):         15.7029 seconds
+File 104 of 412
+Number of lines: 22232337
+Time for input:        15.6542 seconds
+Time for Lines:        0.115959 seconds
+Time for K(x):         15.542 seconds
+File 105 of 412
+Number of lines: 21972714
+Time for input:        14.7573 seconds
+Time for Lines:        0.116074 seconds
+Time for K(x):         15.3596 seconds
+File 106 of 412
+Number of lines: 21717726
+Time for input:        15.3045 seconds
+Time for Lines:        0.11333 seconds
+Time for K(x):         15.181 seconds
+File 107 of 412
+Number of lines: 21471849
+Time for input:        15.132 seconds
+Time for Lines:        0.115221 seconds
+Time for K(x):         15.0166 seconds
+File 108 of 412
+Number of lines: 21222524
+Time for input:        14.9669 seconds
+Time for Lines:        0.120573 seconds
+Time for K(x):         14.8469 seconds
+File 109 of 412
+Number of lines: 20981716
+Time for input:        14.7957 seconds
+Time for Lines:        0.115175 seconds
+Time for K(x):         14.6814 seconds
+File 110 of 412
+Number of lines: 20734222
+Time for input:        13.9794 seconds
+Time for Lines:        0.120163 seconds
+Time for K(x):         14.5121 seconds
+File 111 of 412
+Number of lines: 20499995
+Time for input:        14.4632 seconds
+Time for Lines:        0.118183 seconds
+Time for K(x):         14.3517 seconds
+File 112 of 412
+Number of lines: 20271442
+Time for input:        14.3017 seconds
+Time for Lines:        0.110058 seconds
+Time for K(x):         14.1942 seconds
+File 113 of 412
+Number of lines: 20029427
+Time for input:        14.1485 seconds
+Time for Lines:        0.103106 seconds
+Time for K(x):         14.0311 seconds
+File 114 of 412
+Number of lines: 19804057
+Time for input:        13.2617 seconds
+Time for Lines:        0.104645 seconds
+Time for K(x):         13.8757 seconds
+File 115 of 412
+Number of lines: 19571228
+Time for input:        13.8255 seconds
+Time for Lines:        0.111437 seconds
+Time for K(x):         13.7126 seconds
+File 116 of 412
+Number of lines: 19335526
+Time for input:        13.6709 seconds
+Time for Lines:        0.0933763 seconds
+Time for K(x):         13.556 seconds
+File 117 of 412
+Number of lines: 19117904
+Time for input:        13.5105 seconds
+Time for Lines:        0.0896483 seconds
+Time for K(x):         13.4062 seconds
+File 118 of 412
+Number of lines: 18886005
+Time for input:        13.3588 seconds
+Time for Lines:        0.0881866 seconds
+Time for K(x):         13.2447 seconds
+File 119 of 412
+Number of lines: 18666584
+Time for input:        12.5445 seconds
+Time for Lines:        0.0930915 seconds
+Time for K(x):         13.093 seconds
+File 120 of 412
+Number of lines: 18441986
+Time for input:        13.0489 seconds
+Time for Lines:        0.096778 seconds
+Time for K(x):         12.9379 seconds
+File 121 of 412
+Number of lines: 18225164
+Time for input:        12.8949 seconds
+Time for Lines:        0.095666 seconds
+Time for K(x):         12.7923 seconds
+File 122 of 412
+Number of lines: 18015981
+Time for input:        12.7495 seconds
+Time for Lines:        0.0915545 seconds
+Time for K(x):         12.6468 seconds
+File 123 of 412
+Number of lines: 17791131
+Time for input:        11.8735 seconds
+Time for Lines:        0.0910923 seconds
+Time for K(x):         12.4921 seconds
+File 124 of 412
+Number of lines: 17574629
+Time for input:        12.445 seconds
+Time for Lines:        0.0885995 seconds
+Time for K(x):         12.34 seconds
+File 125 of 412
+Number of lines: 17368280
+Time for input:        12.3012 seconds
+Time for Lines:        0.0869321 seconds
+Time for K(x):         12.2013 seconds
+File 126 of 412
+Number of lines: 17158791
+Time for input:        12.1628 seconds
+Time for Lines:        0.0893306 seconds
+Time for K(x):         12.0582 seconds
+File 127 of 412
+Number of lines: 16952362
+Time for input:        12.0173 seconds
+Time for Lines:        0.0858397 seconds
+Time for K(x):         11.9167 seconds
+File 128 of 412
+Number of lines: 16743232
+Time for input:        11.1414 seconds
+Time for Lines:        0.0885046 seconds
+Time for K(x):         11.7677 seconds
+File 129 of 412
+Number of lines: 16540839
+Time for input:        11.7299 seconds
+Time for Lines:        0.0893624 seconds
+Time for K(x):         11.6307 seconds
+File 130 of 412
+Number of lines: 16334996
+Time for input:        11.5903 seconds
+Time for Lines:        0.087516 seconds
+Time for K(x):         11.4881 seconds
+File 131 of 412
+Number of lines: 16139076
+Time for input:        11.4496 seconds
+Time for Lines:        0.0865067 seconds
+Time for K(x):         11.3534 seconds
+File 132 of 412
+Number of lines: 15940267
+Time for input:        11.3161 seconds
+Time for Lines:        0.0872792 seconds
+Time for K(x):         11.2179 seconds
+File 133 of 412
+Number of lines: 15736472
+Time for input:        11.1795 seconds
+Time for Lines:        0.0810363 seconds
+Time for K(x):         11.0776 seconds
+File 134 of 412
+Number of lines: 15550474
+Time for input:        10.3825 seconds
+Time for Lines:        0.0795585 seconds
+Time for K(x):         10.9446 seconds
+File 135 of 412
+Number of lines: 15358235
+Time for input:        10.9091 seconds
+Time for Lines:        0.0815081 seconds
+Time for K(x):         10.8126 seconds
+File 136 of 412
+Number of lines: 15162945
+Time for input:        10.7772 seconds
+Time for Lines:        0.0784082 seconds
+Time for K(x):         10.6785 seconds
+File 137 of 412
+Number of lines: 14980680
+Time for input:        10.641 seconds
+Time for Lines:        0.0785958 seconds
+Time for K(x):         10.5539 seconds
+File 138 of 412
+Number of lines: 14785642
+Time for input:        10.5205 seconds
+Time for Lines:        0.0763423 seconds
+Time for K(x):         10.4211 seconds
+File 139 of 412
+Number of lines: 14593689
+Time for input:        9.65883 seconds
+Time for Lines:        0.0752372 seconds
+Time for K(x):         10.2859 seconds
+File 140 of 412
+Number of lines: 14411900
+Time for input:        10.2509 seconds
+Time for Lines:        0.074972 seconds
+Time for K(x):         10.1581 seconds
+File 141 of 412
+Number of lines: 14230937
+Time for input:        10.1253 seconds
+Time for Lines:        0.0748887 seconds
+Time for K(x):         10.0361 seconds
+File 142 of 412
+Number of lines: 14049115
+Time for input:        10.0026 seconds
+Time for Lines:        0.071013 seconds
+Time for K(x):         9.90899 seconds
+File 143 of 412
+Number of lines: 13869788
+Time for input:        9.87612 seconds
+Time for Lines:        0.0712569 seconds
+Time for K(x):         9.78686 seconds
+File 144 of 412
+Number of lines: 13693722
+Time for input:        9.75528 seconds
+Time for Lines:        0.0756027 seconds
+Time for K(x):         9.66499 seconds
+File 145 of 412
+Number of lines: 13524016
+Time for input:        8.9353 seconds
+Time for Lines:        0.0725286 seconds
+Time for K(x):         9.54555 seconds
+File 146 of 412
+Number of lines: 13346961
+Time for input:        9.51082 seconds
+Time for Lines:        0.075562 seconds
+Time for K(x):         9.42137 seconds
+File 147 of 412
+Number of lines: 13173937
+Time for input:        9.39245 seconds
+Time for Lines:        0.0742082 seconds
+Time for K(x):         9.3051 seconds
+File 148 of 412
+Number of lines: 13001843
+Time for input:        9.27518 seconds
+Time for Lines:        0.0678303 seconds
+Time for K(x):         9.18506 seconds
+File 149 of 412
+Number of lines: 12836207
+Time for input:        9.15267 seconds
+Time for Lines:        0.0703189 seconds
+Time for K(x):         9.06863 seconds
+File 150 of 412
+Number of lines: 12677489
+Time for input:        9.04028 seconds
+Time for Lines:        0.068524 seconds
+Time for K(x):         8.96099 seconds
+File 151 of 412
+Number of lines: 12508092
+Time for input:        8.21023 seconds
+Time for Lines:        0.0660315 seconds
+Time for K(x):         8.84108 seconds
+File 152 of 412
+Number of lines: 12339773
+Time for input:        8.80955 seconds
+Time for Lines:        0.0659637 seconds
+Time for K(x):         8.72261 seconds
+File 153 of 412
+Number of lines: 12176175
+Time for input:        8.69619 seconds
+Time for Lines:        0.0673965 seconds
+Time for K(x):         8.6119 seconds
+File 154 of 412
+Number of lines: 12011252
+Time for input:        8.58285 seconds
+Time for Lines:        0.0882922 seconds
+Time for K(x):         8.49733 seconds
+File 155 of 412
+Number of lines: 11849977
+Time for input:        8.46654 seconds
+Time for Lines:        0.0643119 seconds
+Time for K(x):         8.38332 seconds
+File 156 of 412
+Number of lines: 11689452
+Time for input:        8.35722 seconds
+Time for Lines:        0.0772776 seconds
+Time for K(x):         8.27326 seconds
+File 157 of 412
+Number of lines: 11539565
+Time for input:        8.24685 seconds
+Time for Lines:        0.0673441 seconds
+Time for K(x):         8.1727 seconds
+File 158 of 412
+Number of lines: 11386333
+Time for input:        7.48375 seconds
+Time for Lines:        0.0580469 seconds
+Time for K(x):         8.06181 seconds
+File 159 of 412
+Number of lines: 11233555
+Time for input:        8.03579 seconds
+Time for Lines:        0.0638321 seconds
+Time for K(x):         7.95543 seconds
+File 160 of 412
+Number of lines: 11076811
+Time for input:        7.92869 seconds
+Time for Lines:        0.0662086 seconds
+Time for K(x):         7.84908 seconds
+File 161 of 412
+Number of lines: 10925692
+Time for input:        7.82247 seconds
+Time for Lines:        0.0623666 seconds
+Time for K(x):         7.7425 seconds
+File 162 of 412
+Number of lines: 10783635
+Time for input:        7.7176 seconds
+Time for Lines:        0.061572 seconds
+Time for K(x):         7.64606 seconds
+File 163 of 412
+Number of lines: 10641509
+Time for input:        7.62199 seconds
+Time for Lines:        0.0589732 seconds
+Time for K(x):         7.54629 seconds
+File 164 of 412
+Number of lines: 10486323
+Time for input:        7.51943 seconds
+Time for Lines:        0.0591226 seconds
+Time for K(x):         7.44042 seconds
+File 165 of 412
+Number of lines: 10346100
+Time for input:        6.75663 seconds
+Time for Lines:        0.0690224 seconds
+Time for K(x):         7.33893 seconds
+File 166 of 412
+Number of lines: 10204824
+Time for input:        7.3144 seconds
+Time for Lines:        0.0595578 seconds
+Time for K(x):         7.2416 seconds
+File 167 of 412
+Number of lines: 10057861
+Time for input:        7.21539 seconds
+Time for Lines:        0.050569 seconds
+Time for K(x):         7.13502 seconds
+File 168 of 412
+Number of lines: 9921926
+Time for input:        7.11217 seconds
+Time for Lines:        0.0626063 seconds
+Time for K(x):         7.04277 seconds
+File 169 of 412
+Number of lines: 9773592
+Time for input:        7.02064 seconds
+Time for Lines:        0.0494139 seconds
+Time for K(x):         6.94196 seconds
+File 170 of 412
+Number of lines: 9633923
+Time for input:        6.91776 seconds
+Time for Lines:        0.0568104 seconds
+Time for K(x):         6.84479 seconds
+File 171 of 412
+Number of lines: 9501177
+Time for input:        6.8226 seconds
+Time for Lines:        0.0479139 seconds
+Time for K(x):         6.74951 seconds
+File 172 of 412
+Number of lines: 9372751
+Time for input:        6.02574 seconds
+Time for Lines:        0.0444999 seconds
+Time for K(x):         6.66194 seconds
+File 173 of 412
+Number of lines: 9239376
+Time for input:        6.63876 seconds
+Time for Lines:        0.0454501 seconds
+Time for K(x):         6.56442 seconds
+File 174 of 412
+Number of lines: 9108502
+Time for input:        6.54215 seconds
+Time for Lines:        0.045823 seconds
+Time for K(x):         6.47268 seconds
+File 175 of 412
+Number of lines: 8977426
+Time for input:        6.45262 seconds
+Time for Lines:        0.0423053 seconds
+Time for K(x):         6.38257 seconds
+File 176 of 412
+Number of lines: 8850163
+Time for input:        6.36046 seconds
+Time for Lines:        0.0486952 seconds
+Time for K(x):         6.29631 seconds
+File 177 of 412
+Number of lines: 8731626
+Time for input:        6.27524 seconds
+Time for Lines:        0.0412958 seconds
+Time for K(x):         6.21177 seconds
+File 178 of 412
+Number of lines: 8600205
+Time for input:        6.19248 seconds
+Time for Lines:        0.0406322 seconds
+Time for K(x):         6.12179 seconds
+File 179 of 412
+Number of lines: 8469901
+Time for input:        6.10097 seconds
+Time for Lines:        0.0396359 seconds
+Time for K(x):         6.03049 seconds
+File 180 of 412
+Number of lines: 8354958
+Time for input:        5.29021 seconds
+Time for Lines:        0.0424938 seconds
+Time for K(x):         5.94575 seconds
+File 181 of 412
+Number of lines: 8231521
+Time for input:        5.92669 seconds
+Time for Lines:        0.0409528 seconds
+Time for K(x):         5.86281 seconds
+File 182 of 412
+Number of lines: 8109897
+Time for input:        5.84311 seconds
+Time for Lines:        0.037974 seconds
+Time for K(x):         5.77644 seconds
+File 183 of 412
+Number of lines: 7980537
+Time for input:        5.75699 seconds
+Time for Lines:        0.038658 seconds
+Time for K(x):         5.68549 seconds
+File 184 of 412
+Number of lines: 7866505
+Time for input:        5.6674 seconds
+Time for Lines:        0.0409435 seconds
+Time for K(x):         5.60809 seconds
+File 185 of 412
+Number of lines: 7751710
+Time for input:        5.58952 seconds
+Time for Lines:        0.0398612 seconds
+Time for K(x):         5.526 seconds
+File 186 of 412
+Number of lines: 7633609
+Time for input:        5.50715 seconds
+Time for Lines:        0.0385692 seconds
+Time for K(x):         5.44223 seconds
+File 187 of 412
+Number of lines: 7529115
+Time for input:        5.42457 seconds
+Time for Lines:        0.0404621 seconds
+Time for K(x):         5.37056 seconds
+File 188 of 412
+Number of lines: 7404183
+Time for input:        5.35216 seconds
+Time for Lines:        0.0437156 seconds
+Time for K(x):         5.28104 seconds
+File 189 of 412
+Number of lines: 7297966
+Time for input:        4.55531 seconds
+Time for Lines:        0.0362832 seconds
+Time for K(x):         5.20482 seconds
+File 190 of 412
+Number of lines: 7189256
+Time for input:        5.18833 seconds
+Time for Lines:        0.0389834 seconds
+Time for K(x):         5.13081 seconds
+File 191 of 412
+Number of lines: 7080320
+Time for input:        5.1139 seconds
+Time for Lines:        0.0374986 seconds
+Time for K(x):         5.05546 seconds
+File 192 of 412
+Number of lines: 6974491
+Time for input:        5.03812 seconds
+Time for Lines:        0.0360108 seconds
+Time for K(x):         4.97777 seconds
+File 193 of 412
+Number of lines: 6865014
+Time for input:        4.96183 seconds
+Time for Lines:        0.0342475 seconds
+Time for K(x):         4.90314 seconds
+File 194 of 412
+Number of lines: 6758330
+Time for input:        4.88677 seconds
+Time for Lines:        0.0370428 seconds
+Time for K(x):         4.82907 seconds
+File 195 of 412
+Number of lines: 6653612
+Time for input:        4.81255 seconds
+Time for Lines:        0.0335401 seconds
+Time for K(x):         4.75632 seconds
+File 196 of 412
+Number of lines: 6549313
+Time for input:        4.74182 seconds
+Time for Lines:        0.0371158 seconds
+Time for K(x):         4.68083 seconds
+File 197 of 412
+Number of lines: 6448230
+Time for input:        4.66569 seconds
+Time for Lines:        0.0320686 seconds
+Time for K(x):         4.61157 seconds
+File 198 of 412
+Number of lines: 6341090
+Time for input:        4.59577 seconds
+Time for Lines:        0.0337787 seconds
+Time for K(x):         4.53607 seconds
+File 199 of 412
+Number of lines: 6245922
+Time for input:        3.82259 seconds
+Time for Lines:        0.0310834 seconds
+Time for K(x):         4.46685 seconds
+File 200 of 412
+Number of lines: 6144754
+Time for input:        4.45205 seconds
+Time for Lines:        0.0309441 seconds
+Time for K(x):         4.39597 seconds
+File 201 of 412
+Number of lines: 6047808
+Time for input:        4.38101 seconds
+Time for Lines:        0.0305981 seconds
+Time for K(x):         4.3273 seconds
+File 202 of 412
+Number of lines: 5950372
+Time for input:        4.31311 seconds
+Time for Lines:        0.030899 seconds
+Time for K(x):         4.25947 seconds
+File 203 of 412
+Number of lines: 5856896
+Time for input:        4.2454 seconds
+Time for Lines:        0.0282142 seconds
+Time for K(x):         4.19261 seconds
+File 204 of 412
+Number of lines: 5763730
+Time for input:        4.17829 seconds
+Time for Lines:        0.0334774 seconds
+Time for K(x):         4.12607 seconds
+File 205 of 412
+Number of lines: 5670113
+Time for input:        4.11305 seconds
+Time for Lines:        0.0311221 seconds
+Time for K(x):         4.06428 seconds
+File 206 of 412
+Number of lines: 5583587
+Time for input:        4.05059 seconds
+Time for Lines:        0.0293233 seconds
+Time for K(x):         4.00165 seconds
+File 207 of 412
+Number of lines: 5487976
+Time for input:        3.98843 seconds
+Time for Lines:        0.0315935 seconds
+Time for K(x):         3.93452 seconds
+File 208 of 412
+Number of lines: 5399430
+Time for input:        3.92142 seconds
+Time for Lines:        0.0316641 seconds
+Time for K(x):         3.87056 seconds
+File 209 of 412
+Number of lines: 5311892
+Time for input:        3.85786 seconds
+Time for Lines:        0.0307711 seconds
+Time for K(x):         3.81152 seconds
+File 210 of 412
+Number of lines: 5223913
+Time for input:        3.083 seconds
+Time for Lines:        0.0251698 seconds
+Time for K(x):         3.74644 seconds
+File 211 of 412
+Number of lines: 5141011
+Time for input:        3.73382 seconds
+Time for Lines:        0.0298689 seconds
+Time for K(x):         3.68603 seconds
+File 212 of 412
+Number of lines: 5054055
+Time for input:        3.67393 seconds
+Time for Lines:        0.0240178 seconds
+Time for K(x):         3.62701 seconds
+File 213 of 412
+Number of lines: 4965864
+Time for input:        3.6148 seconds
+Time for Lines:        0.02822 seconds
+Time for K(x):         3.56352 seconds
+File 214 of 412
+Number of lines: 4883922
+Time for input:        3.55211 seconds
+Time for Lines:        0.0268851 seconds
+Time for K(x):         3.50849 seconds
+File 215 of 412
+Number of lines: 4805252
+Time for input:        3.49681 seconds
+Time for Lines:        0.0229765 seconds
+Time for K(x):         3.45031 seconds
+File 216 of 412
+Number of lines: 4720428
+Time for input:        3.43907 seconds
+Time for Lines:        0.0240843 seconds
+Time for K(x):         3.39294 seconds
+File 217 of 412
+Number of lines: 4645826
+Time for input:        3.38166 seconds
+Time for Lines:        0.0257987 seconds
+Time for K(x):         3.33698 seconds
+File 218 of 412
+Number of lines: 4562340
+Time for input:        3.32572 seconds
+Time for Lines:        0.0259348 seconds
+Time for K(x):         3.28078 seconds
+File 219 of 412
+Number of lines: 4483201
+Time for input:        3.27033 seconds
+Time for Lines:        0.0244398 seconds
+Time for K(x):         3.2233 seconds
+File 220 of 412
+Number of lines: 4408052
+Time for input:        3.21275 seconds
+Time for Lines:        0.0277893 seconds
+Time for K(x):         3.17089 seconds
+File 221 of 412
+Number of lines: 4329692
+Time for input:        3.16015 seconds
+Time for Lines:        0.0247242 seconds
+Time for K(x):         3.11638 seconds
+File 222 of 412
+Number of lines: 4255398
+Time for input:        3.10619 seconds
+Time for Lines:        0.0227522 seconds
+Time for K(x):         3.0624 seconds
+File 223 of 412
+Number of lines: 4178932
+Time for input:        2.34109 seconds
+Time for Lines:        0.0248095 seconds
+Time for K(x):         3.00642 seconds
+File 224 of 412
+Number of lines: 4108751
+Time for input:        2.99644 seconds
+Time for Lines:        0.0215931 seconds
+Time for K(x):         2.95708 seconds
+File 225 of 412
+Number of lines: 4034007
+Time for input:        2.94751 seconds
+Time for Lines:        0.0222924 seconds
+Time for K(x):         2.90629 seconds
+File 226 of 412
+Number of lines: 3961668
+Time for input:        2.89685 seconds
+Time for Lines:        0.0236227 seconds
+Time for K(x):         2.85191 seconds
+File 227 of 412
+Number of lines: 3891961
+Time for input:        2.84232 seconds
+Time for Lines:        0.0187135 seconds
+Time for K(x):         2.80289 seconds
+File 228 of 412
+Number of lines: 3823382
+Time for input:        2.79377 seconds
+Time for Lines:        0.0244419 seconds
+Time for K(x):         2.75446 seconds
+File 229 of 412
+Number of lines: 3750682
+Time for input:        2.74533 seconds
+Time for Lines:        0.0236964 seconds
+Time for K(x):         2.70398 seconds
+File 230 of 412
+Number of lines: 3682246
+Time for input:        2.69496 seconds
+Time for Lines:        0.0241632 seconds
+Time for K(x):         2.65569 seconds
+File 231 of 412
+Number of lines: 3619996
+Time for input:        2.64684 seconds
+Time for Lines:        0.0204564 seconds
+Time for K(x):         2.61107 seconds
+File 232 of 412
+Number of lines: 3555110
+Time for input:        2.60216 seconds
+Time for Lines:        0.0199578 seconds
+Time for K(x):         2.56526 seconds
+File 233 of 412
+Number of lines: 3482747
+Time for input:        2.55693 seconds
+Time for Lines:        0.0195184 seconds
+Time for K(x):         2.51394 seconds
+File 234 of 412
+Number of lines: 3423532
+Time for input:        2.50557 seconds
+Time for Lines:        0.0192591 seconds
+Time for K(x):         2.47149 seconds
+File 235 of 412
+Number of lines: 3359484
+Time for input:        2.46318 seconds
+Time for Lines:        0.0164812 seconds
+Time for K(x):         2.42619 seconds
+File 236 of 412
+Number of lines: 3293612
+Time for input:        2.41791 seconds
+Time for Lines:        0.0206305 seconds
+Time for K(x):         2.37839 seconds
+File 237 of 412
+Number of lines: 3231720
+Time for input:        2.37089 seconds
+Time for Lines:        0.0188354 seconds
+Time for K(x):         2.33516 seconds
+File 238 of 412
+Number of lines: 3174049
+Time for input:        2.34955 seconds
+Time for Lines:        0.015274 seconds
+Time for K(x):         2.29308 seconds
+File 239 of 412
+Number of lines: 3113984
+Time for input:        1.59415 seconds
+Time for Lines:        0.0148603 seconds
+Time for K(x):         2.25065 seconds
+File 240 of 412
+Number of lines: 3051475
+Time for input:        2.24338 seconds
+Time for Lines:        0.0166636 seconds
+Time for K(x):         2.20604 seconds
+File 241 of 412
+Number of lines: 2997391
+Time for input:        2.1993 seconds
+Time for Lines:        0.01647 seconds
+Time for K(x):         2.16673 seconds
+File 242 of 412
+Number of lines: 2941919
+Time for input:        2.15947 seconds
+Time for Lines:        0.014168 seconds
+Time for K(x):         2.12605 seconds
+File 243 of 412
+Number of lines: 2883283
+Time for input:        2.11875 seconds
+Time for Lines:        0.0172001 seconds
+Time for K(x):         2.08306 seconds
+File 244 of 412
+Number of lines: 2829925
+Time for input:        2.07586 seconds
+Time for Lines:        0.0137122 seconds
+Time for K(x):         2.047 seconds
+File 245 of 412
+Number of lines: 2773571
+Time for input:        2.04012 seconds
+Time for Lines:        0.0153723 seconds
+Time for K(x):         2.00642 seconds
+File 246 of 412
+Number of lines: 2722646
+Time for input:        1.99967 seconds
+Time for Lines:        0.0144578 seconds
+Time for K(x):         1.97141 seconds
+File 247 of 412
+Number of lines: 2668326
+Time for input:        1.96483 seconds
+Time for Lines:        0.0130015 seconds
+Time for K(x):         1.93244 seconds
+File 248 of 412
+Number of lines: 2615504
+Time for input:        1.9257 seconds
+Time for Lines:        0.0159178 seconds
+Time for K(x):         1.89294 seconds
+File 249 of 412
+Number of lines: 2565382
+Time for input:        1.88727 seconds
+Time for Lines:        0.0156375 seconds
+Time for K(x):         1.85918 seconds
+File 250 of 412
+Number of lines: 2512457
+Time for input:        1.8526 seconds
+Time for Lines:        0.0136899 seconds
+Time for K(x):         1.81982 seconds
+File 251 of 412
+Number of lines: 2461276
+Time for input:        1.81397 seconds
+Time for Lines:        0.0121897 seconds
+Time for K(x):         1.78624 seconds
+File 252 of 412
+Number of lines: 2411607
+Time for input:        1.78025 seconds
+Time for Lines:        0.0146545 seconds
+Time for K(x):         1.74802 seconds
+File 253 of 412
+Number of lines: 2357275
+Time for input:        1.74206 seconds
+Time for Lines:        0.0133098 seconds
+Time for K(x):         1.70764 seconds
+File 254 of 412
+Number of lines: 2312711
+Time for input:        1.70244 seconds
+Time for Lines:        0.0126473 seconds
+Time for K(x):         1.6774 seconds
+File 255 of 412
+Number of lines: 2265136
+Time for input:        1.67164 seconds
+Time for Lines:        0.0112791 seconds
+Time for K(x):         1.64517 seconds
+File 256 of 412
+Number of lines: 2215405
+Time for input:        1.63931 seconds
+Time for Lines:        0.0106217 seconds
+Time for K(x):         1.60712 seconds
+File 257 of 412
+Number of lines: 2172406
+Time for input:        1.60254 seconds
+Time for Lines:        0.0115127 seconds
+Time for K(x):         1.57977 seconds
+File 258 of 412
+Number of lines: 2126703
+Time for input:        1.60188 seconds
+Time for Lines:        0.0102932 seconds
+Time for K(x):         1.54491 seconds
+File 259 of 412
+Number of lines: 2079734
+Time for input:        0.84453 seconds
+Time for Lines:        0.0115231 seconds
+Time for K(x):         1.5099 seconds
+File 260 of 412
+Number of lines: 2037120
+Time for input:        1.50492 seconds
+Time for Lines:        0.00969011 seconds
+Time for K(x):         1.48069 seconds
+File 261 of 412
+Number of lines: 1996408
+Time for input:        1.47612 seconds
+Time for Lines:        0.0115712 seconds
+Time for K(x):         1.4495 seconds
+File 262 of 412
+Number of lines: 1951206
+Time for input:        1.44431 seconds
+Time for Lines:        0.015156 seconds
+Time for K(x):         1.41799 seconds
+File 263 of 412
+Number of lines: 1909330
+Time for input:        1.41313 seconds
+Time for Lines:        0.0092416 seconds
+Time for K(x):         1.38909 seconds
+File 264 of 412
+Number of lines: 1870015
+Time for input:        1.38459 seconds
+Time for Lines:        0.00909824 seconds
+Time for K(x):         1.36254 seconds
+File 265 of 412
+Number of lines: 1829489
+Time for input:        1.35775 seconds
+Time for Lines:        0.0122347 seconds
+Time for K(x):         1.32951 seconds
+File 266 of 412
+Number of lines: 1787365
+Time for input:        1.32512 seconds
+Time for Lines:        0.00944333 seconds
+Time for K(x):         1.30072 seconds
+File 267 of 412
+Number of lines: 1749418
+Time for input:        1.29683 seconds
+Time for Lines:        0.00861389 seconds
+Time for K(x):         1.2747 seconds
+File 268 of 412
+Number of lines: 1706917
+Time for input:        1.26986 seconds
+Time for Lines:        0.0123812 seconds
+Time for K(x):         1.24416 seconds
+File 269 of 412
+Number of lines: 1668210
+Time for input:        1.24 seconds
+Time for Lines:        0.0106465 seconds
+Time for K(x):         1.21332 seconds
+File 270 of 412
+Number of lines: 1634206
+Time for input:        1.2092 seconds
+Time for Lines:        0.0105062 seconds
+Time for K(x):         1.18944 seconds
+File 271 of 412
+Number of lines: 1594081
+Time for input:        1.18531 seconds
+Time for Lines:        0.0108493 seconds
+Time for K(x):         1.16174 seconds
+File 272 of 412
+Number of lines: 1561266
+Time for input:        1.1577 seconds
+Time for Lines:        0.00781926 seconds
+Time for K(x):         1.13766 seconds
+File 273 of 412
+Number of lines: 1524338
+Time for input:        1.13391 seconds
+Time for Lines:        0.0106076 seconds
+Time for K(x):         1.11178 seconds
+File 274 of 412
+Number of lines: 1486528
+Time for input:        1.10793 seconds
+Time for Lines:        0.00787251 seconds
+Time for K(x):         1.08502 seconds
+File 275 of 412
+Number of lines: 1459049
+Time for input:        1.08145 seconds
+Time for Lines:        0.0140349 seconds
+Time for K(x):         1.06434 seconds
+File 276 of 412
+Number of lines: 1426572
+Time for input:        1.0607 seconds
+Time for Lines:        0.014676 seconds
+Time for K(x):         1.04152 seconds
+File 277 of 412
+Number of lines: 1391368
+Time for input:        1.03801 seconds
+Time for Lines:        0.00716493 seconds
+Time for K(x):         1.0163 seconds
+File 278 of 412
+Number of lines: 1360892
+Time for input:        1.01289 seconds
+Time for Lines:        0.0128061 seconds
+Time for K(x):         0.994411 seconds
+File 279 of 412
+Number of lines: 1328212
+Time for input:        0.991073 seconds
+Time for Lines:        0.00685773 seconds
+Time for K(x):         0.971162 seconds
+File 280 of 412
+Number of lines: 1299511
+Time for input:        0.967879 seconds
+Time for Lines:        0.00675933 seconds
+Time for K(x):         0.949687 seconds
+File 281 of 412
+Number of lines: 1269161
+Time for input:        0.946359 seconds
+Time for Lines:        0.00917811 seconds
+Time for K(x):         0.927564 seconds
+File 282 of 412
+Number of lines: 1237303
+Time for input:        0.924539 seconds
+Time for Lines:        0.0104182 seconds
+Time for K(x):         0.904532 seconds
+File 283 of 412
+Number of lines: 1207013
+Time for input:        0.901525 seconds
+Time for Lines:        0.00965837 seconds
+Time for K(x):         0.88218 seconds
+File 284 of 412
+Number of lines: 1176729
+Time for input:        0.879108 seconds
+Time for Lines:        0.00570675 seconds
+Time for K(x):         0.859692 seconds
+File 285 of 412
+Number of lines: 1146250
+Time for input:        0.856719 seconds
+Time for Lines:        0.00557763 seconds
+Time for K(x):         0.838624 seconds
+File 286 of 412
+Number of lines: 1115908
+Time for input:        0.849721 seconds
+Time for Lines:        0.00556022 seconds
+Time for K(x):         0.821268 seconds
+File 287 of 412
+Number of lines: 1091822
+Time for input:        0.849998 seconds
+Time for Lines:        0.00543629 seconds
+Time for K(x):         0.802234 seconds
+File 288 of 412
+Number of lines: 1061334
+Time for input:        0.849797 seconds
+Time for Lines:        0.00533606 seconds
+Time for K(x):         0.781799 seconds
+File 289 of 412
+Number of lines: 1031940
+Time for input:        0.0906772 seconds
+Time for Lines:        0.00496026 seconds
+Time for K(x):         0.756354 seconds
+File 290 of 412
+Number of lines: 1008240
+Time for input:        0.753747 seconds
+Time for Lines:        0.00481274 seconds
+Time for K(x):         0.738038 seconds
+File 291 of 412
+Number of lines: 984076
+Time for input:        0.735486 seconds
+Time for Lines:        0.0065239 seconds
+Time for K(x):         0.724445 seconds
+File 292 of 412
+Number of lines: 958478
+Time for input:        0.721935 seconds
+Time for Lines:        0.0046336 seconds
+Time for K(x):         0.704667 seconds
+File 293 of 412
+Number of lines: 932601
+Time for input:        0.702235 seconds
+Time for Lines:        0.00454451 seconds
+Time for K(x):         0.684876 seconds
+File 294 of 412
+Number of lines: 910169
+Time for input:        0.682505 seconds
+Time for Lines:        0.00445235 seconds
+Time for K(x):         0.667921 seconds
+File 295 of 412
+Number of lines: 885270
+Time for input:        0.665598 seconds
+Time for Lines:        0.0043776 seconds
+Time for K(x):         0.652149 seconds
+File 296 of 412
+Number of lines: 862238
+Time for input:        0.649879 seconds
+Time for Lines:        0.00428442 seconds
+Time for K(x):         0.634989 seconds
+File 297 of 412
+Number of lines: 840305
+Time for input:        0.632764 seconds
+Time for Lines:        0.00419533 seconds
+Time for K(x):         0.617829 seconds
+File 298 of 412
+Number of lines: 816332
+Time for input:        0.615672 seconds
+Time for Lines:        0.00408883 seconds
+Time for K(x):         0.599404 seconds
+File 299 of 412
+Number of lines: 795097
+Time for input:        0.597311 seconds
+Time for Lines:        0.00691098 seconds
+Time for K(x):         0.586589 seconds
+File 300 of 412
+Number of lines: 771329
+Time for input:        0.58455 seconds
+Time for Lines:        0.00645325 seconds
+Time for K(x):         0.567904 seconds
+File 301 of 412
+Number of lines: 750466
+Time for input:        0.565905 seconds
+Time for Lines:        0.00383898 seconds
+Time for K(x):         0.551008 seconds
+File 302 of 412
+Number of lines: 730919
+Time for input:        0.549067 seconds
+Time for Lines:        0.00373146 seconds
+Time for K(x):         0.539137 seconds
+File 303 of 412
+Number of lines: 710066
+Time for input:        0.537249 seconds
+Time for Lines:        0.0036608 seconds
+Time for K(x):         0.522527 seconds
+File 304 of 412
+Number of lines: 686190
+Time for input:        0.520678 seconds
+Time for Lines:        0.00416563 seconds
+Time for K(x):         0.504857 seconds
+File 305 of 412
+Number of lines: 670611
+Time for input:        0.503056 seconds
+Time for Lines:        0.00441754 seconds
+Time for K(x):         0.495255 seconds
+File 306 of 412
+Number of lines: 651176
+Time for input:        0.493495 seconds
+Time for Lines:        0.00341402 seconds
+Time for K(x):         0.480344 seconds
+File 307 of 412
+Number of lines: 632699
+Time for input:        0.478644 seconds
+Time for Lines:        0.00334029 seconds
+Time for K(x):         0.46849 seconds
+File 308 of 412
+Number of lines: 614830
+Time for input:        0.466815 seconds
+Time for Lines:        0.00325741 seconds
+Time for K(x):         0.453704 seconds
+File 309 of 412
+Number of lines: 596672
+Time for input:        0.452072 seconds
+Time for Lines:        0.00319978 seconds
+Time for K(x):         0.442576 seconds
+File 310 of 412
+Number of lines: 582422
+Time for input:        0.440977 seconds
+Time for Lines:        0.00314778 seconds
+Time for K(x):         0.43125 seconds
+File 311 of 412
+Number of lines: 564097
+Time for input:        0.429687 seconds
+Time for Lines:        0.00566477 seconds
+Time for K(x):         0.419882 seconds
+File 312 of 412
+Number of lines: 550924
+Time for input:        0.418368 seconds
+Time for Lines:        0.00304947 seconds
+Time for K(x):         0.408388 seconds
+File 313 of 412
+Number of lines: 534325
+Time for input:        0.406943 seconds
+Time for Lines:        0.00296947 seconds
+Time for K(x):         0.394771 seconds
+File 314 of 412
+Number of lines: 517564
+Time for input:        0.393353 seconds
+Time for Lines:        0.00291328 seconds
+Time for K(x):         0.380469 seconds
+File 315 of 412
+Number of lines: 502065
+Time for input:        0.379099 seconds
+Time for Lines:        0.00596867 seconds
+Time for K(x):         0.371293 seconds
+File 316 of 412
+Number of lines: 487280
+Time for input:        0.369955 seconds
+Time for Lines:        0.00276992 seconds
+Time for K(x):         0.358218 seconds
+File 317 of 412
+Number of lines: 473291
+Time for input:        0.356932 seconds
+Time for Lines:        0.00545178 seconds
+Time for K(x):         0.349913 seconds
+File 318 of 412
+Number of lines: 458215
+Time for input:        0.348637 seconds
+Time for Lines:        0.00265626 seconds
+Time for K(x):         0.336601 seconds
+File 319 of 412
+Number of lines: 442091
+Time for input:        0.335367 seconds
+Time for Lines:        0.00260192 seconds
+Time for K(x):         0.32693 seconds
+File 320 of 412
+Number of lines: 425589
+Time for input:        0.325737 seconds
+Time for Lines:        0.00253952 seconds
+Time for K(x):         0.312826 seconds
+File 321 of 412
+Number of lines: 413527
+Time for input:        0.31168 seconds
+Time for Lines:        0.0024832 seconds
+Time for K(x):         0.305677 seconds
+File 322 of 412
+Number of lines: 399363
+Time for input:        0.304544 seconds
+Time for Lines:        0.00244518 seconds
+Time for K(x):         0.297231 seconds
+File 323 of 412
+Number of lines: 385721
+Time for input:        0.296142 seconds
+Time for Lines:        0.00240742 seconds
+Time for K(x):         0.284729 seconds
+File 324 of 412
+Number of lines: 372955
+Time for input:        0.28368 seconds
+Time for Lines:        0.00234598 seconds
+Time for K(x):         0.277101 seconds
+File 325 of 412
+Number of lines: 360682
+Time for input:        0.276062 seconds
+Time for Lines:        0.00234701 seconds
+Time for K(x):         0.269798 seconds
+File 326 of 412
+Number of lines: 349944
+Time for input:        0.268794 seconds
+Time for Lines:        0.00221286 seconds
+Time for K(x):         0.259097 seconds
+File 327 of 412
+Number of lines: 337237
+Time for input:        0.258105 seconds
+Time for Lines:        0.00553779 seconds
+Time for K(x):         0.251498 seconds
+File 328 of 412
+Number of lines: 327431
+Time for input:        0.250541 seconds
+Time for Lines:        0.00208589 seconds
+Time for K(x):         0.241371 seconds
+File 329 of 412
+Number of lines: 316290
+Time for input:        0.240457 seconds
+Time for Lines:        0.00354611 seconds
+Time for K(x):         0.234713 seconds
+File 330 of 412
+Number of lines: 305728
+Time for input:        0.233798 seconds
+Time for Lines:        0.00201626 seconds
+Time for K(x):         0.228392 seconds
+File 331 of 412
+Number of lines: 293821
+Time for input:        0.227519 seconds
+Time for Lines:        0.00198246 seconds
+Time for K(x):         0.216998 seconds
+File 332 of 412
+Number of lines: 282571
+Time for input:        0.216138 seconds
+Time for Lines:        0.00198861 seconds
+Time for K(x):         0.210248 seconds
+File 333 of 412
+Number of lines: 274358
+Time for input:        0.20943 seconds
+Time for Lines:        0.00187683 seconds
+Time for K(x):         0.205356 seconds
+File 334 of 412
+Number of lines: 263242
+Time for input:        0.204546 seconds
+Time for Lines:        0.00184013 seconds
+Time for K(x):         0.198688 seconds
+File 335 of 412
+Number of lines: 252795
+Time for input:        0.197919 seconds
+Time for Lines:        0.00179814 seconds
+Time for K(x):         0.188121 seconds
+File 336 of 412
+Number of lines: 243813
+Time for input:        0.187356 seconds
+Time for Lines:        0.00172237 seconds
+Time for K(x):         0.182721 seconds
+File 337 of 412
+Number of lines: 234264
+Time for input:        0.182005 seconds
+Time for Lines:        0.00168858 seconds
+Time for K(x):         0.177053 seconds
+File 338 of 412
+Number of lines: 226171
+Time for input:        0.17634 seconds
+Time for Lines:        0.00163635 seconds
+Time for K(x):         0.167918 seconds
+File 339 of 412
+Number of lines: 217573
+Time for input:        0.167209 seconds
+Time for Lines:        0.00162611 seconds
+Time for K(x):         0.162703 seconds
+File 340 of 412
+Number of lines: 208468
+Time for input:        0.162033 seconds
+Time for Lines:        0.00404682 seconds
+Time for K(x):         0.157265 seconds
+File 341 of 412
+Number of lines: 201875
+Time for input:        0.156591 seconds
+Time for Lines:        0.00156979 seconds
+Time for K(x):         0.153282 seconds
+File 342 of 412
+Number of lines: 194596
+Time for input:        0.152659 seconds
+Time for Lines:        0.00424426 seconds
+Time for K(x):         0.144649 seconds
+File 343 of 412
+Number of lines: 186633
+Time for input:        0.144018 seconds
+Time for Lines:        0.00451277 seconds
+Time for K(x):         0.139869 seconds
+File 344 of 412
+Number of lines: 179917
+Time for input:        0.139242 seconds
+Time for Lines:        0.00144077 seconds
+Time for K(x):         0.135824 seconds
+File 345 of 412
+Number of lines: 173142
+Time for input:        0.135244 seconds
+Time for Lines:        0.00141414 seconds
+Time for K(x):         0.131749 seconds
+File 346 of 412
+Number of lines: 167686
+Time for input:        0.131175 seconds
+Time for Lines:        0.00138138 seconds
+Time for K(x):         0.128463 seconds
+File 347 of 412
+Number of lines: 160652
+Time for input:        0.127891 seconds
+Time for Lines:        0.00134963 seconds
+Time for K(x):         0.119909 seconds
+File 348 of 412
+Number of lines: 154675
+Time for input:        0.11938 seconds
+Time for Lines:        0.00142541 seconds
+Time for K(x):         0.116341 seconds
+File 349 of 412
+Number of lines: 148613
+Time for input:        0.115813 seconds
+Time for Lines:        0.00129331 seconds
+Time for K(x):         0.112681 seconds
+File 350 of 412
+Number of lines: 142142
+Time for input:        0.112146 seconds
+Time for Lines:        0.000862048 seconds
+Time for K(x):         0.108792 seconds
+File 351 of 412
+Number of lines: 136632
+Time for input:        0.108304 seconds
+Time for Lines:        0.000843776 seconds
+Time for K(x):         0.105486 seconds
+File 352 of 412
+Number of lines: 130219
+Time for input:        0.104993 seconds
+Time for Lines:        0.000810784 seconds
+Time for K(x):         0.0972677 seconds
+File 353 of 412
+Number of lines: 125425
+Time for input:        0.0967944 seconds
+Time for Lines:        0.000793568 seconds
+Time for K(x):         0.0943891 seconds
+File 354 of 412
+Number of lines: 119123
+Time for input:        0.09391 seconds
+Time for Lines:        0.000714752 seconds
+Time for K(x):         0.0905728 seconds
+File 355 of 412
+Number of lines: 113675
+Time for input:        0.0901356 seconds
+Time for Lines:        0.000689152 seconds
+Time for K(x):         0.0873267 seconds
+File 356 of 412
+Number of lines: 107743
+Time for input:        0.0868864 seconds
+Time for Lines:        0.00071168 seconds
+Time for K(x):         0.0837325 seconds
+File 357 of 412
+Number of lines: 102563
+Time for input:        0.0833034 seconds
+Time for Lines:        0.000656384 seconds
+Time for K(x):         0.0806246 seconds
+File 358 of 412
+Number of lines: 98131
+Time for input:        0.080213 seconds
+Time for Lines:        0.000649216 seconds
+Time for K(x):         0.0735805 seconds
+File 359 of 412
+Number of lines: 91965
+Time for input:        0.0731781 seconds
+Time for Lines:        0.00064512 seconds
+Time for K(x):         0.0698583 seconds
+File 360 of 412
+Number of lines: 88649
+Time for input:        0.0694682 seconds
+Time for Lines:        0.000611328 seconds
+Time for K(x):         0.0678564 seconds
+File 361 of 412
+Number of lines: 84326
+Time for input:        0.0674724 seconds
+Time for Lines:        0.000590848 seconds
+Time for K(x):         0.0652542 seconds
+File 362 of 412
+Number of lines: 80712
+Time for input:        0.0648684 seconds
+Time for Lines:        0.000565248 seconds
+Time for K(x):         0.0630436 seconds
+File 363 of 412
+Number of lines: 75947
+Time for input:        0.0627005 seconds
+Time for Lines:        0.000548864 seconds
+Time for K(x):         0.0601854 seconds
+File 364 of 412
+Number of lines: 72654
+Time for input:        0.0598456 seconds
+Time for Lines:        0.000523264 seconds
+Time for K(x):         0.0582001 seconds
+File 365 of 412
+Number of lines: 69178
+Time for input:        0.0578673 seconds
+Time for Lines:        0.000510944 seconds
+Time for K(x):         0.056108 seconds
+File 366 of 412
+Number of lines: 65585
+Time for input:        0.0557732 seconds
+Time for Lines:        0.000508928 seconds
+Time for K(x):         0.0538798 seconds
+File 367 of 412
+Number of lines: 61641
+Time for input:        0.0535449 seconds
+Time for Lines:        0.000485376 seconds
+Time for K(x):         0.0471429 seconds
+File 368 of 412
+Number of lines: 58630
+Time for input:        0.0468376 seconds
+Time for Lines:        0.000485376 seconds
+Time for K(x):         0.0453263 seconds
+File 369 of 412
+Number of lines: 54629
+Time for input:        0.0450253 seconds
+Time for Lines:        0.000467968 seconds
+Time for K(x):         0.0429087 seconds
+File 370 of 412
+Number of lines: 52365
+Time for input:        0.0426189 seconds
+Time for Lines:        0.000458752 seconds
+Time for K(x):         0.0415508 seconds
+File 371 of 412
+Number of lines: 48769
+Time for input:        0.0412652 seconds
+Time for Lines:        0.000453632 seconds
+Time for K(x):         0.0393923 seconds
+File 372 of 412
+Number of lines: 45718
+Time for input:        0.0391126 seconds
+Time for Lines:        0.000449536 seconds
+Time for K(x):         0.0375541 seconds
+File 373 of 412
+Number of lines: 43112
+Time for input:        0.0372603 seconds
+Time for Lines:        0.000442368 seconds
+Time for K(x):         0.036009 seconds
+File 374 of 412
+Number of lines: 40754
+Time for input:        0.03571 seconds
+Time for Lines:        0.000428032 seconds
+Time for K(x):         0.0345293 seconds
+File 375 of 412
+Number of lines: 37906
+Time for input:        0.0342866 seconds
+Time for Lines:        0.000421888 seconds
+Time for K(x):         0.0328294 seconds
+File 376 of 412
+Number of lines: 36021
+Time for input:        0.0325887 seconds
+Time for Lines:        0.000417792 seconds
+Time for K(x):         0.0316979 seconds
+File 377 of 412
+Number of lines: 34287
+Time for input:        0.0314633 seconds
+Time for Lines:        0.00042496 seconds
+Time for K(x):         0.0306483 seconds
+File 378 of 412
+Number of lines: 32013
+Time for input:        0.0304085 seconds
+Time for Lines:        0.0004096 seconds
+Time for K(x):         0.024789 seconds
+File 379 of 412
+Number of lines: 30205
+Time for input:        0.0245555 seconds
+Time for Lines:        0.000397312 seconds
+Time for K(x):         0.0236749 seconds
+File 380 of 412
+Number of lines: 28424
+Time for input:        0.0234445 seconds
+Time for Lines:        0.000396288 seconds
+Time for K(x):         0.0226386 seconds
+File 381 of 412
+Number of lines: 27158
+Time for input:        0.022408 seconds
+Time for Lines:        0.000403456 seconds
+Time for K(x):         0.021886 seconds
+File 382 of 412
+Number of lines: 25391
+Time for input:        0.0216391 seconds
+Time for Lines:        0.000403232 seconds
+Time for K(x):         0.02082 seconds
+File 383 of 412
+Number of lines: 24482
+Time for input:        0.0205906 seconds
+Time for Lines:        0.000390368 seconds
+Time for K(x):         0.0202832 seconds
+File 384 of 412
+Number of lines: 23041
+Time for input:        0.0200489 seconds
+Time for Lines:        0.000396288 seconds
+Time for K(x):         0.0194284 seconds
+File 385 of 412
+Number of lines: 21616
+Time for input:        0.0191959 seconds
+Time for Lines:        0.000392096 seconds
+Time for K(x):         0.0185651 seconds
+File 386 of 412
+Number of lines: 20305
+Time for input:        0.0183356 seconds
+Time for Lines:        0.000382848 seconds
+Time for K(x):         0.0177387 seconds
+File 387 of 412
+Number of lines: 18771
+Time for input:        0.0175555 seconds
+Time for Lines:        0.000388032 seconds
+Time for K(x):         0.0168397 seconds
+File 388 of 412
+Number of lines: 17431
+Time for input:        0.0166595 seconds
+Time for Lines:        0.000391168 seconds
+Time for K(x):         0.0160676 seconds
+File 389 of 412
+Number of lines: 15980
+Time for input:        0.0158874 seconds
+Time for Lines:        0.000375808 seconds
+Time for K(x):         0.0152218 seconds
+File 390 of 412
+Number of lines: 14676
+Time for input:        0.0150323 seconds
+Time for Lines:        0.000377056 seconds
+Time for K(x):         0.0144497 seconds
+File 391 of 412
+Number of lines: 13241
+Time for input:        0.0142662 seconds
+Time for Lines:        0.00037888 seconds
+Time for K(x):         0.0136264 seconds
+File 392 of 412
+Number of lines: 12105
+Time for input:        0.013442 seconds
+Time for Lines:        0.00037376 seconds
+Time for K(x):         0.0129649 seconds
+File 393 of 412
+Number of lines: 10701
+Time for input:        0.0127836 seconds
+Time for Lines:        0.000368512 seconds
+Time for K(x):         0.0122132 seconds
+File 394 of 412
+Number of lines: 9523
+Time for input:        0.0120289 seconds
+Time for Lines:        0.000379904 seconds
+Time for K(x):         0.0115855 seconds
+File 395 of 412
+Number of lines: 8717
+Time for input:        0.0114053 seconds
+Time for Lines:        0.000374784 seconds
+Time for K(x):         0.0111616 seconds
+File 396 of 412
+Number of lines: 7739
+Time for input:        0.0109773 seconds
+Time for Lines:        0.000379904 seconds
+Time for K(x):         0.0106578 seconds
+File 397 of 412
+Number of lines: 7120
+Time for input:        0.0104785 seconds
+Time for Lines:        0.000371712 seconds
+Time for K(x):         0.0103381 seconds
+File 398 of 412
+Number of lines: 6561
+Time for input:        0.010153 seconds
+Time for Lines:        0.00037888 seconds
+Time for K(x):         0.010079 seconds
+File 399 of 412
+Number of lines: 5908
+Time for input:        0.00990208 seconds
+Time for Lines:        0.000361376 seconds
+Time for K(x):         0.00981504 seconds
+File 400 of 412
+Number of lines: 5498
+Time for input:        0.00963379 seconds
+Time for Lines:        0.000364544 seconds
+Time for K(x):         0.00966656 seconds
+File 401 of 412
+Number of lines: 4816
+Time for input:        0.0094863 seconds
+Time for Lines:        0.000359424 seconds
+Time for K(x):         0.0093952 seconds
+File 402 of 412
+Number of lines: 4306
+Time for input:        0.009216 seconds
+Time for Lines:        0.000362496 seconds
+Time for K(x):         0.00940954 seconds
+File 403 of 412
+Number of lines: 3623
+Time for input:        0.00922419 seconds
+Time for Lines:        0.000359424 seconds
+Time for K(x):         0.00923034 seconds
+File 404 of 412
+Number of lines: 2841
+Time for input:        0.00904806 seconds
+Time for Lines:        0.000360512 seconds
+Time for K(x):         0.0092672 seconds
+File 405 of 412
+Number of lines: 2232
+Time for input:        0.00908595 seconds
+Time for Lines:        0.000120832 seconds
+Time for K(x):         0.00959181 seconds
+File 406 of 412
+Number of lines: 1760
+Time for input:        0.00941261 seconds
+Time for Lines:        0.00011776 seconds
+Time for K(x):         0.00979251 seconds
+File 407 of 412
+Number of lines: 1305
+Time for input:        0.00961331 seconds
+Time for Lines:        0.000118784 seconds
+Time for K(x):         0.010966 seconds
+File 408 of 412
+Number of lines: 845
+Time for input:        0.0107858 seconds
+Time for Lines:        0.00011664 seconds
+Time for K(x):         0.0122112 seconds
+File 409 of 412
+Number of lines: 519
+Time for input:        0.0120318 seconds
+Time for Lines:        0.000118784 seconds
+Time for K(x):         0.0119624 seconds
+File 410 of 412
+Number of lines: 187
+Time for input:        0.0117984 seconds
+Time for Lines:        0.000118784 seconds
+Time for K(x):         0.0117105 seconds
+File 411 of 412
+Number of lines: 20
+Time for input:        0.0115619 seconds
+Time for Lines:        0.000118816 seconds
+Time for K(x):         0.00729699 seconds
+
+Time for input total:	 3952.95 seconds
+Time for Lines total:  29.1163 seconds
+Time for K(x) total: 	 3965.6 seconds
+Time for write K(x):   9.23686 seconds
+Time for mean K(x):    0.00176624 seconds
+Time for sort K(x):    0.0182373 seconds
+Time for Resampling:   0.000451808 seconds
+Time for write K(y):   7.296e-06 seconds
+Time for Transmission: 2.112e-05 seconds

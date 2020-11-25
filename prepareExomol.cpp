@@ -171,7 +171,7 @@ printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, g
 		}
 
 		if(feof(transFile)){
-printf("\n numax %g\n", numax);
+printf("\n %lld numax %g\n", i, numax);
 			break;
 		}
 

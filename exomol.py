@@ -37,9 +37,10 @@ def getTime(url):
 
 # PrintISO: 1: create the <species>.param files, 0: no <species>.param files are created
 # DownloadFiles: 0: no download
-#		 1: download all files
-#		 2: download only *.def and .pf files
-def main(M, DownloadFiles, PrintISO, getTimeStamp):
+#		 1: download all files (*.def, *.pf, *.states and *.trans files)
+#		 2: download only *.def and *.pf files
+#		 3: download all file for super lines (*.def, *.pf, *.super)
+def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 
 
 	if(getTimeStamp == 1 and DownloadFiles == 0):
@@ -85,7 +86,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 	print(M, P, s, nn, dg)
 
 	if(DownloadFiles == 2):
-		#downlaod *.def and *.pf files, don't exit when files are missing
+		#download *.def and *.pf files, don't exit when files are missing
 		com = "wget http://exomol.com/db/%s/%s.def" % (P, M)
 		er=os.system(com)
 		if(er != 0):
@@ -99,7 +100,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 		#return 0
 
 	if(DownloadFiles == 1):
-		#downlaod *.def and *.pf files, exit when files are missing
+		#downlaod *.def, *.pf and *.states files, exit when files are missing
 		com = "wget http://exomol.com/db/%s/%s.def" % (P, M)
 		er=os.system(com)
 		if(er != 0):
@@ -123,6 +124,18 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 			if(er != 0):
 				print("Error in download .states file")
 				exit()
+	if(DownloadFiles == 3):
+		#downlaod *.def and *.pf files, exit when files are missing
+		com = "wget http://exomol.com/db/%s/%s.def" % (P, M)
+		er=os.system(com)
+		if(er != 0):
+			print("Error in download .def file")
+			exit()
+		com = "wget http://exomol.com/db/%s/%s.pf" % (P, M)
+		er=os.system(com)
+		if(er != 0):
+			print("Error in download .pf file")
+			exit()
 
 	if(getTimeStamp == 1):
 		url = "http://exomol.com/db/%s/%s.states.bz2" % (P, M)
@@ -240,6 +253,10 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 
 	transFile = ''
 
+	if(DownloadFiles == 3):
+		#used for super lines
+		n = 1
+
 	for nu in range(n):
 		print("------Download file %d from %d -----" % (nu, n))
 		if(M == "1H2-16O__BT2"):
@@ -292,36 +309,91 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 
 		else:
 
-			if(n > 1):
-				#multiple transition files
-				transFile = "%s__%05d-%05d.trans" % (M, nu * s, nu * s + s)
-				transFile4 = "%s__%04d-%04d.trans" % (M, nu * s, nu * s + s)
-				if(DownloadFiles == 1):
-					#trans files with only 4 digits
-					if(dg == 4):
-						com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile4)
-						url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile4)
-					elif(dg == 5):
-						com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
-						url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
-					else:
-						print("Error, number of digits not valid")
-						return 0
-					
-					er=os.system(com)
-					if(er != 0):
-						print("Error in download .trans file")
-						exit()
+			if(DownloadFiles == 3):
+				#super lines
+				nuMaxs = int(math.ceil(float(nuMax)))
+				transFile = "%s__%05d-%05d__%dK.super" % (M, 0, nuMaxs, Temp)
+				print('Download superlines', transFile)
+				com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
+				url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
 
-					if(dg == 4):
-						com = "mv %s.bz2 %s.bz2" % (transFile4, transFile)
+				er=os.system(com)
+				if(er == 0):
+					com = "bzip2 -d %s.bz2" % transFile
+					er=os.system(com)
+				if(er != 0):
+					print("Error in download .super file")
+					exit()
+				jarray[1] = nuMaxs
+				l[0]=int(subprocess.check_output(['wc', '-l', "%s" % transFile]).split()[0])
+			else:
+				if(n > 1):
+					#multiple transition files
+					transFile = "%s__%05d-%05d.trans" % (M, nu * s, nu * s + s)
+					transFile4 = "%s__%04d-%04d.trans" % (M, nu * s, nu * s + s)
+					if(DownloadFiles == 1):
+						#trans files with only 4 digits
+						if(dg == 4):
+							com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile4)
+							url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile4)
+						elif(dg == 5):
+							com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
+							url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
+						else:
+							print("Error, number of digits not valid")
+							return 0
+
 						er=os.system(com)
-					
-					com = "bzip2 -d %s.bz2" % (transFile)
-					er=os.system(com)
+						if(er != 0):
+							print("Error in download .trans file")
+							exit()
+
+						if(dg == 4):
+							com = "mv %s.bz2 %s.bz2" % (transFile4, transFile)
+							er=os.system(com)
+
+						com = "bzip2 -d %s.bz2" % (transFile)
+						er=os.system(com)
 
 
+						if(getTimeStamp == 1):
+							#first check if file exists
+							com = "wget -S --spider %s" % url
+							er=os.system(com)
+							#print("er", er)
+							if(er == 0):
+								date = getTime(url)
+								date1 = max(date, date1)
+							else:
+								url = "http://www.exomol.com/db/%s/%s" % (P, transFile)
+
+								#first check if file exists
+								com = "wget -S --spider %s" % url
+								er=os.system(com)
+								#print("er", er)
+								if(er == 0):
+
+									date = getTime(url)
+									date1 = max(date, date1)
+
+				else:
+					#only 1 transition file
+					transFile = "%s.trans" % (M)
+					if(DownloadFiles == 1):
+						com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
+						er=os.system(com)
+						if(er == 0):
+							com = "bzip2 -d %s.bz2" % transFile
+							er=os.system(com)
+						else:
+							com = "wget http://www.exomol.com/db/%s/%s" % (P, transFile)
+							er=os.system(com)
+							if(er != 0):
+								print("Error in download .trans file")
+								exit()
 					if(getTimeStamp == 1):
+						url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
+
 						#first check if file exists
 						com = "wget -S --spider %s" % url
 						er=os.system(com)
@@ -341,46 +413,9 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 								date = getTime(url)
 								date1 = max(date, date1)
 
-			else:
-				#only 1 transition file
-				transFile = "%s.trans" % (M)
-				if(DownloadFiles == 1):
-					com = "wget http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
-					er=os.system(com)
-					if(er == 0):
-						com = "bzip2 -d %s.bz2" % transFile
-						er=os.system(com)
-					else:
-						com = "wget http://www.exomol.com/db/%s/%s" % (P, transFile)
-						er=os.system(com)
-						if(er != 0):
-							print("Error in download .trans file")
-							exit()
-				if(getTimeStamp == 1):
-					url = "http://www.exomol.com/db/%s/%s.bz2" % (P, transFile)
-
-					#first check if file exists
-					com = "wget -S --spider %s" % url
-					er=os.system(com)
-					#print("er", er)
-					if(er == 0):
-						date = getTime(url)
-						date1 = max(date, date1)
-					else:
-						url = "http://www.exomol.com/db/%s/%s" % (P, transFile)
-
-						#first check if file exists
-						com = "wget -S --spider %s" % url
-						er=os.system(com)
-						#print("er", er)
-						if(er == 0):
-
-							date = getTime(url)
-							date1 = max(date, date1)
 
 
-
-		if(PrintISO == 1):
+		if(PrintISO == 1 and DownloadFiles != 3):
 			#check if trans file exists
 			exists = os.path.isfile("%s" % transFile)
 			if(exists == 0):
@@ -419,13 +454,27 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp):
 		print(date1, file = f)
 
 	if(PrintISO == 1):
-		f = open(("%s.param" % M),'w')
+		if(DownloadFiles != 3):
+			f = open(("%s.param" % M),'w')
+		else:
+			f = open(("%s__%05d-%05d__%dK_super.param" % (M, 0, nuMaxs, Temp)),'w')
 
-		lStates=int(subprocess.check_output(['wc', '-l', "%s.states" % M]).split()[0])
+		if(DownloadFiles != 3):
+			lStates=int(subprocess.check_output(['wc', '-l', "%s.states" % M]).split()[0])
+		else:
+			lStates = 0
 
-		print("Database = 2", file = f)
+		if(DownloadFiles != 3):
+			print("Database = 2", file = f)
+		else:
+			print("Database = 20", file = f)
+
 		print("Molecule number = %d" % 1, file = f)
-		print("Name = %s" % M, file = f)
+		if(DownloadFiles != 3):
+			print("Name = %s" % M, file = f)
+		else:
+			print("Name = %s__%05d-%05d__%dK" % (M, 0, nuMaxs, Temp), file = f)
+
 		print("Number of Isotopologues = 1", file = f)
 		print("#Id Abundance      Q(296K)   g     Molar Mass(g)  partition file :", file = f)
 		print("0 1.0             0.0       0      %s        %s.pf" % (mass, M), file = f)
@@ -454,8 +503,10 @@ if __name__ == "__main__":
                     help='Download Files', default = 1)
 	parser.add_argument('-P', '--PrintISO', type=int,
                     help='Print ISO', default = 1)
-	parser.add_argument('-T', '--getTimeStamp', type=int,
+	parser.add_argument('-Ts', '--getTimeStamp', type=int,
                     help='get time stamp', default = 0)
+	parser.add_argument('-Temp', '--Temperature', type=int,
+                    help='Temperature', default = 100)
 
 	args = parser.parse_args()
 
@@ -463,9 +514,10 @@ if __name__ == "__main__":
 	DownloadFiles = args.DownloadFiles
 	PrintISO = args.PrintISO
 	getTimeStamp = args.getTimeStamp
+	Temp = args.Temperature
 	if(M == ''):
 		print("Error, no species specified, run python exomol.py -M <id>")
 
 
 
-	main(M, DownloadFiles, PrintISO, getTimeStamp)
+	main(M, DownloadFiles, PrintISO, getTimeStamp, Temp)

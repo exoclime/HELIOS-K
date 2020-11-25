@@ -1,0 +1,78 @@
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+Name:GeForce GTX 1080, Major:6, Minor:1, Max threads per Block:1024, Max x dim:1024
+, #Multiprocessors:20, Clock Rate:1809500, Memory Clock Rate:5005000, Global Memory:8513978368, Shared memory per block: 49152
+
+Version: 2.05
+Using device 0
+
+Runtime Version 10000
+Driver Version 11000
+GIT Describe: v1.0-131-gd89b4bf
+Build Date: Mi 25. Nov 10:11:40 CET 2020
+Build Path: /home/sigrimm/kCalc
+Build System: Linux mashu 4.15.0-124-generic #127-Ubuntu SMP Fri Nov 6 10:54:43 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+Build Compute Capability: SM=52
+
+name = super
+T = 1000
+P = 1
+cia System = -
+pathToData = 
+numin = 0
+numax = 43000
+dnu = 0.01
+Nnu per bin = 4300000
+Number of points: 4300000
+cutMode = 0
+cut = 100
+doResampling = 0
+nC = 20
+doTransmission = 0
+nTr = 1000
+dTr =  0.05
+doStoreFullK = 1
+pathToK = 
+dostoreK = 0
+nbins = 1
+kmin = 0
+qalphaL = 1
+gammaF = 1
+doMean = 0
+Units = 0
+Replace files = 1
+profile = 1
+doTuning = 0
+def_TOL = 1.43e-17
+def_TOLf = 2.48e-12
+def_nthmax = 1048576
+def_nlmax = 32768
+def_maxlines = 1048576
+def_maxfiles = 500
+def_NmaxSample = 100
+
+Species Name = 1H2-16O__POKAZATEL__00000-41200__1000K
+dataBase = 20
+Molecule Number = 1
+default L = 0.07
+default n = 0.5
+
+File 0 of 1
+Number of lines: 8333615
+Time for input:        4.62828 seconds
+Time for Lines:        0.0382485 seconds
+Time for K(x):         5.53905 seconds
+
+Time for input total:	 0 seconds
+Time for Lines total:  0 seconds
+Time for K(x) total: 	 0 seconds
+Time for write K(x):   9.34114 seconds
+Time for mean K(x):    0.00201952 seconds
+Time for sort K(x):    0.017582 seconds
+Time for Resampling:   0.000557408 seconds
+Time for write K(y):   7.232e-06 seconds
+Time for Transmission: 2.2304e-05 seconds
