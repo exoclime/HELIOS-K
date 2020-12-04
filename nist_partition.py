@@ -56,15 +56,21 @@ def partition(z, I):
 		for i in range(len(g)):
 
 			try:
-				if(Term[i] != '' or z > 1):
-					gf = float(g[i])
-					Ef = float(E[i])
-					#exp(-h c E /(k_B T))
-					z = gf * np.exp(-1.4387770 * Ef/T)
-					if(t == 0):
-						print(i, gf, Ef, Z, z)
+				if((Conf[i].isnumeric() == True or Conf[i] == '1s') or z > 1):
+					#print(Conf[i], Term[i], J[i], '|',g[i],'|',E[i],'|')
+					if(g[i] != '' and E[i] != '' and E[i] != ' '):
+						# remove '[' and ']' from Energy
+						E[i] = E[i].replace('[', '')
+						E[i] = E[i].replace(']', '')
+						#print(Conf[i], Term[i], J[i], g[i], E[i])
+						gf = float(g[i])
+						Ef = float(E[i])
+						#exp(-h c E /(k_B T))
+						z0 = gf * np.exp(-1.4387770 * Ef/T)
+						if(t == 0):
+							print(i, gf, Ef, Z, z0)
 
-					Z += gf * np.exp(-1.4387770 * Ef/T)
+						Z += gf * np.exp(-1.4387770 * Ef/T)
 			except:
 				continue
 

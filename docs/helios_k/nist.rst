@@ -25,7 +25,7 @@ This step can be done either manually or by using a script.
 Step 2, Generate the partition functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run ``python3 nist_partition.py - -Z <z> -I <i>``. This script will read
+Run ``python3 nist_partition.py -Z <z> -I <i>``. This script will read
 the previously produces file ``NIST_ELevels<Z><I>.dat``, and writes a ``*.pf`` file.
 
 
