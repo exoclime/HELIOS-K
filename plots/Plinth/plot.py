@@ -32,7 +32,7 @@ il, nu3, k3 = np.loadtxt(filename3, unpack=True)
 
 
 pl.plot(nu1, k1, lw = 1.5, label= r'1: full Voigt')
-pl.plot(nu2, k2, lw = 1.0, label= r'2: Voight - plinth')
+pl.plot(nu2, k2, lw = 1.0, label= r'2: Voigt - plinth')
 #pl.plot(nu3, 2.51241e-6, lw = 1.0, label= r'3: plinth')
 ax1.add_patch(Rectangle((20318.99, 0), 1.0, 2.51241e-6,alpha=0.3, color='g'))
 ax1.text(20319.4,1.0e-6, 'Plinth', color='g')
@@ -54,7 +54,7 @@ il, nu3, k3 = np.loadtxt(filename3, unpack=True)
 
 
 pl.plot(nu1, k1, lw = 1.5, label= r'1: full Voigt')
-pl.plot(nu2, k2, lw = 1.0, label= r'2: Voight - plinth')
+pl.plot(nu2, k2, lw = 1.0, label= r'2: Voigt - plinth')
 ax1.add_patch(Rectangle((20318.99, 3e-8), 1.0, 2.51241e-6-3e-8,alpha=0.3, color='g'))
 ax1.text(20319.4,3.0e-7, 'Plinth', color='g')
 
