@@ -86,7 +86,7 @@ Citations
 
 If you make use of HELIOS-K in your work, please cite
 
-`Grimm et Al. (2020) <https://ui.adsabs.harvard.edu/abs/2021ApJS..253...30G/abstract>`_:
+`Grimm et Al. (2021) <https://ui.adsabs.harvard.edu/abs/2021ApJS..253...30G/abstract>`_:
 
 .. code-block::
 
