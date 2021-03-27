@@ -85,6 +85,33 @@ Citations
 ~~~~~~~~~
 
 If you make use of HELIOS-K in your work, please cite
+
+`Grimm et Al. (2020) <https://ui.adsabs.harvard.edu/abs/2021ApJS..253...30G/abstract>`_:
+
+.. code-block::
+
+	@ARTICLE{2021ApJS..253...30G,
+	       author = {{Grimm}, Simon L. and {Malik}, Matej and {Kitzmann}, Daniel and {Guzm{\'a}n-Mesa}, Andrea and {Hoeijmakers}, H. Jens and {Fisher}, Chloe and {Mendon{\c{c}}a}, Jo{\~a}o M. and {Yurchenko}, Sergey N. and {Tennyson}, Jonathan and {Alesina}, Fabien and {Buchschacher}, Nicolas and {Burnier}, Julien and {Segransan}, Damien and {Kurucz}, Robert L. and {Heng}, Kevin},
+		title = "{HELIOS-K 2.0 Opacity Calculator and Open-source Opacity Database for Exoplanetary Atmospheres}",
+	      journal = {\apjs},
+	     keywords = {Exoplanet atmospheres, 487, Astrophysics - Earth and Planetary Astrophysics, Astrophysics - Instrumentation and Methods for Astrophysics},
+		 year = 2021,
+		month = mar,
+	       volume = {253},
+	       number = {1},
+		  eid = {30},
+		pages = {30},
+		  doi = {10.3847/1538-4365/abd773},
+	archivePrefix = {arXiv},
+	       eprint = {2101.02005},
+	 primaryClass = {astro-ph.EP},
+	       adsurl = {https://ui.adsabs.harvard.edu/abs/2021ApJS..253...30G},
+	      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+	}
+
+
+or 
+
 `Grimm & Heng (2015) <https://ui.adsabs.harvard.edu/abs/2015ApJ...808..182G/abstract>`_:
 
 .. code-block::
