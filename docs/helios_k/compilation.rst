@@ -45,7 +45,7 @@ Requirements
   - numpy
   - struct
   - math
-  - csh
+  - csv
   - pandas
   - argparse
   - re
