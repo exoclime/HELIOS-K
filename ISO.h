@@ -64,7 +64,7 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	}
 	fscanf (pFile, "%s", m.mName);
 	fgets(sp, 4, pFile);
-	//can be "Number of Isotopes =" or "Number of Isotopes ="
+	//can be "Number of Isotopes =" or "Number of Isotopologues ="
 	//scan until "="
 	fscanf(pFile, "%[^=]s", sp);
 	if(strcmp(sp, "Number of Isotopes ") != 0 && strcmp(sp, "Number of Isotopologues ") != 0){
@@ -135,6 +135,7 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		}
 		if(param.dataBase == 2){
 			//ExoMol
+			//Kurucz Molecules
 			if(m.nFiles > 1){
 				sprintf(m.dataFilename[i], "%s%s__%05d-%05d.", param.path, m.mName, m.fileLimit[i], m.fileLimit[i + 1]);
 			}

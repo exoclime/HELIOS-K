@@ -846,7 +846,8 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		int rbvs = 0;
   	
 		if(param.dataBase == 2){
-			//Exomol		nu, S, El, A 
+			//Exomol		nu, S, El, A
+			//Kurucz Molecules
 			readBufferN = 4;
 		}
 		if(param.dataBase == 20){
@@ -854,15 +855,15 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 			readBufferN = 2;
 		}
 		if(param.dataBase == 30){
-			//Kurucz		nu, S, El, A, Gamma_nat
+			//Kurucz Atoms		nu, S, El, A, Gamma_nat
 			readBufferN = 5;
 		}
 		if(param.dataBase == 31){
-			//NIST
+			//NIST Atoms
 			readBufferN = 5;
 		}
 		if(param.dataBase == 32){
-			//VALD
+			//VALD Atoms
 			readBufferN = 5;
 		}
 
