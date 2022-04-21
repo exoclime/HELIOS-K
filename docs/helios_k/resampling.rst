@@ -55,6 +55,7 @@ Using the Chebyshev coefficients
 --------------------------------
  
 The resampled opacity function can be reconstruced with the following code:
+(See also the code recon_bin.py in the tools directory) 
 
 ::
 
@@ -67,6 +68,8 @@ The resampled opacity function can be reconstruced with the following code:
 	#change here the bin index and the bin size:
 	binIndex = 0
 	binSize = 300
+
+	x = np.linspace(0, 1.0, num=binSize, endpoint=True)
 
 	#extract Chebyshev coefficients
 	c = data_c[binIndex,2:]

@@ -26,7 +26,7 @@ used parameters are listed here, the order can not be changed.
 
 -  name: This name will appear in the output filenames.
 -  T: Temperature in Kelvin
--  P: Pressure in Atmospheres
+-  P: Pressure in standard atmospheres atm (1atm = 1.01325 bar, 1bar = 0.98692367 atm, see https://en.wikipedia.org/wiki/Standard_atmosphere_(unit))
 -  PFile: A '-' ignores this option, otherwise this option specifies a
    filename which contains multiple values for P.
 -  Species Name: The name of the molecular or atomic param file. e.g.
