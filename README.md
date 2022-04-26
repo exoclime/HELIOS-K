@@ -13,5 +13,5 @@ The `Molecule` and `useHITEMP` arguments in the `param.dat` file are not valid a
 All species must have now a `< species >.param` file, which contains all necessary information about the line list.
 
 # Documentation #
-The documentation of HELIOS-K can be found at `https://helios-k.readthedocs.io/`
+The documentation of HELIOS-K can be found at `https://helios-k2.readthedocs.io/`
 
