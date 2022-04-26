@@ -19,6 +19,7 @@ Setup
 
 .. toctree::
   :maxdepth: 1
+  :caption: Setup:
 
   helios_k/compilation.rst
 
@@ -28,6 +29,7 @@ Databases
 
 .. toctree::
   :maxdepth: 1
+  :caption: Databases:
 
   helios_k/param.rst
   helios_k/exomol.rst
@@ -43,6 +45,7 @@ Running HELIOS-K
 
 .. toctree::
   :maxdepth: 1
+  :caption: Running HELIOS-K:
 
   helios_k/heliosk.rst
 
@@ -52,6 +55,7 @@ OPTIONS
 
 .. toctree::
   :maxdepth: 1
+  :caption: Options:
 
   helios_k/profiles.rst
   helios_k/subLorentzian.rst
@@ -69,6 +73,7 @@ Output Files
 
 .. toctree::
   :maxdepth: 1
+  :caption: Output Files:
 
   helios_k/output.rst
 
@@ -77,6 +82,7 @@ Atomic Opacities plots
 
 .. toctree::
   :maxdepth: 1
+  :caption: Atomic Opacitities Plots:
 
   helios_k/atoms.rst
 
