@@ -39,6 +39,7 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 		return 0;
 	}
 	char sp[160];
+	char cid[4];
 	fgets(sp, 11, pFile);
 	if(strcmp(sp, "Database =") != 0){
 		printf("Error in molecule.param file, Database\n");
@@ -82,8 +83,8 @@ int Init(Molecule &m, Param &param, char (*qFilename)[160]){
 	fgets(sp, 100, pFile);
 
 	for(int i = 0; i < m.nISO; ++i){
-		fscanf (pFile, "%s", sp);
-		sprintf(m.ISO[i].cid, "%3s", sp);
+		fscanf (pFile, "%s", cid);
+		sprintf(m.ISO[i].cid, "%3s", cid);
 		fscanf (pFile, "%lf", &m.ISO[i].Ab);
 		fscanf (pFile, "%lf", &m.ISO[i].Q);
 		fscanf (pFile, "%d",  &m.ISO[i].g);
