@@ -11,7 +11,7 @@
 int readTransitions(Molecule &m, long long int nT, double mass){
 
 	FILE *transFile, *OutFile;
-	char transFilename[160], OutFilename[160];
+	char transFilename[300], OutFilename[300];
 
 	sprintf(transFilename, "%ssuper", m.dataFilename[0]);
 	sprintf(OutFilename, "%sbin", m.dataFilename[0]);

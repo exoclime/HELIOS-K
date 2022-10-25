@@ -6,6 +6,51 @@
 #include "ISO.h"
 #include <algorithm>
 
+// ******************************************************************
+//This Function reads the maximal states index from the Exomol states files
+//Author: Simon Grimm
+//October 2022
+// *******************************************************************
+int readStatesN(Molecule &m, int &nStates){
+
+	nStates = 0;
+
+	FILE *dataFile;
+	char statesFilename[180];
+	sprintf(statesFilename, "%s.states", m.mName);
+	dataFile = fopen(statesFilename, "r");
+
+	if(dataFile == NULL){
+		printf("Error: line list file not found %s\n", statesFilename);
+		return 0;
+	}
+	char c1[30];
+	char c2[30];
+	char c3[30];
+	char c4[251];
+
+	int id;
+
+	for(int i = 0; i < m.nStates; ++i){
+		//fgets(c1, 13, dataFile);
+		//fgets(c2, 14, dataFile);
+		//fgets(c3, 8, dataFile);
+		
+		fscanf(dataFile, "%s", c1);
+		fscanf(dataFile, "%s", c2);
+		fscanf(dataFile, "%s", c3);
+
+		fgets(c4, 250, dataFile);
+	
+		id = atoi(c1);
+
+		nStates = max(nStates, id);
+
+	}
+	++nStates;
+	printf("states file max index: %d %d\n", m.nStates, nStates);
+	return 1;
+}
 
 
 // ******************************************************************
@@ -28,9 +73,10 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	char c2[30];
 	char c2b[30];
 	char c3[30];
-	char c4[151];
+	char c4[251];
 	char skip[151];
 
+	int ii;
 	for(int i = 0; i < m.nStates; ++i){
 		//fgets(c1, 13, dataFile);
 		//fgets(c2, 14, dataFile);
@@ -63,13 +109,14 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 
 		fgets(c4, 250, dataFile);
 	
-		id[i] = atoi(c1);
-		E[i] = strtod(c2, NULL);
-		g[i] = atoi(c3);
+		ii = atoi(c1);
+		id[ii] = atoi(c1);
+		E[ii] = strtod(c2, NULL);
+		g[ii] = atoi(c3);
 
 //if(Eb != E[i]) printf("EDuo %d %d %.20g %.20g\n", i, id[i], E[i], Eb);
 
-if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %.20g %d\n", id[i], E[i], g[i]);
+if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %d %.20g %d\n", i, id[i], E[i], g[i]);
 	}
 	printf("states file complete\n");
 	return 1;
@@ -78,7 +125,7 @@ if(i < 10 || i > m.nStates - 10 || i % 1000000 == 0) printf("s %d %.20g %d\n", i
 
 int readTransitions(Molecule &m, int *id, double *E, int *g, long long int nT, double mass, int fi){
 	FILE *transFile, *OutFile;
-	char transFilename[160], OutFilename[160];
+	char transFilename[300], OutFilename[300];
 
 	printf("reading file %d\n", fi);
 	sprintf(transFilename, "%strans", m.dataFilename[fi]);
@@ -125,10 +172,15 @@ if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3);
 			state1 = atoi(c1);
 			state0 = atoi(c2);
 			A = strtod(c3, NULL);
+
+			if(id[state0] == -1 || id[state1] == -1){
+				printf("Error, state not valid %d %d\n", state0, state1);
+				return 0;
+			}
 			
-			EL = E[state0 - 1];
-			nu = E[state1 - 1] - E[state0 - 1];
-			gU = g[state1 - 1];
+			EL = E[state0];
+			nu = E[state1] - E[state0];
+			gU = g[state1];
 			nu1 = 0.0;
 		}
 		if(m.ntcol == 4){
@@ -142,13 +194,20 @@ if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3);
 			A = strtod(c3, NULL);
 			nu1 = strtod(c4, NULL);	
 
-			EL = E[state0 - 1];
-			gU = g[state1 - 1];
+			if(id[state0] == -1 || id[state1] == -1){
+				printf("Error, state not valid %d %d\n", state0, state1);
+				return 0;
+			}
+
+			EL = E[state0];
+			gU = g[state1];
+
+//printf("%lld %d %d %g %g | %g %d\n", i, state0, state1, A, nu1, EL, gU);
 
 			//use always the energy levels
-			nu = E[state1 - 1] - E[state0 - 1];
+			nu = E[state1] - E[state0];
 			if(fabs(nu - nu1) > 1.0e-6){
-if(i < 100) printf("nu %lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 100) printf("nu %lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0], E[state1]); 
 				nuError = 1;
 			}
 
@@ -158,7 +217,7 @@ if(i < 100 || i % 100000 == 0) printf("%s|%s|%s|%s\n", c1, c2, c3, c4);
 
 		S = gU * A /(8.0 * M_PI * def_c * nu * nu * mass);
 		if(nu == 0.0) S = 0.0;
-if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, nu1, S, EL, A, gU, state0, state1, E[state0], E[state1]); 
 		fwrite(&nu, sizeof(double), 1, OutFile);
 		fwrite(&S, sizeof(double), 1, OutFile);
 		fwrite(&EL, sizeof(double), 1, OutFile);
@@ -166,7 +225,7 @@ if(i < 100 || i % 100000 == 0) printf("%lld %.20g %.20g %.20g %.20g %.20g %d %d 
 		numax = fmax(nu, numax);
 		
 		if(i > nT - 10 || feof(transFile)){
-printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, gU, state0, state1, E[state0 - 1], E[state1 - 1]); 
+printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, gU, state0, state1, E[state0], E[state1]); 
 
 		}
 
@@ -214,17 +273,30 @@ int main(int argc, char*argv[]){
 	mass /= def_NA;			//mass in g
 	int *id, *g;
 	double *E;
+
+	int nStates;
+	readStatesN(m, nStates);
 	
-	id = (int*)malloc(m.nStates * sizeof(int));
-	E = (double*)malloc(m.nStates * sizeof(double));
-	g = (int*)malloc(m.nStates * sizeof(int));
+	id = (int*)malloc(nStates * sizeof(int));
+	E = (double*)malloc(nStates * sizeof(double));
+	g = (int*)malloc(nStates * sizeof(int));
+
+	for(int i = 0; i < nStates; ++i){
+		id[i] = -1;
+		E[i] = 0.0;
+		g[i] = 0;
+	}
 
 	readStates(m, id, E, g);
 
 	long long int nT = 20000000000LL;
+	int er = 0;
 	for(int i = 0; i < m.nFiles; ++i){
 		printf("Molecule %s, file: %d, mass:%g\n", param.mParamFilename, i, mass);
-		readTransitions(m, id, E, g, nT, mass, i);
+		er = readTransitions(m, id, E, g, nT, mass, i);
+		if(er <= 0){
+			return 0;
+		}
 	}
 
 	free(id);

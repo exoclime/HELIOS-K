@@ -30,7 +30,7 @@
 #endif
 
 
-#define VERSION 2.06
+#define VERSION 2.07
 
 
 #define def_T0 296.0 		//Reference Temperature in K
@@ -106,7 +106,7 @@ struct Partition{
 
 struct ciaSystem{
 	int Nsets;
-	char dataFilename[160];
+	char dataFilename[400];
 	double mass1;
 	double mass2;
 };
