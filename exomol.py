@@ -55,6 +55,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 	npfcol = 0	#columns in partition function file
 
 	dL = ""
+	dn = ""
 	dg = 0		#number of digits in .trans files ranges
 
 	exfile = "Exomol_species.dat"
@@ -81,6 +82,8 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 		nn = int(nn0[M0 == M][0])
 		dg = int(dg0[M0 == M][0])
 
+	if(M == '75As-1H3__CYT18'):
+		dg = 5
 
 
 	print(M, P, s, nn, dg)
@@ -186,7 +189,8 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 		else:
 			return 0
 	else:
-
+		n = 1
+		nuMax = 0.0
 		with open("%s.def" % M) as defFile:
 			for line in defFile:
 				if not "No. of transition files" in line:
@@ -234,9 +238,15 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 	if(n == 1):
 		s = int(math.ceil(float(nuMax)))
 
+	warning1 = 0
 	if(len(dL) == 0):
-		print("Error, <Default value of Lorentzian half-width for all lines> not found")
-		return 0
+		warning1 = 1
+		dL = 0.07
+
+	warning2 = 0
+	if(len(dn) == 0):
+		warning2 = 1
+		dn = 0.5
 
 	#correct now wrong number of files
 	#if(M == "12C-1H3-37Cl__OYT"):
@@ -244,6 +254,10 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 
 	if(n != nn):
 		print("Error, number of .trans files do not agree %d %d" % (n, nn))
+		return 0
+
+	if(nuMax == 0.0):
+		print("Error, Maximum wavenumber in def file not found")
 		return 0
 
 	l=np.zeros(n, dtype=int)
@@ -327,7 +341,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 				jarray[1] = nuMaxs
 				l[0]=int(subprocess.check_output(['wc', '-l', "%s" % transFile]).split()[0])
 			else:
-				if(n > 1):
+				if(n > 1 or M == "75As-1H3__CYT18"):
 					#multiple transition files
 					transFile = "%s__%05d-%05d.trans" % (M, nu * s, nu * s + s)
 					transFile4 = "%s__%04d-%04d.trans" % (M, nu * s, nu * s + s)
@@ -448,6 +462,11 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 				jarray[1] = int(math.ceil(float(nnuMax)))
 
 	print("download finished")
+
+	if(warning1 == 1):
+		print("Waring, <Default value of Lorentzian half-width for all lines> not found, used dL = %g" % dL)
+	if(warning2 == 1):
+		print("Waring, <Default value of temperature exponent for all lines> not found, used dn = %g" % dn)
 
 	if(getTimeStamp == 1):
 		f = open(("%s.time" % M),'w')
