@@ -198,10 +198,10 @@ int main(int argc, char *argv[]){
 	printf("number of data files in directory %d\n", nn);
 	
 	FILE *binFile;
-	char binFileName[160];
+	char binFileName[300];
 
 	FILE *paramFile;
-	char paramFileName[160];
+	char paramFileName[300];
 
 	if(iso[0] == 0){
 		sprintf(paramFileName, "%02d_%s.param", M, name);
