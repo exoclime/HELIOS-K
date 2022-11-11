@@ -43,10 +43,8 @@ doTransmission options.
 
 An example of a ``binsFile`` is given below, and the result is shown in :numref:`figbinfile`.
 
-::
+bins.dat: ::
 
-   bins.dat
-   --------
    2000
    6000
    12000
@@ -85,10 +83,8 @@ An example of a ``outputedgesFile`` is given below, and the result is shown in
 :numref:`figbinedges`. Note that the figure is plotted in log scale, therefore
 the averaged points can appear to have too high values. 
 
-::
+edges.dat: ::
 
-   edges.dat
-   ---------
    0.0
    0.1
    0.45
