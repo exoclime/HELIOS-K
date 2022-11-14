@@ -71,10 +71,10 @@ int readStates(Molecule &m, int *id, double *E, int *g){
 	}
 	char c1[30];
 	char c2[30];
-	char c2b[30];
+	//char c2b[30];
 	char c3[30];
 	char c4[251];
-	char skip[151];
+	//char skip[151];
 
 	int ii;
 	for(int i = 0; i < m.nStates; ++i){
@@ -142,7 +142,7 @@ int readTransitions(Molecule &m, int *id, double *E, int *g, long long int nT, d
 	char c3[15];
 	char c4[25];
 
-	char skip[100];
+	//char skip[100];
 	
 	int state0;
 	int state1;

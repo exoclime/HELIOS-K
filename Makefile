@@ -22,9 +22,9 @@ heliosk: $(source) $(headers)
 #	nvcc --compiler-options -Wall $(ARCH) -o heliosk $(source) $(BUILD_DATA)
 
 hitran: hitran.cpp 
-	g++ -o hitran hitran.cpp
+	g++ -Wall -Wextra -o hitran hitran.cpp
 prepareExomol: prepareExomol.cpp ISO.h define.h
-	g++ -o prepareExomol prepareExomol.cpp
+	g++ -Wall -Wextra -o prepareExomol prepareExomol.cpp
 prepareExomolSuper: prepareExomolSuper.cpp ISO.h define.h
-	g++ -o prepareExomolSuper prepareExomolSuper.cpp
+	g++ -Wall -Wextra -o prepareExomolSuper prepareExomolSuper.cpp
 
