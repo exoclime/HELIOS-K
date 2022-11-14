@@ -112,10 +112,10 @@ int main(int argc, char *argv[]){
 		sprintf(ii, "%.2s", iii);
 		int molecule = atoi(ii);
 
-		char iiso[1];
-		sprintf(iiso, "%s", &iii[2]);
+		char iiso[2];
+		sprintf(iiso, "%.1s", &iii[2]);
 
-		//printf("%d |%s|%s| %g | %d %d |%s|\n", nISO, index[nISO], iii, abundance[nISO], molecule, M, iiso);
+//printf("%d |%s|%s| %g | %d %d |%s|\n", nISO, index[nISO], iii, abundance[nISO], molecule, M, iiso);
 
 		if(iso[0] == 0){
 			if(molecule == M){
