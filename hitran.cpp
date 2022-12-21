@@ -144,9 +144,13 @@ int main(int argc, char *argv[]){
 	int filesRange[1000];
 
 	//read all files in the current directory
+char path[100];
+realpath(inname, path);
+printf("path |%s|\n", path);
 	struct dirent **namelist;
 	int n;
-	n = scandir(".", &namelist, NULL, alphasort);
+	//n = scandir(".", &namelist, NULL, alphasort);
+	n = scandir("../", &namelist, NULL, alphasort);
 	printf("total number of files in directory %d\n", n);
 
 	int nn = 0;
@@ -156,7 +160,7 @@ int main(int argc, char *argv[]){
 	//scan and count desired files 
 	for(int j = 0; j < n; ++j){
 		std::string str = std::string(namelist[j]->d_name);
-		//printf("--- %d %s %s %s\n", j, namelist[j]->d_name, str.c_str(), inname);
+		printf("--- %d %s %s %s\n", j, namelist[j]->d_name, str.c_str(), inname);
 
 		//check if file name contains name and starts with Molecule id
 		char s2[32];

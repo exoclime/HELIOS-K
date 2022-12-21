@@ -233,7 +233,6 @@ printf("%lld %.20g %.20g %.20g %.20g %d %d %d %.20g %.20g\n", i, nu, S, EL, A, g
 printf("\n %lld numax %g\n", i, numax);
 			break;
 		}
-
 	}
 	fclose(transFile);
 	fclose(OutFile);
@@ -275,7 +274,10 @@ int main(int argc, char*argv[]){
 	double *E;
 
 	int nStates;
-	readStatesN(m, nStates);
+	int er = readStatesN(m, nStates);
+	if(er <= 0){
+		return 0;
+	}
 	
 	id = (int*)malloc(nStates * sizeof(int));
 	E = (double*)malloc(nStates * sizeof(double));
@@ -287,10 +289,12 @@ int main(int argc, char*argv[]){
 		g[i] = 0;
 	}
 
-	readStates(m, id, E, g);
+	er = readStates(m, id, E, g);
+	if(er <= 0){
+		return 0;
+	}
 
 	long long int nT = 20000000000LL;
-	int er = 0;
 	for(int i = 0; i < m.nFiles; ++i){
 		printf("Molecule %s, file: %d, mass:%g\n", param.mParamFilename, i, mass);
 		er = readTransitions(m, id, E, g, nT, mass, i);

@@ -10,7 +10,7 @@ The HELIOS-K repository provides a file called ``Hitran_species.dat``.
 This file contains all available species of the Hitran database. The
 file format is:
 
-``Species ID, Abundance, Molecular Mass, Q(296K), partition function file, Isotopologue Formula``
+``Species ID, Abundance, Molecular Mass in g/mol, Q(296K), partition function file, gi, Isotopologue Formula``
 The same information can be found at
 ``https://hitran.org/docs/iso-meta/``.
 

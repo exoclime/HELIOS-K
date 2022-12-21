@@ -1292,10 +1292,10 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 						if((iL < m.NL[fi] - def_maxlines || fi < fi1 - 1) && iP == param.nP - 1){
 							//read the next line file while calculating the K kernels of the current file
 							// **************************read iL + 1
-							int iLL = iL + def_maxlines;
+							long long int iLL = iL + def_maxlines;
 
 							if(iL >= m.NL[fi] - def_maxlines){
-								iLL = 0;
+								iLL = 0ll;
 								fii = fi + 1;
 								timeT[0] += time[0];
 								time[0] = 0.0;
@@ -1314,7 +1314,7 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 							}
 							NL1 = min(def_maxlines, m.NL[fii] - iLL);
 
-							lPart = (iLL + def_maxlines - 1) / def_maxlines;
+							lPart = (iLL + def_maxlines - 1ll) / def_maxlines;
 
 							cudaEventRecord(ReadStart);
 							printf("Reading Line file %d of %d; part %lld of %lld with %d lines\n", fii, fi1 - 1, lPart, (m.NL[fii] + def_maxlines - 1) / def_maxlines - 1, NL);

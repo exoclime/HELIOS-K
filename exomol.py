@@ -454,10 +454,11 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 					for line in infile:
 						#print(line)
 						#print("x", line.split()[3])
-						nnuMax = max(nnuMax, float(line.split()[ntcol - 1]))
-						if(il % 10000 == 0):
-							print("nuMax", il, nnuMax)
-						il += 1
+						if(len(line) > 1):
+							nnuMax = max(nnuMax, float(line.split()[ntcol - 1]))
+							if(il % 10000 == 0):
+								print("nuMax", il, nnuMax)
+							il += 1
 				print("nuMax: %d %d\n", nuMax, nnuMax)
 				jarray[1] = int(math.ceil(float(nnuMax)))
 
