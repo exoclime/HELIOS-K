@@ -449,10 +449,15 @@ __global__ void S3_kernel(double *nu_d, double *S_d, double *S1_d, double *vy_d,
 			vcut2_d[id] = (float)(cut * cut);
 		}
 
-		if(profile < 4){
+		if(profile < 3){
 			S1_d[id] = S_d[id] * vy_d[id] / M_PI;
 		}
+		else if(profile == 3){
+			//Doppler
+			S1_d[id] = S_d[id] / sqrt(M_PI);
+		}
 		else{
+			//Binned Gaussian
 			S1_d[id] = S_d[id];
 		}
 
@@ -471,6 +476,7 @@ __global__ void S3_kernel(double *nu_d, double *S_d, double *S1_d, double *vy_d,
 		vyf_d[id] = (float)(vy_d[id]); 
 		Sf_d[id] = (float)(S_d[id]); 
 		S1f_d[id] = (float)(S1_d[id]);
+//if(id < 100) printf("S3 %d %g %g %g\n", id, S_d[id], S1_d[id], vy_d[id]);
 	}
 
 }
@@ -1050,7 +1056,7 @@ __global__ void Line2f_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_d
 			else if(profile == 3){
 				//Doppler profile
 				if(E <= 0 && t1 < vcut2_s[ill]){
-					K += S1_s[ill] * b * expf(-x * x);
+					K += S1_s[ill] * expf(-x * x);
 				}
 			}
 			else if(profile == 4){
@@ -1151,7 +1157,7 @@ __global__ void Plinth_kernel(float *S1_d, float *S_d, float *vy_d, float *vcut2
 		else if(profile == 3){
 			//Doppler profile
 			float S1 = S1_d[il];
-			K = S1 * b * expf(-t1);
+			K = S1 * expf(-t1);
 		}
 		plinth_d[il] = K;
 	}
@@ -1236,7 +1242,8 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 				}
 				if(profile == 3){  //Doppler
 					if(t1 < vcut2){	
-						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI);
+						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1);
+//if(iii == 36607) printf("%d %d %g %g\n", iii, i + idx, S1, t1);
 						if(removePlinth == 1){
 							K_s[(i + idx) % (NBy * NBx)] -= plinth;
 						}
@@ -1376,7 +1383,7 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 							chinu = chi * x_s[ii] / nu;
 						}
 
-						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) / sqrtf(M_PI) * chinu;
+						K_s[(i + idx) % (NBy * NBx)] += S1 * expf(-t1) * chinu;
 						if(removePlinth == 1){
 							K_s[(i + idx) % (NBy * NBx)] -= plinth;
 						}

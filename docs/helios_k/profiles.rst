@@ -19,7 +19,7 @@ Line Profiles
 .. math::
    :label: eq_fG
 
-   f_G(\nu) = \frac{ln(2)}{\pi} \frac{1}{\alpha_D} \exp\left(-\frac{ (\nu - \nu_0)^2 ln(2)}{\alpha_D^2} \right)
+   f_G(\nu) = \sqrt{\frac{ln(2)}{\pi}} \frac{1}{\alpha_D} \exp\left(-\frac{ (\nu - \nu_0)^2 ln(2)}{\alpha_D^2} \right)
 
 
 - 4: Binned Gaussian integrated cross section 

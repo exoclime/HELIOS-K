@@ -176,6 +176,7 @@ if(i < 100 || i % 100000 == 0) printf("||%s|%s|%s||\n", c1, c2, c3);
 			if(id[state0] == -1 || id[state1] == -1){
 				printf("Error, state not valid %d %d\n", state0, state1);
 				return 0;
+				//continue;
 			}
 			
 			EL = E[state0];
