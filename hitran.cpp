@@ -149,8 +149,8 @@ realpath(inname, path);
 printf("path |%s|\n", path);
 	struct dirent **namelist;
 	int n;
-	//n = scandir(".", &namelist, NULL, alphasort);
-	n = scandir("../", &namelist, NULL, alphasort);
+	n = scandir(".", &namelist, NULL, alphasort);
+	//n = scandir("../", &namelist, NULL, alphasort);
 	printf("total number of files in directory %d\n", n);
 
 	int nn = 0;
@@ -281,7 +281,7 @@ printf("path |%s|\n", path);
 
 			char skip[161];
 
-			for(int i = 0; i < 100000000; ++i){
+			for(int i = 0; i < 1e9; ++i){
 
 				if(fgets(c1, 3, dataFile) == NULL){
 					int nnu;

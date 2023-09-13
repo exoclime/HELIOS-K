@@ -459,7 +459,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 							if(il % 10000 == 0):
 								print("nuMax", il, nnuMax)
 							il += 1
-				print("nuMax: %d %d\n", nuMax, nnuMax)
+				print("nuMax:", nuMax, nnuMax)
 				jarray[1] = int(math.ceil(float(nnuMax)))
 
 	print("download finished")
