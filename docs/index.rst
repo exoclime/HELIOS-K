@@ -39,6 +39,7 @@ Databases
   helios_k/kurucz.rst
   helios_k/nist.rst
   helios_k/vald.rst
+  helios_k/crosssections.rst
 
 Running HELIOS-K
 ~~~~~~~~~~~~~~~~

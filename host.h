@@ -7,13 +7,8 @@
 //March 2018
 // *****************************************
 __host__ int readPartition(Param &param, char (*qFilename)[160], Partition &part, double T, Molecule &m){
-	part.n = 1;
 	
-	part.id = (int*)malloc(sizeof(int));
 	part.Q = (double*)malloc( m.nISO * sizeof(double));
-
-
-	part.id = 0;
 
 	for(int i = 0; i < m.nISO; ++i){
 

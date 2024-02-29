@@ -820,9 +820,14 @@ printf("%g %g %g %g\n", param.numax, param.numin, param.dnu, (param.numax - para
 		
 		//Read partition function
 		Partition part;
-		er = readPartition(param, qFilename, part, param.T, m);
-		if(er == 0){
-			return 0;
+		if(param.doStoreFullK >= 0){
+			er = readPartition(param, qFilename, part, param.T, m);
+			if(er == 0){
+				return 0;
+			}
+		}
+		else{
+			part.Q = NULL;
 		}
 
 		printf("mean mass %g, Sscale %g\n", meanMass, Sscale);
@@ -2155,7 +2160,7 @@ for(int i = 0; i < Nx; ++i){
 			copyK2_kernel< 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d + iP * Nx, K2_d, param.Nxb);
 			cudaMemcpy(Nxmin_h, Nxmin_d, param.nbins * sizeof(int), cudaMemcpyDeviceToHost);
 	
-			lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx);
+			lnK_kernel <<< (Nx + 511) / 512, 512 >>> (K_d + iP * Nx, Nx, unitScale);
 			leastSquare_kernel <512> <<< param.nbins, 512 >>> (V_d, C_d, D_d, K_d + iP * Nx, param.Nxb, param.nC);
 
 			for(int i = 0; i < param.nbins; ++i){
@@ -2182,7 +2187,7 @@ for(int i = 0; i < Nx; ++i){
 			}
 			//fprintf(Out3File, "\n\n");
 			if(param.doTransmission > 0 || param.doStoreK > 0){
-				expfx_kernel <<< param.nbins, 512 >>> (K_d + iP * Nx, param.nC, param.Nxb);
+				expfx_kernel <<< param.nbins, 512 >>> (K_d + iP * Nx, param.nC, param.Nxb, unitScale);
 				rescale_kernel < 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d + iP * Nx, K2_d, param.Nxb, param.kmin, -1);
 				copyK2_kernel< 512 > <<< param.nbins, 512 >>> (Nxmin_d, K_d + iP * Nx, K2_d, param.Nxb);
 			}	

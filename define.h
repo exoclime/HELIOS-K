@@ -99,8 +99,6 @@ struct Molecule{
 };
 
 struct Partition{
-	int n;
-	int *id;
 	double *Q;
 };
 

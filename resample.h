@@ -57,8 +57,8 @@ __device__ void printA(double *A_d, int NL, int NC){
 
 
 // ****************************************
-// This kernel perform a QR decomposition if the Matrix V_d
-// it overwrites the upper right part of it with R except of
+// This kernel performs a QR decomposition of the Matrix V_d
+// it overwrites the upper right part of it with R, except of
 // the diagonal part, which is written in D_d. C_d contains 
 // the Householder scalar c. The rest of V_d is filled with the 
 // Householder vectors.
@@ -469,12 +469,12 @@ __global__ void copyK2_kernel(int *Nxmin_d, double *K_d, double *K2_d, int Nxb){
 // Author: Simon Grimm
 // January 2015
 // *****************************************
-__global__ void lnK_kernel(double *K_d, int NL){
+__global__ void lnK_kernel(double *K_d, int NL, double unitScale){
 
 	int id = threadIdx.x + blockIdx.x * blockDim.x;
 
 	if(id < NL){
-		double K = K_d[id];
+		double K = K_d[id] * unitScale;
 		K_d[id] = log(K);
 //printf("%d %g %g\n", id, K_d[id], K);
 	}
@@ -494,7 +494,7 @@ __global__ void lnK_kernel(double *K_d, int NL){
 // Author: Simon Grimm
 // January 2015
 // *****************************************
-__global__ void expfx_kernel(double *b_d, int NC, int NL){
+__global__ void expfx_kernel(double *b_d, int NC, int NL, double unitScale){
 
 	int idy = threadIdx.x;
 	int idx = blockIdx.x;
@@ -518,7 +518,7 @@ __global__ void expfx_kernel(double *b_d, int NC, int NL){
 				d2 = t;
 			} 
 			double f = x * d1 - d2 + 0.5 * b_s[0] + 0.5 * b_s[0];
-			b_d[idy + k + idx * NL] = exp(f);
+			b_d[idy + k + idx * NL] = exp(f) / unitScale;
 		}
 	}
 }

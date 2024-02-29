@@ -85,8 +85,10 @@ used parameters are listed here, the order can not be changed.
    - 2: the full unsorted opacity function is written to the binary file ``Out_<name>.bin``.
    - -1: the opacity functions is not calculated, but read in from a text file.
      The name of the file is specified in the next argument.
-   - -2: the opacity function is nor calculated, but read in from a binary file.
+     The text file must have the same format as a HELIOS-K output file in text format (See :ref:`out_<name>.dat`).
+   - -2: the opacity function is not calculated, but read in from a binary file.
      The name of the file is specified in the next argument.
+     The binary file must have the same format as a HELIOS-K output file in binary format (See :ref:`out_<name>.bin`).
 
 - pathToK: path and filename to read in an opacity function. When left blank, then no file is read in.
 
