@@ -86,7 +86,7 @@ def main():
 	#Molecule
 	for i in range(len(List)):
 	#for i in range(20):
-		el = List[i].get('href')
+		el = List[i].get('href').split('data/molecules/')[1]
 		print(el)
 
 		url1 = url + el + "/"
