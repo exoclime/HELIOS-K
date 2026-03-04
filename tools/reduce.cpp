@@ -22,8 +22,8 @@ int main(int argc, char*argv[]){
 	int binary = 1;		//write binary files or not
 	FILE *binFile;
 	FILE *outFile;
-	char binFilename[160];
-	char outFilename[160];
+	char binFilename[400];
+	char outFilename[400];
 
 	sprintf(X, "1500_p000");
 	sprintf(outdir, ".");

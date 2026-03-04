@@ -14,7 +14,10 @@ BUILD_DATA = -DGIT_DESCRIBE=\"$(GIT_DESCRIBE)\" -DBUILD_DATE=\"$(BUILD_DATE)\" -
 
 source = heliosk.cu
 headers = define.h ISO.h resample.h host.h voigt.h
-all: heliosk hitran prepareExomol prepareExomolSuper
+targets = heliosk hitran prepareExomol prepareExomolSuper tools/initialPressure tools/reduce
+
+all: $(targets)
+
 heliosk: $(source) $(headers)
 	nvcc $(ARCH) --compiler-options -Wall -o heliosk $(source) $(BUILD_DATA)
 #	nvcc -ccbin=g++-6 $(ARCH) -o heliosk $(source) $(BUILD_DATA)
@@ -23,8 +26,18 @@ heliosk: $(source) $(headers)
 
 hitran: hitran.cpp 
 	g++ -Wall -Wextra -o hitran hitran.cpp
+
 prepareExomol: prepareExomol.cpp ISO.h define.h
 	g++ -Wall -Wextra -o prepareExomol prepareExomol.cpp
+
 prepareExomolSuper: prepareExomolSuper.cpp ISO.h define.h
 	g++ -Wall -Wextra -o prepareExomolSuper prepareExomolSuper.cpp
 
+tools/initialPressure: tools/initialPressure.cpp
+	g++ -Wall -Wextra -o tools/initialPressure tools/initialPressure.cpp
+
+tools/rduce: tools/reduce.cpp
+	g++ -Wall -Wextra -o tools/reduce tools/reduce.cpp
+
+clean:
+	rm -r $(targets)

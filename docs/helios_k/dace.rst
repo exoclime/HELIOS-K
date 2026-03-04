@@ -16,8 +16,8 @@ This step will create the binary line lists and the species.param files needed t
 
 
 
-Step 2: Create a script to run Helios-k for all desired T P and nu values.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 2: Create a runscript to run Helios-k for all desired T P and nu values.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The values for the tmeperature, pressure and wavenumbers in DACE are set in the following way:
 
@@ -72,47 +72,128 @@ The values for the tmeperature, pressure and wavenumbers in DACE are set in the 
 
 
 
-This can be done with the initialPressure code (availalble in the repository tools directory).
-Choose the maximum temperature according to the maximum value in the partition function file::
+This can be done with the initialPressure code (available in the repository tools directory).
 
-        ./initialPresure -M 27_1_hit -nMax 3 -TMax 38
+Choose the maximum temperature according to the maximum value in the partition function file and the wavenumber to the maximum available range in steps of 1000 :math:`cm^{-1}`::
+
+        ./initialPressure -M 27_1_hit -nMax 4 -TMax 38
 
 
 Step 3: Create a new folder
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new folder  with the name of the species e.g.  ``12C2-1H6__HITRAN_e2``
+Create a new folder with the name of the species e.g.  ``12C2-1H6__HITRAN_e2``
 
 
-The ending indicates a resolution of 10^-2 in binary format
+The ending indicates a resolution of 10^-2 in binary format.
 
 
 Step 4: Copy files
 ~~~~~~~~~~~~~~~~~~
 
-Copy the run sript, heliosk, and param.dat into that folder
+Copy the generated run sript, heliosk, and param.dat into that folder.
+
+Make sure that the ``pathToData`` points to the correct folder with the generated binary line list files.
+Make sure that ``doStoreFullK`` is set to 2 to generated binary opacity files. 
+Other relevant parameters are overwritten by the runscript.
+
+The param.dat file should look like this::
+
+	name = i
+	T = 100.0
+	P = 1.0
+	PFile = -
+	Species Name = 01_hit16
+	SpeciesFile = -
+	ciaSystem = -
+	pathToData = /home/sigrimm/exogp0/sigrimm/EXOMOL/
+	numin = 0.0
+	numax = 1000.0
+	dnu = 0.01
+	Nnu per bin = 0
+	cutMode = 0
+	cut = 100.0
+	doResampling = 0
+	nC = 20
+	doTransmission = 0
+	nTr = 1000
+	dTr = 0.05
+	doStoreFullK = 2
+	pathToK =
+	doStoreSK = 0
+	nbins = 1
+	binsFile = -
+	OutputEdgesFile = -
+	kmin = 0.0
+	qalphaL = 1.0
+	gammaF = 1.0
+	doMean = 0
+	Units = 0
+	ReplaceFiles = 1
+	profile = 1
+	subLorentzianfile = -
+	removePlinth = 0
+	doTuning = 1
+
+
 
 
 Run script::
 
         bash script<name>
 
-This will run Helios-K for all necessary input parameters
+This will run Helios-K for all necessary input parameters.
 
 
-Step 5:
-~~~~~~~
+Step 5: Merge Wavenumber Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        mkdir 12C2-1H6__HITRAN_e0Dat
+The calculated opacity files are split into wavenumber bins of 1000 :math:`cm^{-1}`. The reason is that some
+large line list files can not even be fully stored on some GPU machines. 
+
+The output files can no be merged together into single wavenumber files.
+
+Create a new directory with ending ``_e2b``, e.g.::
+
         mkdir 12C2-1H6__HITRAN_e2b
 
-        mkdir 12C2-1H6__HITRAN_e0Dat
-
-        ./reduce -b 0 -reduce 100 -dnu 0.01 -numin 0 -numax 4000 -Tmin 0 -Tmax 4900 -indir 12C2-1H6__HITRAN_e2 -outdir 12C2-1H6__HITRAN_e0Dat
+run::
 
         ./reduce -b 1 -reduce 1 -dnu 0.01 -numin 0 -numax 4000 -Tmin 0 -Tmax 4900 -indir 12C2-1H6__HITRAN_e2 -outdir 12C2-1H6__HITRAN_e2b
 
-        ./reduce -b 0 -reduce 100 -dnu 0.01 -numin 0 -numax 1000 -Tmin 0 -Tmax 4900 -indir 12C-1H3-13C-1H3__HITRAN_e2 -outdir 12C-1H3-13C-1H3__HITRAN_e0Dat
-        ./reduce -b 1 -reduce 1 -dnu 0.01 -numin 0 -numax 1000 -Tmin 0 -Tmax 4900 -indir 12C-1H3-13C-1H3__HITRANe2 -outdir 12C-1H3-13C-1H3__HITRAN_e2b
+The reduce code is available in the tools directory of the Helios-K repository.
 
+
+Step 6: Downsample files and produce text format output files.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a new directory with ending ``_e0DAT``, e.g.::
+
+        mkdir 12C2-1H6__HITRAN_e0DAT
+
+
+run::
+
+	./reduce -b 0 -reduce 100 -dnu 0.01 -numin 0 -numax 4000 -Tmin 0 -Tmax 4900 -indir 12C2-1H6__HITRAN_e2 -outdir 12C2-1H6__HITRAN_e0Dat
+
+The reduce code is available in the tools directory of the Helios-K repository.
+
+
+Step 7: Add folders to the Opacity Database folder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+At ETHZ, the opacity database folders are stored here::
+
+	exogp0.dhcp-int.phys.ethz.ch:/storage/Opacity3/
+
+Copy new calculated opacities to this folder.
+Add an entry in the ``Molecules2.txt`` file.
+The columns in this file are::
+
+	minimum wavenumber 
+	maximum wavenumber
+	maximum temperature
+	name of folders
+	name of line list files
+	version of the calculated opacities
 

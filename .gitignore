@@ -1,3 +1,11 @@
+heliosk
+hitran
+prepareExomol
+prepareExomolSuper
+
+tools/initialPressure
+tools/reduce
+
 
 # Sphinx
 docs/_build
