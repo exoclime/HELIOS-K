@@ -68,7 +68,7 @@ def main(M, DownloadFiles, PrintISO, getTimeStamp, Temp):
 	if(exists == 0):
 		exomol2.main()
 
-	M0, P0, s0, nn0, dg0 = np.loadtxt(exfile, usecols=(2,3,4,5,6), unpack=True, dtype=np.str)
+	M0, P0, s0, nn0, dg0 = np.loadtxt(exfile, usecols=(2,3,4,5,6), unpack=True, dtype=str)
 
 	if(M == "SH_X-X_A-X"):
 		P = M

@@ -1,3 +1,5 @@
+.. _hitemp:
+
 HITEMP
 ------
 
@@ -21,8 +23,8 @@ needed as for HITRAN, see
 
 .. _step-3-create-<-species->.param-file-and-binary-files-1:
 
-Step 3, create ``< species >.param`` file and the binary files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3, create ``<species_name>.param`` file and the binary files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All necessary files can be created with:
 
@@ -32,8 +34,18 @@ All necessary files can be created with:
 
 The ``<molecule ID>`` is the two digit molecule number, e.g. ``01`` for
 H2O. The ``<isotopologue ID>`` is the hitran internal isotopologue
-identifier, e.g. ``1`` for 1H2-16O. The ``<line list name>`` is the name
-that was given in the download section, e.g. ``HITEMP2010``.
+identifier, e.g. ``1`` for 1H2-16O.
+
+The ``<line list name>`` is the name that was given in the download section, e.g. ``HITEMP2010``.
+
+Example for water (molecule id = 01), isotopolgue = 1  and a choose line list name = `HITEMP2010`::
+
+	./hitran -M 1 -ISO 1 -in HITEMP2010
+
+
+This example will produce the species parameter file ``01_1_HITEMP2010.param`` and the binary line
+list file called ``01_1_HITEMP2010.bin``.  
+
 
 .. _step-4-data-path-2:
 

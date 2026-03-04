@@ -1,3 +1,5 @@
+.. _nist:
+
 NIST Database
 -------------
 

@@ -78,6 +78,17 @@ Output Files
 
   helios_k/output.rst
 
+
+DACE Files
+~~~~~~~~~~
+
+.. toctree::
+  :maxdepth: 1
+  :caption: Dace Files:
+
+  helios_k/dace.rst
+
+
 Atomic Opacities plots
 ~~~~~~~~~~~~~~~~~~~~~~
 

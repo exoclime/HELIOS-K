@@ -1,3 +1,5 @@
+.. _kurucz:
+
 Kurucz Database
 ---------------
 

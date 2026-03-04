@@ -1,3 +1,5 @@
+.. _vald:
+
 VALD3 Database
 --------------
 
