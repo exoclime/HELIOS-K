@@ -1187,7 +1187,7 @@ __global__ void Line6fA_kernel(float *S1_d, float *vy_d, float *va_d, float *vb_
 
 	int nstart = Nk;
 	if(il < NL){
-		nstart = iiLimitsA0_d[il / def_nlB];
+		nstart = iiLimitsA0_d[il / def_nlA];
 	}
 
 	K_s[idx] = 0.0;
@@ -1296,7 +1296,7 @@ __global__ void Line6fAX_kernel(float *S1_d, float *vy_d, double *nu_d, double *
 
 	int nstart = Nk;
 	if(il < NL){
-		nstart = iiLimitsA0_d[il / def_nlB];
+		nstart = iiLimitsA0_d[il / def_nlA];
 	}
 
 	K_s[idx] = 0.0;
